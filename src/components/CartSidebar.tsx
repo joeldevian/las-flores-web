@@ -193,25 +193,21 @@ export function CartSidebar() {
                         style={{ borderLeft: `5px solid ${accent}` }}
                       >
                         {item.image && (
-                          <div className="relative w-[110px] h-[80px] flex items-center justify-center flex-shrink-0 group/retablo">
+                          <div className="relative flex items-center justify-center flex-shrink-0 group/retablo mx-1">
                             
                             {/* Panel Izquierdo (Decorativo) */}
-                            <div 
-                              className="w-[20px] h-[70px] bg-white border border-black/10 z-10 rounded-l-md overflow-hidden shadow-sm flex-shrink-0"
-                            >
-                              <div className="w-[40px] h-full bg-no-repeat bg-cover bg-left" style={{ backgroundImage: "url('/flor-retablo.png')" }}></div>
+                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-l border-black/10 z-10 rounded-l-md overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center">
+                              <div className="w-full h-full bg-no-repeat bg-contain bg-center" style={{ backgroundImage: "url('/flor-retablo.png')" }}></div>
                             </div>
 
                             {/* Imagen Central (Comida) */}
-                            <div className="w-[68px] h-[80px] z-20 shadow-md border-[3px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0" style={{ outline: `2px solid ${accent}40` }}>
+                            <div className="w-[68px] h-[80px] z-20 shadow-md border-[3px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0 bg-white" style={{ outline: `2px solid ${accent}40` }}>
                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover/retablo:scale-110 transition-transform duration-500" />
                             </div>
 
                             {/* Panel Derecho (Decorativo) */}
-                            <div 
-                              className="w-[20px] h-[70px] bg-white border border-black/10 z-10 rounded-r-md overflow-hidden shadow-sm flex-shrink-0"
-                            >
-                              <div className="w-[40px] h-full bg-no-repeat bg-cover bg-right scale-x-[-1]" style={{ backgroundImage: "url('/flor-retablo.png')" }}></div>
+                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-r border-black/10 z-10 rounded-r-md overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center">
+                              <div className="w-full h-full bg-no-repeat bg-contain bg-center scale-x-[-1]" style={{ backgroundImage: "url('/flor-retablo.png')" }}></div>
                             </div>
                           </div>
                         )}
