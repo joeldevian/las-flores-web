@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import {
   X, Plus, Minus, Trash2, ShoppingBag, MapPin,
   CreditCard, CheckCircle, Truck, Store, Smartphone,
-  Lock, ArrowLeft
+  Lock, ArrowLeft, AlertTriangle
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { calculateDistanceKm, calculateDeliveryCost, RESTAURANT_LOCATION, DELIVERY_CONFIG } from "../utils/deliveryUtils";
+
+const LocationSelector = lazy(() => import("./LocationSelector").then(m => ({ default: m.LocationSelector })));
 
 type Step = "cart" | "delivery" | "payment" | "success";
 type OrderType = "delivery" | "pickup";
@@ -41,11 +44,26 @@ export function CartSidebar() {
   const [step, setStep]         = useState<Step>("cart");
   const [orderType, setOrderType] = useState<OrderType>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<"yape" | "card">("yape");
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const [delivery, setDelivery] = useState<DeliveryForm>({ name: "", phone: "", address: "", reference: "", email: "" });
   const [payment,  setPayment]  = useState<PaymentForm>({ cardNumber: "", cardName: "", expiry: "", cvv: "" });
   const [processing, setProcessing] = useState(false);
+  const [clientLocation, setClientLocation] = useState<{lat: number, lng: number} | null>(null);
 
-  const DELIVERY_FEE = orderType === "delivery" ? 8 : 0;
+  // Calcular la distancia y el costo
+  const distanceKm = clientLocation 
+    ? calculateDistanceKm(RESTAURANT_LOCATION.lat, RESTAURANT_LOCATION.lng, clientLocation.lat, clientLocation.lng)
+    : 0;
+  
+  const DELIVERY_FEE = orderType === "delivery" 
+    ? (clientLocation ? calculateDeliveryCost(distanceKm) : DELIVERY_CONFIG.baseCost)
+    : 0;
+    
+  const isTooFar = distanceKm > DELIVERY_CONFIG.maxRadiusKm;
   const total = totalPrice + DELIVERY_FEE;
 
   const formatCard   = (v: string) => v.replace(/\D/g,"").slice(0,16).replace(/(.{4})/g,"$1 ").trim();
@@ -333,23 +351,28 @@ export function CartSidebar() {
                       </div>
                       <div>
                         <Label>Ubicación exacta *</Label>
-                        <div className="relative rounded-xl overflow-hidden h-32 flex items-center justify-center cursor-pointer border-2 transition-all group hover:opacity-90"
-                          style={{ borderColor: `${R.amarillo}60`, background: `${R.amarillo}15` }}>
-                          <div className="absolute inset-0 opacity-[0.05]"
-                            style={{ backgroundImage:"radial-gradient(#000 1px,transparent 1px)", backgroundSize:"18px 18px" }} />
-                          <div className="relative flex flex-col items-center gap-2">
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-md"
-                              style={{ background: R.morado }}>
-                              <MapPin size={18} />
-                            </div>
-                            <span className="text-xs font-bold" style={{ color: R.morado }}>
-                              Marcar mi ubicación en el mapa
-                            </span>
-                          </div>
-                        </div>
-                        <p className="text-[10px] text-black/40 mt-1.5 font-medium">
-                          Ayuda a nuestro repartidor a encontrarte con exactitud.
-                        </p>
+                        {isMounted && (
+                          <Suspense fallback={<div className="w-full h-[250px] rounded-xl border-2 border-black/10 bg-black/5 animate-pulse" />}>
+                            <LocationSelector 
+                              initialLocation={clientLocation}
+                              onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
+                            />
+                          </Suspense>
+                        )}
+                        {clientLocation ? (
+                          <p className="text-[10px] text-black/40 mt-1.5 font-medium">
+                            Distancia al restaurante: {distanceKm.toFixed(1)} km
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-black/40 mt-1.5 font-medium">
+                            Mueve el pin rojo o haz clic en el mapa para marcar tu ubicación exacta.
+                          </p>
+                        )}
+                        {isTooFar && (
+                          <p className="text-xs text-red-600 font-bold mt-1.5 flex items-center gap-1">
+                            <AlertTriangle size={14} /> Fuera de zona de reparto (Máx {DELIVERY_CONFIG.maxRadiusKm} km)
+                          </p>
+                        )}
                       </div>
                     </>
                   )}
@@ -525,7 +548,8 @@ export function CartSidebar() {
                 <ArrowLeft size={20} />
               </button>
               <button type="submit" form="delivery-form"
-                className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                disabled={orderType === "delivery" && (!clientLocation || isTooFar)}
+                className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
                 style={{ background: R.amarillo, color: R.morado }}>
                 Ir al pago
               </button>
