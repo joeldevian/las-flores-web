@@ -193,8 +193,26 @@ export function CartSidebar() {
                         style={{ borderLeft: `5px solid ${accent}` }}
                       >
                         {item.image && (
-                          <div className="overflow-hidden rounded-t-full rounded-b-xl border-[3px] border-white shadow-sm flex-shrink-0" style={{ outline: `2px solid ${accent}40` }}>
-                            <img src={item.image} alt={item.name} className="w-[68px] h-[80px] object-cover group-hover:scale-105 transition-transform" />
+                          <div className="relative w-[110px] h-[80px] flex items-center justify-center flex-shrink-0 group/retablo">
+                            
+                            {/* Panel Izquierdo (Decorativo) */}
+                            <div 
+                              className="w-[20px] h-[70px] bg-white border border-black/10 z-10 rounded-l-md overflow-hidden shadow-sm flex-shrink-0"
+                            >
+                              <div className="w-[40px] h-full bg-no-repeat bg-cover bg-left" style={{ backgroundImage: "url('/flor-retablo.png')" }}></div>
+                            </div>
+
+                            {/* Imagen Central (Comida) */}
+                            <div className="w-[68px] h-[80px] z-20 shadow-md border-[3px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0" style={{ outline: `2px solid ${accent}40` }}>
+                               <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover/retablo:scale-110 transition-transform duration-500" />
+                            </div>
+
+                            {/* Panel Derecho (Decorativo) */}
+                            <div 
+                              className="w-[20px] h-[70px] bg-white border border-black/10 z-10 rounded-r-md overflow-hidden shadow-sm flex-shrink-0"
+                            >
+                              <div className="w-[40px] h-full bg-no-repeat bg-cover bg-right scale-x-[-1]" style={{ backgroundImage: "url('/flor-retablo.png')" }}></div>
+                            </div>
                           </div>
                         )}
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
