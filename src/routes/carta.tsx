@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { categories } from '@/components/MenuModal';
 import { SiteFooter } from '@/components/site-footer';
+import { useCart } from '@/context/CartContext';
 
 export const Route = createFileRoute('/carta')({
   head: () => ({
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/carta')({
 });
 
 function CartaPage() {
+  const { addItem, setIsOpen } = useCart();
   const [activeId, setActiveId] = useState(categories[0].id);
   const active = categories.find((c) => c.id === activeId)!;
 
@@ -109,7 +111,18 @@ function CartaPage() {
                   </h3>
                   <span className="text-retablo font-bold text-sm flex-shrink-0 tracking-wide bg-retablo/10 px-2 py-1 rounded-sm">{dish.price}</span>
                 </div>
-                <p className="text-ink/60 text-xs flex-1 mb-2 leading-relaxed font-light">{dish.description}</p>
+                <p className="text-ink/60 text-xs flex-1 mb-4 leading-relaxed font-light">{dish.description}</p>
+                <button
+                  onClick={() => {
+                    const priceNum = parseFloat(dish.price.replace('S/ ', ''));
+                    addItem({ id: `${activeId}-${dish.name}`, name: dish.name, price: priceNum, image: dish.image });
+                    setIsOpen(true); // Open the cart
+                  }}
+                  className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-retablo"
+                  style={{ background: '#F4C430', color: '#4B2840' }} // Retablo Yellow and Purple
+                >
+                  + Agregar
+                </button>
               </div>
             </div>
           ))}
