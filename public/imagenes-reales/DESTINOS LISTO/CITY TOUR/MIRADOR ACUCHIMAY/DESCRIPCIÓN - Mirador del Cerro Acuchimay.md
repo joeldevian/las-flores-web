@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Mirador del Cerro Acuchimay
+
+A solo 15 minutos del centro de Huamanga, el **Mirador del Cerro Acuchimay** ofrece una espectacular vista panorámica de la ciudad, albergando una imponente estatua del **Cristo Redentor**. Se sugiere realizar la visita durante el **atardecer** para capturar excelentes fotografías y aprovechar su cercanía para explorar el tradicional distrito de **Carmen Alto**.

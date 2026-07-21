@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Colibrí
+
+Presente en los valles y campiñas de la región, el **colibrí** (conocido localmente como *q'enti* en quechua) es una diminuta y fascinante ave, fundamental como **polinizador natural** para la preservación de la variada flora andina. Observar su ágil y veloz vuelo estacionario entre las flores silvestres brinda una excelente oportunidad para conectar con la delicada belleza de la naturaleza local.

@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Arco del Triunfo
+
+Ubicado en pleno centro histórico a pocos pasos de la **Plaza Mayor**, el **Arco del Triunfo** es un emblemático monumento erigido para conmemorar la victoria peruana en el Combate del Dos de Mayo. Se sugiere visitarlo durante un paseo peatonal para capturar excelentes fotografías de su arquitectura y continuar la exploración hacia el tradicional barrio de **San Francisco**.

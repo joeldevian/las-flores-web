@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Chorizo Ayacuchano
+
+Presente en las tradicionales picanterías y festividades de la región, especialmente durante **Semana Santa**, el **chorizo ayacuchano** es un emblemático plato a base de carne de cerdo finamente picada y macerada en **ají panca** que se sirve sin embutir. Degustar este sabroso manjar tradicional brinda una excelente oportunidad para disfrutar de la auténtica y única riqueza gastronómica local.

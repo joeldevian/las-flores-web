@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Vilcashuamán
+
+A 3 horas de Huamanga, el imponente complejo arqueológico de **Vilcashuamán** fue un importante centro administrativo inca, conectado estratégicamente con el Cusco por el **Qhapaq Ñan** y diseñado a su imagen. Se sugiere llevar ropa abrigadora y calzado cómodo para recorrer sus majestuosas edificaciones de piedra, destacando el **Templo del Sol** y el emblemático **Ushnu**.

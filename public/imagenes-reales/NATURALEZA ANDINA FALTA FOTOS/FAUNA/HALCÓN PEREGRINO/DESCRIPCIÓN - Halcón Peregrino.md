@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Halcón Peregrino
+
+Presente en los altos riscos y cañones de la región, el **halcón peregrino** (asociado al vocablo quechua *waman*) es una imponente ave rapaz y el animal más veloz del planeta, crucial como **depredador tope** para el equilibrio del ecosistema andino. Avistar su espectacular vuelo en picada durante sus cacerías brinda una excelente oportunidad para maravillarse con la imponente vida silvestre local.

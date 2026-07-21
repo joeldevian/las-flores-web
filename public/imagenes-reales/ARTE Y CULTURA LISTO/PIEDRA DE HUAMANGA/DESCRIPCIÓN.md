@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Tallado en Piedra de Huamanga
+
+Reconocido como Patrimonio Cultural, el **tallado en piedra de Huamanga** es un delicado arte en alabastro blanco que retrata magistralmente escenas religiosas y costumbristas con siglos de tradición. Se sugiere visitar los talleres artesanales locales para admirar de cerca este invaluable legado y adquirir una pieza de esta emblemática expresión artística.

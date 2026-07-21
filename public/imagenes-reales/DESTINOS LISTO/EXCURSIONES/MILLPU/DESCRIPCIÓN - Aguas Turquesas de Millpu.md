@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Aguas Turquesas de Millpu
+
+Ubicadas a casi 4 horas de Huamanga, las **Aguas Turquesas de Millpu** conforman una impresionante sucesión de piscinas naturales escalonadas en el interior de un cañón. Para disfrutar del vibrante color de sus aguas, se recomienda realizar la excursión entre los meses de **mayo a noviembre**, siendo indispensable utilizar calzado de trekking y aclimatarse previamente a la altitud.

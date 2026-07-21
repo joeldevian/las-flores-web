@@ -1,0 +1,3 @@
+# DESCRIPCIÓN - Semana Santa Ayacuchana
+
+Celebrada habitualmente entre **marzo y abril**, la **Semana Santa Ayacuchana**, reconocida oficialmente como **Patrimonio Cultural de la Nación**, es la mayor expresión de fe y fervor religioso en el Perú, destacando por sus multitudinarias y solemnes procesiones, impresionantes alfombras de flores y profunda devoción andina. Una experiencia espiritual e histórica verdaderamente inigualable.
