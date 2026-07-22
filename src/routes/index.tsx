@@ -69,7 +69,7 @@ const festividades: Festividad[] = [
     nombre: "Semana Santa Ayacuchana",
     fecha: "Marzo / Abril",
     colorAccent: "bg-pantiwaita",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/SEMANA SANTA/semana santa.webp",
+    imagen: "/imagenes-reales/FESTIVIDADES LISTO/SEMANA SANTA/semana santa-opt.webp",
     descripcionCorta: "La mayor expresión de fe y fervor religioso en el Perú, con impresionantes alfombras de flores.",
     descripcion: "Celebrada habitualmente entre marzo y abril, la Semana Santa Ayacuchana, reconocida oficialmente como Patrimonio Cultural de la Nación, es la mayor expresión de fe y fervor religioso en el Perú, destacando por sus multitudinarias y solemnes procesiones, impresionantes alfombras de flores y profunda devoción andina. Una experiencia espiritual e histórica verdaderamente inigualable.",
     tradiciones: [
@@ -86,7 +86,7 @@ const festividades: Festividad[] = [
     nombre: "Carnaval Ayacuchano",
     fecha: "Febrero / Marzo",
     colorAccent: "bg-retama",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVALES/Carnavales.webp",
+    imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVALES/Carnavales-opt.webp",
     descripcionCorta: "Vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas.",
     descripcion: "Celebrado entre febrero y marzo, el Carnaval Ayacuchano, reconocido oficialmente como Patrimonio Cultural de la Nación, es una vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas, música y coloridos trajes tradicionales de danza. Una excelente oportunidad para vivir esta alegre tradición.",
     tradiciones: [
@@ -156,7 +156,7 @@ const lugares: Lugar[] = [
     numeral: "I",
     nombre: "Aguas Turquesas de Millpu",
     categoria: "Naturaleza",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/MILLPU/millpu.webp",
+    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/MILLPU/millpu-opt.webp",
     descripcion: "Ubicadas a casi 4 horas de Huamanga, las Aguas Turquesas de Millpu conforman una impresionante sucesión de piscinas naturales escalonadas en el interior de un cañón.",
     consejo: "Visitar de mayo a noviembre para disfrutar del vibrante color, llevar calzado de trekking.",
   },
@@ -201,7 +201,7 @@ const lugares: Lugar[] = [
     numeral: "VI",
     nombre: "Vilcashuamán",
     categoria: "Patrimonio Inca",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/VILCASHUAMAN/DSC09327-2.webp",
+    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/VILCASHUAMAN/DSC09327-2-opt.webp",
     descripcion: "A 3 horas de Huamanga, este imponente complejo arqueológico fue un importante centro administrativo inca, conectado estratégicamente con el Cusco.",
     consejo: "Llevar ropa abrigadora y recorrer sus majestuosas edificaciones de piedra como el Templo del Sol.",
   },
@@ -700,7 +700,7 @@ function Index() {
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <img
-              src="/imagenes-reales/EQUIPO/encantados-de-atenderlos.webp" alt="Personal de Las Flores encantados de atenderlos"
+              src="/imagenes-reales/EQUIPO/encantados-de-atenderlos-opt.webp" alt="Personal de Las Flores encantados de atenderlos"
               width={800} height={1200}
               className="w-full aspect-square object-cover rounded-3xl"
             />
