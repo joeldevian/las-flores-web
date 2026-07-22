@@ -116,7 +116,6 @@ function CartaPage() {
                   onClick={() => {
                     const priceNum = parseFloat(dish.price.replace('S/ ', ''));
                     addItem({ id: `${activeId}-${dish.name}`, name: dish.name, price: priceNum, image: dish.image });
-                    setIsOpen(true); // Open the cart
                   }}
                   className="w-full py-3 md:py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-retablo"
                   style={{ background: '#F4C430', color: '#4B2840' }} // Retablo Yellow and Purple

@@ -13,7 +13,7 @@ type Step = "cart" | "delivery" | "payment" | "success";
 type OrderType = "delivery" | "pickup";
 
 interface DeliveryForm {
-  name: string; phone: string; address: string; reference: string; email: string;
+  name: string; phone: string; address: string; reference: string; email: string; notes: string;
 }
 interface PaymentForm {
   cardNumber: string; cardName: string; expiry: string; cvv: string;
@@ -47,7 +47,7 @@ export function CartSidebar() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  const [delivery, setDelivery] = useState<DeliveryForm>({ name: "", phone: "", address: "", reference: "", email: "" });
+  const [delivery, setDelivery] = useState<DeliveryForm>({ name: "", phone: "", address: "", reference: "", email: "", notes: "" });
   const [payment,  setPayment]  = useState<PaymentForm>({ cardNumber: "", cardName: "", expiry: "", cvv: "" });
   const [processing, setProcessing] = useState(false);
   const [clientLocation, setClientLocation] = useState<{lat: number, lng: number} | null>(null);
@@ -81,7 +81,7 @@ export function CartSidebar() {
     if (step === "success") {
       clearCart();
       setStep("cart");
-      setDelivery({ name:"", phone:"", address:"", reference:"", email:"" });
+      setDelivery({ name:"", phone:"", address:"", reference:"", email:"", notes:"" });
       setPayment({ cardNumber:"", cardName:"", expiry:"", cvv:"" });
     }
   };
@@ -89,7 +89,7 @@ export function CartSidebar() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
+    <div className="fixed inset-0 z-[110] flex">
       <div className="flex-1 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
 
       <div className="w-full max-w-md flex flex-col h-full shadow-2xl overflow-hidden" style={{ background: R.crema }}>
@@ -346,6 +346,14 @@ export function CartSidebar() {
                       onChange={(e) => setDelivery({ ...delivery, phone: e.target.value })}
                       placeholder="987 654 321" className={inputCls} />
                   </div>
+                  <div>
+                    <Label>Notas o Comentarios (Opcional)</Label>
+                    <textarea value={delivery.notes}
+                      onChange={(e) => setDelivery({ ...delivery, notes: e.target.value })}
+                      placeholder="Sin cebolla, o entregar a las 2:00 PM..." 
+                      className={`${inputCls} resize-none min-h-[80px]`} 
+                    />
+                  </div>
 
                   {orderType === "delivery" && (
                     <>
@@ -518,6 +526,11 @@ export function CartSidebar() {
               ) : (
                 <p className="text-black/50 text-xs mb-6">
                   Listo para recoger en <strong style={{ color: R.verde }}>20 minutos</strong>.
+                </p>
+              )}
+              {delivery.notes && (
+                <p className="text-black/60 text-xs mb-6 px-4 py-3 bg-black/5 rounded-lg italic shadow-inner">
+                  "{delivery.notes}"
                 </p>
               )}
 
