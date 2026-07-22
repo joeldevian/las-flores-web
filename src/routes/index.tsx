@@ -513,6 +513,7 @@ function Index() {
           src={ayacuchoHero}
           alt="Vista panorámica de Ayacucho al atardecer con sus iglesias coloniales y los Andes"
           width={1920} height={1088}
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover opacity-70 animate-hero"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-transparent to-ink/80" />
