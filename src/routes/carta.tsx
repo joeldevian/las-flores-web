@@ -16,7 +16,7 @@ export const Route = createFileRoute('/carta')({
 
 function CartaPage() {
   const { addItem, setIsOpen } = useCart();
-  const [activeId, setActiveId] = useState(categories[0].id);
+  const [activeId, setActiveId] = useState('chef');
   const active = categories.find((c) => c.id === activeId)!;
 
   return (
@@ -33,7 +33,9 @@ function CartaPage() {
         </div>
         
         <div className="flex-none">
-          <img src="/images.png" alt="Las Flores" className="h-8 md:h-12 w-auto object-contain brightness-0 invert" />
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white shadow-sm flex items-center justify-center p-1" style={{ borderColor: '#F4C430' }}>
+            <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
+          </div>
         </div>
         
         <div className="flex-1 flex justify-end gap-6 md:gap-8">
@@ -59,7 +61,7 @@ function CartaPage() {
 
       {/* Sticky Category Navigation */}
       <div className="bg-cream border-b border-ink/10 overflow-x-auto scrollbar-none sticky top-0 z-20 shadow-sm">
-        <div className="flex px-4 md:justify-center">
+        <div className="flex w-max min-w-full px-4">
           {categories.map((cat) => (
             <button
               key={cat.id}
