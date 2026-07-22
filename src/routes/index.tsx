@@ -2,11 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
-const retabloImg = "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp";
+const retabloImg =
+  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp";
 const platoPucaImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/PUCA PICANTE/puca.webp"; // placeholder if needed
 const platoCuyImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/CUY FRITO/cuy.webp"; // placeholder
-const platoMondongoImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/MONDONGO/mondongo.webp"; // placeholder
-const platoMaizImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/POSTRES Y BEBIDAS/CHAPLA/chapla.webp"; // placeholder
+const platoMondongoImg =
+  "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/MONDONGO/mondongo.webp"; // placeholder
+const platoMaizImg =
+  "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/POSTRES Y BEBIDAS/CHAPLA/chapla.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
 
 export const Route = createFileRoute("/")({
@@ -70,8 +73,10 @@ const festividades: Festividad[] = [
     fecha: "Marzo / Abril",
     colorAccent: "bg-pantiwaita",
     imagen: "/imagenes-reales/FESTIVIDADES LISTO/SEMANA SANTA/semana santa-opt.webp",
-    descripcionCorta: "La mayor expresión de fe y fervor religioso en el Perú, con impresionantes alfombras de flores.",
-    descripcion: "Celebrada habitualmente entre marzo y abril, la Semana Santa Ayacuchana, reconocida oficialmente como Patrimonio Cultural de la Nación, es la mayor expresión de fe y fervor religioso en el Perú, destacando por sus multitudinarias y solemnes procesiones, impresionantes alfombras de flores y profunda devoción andina. Una experiencia espiritual e histórica verdaderamente inigualable.",
+    descripcionCorta:
+      "La mayor expresión de fe y fervor religioso en el Perú, con impresionantes alfombras de flores.",
+    descripcion:
+      "Celebrada habitualmente entre marzo y abril, la Semana Santa Ayacuchana, reconocida oficialmente como Patrimonio Cultural de la Nación, es la mayor expresión de fe y fervor religioso en el Perú, destacando por sus multitudinarias y solemnes procesiones, impresionantes alfombras de flores y profunda devoción andina. Una experiencia espiritual e histórica verdaderamente inigualable.",
     tradiciones: [
       "Procesión del Señor de los Ramos el Domingo de Ramos",
       "Quema del Judas y Pascua Toro el Sábado de Gloria",
@@ -87,8 +92,10 @@ const festividades: Festividad[] = [
     fecha: "Febrero / Marzo",
     colorAccent: "bg-retama",
     imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVALES/Carnavales-opt.webp",
-    descripcionCorta: "Vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas.",
-    descripcion: "Celebrado entre febrero y marzo, el Carnaval Ayacuchano, reconocido oficialmente como Patrimonio Cultural de la Nación, es una vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas, música y coloridos trajes tradicionales de danza. Una excelente oportunidad para vivir esta alegre tradición.",
+    descripcionCorta:
+      "Vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas.",
+    descripcion:
+      "Celebrado entre febrero y marzo, el Carnaval Ayacuchano, reconocido oficialmente como Patrimonio Cultural de la Nación, es una vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas, música y coloridos trajes tradicionales de danza. Una excelente oportunidad para vivir esta alegre tradición.",
     tradiciones: [
       "Yunzas o umishadas: tala del árbol adornado al ritmo del huayno",
       "Comparsas de danza con trajes típicos de cada barrio",
@@ -103,9 +110,11 @@ const festividades: Festividad[] = [
     nombre: "Hatun Yaku Raymi",
     fecha: "Agosto / Septiembre",
     colorAccent: "bg-eucalipto",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/HATUN YAKU RAYMI PARAS/HATUN YAKU RAYMI PARAS.webp",
+    imagen:
+      "/imagenes-reales/FESTIVIDADES LISTO/HATUN YAKU RAYMI PARAS/HATUN YAKU RAYMI PARAS.webp",
     descripcionCorta: "Un ancestral tributo al agua y a la Pachamama con los Danzantes de Tijeras.",
-    descripcion: "Celebrado entre agosto y septiembre en Paras, el Hatun Yaku Raymi es un ancestral tributo al agua y a la Pachamama. Destaca la participación de los Danzantes de Tijeras, quienes actúan como mediadores espirituales ante los Apus para bendecir el inicio del ciclo agrícola. Una gran oportunidad para presenciar esta milenaria tradición andina.",
+    descripcion:
+      "Celebrado entre agosto y septiembre en Paras, el Hatun Yaku Raymi es un ancestral tributo al agua y a la Pachamama. Destaca la participación de los Danzantes de Tijeras, quienes actúan como mediadores espirituales ante los Apus para bendecir el inicio del ciclo agrícola. Una gran oportunidad para presenciar esta milenaria tradición andina.",
     tradiciones: [
       "Duelos de Danza de las Tijeras entre competidores",
       "Rituales de ofrenda al agua y a la Pachamama",
@@ -120,8 +129,10 @@ const festividades: Festividad[] = [
     fecha: "Mayo",
     colorAccent: "bg-retablo-blue",
     imagen: "/imagenes-reales/FESTIVIDADES LISTO/FIESTA DE LAS CRUCES/fiesta de las cruces(1).webp",
-    descripcionCorta: "Fusiona la fe católica y andina con el tradicional descenso de cruces al ritmo de música.",
-    descripcion: "Celebrada en mayo, especialmente en Luricocha (Huanta), la Fiesta de las Cruces fusiona la fe católica y andina con el tradicional descenso de cruces al ritmo de música costumbrista. Una gran oportunidad para vivir esta profunda devoción popular.",
+    descripcionCorta:
+      "Fusiona la fe católica y andina con el tradicional descenso de cruces al ritmo de música.",
+    descripcion:
+      "Celebrada en mayo, especialmente en Luricocha (Huanta), la Fiesta de las Cruces fusiona la fe católica y andina con el tradicional descenso de cruces al ritmo de música costumbrista. Una gran oportunidad para vivir esta profunda devoción popular.",
     tradiciones: [
       "Peregrinación a los cerros al amanecer para adornar las cruces",
       "Bajada procesional de cruces hacia la Plaza de Armas",
@@ -137,8 +148,10 @@ const festividades: Festividad[] = [
     fecha: "Julio",
     colorAccent: "bg-adobe",
     imagen: "/imagenes-reales/FESTIVIDADES LISTO/VILCAS RAYMI/Vilcas raymi.webp",
-    descripcionCorta: "Escenificación de la guerra Inca-Chanca en el antiguo centro administrativo inca.",
-    descripcion: "Celebrado a fines de julio, el Vilcas Raymi escenifica la guerra Inca-Chanca en Vilcashuamán. Este antiguo centro administrativo inca, cuya imponente arquitectura está estrechamente ligada al diseño original del Cusco, ofrece la gran ventaja de disfrutar su majestuoso legado histórico con mucha menor afluencia turística y total tranquilidad.",
+    descripcionCorta:
+      "Escenificación de la guerra Inca-Chanca en el antiguo centro administrativo inca.",
+    descripcion:
+      "Celebrado a fines de julio, el Vilcas Raymi escenifica la guerra Inca-Chanca en Vilcashuamán. Este antiguo centro administrativo inca, cuya imponente arquitectura está estrechamente ligada al diseño original del Cusco, ofrece la gran ventaja de disfrutar su majestuoso legado histórico con mucha menor afluencia turística y total tranquilidad.",
     tradiciones: [
       "Escenificación histórica en la plaza principal de Vilcashuamán",
       "Danzas folclóricas y representaciones teatrales",
@@ -157,8 +170,10 @@ const lugares: Lugar[] = [
     nombre: "Aguas Turquesas de Millpu",
     categoria: "Naturaleza",
     imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/MILLPU/millpu-opt.webp",
-    descripcion: "Ubicadas a casi 4 horas de Huamanga, las Aguas Turquesas de Millpu conforman una impresionante sucesión de piscinas naturales escalonadas en el interior de un cañón.",
-    consejo: "Visitar de mayo a noviembre para disfrutar del vibrante color, llevar calzado de trekking.",
+    descripcion:
+      "Ubicadas a casi 4 horas de Huamanga, las Aguas Turquesas de Millpu conforman una impresionante sucesión de piscinas naturales escalonadas en el interior de un cañón.",
+    consejo:
+      "Visitar de mayo a noviembre para disfrutar del vibrante color, llevar calzado de trekking.",
   },
   {
     id: 2,
@@ -166,7 +181,8 @@ const lugares: Lugar[] = [
     nombre: "Pampa de Quinua",
     categoria: "Historia",
     imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/PAMPA DE QUINUA/pampa de quinua.webp",
-    descripcion: "A solo 45 minutos de Huamanga, la Pampa de Quinua es un majestuoso escenario histórico coronado por un obelisco que conmemora la Batalla de Ayacucho.",
+    descripcion:
+      "A solo 45 minutos de Huamanga, la Pampa de Quinua es un majestuoso escenario histórico coronado por un obelisco que conmemora la Batalla de Ayacucho.",
     consejo: "Complementar la visita explorando la tradicional alfarería del pueblo aledaño.",
   },
   {
@@ -175,8 +191,10 @@ const lugares: Lugar[] = [
     nombre: "Complejo Arqueológico Wari",
     categoria: "Arqueología",
     imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/COMPLEJO WARI/complejo wari.webp",
-    descripcion: "A solo 30 minutos de Huamanga, destaca por haber sido la imponente capital del primer gran imperio andino, siendo pionero en la planificación urbana preincaica.",
-    consejo: "Llevar protector solar y calzado cómodo para explorar sus extensas edificaciones de piedra.",
+    descripcion:
+      "A solo 30 minutos de Huamanga, destaca por haber sido la imponente capital del primer gran imperio andino, siendo pionero en la planificación urbana preincaica.",
+    consejo:
+      "Llevar protector solar y calzado cómodo para explorar sus extensas edificaciones de piedra.",
   },
   {
     id: 4,
@@ -184,7 +202,8 @@ const lugares: Lugar[] = [
     nombre: "Catedral de Huamanga",
     categoria: "Arquitectura Colonial",
     imagen: "/imagenes-reales/DESTINOS LISTO/CITY TOUR/CATEDRAL DE HUAMANGA/CATEDRAL.webp",
-    descripcion: "Majestuosa obra del siglo XVII que destaca por su fachada renacentista y sus interiores barrocos, albergando impresionantes altares bañados en pan de oro.",
+    descripcion:
+      "Majestuosa obra del siglo XVII que destaca por su fachada renacentista y sus interiores barrocos, albergando impresionantes altares bañados en pan de oro.",
     consejo: "Recorrer el centro histórico a pie para admirar su arquitectura y riqueza histórica.",
   },
   {
@@ -193,8 +212,10 @@ const lugares: Lugar[] = [
     nombre: "Arte y Cultura Ayacuchana",
     categoria: "Artesanía",
     imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp",
-    descripcion: "El retablo ayacuchano plasma magistralmente las costumbres andinas y religiosas mediante diminutas figuras en coloridas cajas de madera. Patrimonio Cultural de la Nación.",
-    consejo: "Visitar los talleres artesanales para admirar este minucioso arte y adquirir piezas únicas.",
+    descripcion:
+      "El retablo ayacuchano plasma magistralmente las costumbres andinas y religiosas mediante diminutas figuras en coloridas cajas de madera. Patrimonio Cultural de la Nación.",
+    consejo:
+      "Visitar los talleres artesanales para admirar este minucioso arte y adquirir piezas únicas.",
   },
   {
     id: 6,
@@ -202,16 +223,23 @@ const lugares: Lugar[] = [
     nombre: "Vilcashuamán",
     categoria: "Patrimonio Inca",
     imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/VILCASHUAMAN/DSC09327-2-opt.webp",
-    descripcion: "A 3 horas de Huamanga, este imponente complejo arqueológico fue un importante centro administrativo inca, conectado estratégicamente con el Cusco.",
-    consejo: "Llevar ropa abrigadora y recorrer sus majestuosas edificaciones de piedra como el Templo del Sol.",
+    descripcion:
+      "A 3 horas de Huamanga, este imponente complejo arqueológico fue un importante centro administrativo inca, conectado estratégicamente con el Cusco.",
+    consejo:
+      "Llevar ropa abrigadora y recorrer sus majestuosas edificaciones de piedra como el Templo del Sol.",
   },
 ];
 
-
-
 // ─── COMPONENTES ──────────────────────────────────────────────────────────────
 
-function Modal({ imagen, titulo, subtitulo, accentBar, cuerpo, onClose }: {
+function Modal({
+  imagen,
+  titulo,
+  subtitulo,
+  accentBar,
+  cuerpo,
+  onClose,
+}: {
   imagen: string;
   titulo: string;
   subtitulo: string;
@@ -220,14 +248,22 @@ function Modal({ imagen, titulo, subtitulo, accentBar, cuerpo, onClose }: {
   onClose: () => void;
 }) {
   useEffect(() => {
-    const fn = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const fn = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     document.addEventListener("keydown", fn);
     document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", fn); document.body.style.overflow = ""; };
+    return () => {
+      document.removeEventListener("keydown", fn);
+      document.body.style.overflow = "";
+    };
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10"
+      onClick={onClose}
+    >
       <div className="absolute inset-0 bg-ink/85 backdrop-blur-sm" />
       <div
         className="relative bg-cream text-ink max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
@@ -245,8 +281,12 @@ function Modal({ imagen, titulo, subtitulo, accentBar, cuerpo, onClose }: {
             ✕
           </button>
           <div className="absolute bottom-0 left-0 p-7">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-cream/60 mb-2">{subtitulo}</p>
-            <h2 className="font-serif italic text-2xl md:text-3xl text-cream leading-snug">{titulo}</h2>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-cream/60 mb-2">
+              {subtitulo}
+            </p>
+            <h2 className="font-serif italic text-2xl md:text-3xl text-cream leading-snug">
+              {titulo}
+            </h2>
           </div>
         </div>
 
@@ -257,8 +297,6 @@ function Modal({ imagen, titulo, subtitulo, accentBar, cuerpo, onClose }: {
     </div>
   );
 }
-
-
 
 // ─── SECCIÓN FESTIVIDADES — Carrusel / Slider ───────────────────────────────────
 
@@ -271,12 +309,26 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
     timerRef.current = setInterval(() => setActivo((p) => (p + 1) % festividades.length), 5000);
   };
 
-  useEffect(() => { resetTimer(); return () => { if (timerRef.current) clearInterval(timerRef.current); }; }, []);
+  useEffect(() => {
+    resetTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
-  const goTo = (i: number) => { setActivo(i); resetTimer(); };
-  const prev = () => { setActivo((p) => (p - 1 + festividades.length) % festividades.length); resetTimer(); };
-  const next = () => { setActivo((p) => (p + 1) % festividades.length); resetTimer(); };
-  
+  const goTo = (i: number) => {
+    setActivo(i);
+    resetTimer();
+  };
+  const prev = () => {
+    setActivo((p) => (p - 1 + festividades.length) % festividades.length);
+    resetTimer();
+  };
+  const next = () => {
+    setActivo((p) => (p + 1) % festividades.length);
+    resetTimer();
+  };
+
   const fest = festividades[activo];
 
   return (
@@ -287,9 +339,12 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
           to { width: 100%; }
         }
       `}</style>
-      
+
       {festividades.map((f, i) => (
-        <div key={f.id} className={`absolute inset-0 transition-opacity duration-1000 ${i === activo ? "opacity-100" : "opacity-0"}`}>
+        <div
+          key={f.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === activo ? "opacity-100" : "opacity-0"}`}
+        >
           <img src={f.imagen} alt={f.nombre} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
           {/* Línea de color de la festividad arriba */}
@@ -300,7 +355,9 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
       <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 z-10 text-cream">
         <div className="max-w-3xl">
           <p className="text-[10px] uppercase tracking-[0.35em] mb-3 text-cream/70">{fest.fecha}</p>
-          <h3 className="font-serif italic text-3xl md:text-5xl mb-4 leading-tight">{fest.nombre}</h3>
+          <h3 className="font-serif italic text-3xl md:text-5xl mb-4 leading-tight">
+            {fest.nombre}
+          </h3>
           <p className="text-sm md:text-base text-cream/80 leading-relaxed mb-6 max-w-2xl hidden md:block">
             {fest.descripcionCorta}
           </p>
@@ -315,13 +372,45 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
 
       {/* Flechas de navegación */}
       <div className="absolute top-1/2 -translate-y-1/2 left-4 md:left-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button onClick={prev} className="p-3 bg-ink/40 hover:bg-ink/80 rounded-full text-cream backdrop-blur-sm transition-all" aria-label="Anterior">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <button
+          onClick={prev}
+          className="p-3 bg-ink/40 hover:bg-ink/80 rounded-full text-cream backdrop-blur-sm transition-all"
+          aria-label="Anterior"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m15 18-6-6 6-6" />
+          </svg>
         </button>
       </div>
       <div className="absolute top-1/2 -translate-y-1/2 right-4 md:right-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button onClick={next} className="p-3 bg-ink/40 hover:bg-ink/80 rounded-full text-cream backdrop-blur-sm transition-all" aria-label="Siguiente">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <button
+          onClick={next}
+          className="p-3 bg-ink/40 hover:bg-ink/80 rounded-full text-cream backdrop-blur-sm transition-all"
+          aria-label="Siguiente"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m9 18 6-6-6-6" />
+          </svg>
         </button>
       </div>
 
@@ -335,7 +424,7 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
             aria-label={`Ver festividad ${i + 1}`}
           >
             {i === activo && (
-              <div 
+              <div
                 key={activo}
                 className="absolute top-0 left-0 h-full bg-cream"
                 style={{ animation: "fillProgress 5s linear forwards" }}
@@ -358,7 +447,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
       {lugares.map((lugar, i) => {
         // En móviles y desktop, el primero se expande por defecto si no hay hover en ninguno.
         const isExpanded = hovered === null ? i === 0 : hovered === lugar.id;
-        
+
         return (
           <div
             key={lugar.id}
@@ -368,25 +457,33 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
               isExpanded ? "flex-[4] md:flex-[5]" : "flex-[1]"
             }`}
           >
-            <img 
-              src={lugar.imagen} 
-              alt={lugar.nombre} 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" 
+            <img
+              src={lugar.imagen}
+              alt={lugar.nombre}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
             />
             {/* Gradiente más oscuro abajo para que lea el texto */}
-            <div className={`absolute inset-0 transition-opacity duration-700 ${isExpanded ? "bg-gradient-to-t from-ink via-ink/20 to-transparent" : "bg-ink/60 hover:bg-ink/40"}`} />
-            
+            <div
+              className={`absolute inset-0 transition-opacity duration-700 ${isExpanded ? "bg-gradient-to-t from-ink via-ink/20 to-transparent" : "bg-ink/60 hover:bg-ink/40"}`}
+            />
+
             {/* Número Romano */}
-            <div className={`absolute top-4 transition-all duration-700 z-20 ${isExpanded ? "right-5 md:right-8" : "left-1/2 -translate-x-1/2 md:left-4 md:translate-x-0"}`}>
-              <span className={`font-serif text-cream/40 select-none transition-all duration-700 ${isExpanded ? "text-4xl" : "text-xl md:text-2xl"}`}>
+            <div
+              className={`absolute top-4 transition-all duration-700 z-20 ${isExpanded ? "right-5 md:right-8" : "left-1/2 -translate-x-1/2 md:left-4 md:translate-x-0"}`}
+            >
+              <span
+                className={`font-serif text-cream/40 select-none transition-all duration-700 ${isExpanded ? "text-4xl" : "text-xl md:text-2xl"}`}
+              >
                 {lugar.numeral}
               </span>
             </div>
 
             {/* Contenido expandido */}
-            <div 
+            <div
               className={`absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end transition-all duration-500 z-20 ${
-                isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
+                isExpanded
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-8 pointer-events-none"
               }`}
             >
               <span className="text-eucalipto text-[10px] uppercase tracking-[0.35em] font-semibold mb-2 block">
@@ -404,7 +501,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
             </div>
 
             {/* Título para versión colapsada (Desktop) */}
-            <div 
+            <div
               className={`absolute inset-0 flex items-center justify-center pointer-events-none hidden md:flex transition-opacity duration-500 z-10 ${
                 isExpanded ? "opacity-0" : "opacity-100"
               }`}
@@ -413,9 +510,9 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
                 {lugar.nombre}
               </span>
             </div>
-            
+
             {/* Título para versión colapsada (Mobile) */}
-            <div 
+            <div
               className={`absolute inset-0 flex items-center justify-center pointer-events-none md:hidden transition-opacity duration-500 z-10 ${
                 isExpanded ? "opacity-0" : "opacity-100"
               }`}
@@ -442,13 +539,12 @@ function Index() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <div className="bg-cream text-ink font-sans selection:bg-retama/30">
-
       {/* MODAL — Festividad */}
       {festividadActiva && (
         <Modal
@@ -459,7 +555,9 @@ function Index() {
           onClose={() => setFestividadActiva(null)}
           cuerpo={
             <>
-              <p className="text-ink/80 text-base md:text-lg leading-[1.85] mb-8">{festividadActiva.descripcion}</p>
+              <p className="text-ink/80 text-base md:text-lg leading-[1.85] mb-8">
+                {festividadActiva.descripcion}
+              </p>
               <h4 className="font-serif text-xl mb-5">Tradiciones</h4>
               <ul className="space-y-3 mb-8">
                 {festividadActiva.tradiciones.map((t, i) => (
@@ -490,7 +588,9 @@ function Index() {
           onClose={() => setLugarActivo(null)}
           cuerpo={
             <>
-              <p className="text-ink/80 text-base md:text-lg leading-[1.85] mb-8">{lugarActivo.descripcion}</p>
+              <p className="text-ink/80 text-base md:text-lg leading-[1.85] mb-8">
+                {lugarActivo.descripcion}
+              </p>
               <div className="border-l-2 border-eucalipto pl-6 py-1">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-eucalipto font-semibold mb-2">
                   Consejo de visita
@@ -503,13 +603,26 @@ function Index() {
       )}
 
       {/* NAV */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-0 md:py-1 transition-all duration-500 pointer-events-none ${isScrolled ? 'bg-cream text-ink shadow-md' : 'bg-transparent text-cream'}`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-0 md:py-1 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
+      >
         <div className="flex-1 pointer-events-auto" />
-        <Link to="/" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <img src="/images.png" alt="Las Flores Logo" className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`} />
+        <Link
+          to="/"
+          className="flex-none pointer-events-auto"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <img
+            src="/images.png"
+            alt="Las Flores Logo"
+            className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? "" : "brightness-0 invert"}`}
+          />
         </Link>
         <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold">
-          <Link to="/restaurante" className="hover:text-retama transition-colors pointer-events-auto">
+          <Link
+            to="/restaurante"
+            className="hover:text-retama transition-colors pointer-events-auto"
+          >
             <span className="md:hidden">RESTAURANTE</span>
             <span className="hidden md:inline">NUESTRO RESTAURANTE</span>
           </Link>
@@ -521,7 +634,8 @@ function Index() {
         <img
           src={ayacuchoHero}
           alt="Vista panorámica de Ayacucho al atardecer con sus iglesias coloniales y los Andes"
-          width={1920} height={1088}
+          width={1920}
+          height={1088}
           fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover opacity-70 animate-hero"
         />
@@ -534,8 +648,8 @@ function Index() {
             Guardianes de la Cultura Ayacuchana
           </h1>
           <p className="mt-8 max-w-[52ch] text-cream/80 text-sm sm:text-base md:text-lg leading-[1.7] animate-reveal [animation-delay:400ms]">
-            Treinta y tres iglesias, retablos que guardan siglos y calles donde la tradición respira.
-            Nosotros no solo servimos comida, preservamos el alma de Ayacucho.
+            Treinta y tres iglesias, retablos que guardan siglos y calles donde la tradición
+            respira. Nosotros no solo servimos comida, preservamos el alma de Ayacucho.
           </p>
           <Link
             to="/restaurante"
@@ -554,8 +668,10 @@ function Index() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-5">
             <img
-              src={retabloImg} alt="Retablo ayacuchano tallado a mano con figuras policromadas"
-              width={800} height={1200}
+              src={retabloImg}
+              alt="Retablo ayacuchano tallado a mano con figuras policromadas"
+              width={800}
+              height={1200}
               className="w-full aspect-[4/5] object-cover"
             />
           </div>
@@ -567,10 +683,10 @@ function Index() {
               El retablo, la textilería y el fogón
             </h2>
             <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75">
-              En Ayacucho el arte y la comida comparten origen: manos que tallan retablos,
-              tejen mantas y avivan el fogón con la misma paciencia. Cada grano de maíz morado,
-              cada aroma a leña y cada textura de la piedra volcánica cuentan la historia de
-              una tierra que se niega a olvidar su esencia.
+              En Ayacucho el arte y la comida comparten origen: manos que tallan retablos, tejen
+              mantas y avivan el fogón con la misma paciencia. Cada grano de maíz morado, cada aroma
+              a leña y cada textura de la piedra volcánica cuentan la historia de una tierra que se
+              niega a olvidar su esencia.
             </p>
           </div>
         </div>
@@ -589,7 +705,8 @@ function Index() {
               </h2>
             </div>
             <p className="text-sm sm:text-base text-ink/60 leading-[1.7] max-w-[36ch] md:text-right">
-              Historia, naturaleza y arte vivo en cada rincón. Conoce la tierra que inspira nuestros sabores.
+              Historia, naturaleza y arte vivo en cada rincón. Conoce la tierra que inspira nuestros
+              sabores.
             </p>
           </div>
           {/* Acordeón expandible */}
@@ -610,7 +727,8 @@ function Index() {
               </h2>
             </div>
             <p className="text-base text-ink/60 leading-[1.7] max-w-[36ch] md:text-right">
-              Cada plato de Las Flores tiene una celebración detrás. Estas son las fiestas de nuestra tierra.
+              Cada plato de Las Flores tiene una celebración detrás. Estas son las fiestas de
+              nuestra tierra.
             </p>
           </div>
           <FestividadesSlider onSelect={setFestividadActiva} />
@@ -628,22 +746,45 @@ function Index() {
               La despensa de la sierra en cinco sabores
             </h2>
             <p className="mt-4 text-base text-cream/70 leading-[1.6] max-w-2xl">
-              Recetas que definen la identidad ayacuchana. El fruto del fogón y las festividades
-              que atraviesan generaciones.
+              Recetas que definen la identidad ayacuchana. El fruto del fogón y las festividades que
+              atraviesan generaciones.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
-              { img: "/gastronomia/puca-picante.webp", nombre: "Puca Picante", desc: "Remolacha, maní tostado y chicharrón sobre arroz graneado." },
-              { img: "/gastronomia/mondongo.webp", nombre: "Mondongo", desc: "Sopa ancestral de mote, panceta y hierbas de la puna." },
-              { img: "/gastronomia/cuy-chactado.webp", nombre: "Cuy Chactado", desc: "Confitado con hierbas y servido bajo la piedra caliente." },
-              { img: "/gastronomia/chicharron.webp", nombre: "Chicharrón", desc: "Cerdo dorado en su propia manteca con sarsa criolla." },
-              { img: "/gastronomia/qapchi.webp", nombre: "Qapchi", desc: "Queso fresco, rocoto y huacatay sobre papas nativas." },
+              {
+                img: "/gastronomia/puca-picante.webp",
+                nombre: "Puca Picante",
+                desc: "Remolacha, maní tostado y chicharrón sobre arroz graneado.",
+              },
+              {
+                img: "/gastronomia/mondongo.webp",
+                nombre: "Mondongo",
+                desc: "Sopa ancestral de mote, panceta y hierbas de la puna.",
+              },
+              {
+                img: "/gastronomia/cuy-chactado.webp",
+                nombre: "Cuy Chactado",
+                desc: "Confitado con hierbas y servido bajo la piedra caliente.",
+              },
+              {
+                img: "/gastronomia/chicharron.webp",
+                nombre: "Chicharrón",
+                desc: "Cerdo dorado en su propia manteca con sarsa criolla.",
+              },
+              {
+                img: "/gastronomia/qapchi.webp",
+                nombre: "Qapchi",
+                desc: "Queso fresco, rocoto y huacatay sobre papas nativas.",
+              },
             ].map((p) => (
               <article key={p.nombre} className="flex flex-col group">
                 <div className="dish-card-hover aspect-[5/4] bg-ink/40 rounded-lg">
                   <img
-                    src={p.img} alt={p.nombre} width={1000} height={800}
+                    src={p.img}
+                    alt={p.nombre}
+                    width={1000}
+                    height={800}
                     className="w-full h-full object-cover"
                   />
                   <div className="dish-card-overlay">
@@ -678,30 +819,42 @@ function Index() {
               <li className="flex items-start gap-5">
                 <span className="w-px h-10 bg-pantiwaita shrink-0 mt-1" />
                 <div>
-                  <h4 className="font-serif text-xl font-semibold mb-0.5">Mejor Restaurante Regional</h4>
-                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">Premios Summum 2024</p>
+                  <h4 className="font-serif text-xl font-semibold mb-0.5">
+                    Mejor Restaurante Regional
+                  </h4>
+                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">
+                    Premios Summum 2024
+                  </p>
                 </div>
               </li>
               <li className="flex items-start gap-5">
                 <span className="w-px h-10 bg-pantiwaita shrink-0 mt-1" />
                 <div>
-                  <h4 className="font-serif text-xl font-semibold mb-0.5">Guardianes de la Tradición</h4>
-                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">Ministerio de Cultura</p>
+                  <h4 className="font-serif text-xl font-semibold mb-0.5">
+                    Guardianes de la Tradición
+                  </h4>
+                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">
+                    Ministerio de Cultura
+                  </p>
                 </div>
               </li>
               <li className="flex items-start gap-5">
                 <span className="w-px h-10 bg-pantiwaita shrink-0 mt-1" />
                 <div>
                   <h4 className="font-serif text-xl font-semibold mb-0.5">Ayacucho Emprende</h4>
-                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">Municipalidad de Huamanga</p>
+                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">
+                    Municipalidad de Huamanga
+                  </p>
                 </div>
               </li>
             </ul>
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <img
-              src="/imagenes-reales/EQUIPO/encantados-de-atenderlos-opt.webp" alt="Personal de Las Flores encantados de atenderlos"
-              width={800} height={1200}
+              src="/imagenes-reales/EQUIPO/encantados-de-atenderlos-opt.webp"
+              alt="Personal de Las Flores encantados de atenderlos"
+              width={800}
+              height={1200}
               className="w-full aspect-square object-cover rounded-3xl"
             />
           </div>
@@ -715,7 +868,8 @@ function Index() {
             El Orgullo de nuestro Personal
           </span>
           <blockquote className="font-serif italic text-3xl md:text-5xl leading-[1.15] text-cream/95 text-balance">
-            «Siento un profundo respeto al portar los colores de nuestra tierra. Aquí no solo atendemos, aquí somos embajadores de Ayacucho.»
+            «Siento un profundo respeto al portar los colores de nuestra tierra. Aquí no solo
+            atendemos, aquí somos embajadores de Ayacucho.»
           </blockquote>
           <cite className="not-italic block mt-10 text-xs uppercase tracking-[0.3em] text-cream/60">
             — Carmen R., Anfitriona
@@ -726,8 +880,10 @@ function Index() {
       {/* CTA FINAL */}
       <section className="relative w-full">
         <img
-          src={ayacuchoHero} alt="Vista andina al atardecer"
-          width={1920} height={800}
+          src={ayacuchoHero}
+          alt="Vista andina al atardecer"
+          width={1920}
+          height={800}
           className="w-full h-[60vh] md:h-[600px] object-cover"
         />
         <div className="absolute inset-0 bg-ink/75" />
@@ -739,7 +895,8 @@ function Index() {
             De esta tierra nace Las Flores
           </h2>
           <p className="mt-6 max-w-[40ch] text-cream/80 text-sm md:text-base leading-relaxed">
-            Reserva una mesa en nuestro santuario de tradición o recibe el sabor de Ayacucho en tu hogar.
+            Reserva una mesa en nuestro santuario de tradición o recibe el sabor de Ayacucho en tu
+            hogar.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
             <Link

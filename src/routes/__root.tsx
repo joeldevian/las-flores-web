@@ -86,8 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Restaurante Las Flores — Ayacucho" },
       {
         property: "og:description",
-        content:
-          "Cocina ayacuchana de autor. Tres generaciones, un mismo respeto por la tierra.",
+        content: "Cocina ayacuchana de autor. Tres generaciones, un mismo respeto por la tierra.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

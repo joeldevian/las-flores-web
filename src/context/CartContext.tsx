@@ -30,9 +30,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => {
       const existing = prev.find((i) => i.id === newItem.id);
       if (existing) {
-        return prev.map((i) =>
-          i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
+        return prev.map((i) => (i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i));
       }
       return [...prev, { ...newItem, quantity: 1 }];
     });
@@ -47,9 +45,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeItem(id);
       return;
     }
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity } : i))
-    );
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity } : i)));
   };
 
   const clearCart = () => setItems([]);
@@ -59,7 +55,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, isOpen, setIsOpen }}
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        totalItems,
+        totalPrice,
+        isOpen,
+        setIsOpen,
+      }}
     >
       {children}
     </CartContext.Provider>
