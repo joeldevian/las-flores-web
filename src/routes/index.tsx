@@ -494,14 +494,15 @@ function Index() {
       )}
 
       {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-1 md:py-2 mix-blend-difference text-cream">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-1 md:py-2 mix-blend-difference text-cream">
         <div className="flex-1" />
         <Link to="/" className="flex-none" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <img loading="lazy" src="/images.png" alt="Las Flores Logo" className="h-14 md:h-16 w-auto object-contain brightness-0 invert" />
+          <img loading="lazy" src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
         </Link>
-        <div className="flex-1 flex justify-end">
-          <Link to="/restaurante" className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-retama transition-colors">
-            NUESTRO RESTAURANTE →
+        <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold">
+          <Link to="/restaurante" className="hover:text-retama transition-colors">
+            <span className="md:hidden">RESTAURANTE</span>
+            <span className="hidden md:inline">NUESTRO RESTAURANTE</span>
           </Link>
         </div>
       </nav>
@@ -519,10 +520,10 @@ function Index() {
           <span className="text-retama/90 uppercase tracking-[0.4em] text-xs md:text-sm mb-6 animate-reveal font-semibold">
             Huamanga · Perú
           </span>
-          <h1 className="font-serif italic text-5xl md:text-7xl lg:text-8xl text-cream leading-[1.05] text-balance max-w-[20ch] animate-reveal [animation-delay:200ms]">
+          <h1 className="font-serif italic text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-cream leading-[1.05] text-balance max-w-[20ch] animate-reveal [animation-delay:200ms]">
             Guardianes de la Cultura Ayacuchana
           </h1>
-          <p className="mt-8 max-w-[52ch] text-cream/80 text-base md:text-lg leading-[1.7] animate-reveal [animation-delay:400ms]">
+          <p className="mt-8 max-w-[52ch] text-cream/80 text-sm sm:text-base md:text-lg leading-[1.7] animate-reveal [animation-delay:400ms]">
             Treinta y tres iglesias, retablos que guardan siglos y calles donde la tradición respira.
             Nosotros no solo servimos comida, preservamos el alma de Ayacucho.
           </p>
@@ -552,10 +553,10 @@ function Index() {
             <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
               Cultura y Tradición
             </span>
-            <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
               El retablo, la textilería y el fogón
             </h2>
-            <p className="text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75">
+            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75">
               En Ayacucho el arte y la comida comparten origen: manos que tallan retablos,
               tejen mantas y avivan el fogón con la misma paciencia. Cada grano de maíz morado,
               cada aroma a leña y cada textura de la piedra volcánica cuentan la historia de
@@ -573,11 +574,11 @@ function Index() {
               <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-4 block">
                 Lugares para Visitar
               </span>
-              <h2 className="font-serif text-4xl md:text-5xl leading-[1.05] text-balance max-w-[24ch]">
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-balance max-w-[24ch]">
                 Ayacucho más allá de la mesa
               </h2>
             </div>
-            <p className="text-base text-ink/60 leading-[1.7] max-w-[36ch] md:text-right">
+            <p className="text-sm sm:text-base text-ink/60 leading-[1.7] max-w-[36ch] md:text-right">
               Historia, naturaleza y arte vivo en cada rincón. Conoce la tierra que inspira nuestros sabores.
             </p>
           </div>
@@ -594,7 +595,7 @@ function Index() {
               <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-4 block">
                 Festividades de Huamanga
               </span>
-              <h2 className="font-serif text-4xl md:text-5xl leading-[1.05] text-balance max-w-[28ch]">
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-balance max-w-[28ch]">
                 El calendario que da vida a nuestra cocina
               </h2>
             </div>
@@ -656,10 +657,10 @@ function Index() {
             <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
               Excelencia Reconocida
             </span>
-            <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
               Nuestra devoción <span className="italic">premiada</span>
             </h2>
-            <p className="text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75 mb-10">
+            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75 mb-10">
               Ser el mejor restaurante de Ayacucho no es solo un título, es una responsabilidad.
               Estos galardones reflejan nuestro respeto inquebrantable por la herencia culinaria.
             </p>

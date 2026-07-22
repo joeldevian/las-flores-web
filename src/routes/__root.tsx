@@ -97,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMe1vcerYlUI54Rr-Y3ryV_CMz5lKQagzviw8SBEMkDn0Ha1EaeWPD6vY&s=10", type: "image/jpeg" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -120,7 +120,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
-        <ScrollRestoration />
+        {/* ScrollRestoration is deprecated in recent versions of Tanstack Router, handled in createRouter instead */}
         <Scripts />
       </body>
     </html>
