@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 const equipoImg = "/imagenes-reales/EQUIPO/02042026-DSC04926.webp";
 const casaImg = "/inicio/inicio-pagina-restaurante.webp";
-const cocinaImg = "/imagenes-reales/EQUIPO/02042026-DSC05081.webp";
+const cocinaImg = "/imagenes-reales/EQUIPO/02042026-DSC05081-opt.webp";
 const platoPucaImg = "/gastronomia/puca-picante.webp"; // placeholder
 const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
@@ -56,7 +56,7 @@ const generationStories: GenerationStory[] = [
   {
     generation: "Primera generación",
     name: "Fundadora",
-    image: "/imagenes-reales/EQUIPO/02042026-DSC05038.webp",
+    image: "/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp",
     alt: "Fundadora de Las Flores en la cocina",
     summary:
       "Mamina abrió la primera casa de sabor, donde la hospitalidad, el fuego y la memoria compartida dieron forma a la identidad de Las Flores.",
