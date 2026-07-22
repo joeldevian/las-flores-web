@@ -207,7 +207,7 @@ interface MenuModalProps {
 }
 
 export function MenuModal({ open, onClose }: MenuModalProps) {
-  const [activeId, setActiveId] = useState('tipicos');
+  const [activeId, setActiveId] = useState('chef');
   const { totalItems, setIsOpen: setSidebarOpen } = useCart();
 
   useEffect(() => {
@@ -265,7 +265,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
 
       {/* Categories Tabs */}
       <div className="overflow-x-auto scrollbar-none sticky top-[80px] md:top-[88px] z-10 shadow-sm border-b border-black/5" style={{ background: R.crema }}>
-        <div className="flex max-w-7xl mx-auto px-4 md:px-10">
+        <div className="flex w-max min-w-full px-4 md:px-10">
           {categories.map((cat) => {
             const isActive = activeId === cat.id;
             return (
