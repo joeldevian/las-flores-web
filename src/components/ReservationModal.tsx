@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SeatSelector } from './SeatSelector';
 
 interface ReservationModalProps {
@@ -34,8 +34,9 @@ const SERVICES = [
 ];
 
 export function ReservationModal({ open, onClose }: ReservationModalProps) {
-  // Step 1: Comensales, 2: Fecha, 3: Hora, 4: Login, 5: Mesa, 6: Exito
   const [step, setStep] = useState(1);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
     guests: '',
@@ -47,6 +48,18 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     name: '', // Guardado por Google Login (mock)
     email: '' // Guardado por Google Login (mock)
   });
+
+  // Evitar scroll en el fondo cuando el modal está abierto
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => 
     setForm(f => ({ ...f, [key]: e.target.value }));
@@ -78,15 +91,15 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
   const progressPercent = ((step - 1) / 5) * 100;
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-ink/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
       
-      {/* Modal Sidebar */}
-      <div className="relative w-full md:w-[450px] bg-[#f8f4e6] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 overflow-hidden">
+      {/* Modal Centered */}
+      <div className="relative w-full max-w-[450px] bg-[#f8f4e6] h-[95%] max-h-[850px] shadow-2xl flex flex-col animate-in zoom-in-95 duration-500 overflow-hidden rounded-2xl md:rounded-3xl">
         
         {/* Header / Nav */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-ink/10 bg-white/50 backdrop-blur-md z-10">
@@ -97,16 +110,14 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
           ) : (
             <div className="w-10"></div> // Spacer
           )}
-          <img src="/images.png" alt="Logo" className="h-10 object-contain drop-shadow-sm" />
+          <img src="/images.png" alt="Logo" className="h-10 object-contain drop-shadow-sm scale-[1.35] origin-center" />
           <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors" aria-label="Cerrar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={R.morado} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
 
         {/* Contenedor Principal con Scroll */}
-        <div className="flex-1 overflow-y-auto relative p-6 custom-scrollbar bg-cover bg-center" style={{ backgroundImage: "url('/inicio/ayacucho.webp')" }}>
-          {/* Overlay blanco semitransparente para legibilidad */}
-          <div className="absolute inset-0 bg-white/85" />
+        <div className="flex-1 overflow-y-auto relative p-6 custom-scrollbar bg-gradient-to-br from-[#f8f4e6] via-[#f8f4e6] to-[#eaddcd]">
           
           <div className="relative z-10 h-full">
             
@@ -154,10 +165,13 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                   <button
                     onClick={handleGuestsNext}
                     disabled={!form.guests}
-                    className="w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:transform-none hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-                    style={{ background: "#3b0944", color: "#F4C430" }}
+                    className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
+                      ${!form.guests 
+                        ? 'bg-white/80 text-ink/40 backdrop-blur-md border border-ink/10 cursor-not-allowed' 
+                        : 'bg-[#3b0944] text-[#F4C430] hover:-translate-y-0.5 hover:shadow-lg'}`}
                   >
-                    Continuar con {form.guests || '...'} comensales
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    {form.guests ? `Continuar con ${form.guests} comensal${form.guests === '1' ? '' : 'es'}` : 'Selecciona tus comensales'}
                   </button>
                 </div>
               </div>
@@ -177,29 +191,69 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                   <p className="text-sm text-ink/70 mt-2">Selecciona tu fecha preferida</p>
                 </div>
                 
-                <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar">
-                  {DATES.map((d, i) => (
-                    <button
-                      key={d.value}
-                      onClick={() => setForm(f => ({ ...f, date: d.value }))}
-                      className={`flex-none w-[100px] h-[120px] snap-center rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1
-                        ${form.date === d.value 
-                          ? 'bg-[#3b0944] text-white border-[#3b0944] shadow-md scale-[1.02]' 
-                          : 'bg-white/80 border-[#3b0944]/20 hover:border-[#3b0944]/50 text-[#3b0944]'}`}
-                    >
-                      <span className="text-xs uppercase tracking-widest opacity-80">{i === 0 ? 'Hoy' : d.dayName}</span>
-                      <span className="text-4xl font-serif">{d.dayNum}</span>
-                      <span className="text-xs uppercase opacity-80">{d.month}</span>
-                    </button>
-                  ))}
+                <div className="relative group">
+                  <button 
+                    onClick={() => scrollContainerRef.current?.scrollBy({ left: -120, behavior: 'smooth' })}
+                    className="absolute left-[-15px] top-[45%] -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-ink/10 shadow-md rounded-full w-10 h-10 flex items-center justify-center text-ink hover:scale-105 transition-all"
+                    aria-label="Anterior"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  
+                  <div ref={scrollContainerRef} className="flex gap-3 overflow-x-auto py-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth">
+                    {DATES.map((d, i) => (
+                      <button
+                        key={d.value}
+                        onClick={() => setForm(f => ({ ...f, date: d.value }))}
+                        className={`flex-none w-[100px] h-[120px] snap-center rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1
+                          ${form.date === d.value 
+                            ? 'bg-[#3b0944] text-[#F4C430] border-[#3b0944] shadow-md scale-[1.02]' 
+                            : 'bg-white shadow-sm border-transparent hover:border-[#3b0944]/30 text-[#3b0944]'}`}
+                      >
+                        <span className="text-xs uppercase tracking-widest opacity-80">{i === 0 ? 'Hoy' : d.dayName}</span>
+                        <span className="text-4xl font-serif">{d.dayNum}</span>
+                        <span className="text-xs uppercase opacity-80">{d.month}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <button 
+                    onClick={() => scrollContainerRef.current?.scrollBy({ left: 120, behavior: 'smooth' })}
+                    className="absolute right-[-15px] top-[45%] -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-ink/10 shadow-md rounded-full w-10 h-10 flex items-center justify-center text-ink hover:scale-105 transition-all"
+                    aria-label="Siguiente"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+
+                <div className="mt-2 flex justify-center">
+                  <button 
+                    onClick={() => dateInputRef.current?.showPicker()}
+                    className="flex items-center gap-2 text-sm font-bold text-ink hover:opacity-70 transition-opacity bg-white/50 backdrop-blur-md px-6 py-3 rounded-full border border-ink/10 shadow-sm"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    {form.date && !DATES.find(d => d.value === form.date) 
+                      ? new Date(form.date + 'T12:00').toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'long' })
+                      : 'Ver calendario completo'}
+                  </button>
+                  <input 
+                    ref={dateInputRef}
+                    type="date" 
+                    style={{ width: 0, height: 0, opacity: 0, border: 0, padding: 0, margin: 0, position: 'absolute' }}
+                    min={new Date().toISOString().split('T')[0]}
+                    value={form.date}
+                    onChange={(e) => setForm(f => ({ ...f, date: e.target.value }))}
+                  />
                 </div>
 
                 <div className="mt-auto pt-8">
                   <button
                     onClick={handleDateNext}
                     disabled={!form.date}
-                    className="w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:transform-none hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-                    style={{ background: "#3b0944", color: "#F4C430" }}
+                    className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
+                      ${!form.date 
+                        ? 'bg-white/80 text-ink/40 backdrop-blur-md border border-ink/10 cursor-not-allowed' 
+                        : 'bg-[#3b0944] text-[#F4C430] hover:-translate-y-0.5 hover:shadow-lg'}`}
                   >
                     Continuar
                   </button>
@@ -262,8 +316,10 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       <button
                         onClick={handleTimeNext}
                         disabled={!form.time}
-                        className="w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:transform-none hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-                        style={{ background: "#3b0944", color: "#F4C430" }}
+                        className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
+                          ${!form.time 
+                            ? 'bg-white/80 text-ink/40 backdrop-blur-md border border-ink/10 cursor-not-allowed' 
+                            : 'bg-[#3b0944] text-[#F4C430] hover:-translate-y-0.5 hover:shadow-lg'}`}
                       >
                         Continuar
                       </button>
