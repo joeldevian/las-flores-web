@@ -86,8 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Restaurante Las Flores — Ayacucho" },
       {
         property: "og:description",
-        content:
-          "Cocina ayacuchana de autor. Tres generaciones, un mismo respeto por la tierra.",
+        content: "Cocina ayacuchana de autor. Tres generaciones, un mismo respeto por la tierra.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -119,7 +118,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="overflow-x-hidden">
         {children}
         {/* ScrollRestoration is deprecated in recent versions of Tanstack Router, handled in createRouter instead */}
         <Scripts />

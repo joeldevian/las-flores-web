@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import type { LeafletMouseEvent, Marker as LeafletMarker } from "leaflet";
 
 const DEFAULT_CENTER = {
   lat: -13.1628496,
@@ -15,18 +16,15 @@ interface LocationSelectorProps {
 }
 
 export function LocationSelector({ onLocationSelect, initialLocation }: LocationSelectorProps) {
-  const [MapComponents, setMapComponents] = useState<any>(null);
+  const [MapComponents, setMapComponents] = useState<typeof import("react-leaflet") | null>(null);
   const position = initialLocation || DEFAULT_CENTER;
-  
+
   useEffect(() => {
     let mounted = true;
-    Promise.all([
-      import("react-leaflet"),
-      import("leaflet")
-    ]).then(([rl, L]) => {
+    Promise.all([import("react-leaflet"), import("leaflet")]).then(([rl, L]) => {
       if (!mounted) return;
-      
-      delete (L.default.Icon.Default.prototype as any)._getIconUrl;
+
+      delete (L.default.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
       L.default.Icon.Default.mergeOptions({
         iconUrl: markerIcon,
         iconRetinaUrl: markerIcon2x,
@@ -35,18 +33,22 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
 
       setMapComponents(rl);
     });
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (!MapComponents) {
-    return <div className="w-full h-[250px] rounded-xl border-2 border-black/10 bg-black/5 animate-pulse" />;
+    return (
+      <div className="w-full h-[250px] rounded-xl border-2 border-black/10 bg-black/5 animate-pulse" />
+    );
   }
 
   const { MapContainer, TileLayer, Marker, useMapEvents } = MapComponents;
 
   function MapEvents() {
     useMapEvents({
-      click(e: any) {
+      click(e: LeafletMouseEvent) {
         onLocationSelect(e.latlng.lat, e.latlng.lng);
       },
     });
@@ -54,7 +56,7 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
   }
 
   function DraggableMarker() {
-    const markerRef = useRef<any>(null);
+    const markerRef = useRef<LeafletMarker | null>(null);
     const eventHandlers = useMemo(
       () => ({
         dragend() {
@@ -65,16 +67,11 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
           }
         },
       }),
-      []
+      [],
     );
 
     return (
-      <Marker
-        draggable={true}
-        eventHandlers={eventHandlers}
-        position={position}
-        ref={markerRef}
-      />
+      <Marker draggable={true} eventHandlers={eventHandlers} position={position} ref={markerRef} />
     );
   }
 
