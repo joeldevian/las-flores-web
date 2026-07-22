@@ -79,7 +79,7 @@ export function ReservationModal({ open, onClose }: Props) {
           <div className="flex items-center justify-between p-6 relative">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white shadow-sm flex items-center justify-center p-1" style={{ borderColor: R.amarillo }}>
-                <img src="/brand/logo-original.png" alt="Las Flores" className="w-full h-full object-contain" />
+                <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
               </div>
               <h3 className="font-serif text-2xl font-bold tracking-wide text-white">Reservar Mesa</h3>
             </div>

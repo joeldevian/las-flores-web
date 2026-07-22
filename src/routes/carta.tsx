@@ -33,7 +33,7 @@ function CartaPage() {
         </div>
         
         <div className="flex-none">
-          <img src="/images.png" alt="Las Flores" className="h-10 md:h-12 w-auto object-contain brightness-0 invert" />
+          <img src="/images.png" alt="Las Flores" className="h-8 md:h-12 w-auto object-contain brightness-0 invert" />
         </div>
         
         <div className="flex-1 flex justify-end gap-6 md:gap-8">
@@ -118,7 +118,7 @@ function CartaPage() {
                     addItem({ id: `${activeId}-${dish.name}`, name: dish.name, price: priceNum, image: dish.image });
                     setIsOpen(true); // Open the cart
                   }}
-                  className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-retablo"
+                  className="w-full py-3 md:py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-retablo"
                   style={{ background: '#F4C430', color: '#4B2840' }} // Retablo Yellow and Purple
                 >
                   + Agregar

@@ -29,9 +29,7 @@ const R = {
   blanco:  "#FFFFFF",
 };
 
-const inputCls =
-  "w-full border-2 border-transparent border-b-black/15 rounded-t-xl rounded-b-sm px-4 py-3 text-sm bg-black/4 " +
-  "focus:outline-none focus:border-b-[#F4C430] focus:bg-white transition-all placeholder:text-black/30 font-medium";
+const inputCls = "w-full border-2 border-transparent border-b-black/15 rounded-t-xl rounded-b-sm px-4 py-3 text-base md:text-sm bg-black/4 focus:border-b-[#F4C430] focus:bg-white transition-all placeholder:text-black/30 font-medium";
 
 const Label = ({ children }: { children: React.ReactNode }) => (
   <label className="block text-[10px] uppercase tracking-[0.14em] font-bold text-black/50 mb-2">
@@ -104,7 +102,7 @@ export function CartSidebar() {
           <div className="flex items-center py-4 px-5 relative h-16">
             {/* Logo a la izquierda */}
             <div className="absolute left-5 flex items-center">
-              <img src="/brand/logo-original.png" alt="Las Flores" className="w-[38px] h-[38px] rounded-full object-cover border-2 shadow-sm" style={{ borderColor: R.amarillo }} />
+              <img src="/favicon.png" alt="Las Flores" className="w-[38px] h-[38px] rounded-full object-cover border-2 shadow-sm bg-white" style={{ borderColor: R.amarillo }} />
             </div>
 
             {/* Título centrado */}
