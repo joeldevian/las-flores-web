@@ -244,7 +244,6 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
         <div className="flex items-center gap-4 md:gap-8 relative">
           <button
             onClick={() => {
-              onClose();
               setSidebarOpen(true);
             }}
             className="relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5"
