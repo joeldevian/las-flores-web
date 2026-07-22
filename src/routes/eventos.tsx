@@ -54,7 +54,7 @@ function EventosPage() {
   return (
     <div className="bg-cream text-ink font-sans selection:bg-retama/30">
       {/* Nav */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-3 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? 'bg-cream text-ink shadow-md' : 'bg-transparent text-cream'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-0 md:py-1 transition-all duration-500 pointer-events-none ${isScrolled ? 'bg-cream text-ink shadow-md' : 'bg-transparent text-cream'}`}>
         <div className="flex-1 hidden md:flex gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
           <Link to="/restaurante" className="hover:text-retama transition-colors">
             RESTAURANTE
