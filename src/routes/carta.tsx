@@ -61,9 +61,9 @@ function CartaPage() {
 
       {/* Main Content with Sidebar */}
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto w-full flex-1">
-        {/* Vertical Category Sidebar */}
-        <aside className="w-full md:w-72 bg-cream border-b md:border-b-0 md:border-r border-ink/10 flex-shrink-0 md:sticky md:top-24 md:h-[calc(100vh-100px)] overflow-y-auto z-20">
-          <div className="flex flex-col py-4 md:py-8">
+        {/* Vertical Category Sidebar (Desktop) / Horizontal Tabs (Mobile) */}
+        <aside className="w-full md:w-72 bg-cream border-b md:border-b-0 md:border-r border-ink/10 flex-shrink-0 md:sticky md:top-24 md:h-[calc(100vh-100px)] overflow-x-auto md:overflow-y-auto z-20 scrollbar-none">
+          <div className="flex flex-row md:flex-col py-0 md:py-8 w-max min-w-full md:w-auto">
             {categories.map((cat) => (
               <button
                 key={cat.id}
@@ -73,7 +73,7 @@ function CartaPage() {
                     window.scrollTo({ top: document.getElementById('menu-content')?.offsetTop || 0, behavior: 'smooth' });
                   }
                 }}
-                className={`text-left px-8 py-4 text-xs font-bold uppercase tracking-[0.15em] transition-all border-l-4 ${
+                className={`text-center md:text-left whitespace-nowrap md:whitespace-normal px-6 md:px-8 py-4 md:py-4 text-xs font-bold uppercase tracking-[0.15em] transition-all border-b-4 md:border-b-0 md:border-l-4 ${
                   activeId === cat.id
                     ? 'border-retablo text-retablo bg-retablo/5'
                     : 'border-transparent text-ink/50 hover:text-ink hover:bg-ink/5'

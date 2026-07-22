@@ -265,16 +265,16 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
 
       {/* Content Layout */}
       <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-        {/* Vertical Categories Sidebar */}
-        <div className="w-full md:w-72 flex-shrink-0 border-b md:border-b-0 md:border-r border-black/5 overflow-y-auto z-10" style={{ background: R.crema }}>
-          <div className="flex flex-col py-2 md:py-6">
+        {/* Vertical Categories Sidebar (Desktop) / Horizontal Tabs (Mobile) */}
+        <div className="w-full md:w-72 flex-shrink-0 border-b md:border-b-0 md:border-r border-black/5 overflow-x-auto md:overflow-y-auto z-10 scrollbar-none" style={{ background: R.crema }}>
+          <div className="flex flex-row md:flex-col py-0 md:py-6 w-max min-w-full md:w-auto">
             {categories.map((cat) => {
               const isActive = activeId === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveId(cat.id)}
-                  className={`text-left px-6 md:px-8 py-4 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all border-l-4 ${
+                  className={`text-center md:text-left whitespace-nowrap md:whitespace-normal px-6 md:px-8 py-4 md:py-4 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all border-b-4 md:border-b-0 md:border-l-4 ${
                     isActive
                       ? 'bg-black/5'
                       : 'border-transparent text-black/50 hover:text-black/80 hover:bg-black/5'
