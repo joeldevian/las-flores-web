@@ -45,16 +45,16 @@ function EventosPage() {
   return (
     <div className="bg-cream text-ink font-sans selection:bg-retama/30">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-1 md:py-2 mix-blend-difference text-cream">
-        <div className="flex-1 hidden md:flex gap-8 text-sm uppercase tracking-[0.15em] font-semibold">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 pt-4 pb-12 bg-gradient-to-b from-ink/80 via-ink/40 to-transparent text-cream pointer-events-none">
+        <div className="flex-1 hidden md:flex gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
           <Link to="/restaurante" className="hover:text-retama transition-colors">
             RESTAURANTE
           </Link>
         </div>
-        <Link to="/" className="flex-none" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+        <Link to="/" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <img src="/images.png" alt="Las Flores Logo" className="h-14 md:h-16 w-auto object-contain brightness-0 invert" />
         </Link>
-        <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-sm uppercase tracking-[0.15em] font-semibold">
+        <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
           <button onClick={() => setIsReservationOpen(true)} className="hover:text-retama transition-colors">
             RESERVAS
           </button>
