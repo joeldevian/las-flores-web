@@ -45,7 +45,7 @@ function EventosPage() {
   return (
     <div className="bg-cream text-ink font-sans selection:bg-retama/30">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 pt-4 pb-12 bg-gradient-to-b from-ink/80 via-ink/40 to-transparent text-cream pointer-events-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 pt-4 pb-24 bg-gradient-to-b from-ink/95 via-ink/50 to-transparent text-cream pointer-events-none">
         <div className="flex-1 hidden md:flex gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
           <Link to="/restaurante" className="hover:text-retama transition-colors">
             RESTAURANTE
