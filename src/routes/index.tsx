@@ -271,7 +271,7 @@ function Modal({
       >
         {/* Imagen cabecera con arco en CSS */}
         <div className="relative overflow-hidden" style={{ height: "18rem" }}>
-          <img src={imagen} alt={titulo} className="w-full h-full object-cover" />
+          <img src={imagen} alt={titulo} loading="lazy" decoding="async" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
           <button
             onClick={onClose}
@@ -345,7 +345,7 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
           key={f.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${i === activo ? "opacity-100" : "opacity-0"}`}
         >
-          <img src={f.imagen} alt={f.nombre} className="w-full h-full object-cover" />
+          <img src={f.imagen} alt={f.nombre} loading="lazy" decoding="async" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
           {/* Línea de color de la festividad arriba */}
           <div className={`absolute top-0 left-0 w-full h-1 ${f.colorAccent} z-20 opacity-80`} />
@@ -460,6 +460,8 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
             <img
               src={lugar.imagen}
               alt={lugar.nombre}
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
             />
             {/* Gradiente más oscuro abajo para que lea el texto */}
@@ -672,6 +674,8 @@ function Index() {
               alt="Retablo ayacuchano tallado a mano con figuras policromadas"
               width={800}
               height={1200}
+              loading="lazy"
+              decoding="async"
               className="w-full aspect-[4/5] object-cover"
             />
           </div>
@@ -785,6 +789,8 @@ function Index() {
                     alt={p.nombre}
                     width={1000}
                     height={800}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                   <div className="dish-card-overlay">
@@ -855,6 +861,8 @@ function Index() {
               alt="Personal de Las Flores encantados de atenderlos"
               width={800}
               height={1200}
+              loading="lazy"
+              decoding="async"
               className="w-full aspect-square object-cover rounded-3xl"
             />
           </div>
@@ -884,6 +892,8 @@ function Index() {
           alt="Vista andina al atardecer"
           width={1920}
           height={800}
+          loading="lazy"
+          decoding="async"
           className="w-full h-[60vh] md:h-[600px] object-cover"
         />
         <div className="absolute inset-0 bg-ink/75" />

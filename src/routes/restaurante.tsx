@@ -127,6 +127,8 @@ function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
             <img
               src={generation.image}
               alt={generation.alt}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/30 to-transparent" />
@@ -223,6 +225,8 @@ function ChefAccordionSection() {
                 <img
                   src={plate.image}
                   alt={plate.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div
@@ -374,6 +378,8 @@ function RestaurantePage() {
               <img
                 src={casaImg}
                 alt="Salón para eventos corporativos"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 border border-cream/20 m-4 rounded-sm pointer-events-none" />
