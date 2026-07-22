@@ -39,6 +39,224 @@ export const Route = createFileRoute("/restaurante")({
   component: RestaurantePage,
 });
 
+type GenerationStory = {
+  generation: string;
+  name: string;
+  image: string;
+  alt: string;
+  summary: string;
+  contribution: string;
+};
+
+const generationStories: GenerationStory[] = [
+  {
+    generation: "Primera generación",
+    name: "Fundadora",
+    image: "/imagenes-reales/EQUIPO/02042026-DSC05038.webp",
+    alt: "Fundadora de Las Flores en la cocina",
+    summary: "Mamina abrió la primera casa de sabor, donde la hospitalidad, el fuego y la memoria compartida dieron forma a la identidad de Las Flores.",
+    contribution: "Puso la base de la cocina familiar y consolidó el vínculo entre tradición, hogar y mesa.",
+  },
+  {
+    generation: "Segunda generación",
+    name: "Descendencia",
+    image: "/imagenes-reales/EQUIPO/02042026-DSC04926.webp",
+    alt: "Miembros de la segunda generación del restaurante",
+    summary: "Gloria transformó la herencia en un proyecto más sólido, cuidando la cocina, la experiencia y la continuidad de la tradición.",
+    contribution: "Amplió la propuesta del restaurante y fortaleció su presencia como espacio gastronómico reconocible.",
+  },
+  {
+    generation: "Tercera generación",
+    name: "Nueva generación",
+    image: "/imagenes-reales/EQUIPO/02042026-DSC05081.webp",
+    alt: "Equipo actual de La Flores trabajando en cocina",
+    summary: "Mijail y la nueva generación llevaban la cocina al presente con una mirada contemporánea, sin perder la esencia de lo aprendido.",
+    contribution: "Proyecta la tradición hacia nuevas mesas y nuevas formas de vivir la experiencia culinaria.",
+  },
+];
+
+const chefRecommendations = [
+  {
+    name: "Puca Picante Ancestral",
+    price: "S/ 65",
+    description: "Remolacha fermentada, maní tostado y jugoso chicharrón crocante hecho en leña de molle.",
+    image: "/gastronomia/puca-picante.webp",
+    alt: "Puca Picante Ancestral",
+  },
+  {
+    name: "Cuy Chactado de la Casa",
+    price: "S/ 85",
+    description: "El orgullo de Las Flores. Confitado con hierbas aromáticas y servido bajo la piedra caliente con papas doradas.",
+    image: "/gastronomia/cuy-chactado.webp",
+    alt: "Cuy Chactado de la Casa",
+  },
+  {
+    name: "Chicharrón Tradicional",
+    price: "S/ 70",
+    description: "Panceta de cerdo dorada lentamente en su propia manteca hasta lograr la crocancia perfecta, con mote y sarsa.",
+    image: "/gastronomia/chicharron.webp",
+    alt: "Chicharrón Tradicional",
+  },
+];
+
+function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <article className="group h-full [perspective:1400px]">
+      <button
+        type="button"
+        onMouseEnter={() => setIsFlipped(true)}
+        onMouseLeave={() => setIsFlipped(false)}
+        onFocus={() => setIsFlipped(true)}
+        onBlur={() => setIsFlipped(false)}
+        onClick={() => setIsFlipped((prev) => !prev)}
+        className="relative h-[420px] w-full overflow-hidden rounded-[1.75rem] border border-ink/10 bg-transparent text-left shadow-[0_24px_60px_rgba(20,16,12,0.16)] focus:outline-none focus-visible:ring-2 focus-visible:ring-retama"
+      >
+        <div
+          className={`relative h-full w-full transition-transform duration-700 ease-out [transform-style:preserve-3d] ${isFlipped ? "[transform:rotateY(180deg)]" : ""}`}
+        >
+          <div
+            className="absolute inset-0 h-full w-full"
+            style={{ backfaceVisibility: "hidden" }}
+          >
+            <img
+              src={generation.image}
+              alt={generation.alt}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 text-cream">
+              <span className="inline-flex rounded-full border border-cream/20 bg-cream/10 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-cream/80">
+                {generation.generation}
+              </span>
+              <h3 className="mt-4 font-serif text-2xl md:text-3xl leading-tight text-balance">
+                {generation.name}
+              </h3>
+              <p className="mt-3 text-xs uppercase tracking-[0.25em] text-cream/70">
+                {generation.generation === "Primera generación" ? "Fundadora" : generation.generation === "Segunda generación" ? "Descendencia" : "Nueva generación"}
+              </p>
+            </div>
+          </div>
+
+          <div
+            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-[1.75rem] border-[2px] border-[#F2B705] bg-eucalipto p-6 text-cream"
+            style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          >
+            <div>
+              <span className="text-[10px] uppercase tracking-[0.35em] text-cream/80">
+                {generation.generation}
+              </span>
+              <h3 className="mt-3 font-serif text-2xl leading-tight text-cream text-balance">
+                {generation.name}
+              </h3>
+            </div>
+            <p className="text-sm leading-[1.8] text-cream/80 text-pretty">
+              {generation.summary}
+            </p>
+            <div className="rounded-2xl border border-[#F2B705]/40 bg-white/10 p-4 text-sm leading-relaxed text-cream/90">
+              <span className="block text-[10px] uppercase tracking-[0.3em] text-cream/60 mb-2">
+                Aporte
+              </span>
+              {generation.contribution}
+            </div>
+          </div>
+        </div>
+      </button>
+    </article>
+  );
+}
+
+function GenerationsSection() {
+  return (
+    <section id="historia" className="bg-cream py-24 md:py-32 px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mb-12 md:mb-16">
+          <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
+            Las Tres Generaciones
+          </span>
+          <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
+            La historia y el legado familiar de Las Flores
+          </h2>
+          <p className="mt-6 text-lg text-ink/70 leading-[1.7] text-pretty">
+            Cada generación ha dejado una huella distinta: una fundadora que abrió el fuego, una segunda etapa que consolidó el proyecto y una tercera que lo lleva al presente con una mirada contemporánea.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-10">
+          {generationStories.map((generation) => (
+            <GenerationFlipCard key={generation.name} generation={generation} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ChefAccordionSection() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(1);
+
+  return (
+    <section className="bg-eucalipto/5 py-16 md:py-20 px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
+          <div className="max-w-[48ch]">
+            <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
+              Especialidad de Casa
+            </span>
+            <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
+              Recomendaciones del Chef
+            </h2>
+            <p className="mt-6 text-lg text-ink/70 leading-[1.7]">
+              Un recorrido por los platos que mejor representan el espíritu de Las Flores.
+            </p>
+          </div>
+          <Link
+            to="/carta"
+            className="inline-flex items-center gap-3 border border-ink/15 py-3 pr-4 pl-6 rounded-full hover:bg-ink hover:text-cream transition-colors text-xs uppercase tracking-[0.2em] font-medium"
+          >
+            Ver carta completa
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
+
+        <div className="mt-8 flex flex-col gap-3 md:flex-row md:h-[480px]">
+          {chefRecommendations.map((plate, index) => {
+            const isActive = activeIndex === index;
+            return (
+              <button
+                key={plate.name}
+                type="button"
+                onMouseEnter={() => setActiveIndex(index)}
+                onFocus={() => setActiveIndex(index)}
+                onClick={() => setActiveIndex((prev) => (prev === index ? null : index))}
+                className={`group relative overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white text-left shadow-md transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "md:flex-[2.2]" : "md:flex-[0.9]"} ${isActive ? "min-h-[280px]" : "min-h-[120px]"}`}
+              >
+                <img
+                  src={plate.image}
+                  alt={plate.alt}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className={`absolute inset-0 transition-all duration-700 ${isActive ? "bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" : "bg-gradient-to-t from-ink/70 via-ink/20 to-transparent"}`} />
+                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 text-cream">
+                  <div className={`transition-all duration-500 ${isActive ? "translate-y-0 opacity-100" : "translate-y-3 opacity-90"}`}>
+                    <h3 className="text-lg md:text-xl font-serif leading-tight">
+                      {plate.name}
+                    </h3>
+                    <p className={`mt-3 text-sm leading-relaxed text-cream/80 transition-all duration-500 ${isActive ? "max-h-32 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>
+                      {plate.description}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function RestaurantePage() {
   const { totalItems, setIsOpen: setCartOpen } = useCart();
   const [isReservationOpen, setIsReservationOpen] = useState(false);
@@ -66,7 +284,7 @@ function RestaurantePage() {
         <Link to="/restaurante" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <img src="/images.png" alt="Las Flores Logo" className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`} />
         </Link>
-        <div className="flex-1 flex justify-end items-center gap-3 md:gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold pointer-events-auto">
+        <div className="flex-1 flex justify-end items-center gap-3 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
           <button onClick={() => setIsReservationOpen(true)} className="hover:text-retama transition-colors">
             RESERVAS
           </button>
@@ -84,7 +302,6 @@ function RestaurantePage() {
         </div>
       </nav>
 
-      {/* Hero — Historia de Tres Generaciones */}
       <header
         id="historia"
         className="relative min-h-[100svh] w-full overflow-hidden bg-ink flex items-center pt-32 pb-24"
@@ -99,232 +316,18 @@ function RestaurantePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/30 to-ink/90" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-cream">
-          <span className="uppercase tracking-[0.4em] text-xs md:text-sm text-cream/80 mb-6 block animate-reveal">
-            Historia · 1964 – Hoy
-          </span>
-          <h1 className="font-serif italic text-5xl md:text-7xl lg:text-8xl leading-[1.05] text-balance max-w-[18ch] mb-12 animate-reveal [animation-delay:200ms]">
-            Tres generaciones frente al mismo fogón
-          </h1>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14 mt-16 animate-reveal [animation-delay:400ms]">
-            <div>
-              <span className="font-serif text-5xl text-retama leading-none block mb-4">
-                01
-              </span>
-              <h3 className="font-serif text-xl mb-3">El Origen · 1980</h3>
-              <p className="text-cream/70 text-sm leading-[1.7]">
-                Mamina comenzó la tradición familiar ofreciendo un cálido espacio
-                en su hogar. Sus recetas, especialmente el cuy a la leña, sentaron
-                las bases de nuestro sabor andino.
-              </p>
-            </div>
-            <div>
-              <span className="font-serif text-5xl text-retama leading-none block mb-4">
-                02
-              </span>
-              <h3 className="font-serif text-xl mb-3">La Consolidación · 1990s</h3>
-              <p className="text-cream/70 text-sm leading-[1.7]">
-                Gloria tomó las riendas y transformó el comedor familiar en un
-                santuario gastronómico, formalizando el negocio y llevando el 
-                sabor de Ayacucho a nuevos horizontes sin perder la esencia.
-              </p>
-            </div>
-            <div>
-              <span className="font-serif text-5xl text-retama leading-none block mb-4">
-                03
-              </span>
-              <h3 className="font-serif text-xl mb-3">El Legado Vivo · Hoy</h3>
-              <p className="text-cream/70 text-sm leading-[1.7]">
-                Mijail lidera la tercera generación, preservando el fuego original
-                y llevando nuestra tradición culinaria hacia una experiencia
-                contemporánea.
-              </p>
-            </div>
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center px-4 sm:px-6 lg:px-8 text-cream">
+          <div className="max-w-3xl">
+            <h1 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05] text-balance animate-reveal [animation-delay:200ms]">
+              La familia detrás de cada plato
+            </h1>
           </div>
         </div>
       </header>
 
-      {/* Nuestro Equipo */}
-      <section className="py-24 md:py-40 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-center">
-          <div className="md:col-span-7 order-2 md:order-1">
-            <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
-              Nuestro Equipo
-            </span>
-            <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
-              La familia detrás de cada plato
-            </h2>
-            <p className="text-lg leading-[1.7] text-pretty text-ink/75 mb-6">
-              Mamina, Gloria y Mijail conforman las tres voces de una
-              misma cocina. A su alrededor, un equipo dedicado cuida
-              cada detalle: desde la selección del maíz en el valle hasta el
-              montaje final en la mesa.
-            </p>
-            <p className="text-lg leading-[1.7] text-pretty text-ink/75">
-              No hay improvisación. Hay memoria compartida.
-            </p>
+      <GenerationsSection />
 
-            <dl className="mt-12 grid grid-cols-3 gap-8 max-w-md">
-              <div>
-                <dt className="text-xs uppercase tracking-[0.25em] text-ink/50 mb-2">
-                  Familia
-                </dt>
-                <dd className="font-serif text-3xl">3</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase tracking-[0.25em] text-ink/50 mb-2">
-                  Equipo
-                </dt>
-                <dd className="font-serif text-3xl">12</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase tracking-[0.25em] text-ink/50 mb-2">
-                  Años
-                </dt>
-                <dd className="font-serif text-3xl">60+</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div className="md:col-span-5 order-1 md:order-2 relative">
-            <div className="absolute inset-0 bg-retama/10 translate-x-4 translate-y-4 rounded-sm -z-10"></div>
-            <img
-              src={equipoImg}
-              alt="Retrato en blanco y negro de las tres generaciones del equipo de Las Flores"
-              width={1600}
-              height={1200}
-
-              className="w-full aspect-[4/5] object-cover rounded-sm shadow-xl"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Especialidad de Casa / Recomendaciones del Chef */}
-      <section className="bg-eucalipto/5 py-10 md:py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-6">
-            <div className="max-w-[48ch]">
-              <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
-                Especialidad de Casa
-              </span>
-              <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
-                Recomendaciones del Chef
-              </h2>
-              <p className="mt-6 text-lg text-ink/70 leading-[1.7]">
-                Tres platos que nuestro equipo considera indispensables
-                para entender la esencia de Las Flores.
-              </p>
-            </div>
-            <Link
-              to="/carta"
-              className="inline-flex items-center gap-3 border border-ink/15 py-3 pr-4 pl-6 rounded-full hover:bg-ink hover:text-cream transition-colors text-xs uppercase tracking-[0.2em] font-medium"
-            >
-              Ver carta completa
-              <span aria-hidden>→</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 mt-12">
-            <article className="bg-white rounded-md flex flex-col shadow-md hover:shadow-xl transition-all duration-300 group border-b-4 border-transparent hover:border-retama h-full overflow-hidden">
-              <div className="h-56 overflow-hidden relative">
-                <div className="absolute inset-0 bg-ink/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
-                <img
-                  src="/gastronomia/puca-picante.webp"
-                  alt="Puca Picante Ancestral"
-                  width={1000}
-                  height={800}
-
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-              <div className="p-6 flex flex-col flex-1">
-                <div className="flex justify-between items-start gap-3 mb-3">
-                  <h3 className="text-xl font-serif leading-tight text-ink group-hover:text-retablo transition-colors">
-                    Puca Picante Ancestral
-                  </h3>
-                  <span className="text-retablo font-bold text-sm flex-shrink-0 tracking-wide bg-retablo/10 px-2 py-1 rounded-sm">S/ 65</span>
-                </div>
-                <p className="text-ink/60 text-sm flex-1 mb-6 leading-relaxed font-light">
-                  Remolacha fermentada, maní tostado y jugoso chicharrón crocante
-                  hecho en leña de molle.
-                </p>
-                <div className="flex items-center justify-between border-t border-ink/10 pt-4 mt-auto">
-                  <button className="text-xs uppercase tracking-[0.2em] font-bold text-eucalipto hover:text-eucalipto-dark transition-colors flex items-center gap-2">
-                    Pedir Ahora <span aria-hidden>→</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <article className="bg-white rounded-md flex flex-col shadow-md hover:shadow-xl transition-all duration-300 group border-b-4 border-transparent hover:border-retama h-full overflow-hidden relative">
-              <div className="absolute top-4 -right-2 z-20 bg-retablo text-cream text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-l-md shadow-md">
-                Recomendado
-              </div>
-              <div className="h-56 overflow-hidden relative">
-                <div className="absolute inset-0 bg-ink/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
-                <img
-                  src="/gastronomia/cuy-chactado.webp"
-                  alt="Cuy Chactado de la Casa"
-                  width={1000}
-                  height={800}
-
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-              <div className="p-6 flex flex-col flex-1">
-                <div className="flex justify-between items-start gap-3 mb-3">
-                  <h3 className="text-xl font-serif leading-tight text-ink group-hover:text-retablo transition-colors">
-                    Cuy Chactado de la Casa
-                  </h3>
-                  <span className="text-retablo font-bold text-sm flex-shrink-0 tracking-wide bg-retablo/10 px-2 py-1 rounded-sm">S/ 85</span>
-                </div>
-                <p className="text-ink/60 text-sm flex-1 mb-6 leading-relaxed font-light">
-                  El orgullo de Las Flores. Confitado con hierbas aromáticas y
-                  servido bajo la piedra caliente con papas doradas.
-                </p>
-                <div className="flex items-center justify-between border-t border-ink/10 pt-4 mt-auto">
-                  <button className="text-xs uppercase tracking-[0.2em] font-bold text-eucalipto hover:text-eucalipto-dark transition-colors flex items-center gap-2">
-                    Pedir Ahora <span aria-hidden>→</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <article className="bg-white rounded-md flex flex-col shadow-md hover:shadow-xl transition-all duration-300 group border-b-4 border-transparent hover:border-retama h-full overflow-hidden">
-              <div className="h-56 overflow-hidden relative">
-                <div className="absolute inset-0 bg-ink/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
-                <img
-                  src="/gastronomia/chicharron.webp"
-                  alt="Chicharrón Tradicional"
-                  width={1000}
-                  height={800}
-
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-              <div className="p-6 flex flex-col flex-1">
-                <div className="flex justify-between items-start gap-3 mb-3">
-                  <h3 className="text-xl font-serif leading-tight text-ink group-hover:text-retablo transition-colors">
-                    Chicharrón Tradicional
-                  </h3>
-                  <span className="text-retablo font-bold text-sm flex-shrink-0 tracking-wide bg-retablo/10 px-2 py-1 rounded-sm">S/ 70</span>
-                </div>
-                <p className="text-ink/60 text-sm flex-1 mb-6 leading-relaxed font-light">
-                  Panceta de cerdo dorada lentamente en su propia manteca hasta 
-                  lograr la crocancia perfecta, con mote y sarsa.
-                </p>
-                <div className="flex items-center justify-between border-t border-ink/10 pt-4 mt-auto">
-                  <button className="text-xs uppercase tracking-[0.2em] font-bold text-eucalipto hover:text-eucalipto-dark transition-colors flex items-center gap-2">
-                    Pedir Ahora <span aria-hidden>→</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
+      <ChefAccordionSection />
 
       {/* Eventos Corporativos */}
       <section id="corporativo" className="bg-ink text-cream py-24 md:py-32 px-6">
@@ -348,7 +351,7 @@ function RestaurantePage() {
             </Link>
           </div>
           <div className="flex-1 w-full">
-            <div className="relative aspect-[4/3] rounded-sm overflow-hidden group">
+            <div className="relative aspect-4/3 rounded-sm overflow-hidden group">
               <img
                 src={casaImg} 
                 alt="Salón para eventos corporativos"
