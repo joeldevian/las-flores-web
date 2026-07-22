@@ -59,30 +59,37 @@ function CartaPage() {
         <h1 className="font-serif text-4xl md:text-5xl text-ink">Nuestra Carta</h1>
       </div>
 
-      {/* Sticky Category Navigation */}
-      <div className="bg-cream border-b border-ink/10 overflow-x-auto scrollbar-none sticky top-0 z-20 shadow-sm">
-        <div className="flex w-max min-w-full px-4">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveId(cat.id)}
-              className={`flex-shrink-0 px-6 py-5 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 whitespace-nowrap ${
-                activeId === cat.id
-                  ? 'border-retablo text-retablo'
-                  : 'border-transparent text-ink/40 hover:text-ink/80'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Main Content with Sidebar */}
+      <div className="flex flex-col md:flex-row max-w-7xl mx-auto w-full flex-1">
+        {/* Vertical Category Sidebar */}
+        <aside className="w-full md:w-72 bg-cream border-b md:border-b-0 md:border-r border-ink/10 flex-shrink-0 md:sticky md:top-24 md:h-[calc(100vh-100px)] overflow-y-auto z-20">
+          <div className="flex flex-col py-4 md:py-8">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveId(cat.id);
+                  if (window.innerWidth < 768) {
+                    window.scrollTo({ top: document.getElementById('menu-content')?.offsetTop || 0, behavior: 'smooth' });
+                  }
+                }}
+                className={`text-left px-8 py-4 text-xs font-bold uppercase tracking-[0.15em] transition-all border-l-4 ${
+                  activeId === cat.id
+                    ? 'border-retablo text-retablo bg-retablo/5'
+                    : 'border-transparent text-ink/50 hover:text-ink hover:bg-ink/5'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </aside>
 
-      {/* Menu Content */}
-      <main className="flex-1 p-6 md:p-12 max-w-5xl mx-auto w-full">
-        <div className="flex justify-between items-end mb-8 border-b border-ink/5 pb-4">
-          <h2 className="font-serif text-3xl md:text-4xl text-ink">
-            {active.label}
+        {/* Menu Content */}
+        <main id="menu-content" className="flex-1 p-6 md:p-12">
+          <div className="flex justify-between items-end mb-8 border-b border-ink/5 pb-4">
+            <h2 className="font-serif text-3xl md:text-4xl text-ink">
+              {active.label}
           </h2>
           <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-ink/40 bg-ink/5 px-4 py-2 rounded-full hidden sm:inline-block">
             {active.dishes.length} platos
@@ -129,6 +136,7 @@ function CartaPage() {
           ))}
         </div>
       </main>
+      </div>
 
       <SiteFooter />
     </div>

@@ -263,30 +263,33 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
         </div>
       </div>
 
-      {/* Categories Tabs */}
-      <div className="overflow-x-auto scrollbar-none sticky top-[80px] md:top-[88px] z-10 shadow-sm border-b border-black/5" style={{ background: R.crema }}>
-        <div className="flex w-max min-w-full px-4 md:px-10">
-          {categories.map((cat) => {
-            const isActive = activeId === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveId(cat.id)}
-                className="flex-shrink-0 px-6 py-4 text-[11px] font-bold uppercase tracking-[0.2em] transition-all whitespace-nowrap"
-                style={{
-                  borderBottom: isActive ? `3px solid ${R.amarillo}` : "3px solid transparent",
-                  color: isActive ? R.morado : "rgba(0,0,0,0.4)"
-                }}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
+      {/* Content Layout */}
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        {/* Vertical Categories Sidebar */}
+        <div className="w-full md:w-72 flex-shrink-0 border-b md:border-b-0 md:border-r border-black/5 overflow-y-auto z-10" style={{ background: R.crema }}>
+          <div className="flex flex-col py-2 md:py-6">
+            {categories.map((cat) => {
+              const isActive = activeId === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveId(cat.id)}
+                  className={`text-left px-6 md:px-8 py-4 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all border-l-4 ${
+                    isActive
+                      ? 'bg-black/5'
+                      : 'border-transparent text-black/50 hover:text-black/80 hover:bg-black/5'
+                  }`}
+                  style={{ borderColor: isActive ? R.amarillo : 'transparent', color: isActive ? R.morado : undefined }}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Dishes Grid */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-10" style={{ background: `${R.crema}80` }}>
+        {/* Dishes Grid */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-10" style={{ background: `${R.crema}80` }}>
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8 border-b border-black/5 pb-4">
             <h2 className="font-serif text-3xl md:text-4xl font-bold" style={{ color: R.morado }}>
@@ -304,6 +307,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
