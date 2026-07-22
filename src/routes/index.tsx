@@ -494,7 +494,7 @@ function Index() {
       )}
 
       {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 pt-4 pb-12 bg-gradient-to-b from-ink/80 via-ink/40 to-transparent text-cream pointer-events-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 pt-4 pb-24 bg-gradient-to-b from-ink/95 via-ink/50 to-transparent text-cream pointer-events-none">
         <div className="flex-1 pointer-events-auto" />
         <Link to="/" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <img src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
