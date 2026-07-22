@@ -494,13 +494,13 @@ function Index() {
       )}
 
       {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-1 md:py-2 mix-blend-difference text-cream">
-        <div className="flex-1" />
-        <Link to="/" className="flex-none" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 pt-4 pb-12 bg-gradient-to-b from-ink/80 via-ink/40 to-transparent text-cream pointer-events-none">
+        <div className="flex-1 pointer-events-auto" />
+        <Link to="/" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <img loading="lazy" src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
         </Link>
         <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold">
-          <Link to="/restaurante" className="hover:text-retama transition-colors">
+          <Link to="/restaurante" className="hover:text-retama transition-colors pointer-events-auto">
             <span className="md:hidden">RESTAURANTE</span>
             <span className="hidden md:inline">NUESTRO RESTAURANTE</span>
           </Link>
