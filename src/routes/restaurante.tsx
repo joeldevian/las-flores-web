@@ -5,7 +5,7 @@ const platoPucaImg = "/gastronomia/puca-picante.webp"; // placeholder
 const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
-import { useState, useTransition, lazy, Suspense } from "react";
+import { useState, useTransition, lazy, Suspense, useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 const ReservationModal = lazy(() => import("@/components/ReservationModal").then(m => ({ default: m.ReservationModal })));
@@ -43,19 +43,28 @@ function RestaurantePage() {
   const { totalItems, setIsOpen: setCartOpen } = useCart();
   const [isReservationOpen, setIsReservationOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const [isPending, startTransition] = useTransition();
 
   return (
     <div className="bg-cream text-ink font-sans selection:bg-retama/30">
       {/* Nav: nuestra historia | logo | reservas y delivery */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 pt-4 pb-24 bg-gradient-to-b from-ink/95 via-ink/50 to-transparent text-cream pointer-events-none">
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-3 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? 'bg-cream text-ink shadow-md' : 'bg-transparent text-cream'}`}>
         <div className="flex-1 hidden md:flex gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
           <Link to="/" className="hover:text-retama transition-colors">
             NUESTRA TIERRA
           </Link>
         </div>
         <Link to="/restaurante" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <img src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
+          <img src="/images.png" alt="Las Flores Logo" className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`} />
         </Link>
         <div className="flex-1 flex justify-end items-center gap-3 md:gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold pointer-events-auto">
           <button onClick={() => setIsReservationOpen(true)} className="hover:text-retama transition-colors">
