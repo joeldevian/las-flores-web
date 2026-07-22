@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 const equipoImg = "/imagenes-reales/EQUIPO/02042026-DSC04926.webp";
 const casaImg = "/inicio/inicio-pagina-restaurante.webp";
+const cocinaImg = "/imagenes-reales/EQUIPO/02042026-DSC05081.webp";
 const platoPucaImg = "/gastronomia/puca-picante.webp"; // placeholder
 const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
@@ -58,20 +59,20 @@ const generationStories: GenerationStory[] = [
     contribution: "Puso la base de la cocina familiar y consolidó el vínculo entre tradición, hogar y mesa.",
   },
   {
-    generation: "Segunda generación",
-    name: "Descendencia",
-    image: "/imagenes-reales/EQUIPO/02042026-DSC04926.webp",
-    alt: "Miembros de la segunda generación del restaurante",
-    summary: "Gloria transformó la herencia en un proyecto más sólido, cuidando la cocina, la experiencia y la continuidad de la tradición.",
-    contribution: "Amplió la propuesta del restaurante y fortaleció su presencia como espacio gastronómico reconocible.",
+    generation: "La Consolidación · 1990s",
+    name: "Gloria",
+    image: "/Gloria.webp",
+    alt: "Gloria en la etapa de consolidación del restaurante Las Flores",
+    summary: "Gloria tomó las riendas y transformó el comedor familiar en un santuario gastronómico, formalizando el negocio y llevando el sabor de Ayacucho a nuevos horizontes sin perder la esencia.",
+    contribution: "Formalizó el negocio y proyectó la cocina de Ayacucho hacia nuevos horizontes.",
   },
   {
-    generation: "Tercera generación",
-    name: "Nueva generación",
-    image: "/imagenes-reales/EQUIPO/02042026-DSC05081.webp",
-    alt: "Equipo actual de La Flores trabajando en cocina",
-    summary: "Mijail y la nueva generación llevaban la cocina al presente con una mirada contemporánea, sin perder la esencia de lo aprendido.",
-    contribution: "Proyecta la tradición hacia nuevas mesas y nuevas formas de vivir la experiencia culinaria.",
+    generation: "El Legado",
+    name: "Mijail",
+    image: "/Captura%20de%20pantalla%202026-07-22%20162318.webp",
+    alt: "Mijail junto a la tercera generación de Las Flores",
+    summary: "Mijail lidera la tercera generación, preservando el fuego original y llevando nuestra tradición culinaria hacia una experiencia contemporánea.",
+    contribution: "Mantiene viva la esencia familiar mientras proyecta la cocina hacia el presente.",
   },
 ];
 
@@ -178,9 +179,6 @@ function GenerationsSection() {
           <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] text-balance">
             La historia y el legado familiar de Las Flores
           </h2>
-          <p className="mt-6 text-lg text-ink/70 leading-[1.7] text-pretty">
-            Cada generación ha dejado una huella distinta: una fundadora que abrió el fuego, una segunda etapa que consolidó el proyecto y una tercera que lo lleva al presente con una mirada contemporánea.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-10">
@@ -307,20 +305,23 @@ function RestaurantePage() {
         className="relative min-h-[100svh] w-full overflow-hidden bg-ink flex items-center pt-32 pb-24"
       >
         <img
-          src={casaImg}
-          alt="Interior del restaurante Las Flores con muros de adobe y textiles ayacuchanos"
+          src={cocinaImg}
+          alt="Cocina de Las Flores con ambiente cálido y tonalidades terracota"
           width={1920}
           fetchPriority="high"
           height={800}
-          className="absolute inset-0 w-full h-full object-cover opacity-50 animate-hero"
+          className="absolute inset-0 w-full h-full object-cover opacity-55 animate-hero"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/30 to-ink/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/35 to-ink/90" />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center px-4 sm:px-6 lg:px-8 text-cream">
-          <div className="max-w-3xl">
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8 text-cream">
+          <div className="max-w-3xl text-center">
             <h1 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05] text-balance animate-reveal [animation-delay:200ms]">
               La familia detrás de cada plato
             </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-[1.7] text-cream/80">
+              Cada generación ha dejado una huella distinta: una fundadora que abrió el fuego, una segunda etapa que consolidó el proyecto y una tercera que lo lleva al presente con una mirada contemporánea.
+            </p>
           </div>
         </div>
       </header>
