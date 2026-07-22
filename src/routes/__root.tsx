@@ -118,7 +118,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="overflow-x-hidden">
         {children}
         {/* ScrollRestoration is deprecated in recent versions of Tanstack Router, handled in createRouter instead */}
         <Scripts />
