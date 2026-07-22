@@ -503,7 +503,7 @@ function Index() {
       )}
 
       {/* NAV */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-3 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? 'bg-cream text-ink shadow-md' : 'bg-transparent text-cream'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-0 md:py-1 transition-all duration-500 pointer-events-none ${isScrolled ? 'bg-cream text-ink shadow-md' : 'bg-transparent text-cream'}`}>
         <div className="flex-1 pointer-events-auto" />
         <Link to="/" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           <img src="/images.png" alt="Las Flores Logo" className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`} />
