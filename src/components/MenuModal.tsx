@@ -234,7 +234,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
         />
         <div className="flex items-center gap-4 relative">
           <div className="hidden md:flex w-14 h-14 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white p-1" style={{ borderColor: R.amarillo }}>
-            <img loading="lazy" src="/images.png" alt="Las Flores" className="w-full h-full object-contain" />
+            <img loading="lazy" src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col">
             <h2 className="font-serif font-bold tracking-wide text-2xl md:text-3xl text-white">Nuestra Carta</h2>
