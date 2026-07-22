@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { useState, useTransition, lazy, Suspense } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { ReservationModal } from "@/components/ReservationModal";
+const ReservationModal = lazy(() => import("@/components/ReservationModal").then(m => ({ default: m.ReservationModal })));
 const MenuModal = lazy(() => import("@/components/MenuModal").then(m => ({ default: m.MenuModal })));
 
 export const Route = createFileRoute("/restaurante")({
@@ -84,6 +84,7 @@ function RestaurantePage() {
           src={casaImg}
           alt="Interior del restaurante Las Flores con muros de adobe y textiles ayacuchanos"
           width={1920}
+          fetchPriority="high"
           height={800}
           className="absolute inset-0 w-full h-full object-cover opacity-50 animate-hero"
         />
@@ -382,9 +383,9 @@ function RestaurantePage() {
       </section>
 
       <SiteFooter />
-      <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />
       <Suspense fallback={null}>
-        <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        {isReservationOpen && <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />}
+        {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
       </Suspense>
     </div>
   );

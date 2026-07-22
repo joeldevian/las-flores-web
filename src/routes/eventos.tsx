@@ -7,7 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { useState, useTransition, lazy, Suspense } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { ReservationModal } from "@/components/ReservationModal";
+const ReservationModal = lazy(() => import("@/components/ReservationModal").then(m => ({ default: m.ReservationModal })));
 const MenuModal = lazy(() => import("@/components/MenuModal").then(m => ({ default: m.MenuModal })));
 
 export const Route = createFileRoute("/eventos")({
@@ -78,6 +78,7 @@ function EventosPage() {
         <img
           src={heroImg}
           alt="Eventos en Restaurante Las Flores Ayacucho"
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover opacity-60 animate-hero"
         />
         {/* Elegant Gradient Overlay */}
@@ -214,9 +215,9 @@ function EventosPage() {
       </section>
 
       <SiteFooter />
-      <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />
       <Suspense fallback={null}>
-        <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        {isReservationOpen && <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />}
+        {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
       </Suspense>
       
       {/* Drawer Formulario Lateral */}
