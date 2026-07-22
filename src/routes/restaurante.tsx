@@ -55,7 +55,7 @@ function RestaurantePage() {
           </Link>
         </div>
         <Link to="/restaurante" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <img loading="lazy" src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
+          <img src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
         </Link>
         <div className="flex-1 flex justify-end items-center gap-3 md:gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold pointer-events-auto">
           <button onClick={() => setIsReservationOpen(true)} className="hover:text-retama transition-colors">
@@ -185,7 +185,7 @@ function RestaurantePage() {
               alt="Retrato en blanco y negro de las tres generaciones del equipo de Las Flores"
               width={1600}
               height={1200}
-              loading="lazy"
+
               className="w-full aspect-[4/5] object-cover rounded-sm shadow-xl"
             />
           </div>
@@ -226,7 +226,7 @@ function RestaurantePage() {
                   alt="Puca Picante Ancestral"
                   width={1000}
                   height={800}
-                  loading="lazy"
+
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
@@ -260,7 +260,7 @@ function RestaurantePage() {
                   alt="Cuy Chactado de la Casa"
                   width={1000}
                   height={800}
-                  loading="lazy"
+
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
@@ -291,7 +291,7 @@ function RestaurantePage() {
                   alt="Chicharrón Tradicional"
                   width={1000}
                   height={800}
-                  loading="lazy"
+
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>

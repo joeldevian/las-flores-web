@@ -235,7 +235,7 @@ function Modal({ imagen, titulo, subtitulo, accentBar, cuerpo, onClose }: {
       >
         {/* Imagen cabecera con arco en CSS */}
         <div className="relative overflow-hidden" style={{ height: "18rem" }}>
-          <img loading="lazy" src={imagen} alt={titulo} className="w-full h-full object-cover" />
+          <img src={imagen} alt={titulo} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
           <button
             onClick={onClose}
@@ -290,7 +290,7 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
       
       {festividades.map((f, i) => (
         <div key={f.id} className={`absolute inset-0 transition-opacity duration-1000 ${i === activo ? "opacity-100" : "opacity-0"}`}>
-          <img loading="lazy" src={f.imagen} alt={f.nombre} className="w-full h-full object-cover" />
+          <img src={f.imagen} alt={f.nombre} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
           {/* Línea de color de la festividad arriba */}
           <div className={`absolute top-0 left-0 w-full h-1 ${f.colorAccent} z-20 opacity-80`} />
@@ -368,7 +368,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
               isExpanded ? "flex-[4] md:flex-[5]" : "flex-[1]"
             }`}
           >
-            <img loading="lazy" 
+            <img 
               src={lugar.imagen} 
               alt={lugar.nombre} 
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" 
@@ -497,7 +497,7 @@ function Index() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 pt-4 pb-12 bg-gradient-to-b from-ink/80 via-ink/40 to-transparent text-cream pointer-events-none">
         <div className="flex-1 pointer-events-auto" />
         <Link to="/" className="flex-none pointer-events-auto" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <img loading="lazy" src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
+          <img src="/images.png" alt="Las Flores Logo" className="h-10 md:h-16 w-auto object-contain brightness-0 invert" />
         </Link>
         <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold">
           <Link to="/restaurante" className="hover:text-retama transition-colors pointer-events-auto">
@@ -546,7 +546,7 @@ function Index() {
           <div className="md:col-span-5">
             <img
               src={retabloImg} alt="Retablo ayacuchano tallado a mano con figuras policromadas"
-              width={800} height={1200} loading="lazy"
+              width={800} height={1200}
               className="w-full aspect-[4/5] object-cover"
             />
           </div>
@@ -634,7 +634,7 @@ function Index() {
               <article key={p.nombre} className="flex flex-col group">
                 <div className="dish-card-hover aspect-[5/4] bg-ink/40 rounded-lg">
                   <img
-                    src={p.img} alt={p.nombre} width={1000} height={800} loading="lazy"
+                    src={p.img} alt={p.nombre} width={1000} height={800}
                     className="w-full h-full object-cover"
                   />
                   <div className="dish-card-overlay">
@@ -692,7 +692,7 @@ function Index() {
           <div className="md:col-span-5 md:col-start-8">
             <img
               src="/imagenes-reales/EQUIPO/encantados-de-atenderlos.webp" alt="Personal de Las Flores encantados de atenderlos"
-              width={800} height={1200} loading="lazy"
+              width={800} height={1200}
               className="w-full aspect-square object-cover rounded-3xl"
             />
           </div>
@@ -718,7 +718,7 @@ function Index() {
       <section className="relative w-full">
         <img
           src={ayacuchoHero} alt="Vista andina al atardecer"
-          width={1920} height={800} loading="lazy"
+          width={1920} height={800}
           className="w-full h-[60vh] md:h-[600px] object-cover"
         />
         <div className="absolute inset-0 bg-ink/75" />
