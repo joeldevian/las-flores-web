@@ -54,8 +54,8 @@ type GenerationStory = {
 
 const generationStories: GenerationStory[] = [
   {
-    generation: "Primera generación",
-    name: "Fundadora",
+    generation: "Origen",
+    name: "Mamina",
     image: "/imagenes-reales/FAMILIA-HISTORIA/mamina.webp",
     alt: "Fundadora de Las Flores en la cocina",
     summary:
@@ -64,7 +64,7 @@ const generationStories: GenerationStory[] = [
       "Puso la base de la cocina familiar y consolidó el vínculo entre tradición, hogar y mesa.",
   },
   {
-    generation: "La Consolidación · 1990s",
+    generation: "La Consolidación",
     name: "Gloria",
     image: "/imagenes-reales/FAMILIA-HISTORIA/gloria.webp",
     alt: "Gloria en la etapa de consolidación del restaurante Las Flores",
