@@ -274,18 +274,18 @@ function EventosPage() {
         {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
       </Suspense>
 
-      {/* Drawer Formulario Lateral */}
+      {/* Modal Formulario Centrado */}
       {isContactOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           {/* Overlay oscuro con blur */}
           <div
             className="absolute inset-0 bg-ink/70 backdrop-blur-sm animate-in fade-in duration-300"
             onClick={() => setIsContactOpen(false)}
           />
 
-          {/* Panel Lateral */}
-          <div className="relative w-full max-w-md bg-cream text-ink h-full shadow-2xl flex flex-col overflow-y-auto animate-in slide-in-from-right duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]">
-            <div className="p-8 border-b border-ink/10 flex justify-between items-center bg-cream sticky top-0 z-10">
+          {/* Panel Centrado */}
+          <div className="relative w-full max-w-lg bg-cream text-ink max-h-[90vh] shadow-2xl flex flex-col overflow-y-auto animate-in zoom-in-95 fade-in duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-2xl">
+            <div className="p-8 border-b border-ink/10 flex justify-between items-center bg-cream sticky top-0 z-10 rounded-t-2xl">
               <h3 className="font-serif text-2xl">Cotizar Evento</h3>
               <button
                 onClick={() => setIsContactOpen(false)}

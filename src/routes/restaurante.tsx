@@ -111,14 +111,17 @@ const chefRecommendations = [
   },
 ];
 
-function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
+function GenerationFlipCard({ generation, flipped, onFlip }: { generation: GenerationStory; flipped: boolean; onFlip: () => void }) {
   return (
     <article className="group h-full [perspective:1400px]">
       <div
         tabIndex={0}
+        onClick={onFlip}
         className="relative h-[380px] md:h-[420px] w-full overflow-hidden rounded-[2rem] bg-transparent text-left cursor-pointer focus:outline-none"
       >
-        <div className="relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus:[transform:rotateY(180deg)] shadow-xl">
+        <div
+          className={`relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] md:group-hover:[transform:rotateY(180deg)] md:group-focus:[transform:rotateY(180deg)] shadow-xl ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
+        >
           {/* Front Face */}
           <div
             className="absolute inset-0 h-full w-full rounded-[2rem] overflow-hidden bg-ink"
@@ -173,6 +176,8 @@ function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
 }
 
 function GenerationsSection() {
+  const [activeCard, setActiveCard] = useState<string | null>(null);
+
   return (
     <section id="historia" className="bg-cream py-16 md:py-20 px-6">
       <div className="max-w-7xl mx-auto">
@@ -187,7 +192,12 @@ function GenerationsSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8">
           {generationStories.map((generation) => (
-            <GenerationFlipCard key={generation.name} generation={generation} />
+            <GenerationFlipCard
+              key={generation.name}
+              generation={generation}
+              flipped={activeCard === generation.name}
+              onFlip={() => setActiveCard((prev) => prev === generation.name ? null : generation.name)}
+            />
           ))}
         </div>
       </div>
