@@ -670,7 +670,7 @@ function Index() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-5">
             <img
-              src={retabloImg}
+              src="/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/seccion-retablo.webp"
               alt="Retablo ayacuchano tallado a mano con figuras policromadas"
               width={800}
               height={1200}
