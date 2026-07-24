@@ -161,25 +161,21 @@ export function CartSidebar() {
         className="w-full max-w-md flex flex-col h-full shadow-2xl overflow-hidden"
         style={{ background: R.crema }}
       >
-        {/* ══ CABECERA — Eucalipto Elegante ══ */}
-        <div className="relative flex-shrink-0 overflow-hidden" style={{ background: "var(--color-eucalipto)" }}>
-          <div
-            className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20"
-          />
+        {/* ══ CABECERA — Elegante y Fina ══ */}
+        <div className="relative flex-shrink-0 bg-cream/95 backdrop-blur-md border-b border-black/5 shadow-sm">
           <div className="flex items-center py-4 px-5 relative h-16">
             {/* Logo a la izquierda */}
             <div className="absolute left-5 flex items-center">
               <img
                 src="/favicon.png"
                 alt="Las Flores"
-                className="w-[38px] h-[38px] rounded-full object-cover border-2 shadow-sm bg-white"
-                style={{ borderColor: "rgba(251, 245, 230, 0.4)" }}
+                className="w-[38px] h-[38px] rounded-full object-cover border shadow-sm bg-white p-0.5 border-eucalipto/20"
               />
             </div>
 
             {/* Título centrado */}
             <div className="flex-1 text-center">
-              <span className="font-serif text-[1.15rem] font-bold tracking-wide text-white">
+              <span className="font-serif text-[1.15rem] font-bold tracking-wide text-eucalipto">
                 {step === "cart" && "Tu Pedido"}
                 {step === "delivery" && "Datos de Entrega"}
                 {step === "payment" && "Método de Pago"}
@@ -190,11 +186,10 @@ export function CartSidebar() {
             {/* Carrito e ícono de cerrar a la derecha */}
             <div className="absolute right-5 flex items-center gap-4">
               <div className="relative hidden sm:block">
-                <ShoppingBag size={20} style={{ color: "#FBF5E6" }} strokeWidth={2} />
+                <ShoppingBag size={20} className="text-eucalipto" strokeWidth={2} />
                 {totalItems > 0 && (
                   <span
-                    className="absolute -top-1 -right-2 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm"
-                    style={{ background: R.rojo, color: "white" }}
+                    className="absolute -top-1 -right-2 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm bg-[#8B261D] text-white"
                   >
                     {totalItems}
                   </span>
@@ -202,7 +197,7 @@ export function CartSidebar() {
               </div>
               <button
                 onClick={handleClose}
-                className="text-white/50 hover:text-white transition-colors"
+                className="text-ink/50 hover:text-ink transition-colors p-1 rounded-full hover:bg-black/5"
               >
                 <X size={22} />
               </button>
@@ -281,8 +276,7 @@ export function CartSidebar() {
                     return (
                       <div
                         key={item.id}
-                        className="flex gap-4 bg-white rounded-xl p-3 shadow-sm group hover:shadow-md transition-shadow"
-                        style={{ borderLeft: `5px solid ${accent}` }}
+                        className="flex gap-4 bg-white rounded-xl p-3 shadow-sm group hover:shadow-md transition-shadow border-l-4 border-eucalipto"
                       >
                         {item.image && (
                           <div className="relative flex items-center justify-center flex-shrink-0 group/retablo mx-1">
@@ -297,7 +291,7 @@ export function CartSidebar() {
                             {/* Imagen Central (Comida) */}
                             <div
                               className="w-[68px] h-[80px] z-20 shadow-md border-[3px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0 bg-white"
-                              style={{ outline: `2px solid ${accent}40` }}
+                              style={{ outline: `2px solid rgba(36,63,50,0.2)` }}
                             >
                               <img
                                 src={item.image}
@@ -317,42 +311,32 @@ export function CartSidebar() {
                         )}
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
                           <div>
-                            <p className="font-serif text-sm font-bold leading-snug text-black/85">
+                            <p className="font-serif text-sm font-bold leading-snug text-ink">
                               {item.name}
                             </p>
-                            <p className="text-sm font-bold mt-1" style={{ color: R.rojo }}>
+                            <p className="text-sm font-serif font-bold mt-1 text-eucalipto">
                               S/ {item.price.toFixed(2)}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border-2 transition-colors hover:text-white"
-                              style={{ borderColor: R.rojo, color: R.rojo }}
-                              onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = R.rojo;
-                                (e.currentTarget as HTMLElement).style.color = "white";
-                              }}
-                              onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = "transparent";
-                                (e.currentTarget as HTMLElement).style.color = R.rojo;
-                              }}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border border-eucalipto/30 text-eucalipto transition-all hover:bg-eucalipto hover:text-white"
                             >
                               <Minus size={11} strokeWidth={3} />
                             </button>
-                            <span className="text-sm font-bold w-5 text-center text-black/70">
+                            <span className="text-sm font-bold w-5 text-center text-ink/70">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white transition-opacity hover:opacity-80"
-                              style={{ background: R.verde }}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold bg-eucalipto text-white transition-all hover:bg-eucalipto-dark"
                             >
                               <Plus size={11} strokeWidth={3} />
                             </button>
                             <button
                               onClick={() => removeItem(item.id)}
-                              className="ml-auto opacity-20 hover:opacity-50 transition-opacity"
+                              className="ml-auto opacity-30 hover:opacity-80 text-ink transition-opacity"
                             >
                               <Trash2 size={14} />
                             </button>
@@ -424,8 +408,8 @@ export function CartSidebar() {
                       </div>
                     )}
                     <div className="flex justify-between font-serif font-bold text-base pt-2 border-t border-black/5">
-                      <span className="text-black/70">Total</span>
-                      <span style={{ color: R.rojo }}>S/ {total.toFixed(2)}</span>
+                      <span className="text-ink/80">Total</span>
+                      <span className="text-eucalipto font-serif font-bold text-lg">S/ {total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -445,12 +429,7 @@ export function CartSidebar() {
             >
               {orderType === "delivery" && (
                 <div
-                  className="rounded-xl p-3.5 flex gap-2.5 text-sm"
-                  style={{
-                    background: `${R.amarillo}15`,
-                    border: `1px solid ${R.amarillo}50`,
-                    color: R.morado,
-                  }}
+                  className="rounded-xl p-3.5 flex gap-2.5 text-sm bg-eucalipto/8 border border-eucalipto/20 text-eucalipto"
                 >
                   <MapPin size={15} className="flex-shrink-0 mt-0.5" />
                   <span>

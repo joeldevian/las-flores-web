@@ -542,14 +542,12 @@ function DishCard({ dish, categoryId }: DishCardProps) {
       <div className="px-5 pb-5 pt-3 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-3 mb-2">
           <h3
-            className="text-lg font-serif font-bold leading-tight transition-colors"
-            style={{ color: R.morado }}
+            className="text-lg font-serif font-bold leading-tight text-ink"
           >
             {dish.name}
           </h3>
           <span
-            className="font-bold text-sm flex-shrink-0 px-2 py-1 rounded-md"
-            style={{ background: `${R.rojo}15`, color: R.rojo }}
+            className="font-serif font-bold text-sm flex-shrink-0 px-3 py-1 rounded-full bg-eucalipto/10 text-eucalipto"
           >
             {dish.price}
           </span>
@@ -566,8 +564,7 @@ function DishCard({ dish, categoryId }: DishCardProps) {
               image: dish.image,
             })
           }
-          className="w-full py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg text-sm font-bold tracking-wide"
-          style={{ background: R.eucalipto, color: "#FBF5E6" }}
+          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:bg-eucalipto-dark active:scale-[0.99] shadow-sm hover:shadow-md text-sm font-bold tracking-wide bg-eucalipto text-cream"
         >
           <Plus size={16} strokeWidth={3} />
           Agregar
@@ -603,46 +600,39 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-cream overflow-hidden animate-in fade-in zoom-in-[0.98] duration-300">
-      {/* Header */}
+      {/* Header — Light & Luxurious Warm Cream Header */}
       <div
-        className="relative text-white py-5 px-6 md:px-10 flex items-center justify-between sticky top-0 z-20 shadow-md"
-        style={{ background: R.eucalipto }}
+        className="relative bg-cream/95 backdrop-blur-md border-b border-black/5 py-4 px-6 md:px-10 flex items-center justify-between sticky top-0 z-20 shadow-sm"
       >
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20"
-        />
         <div className="flex items-center gap-4 relative">
           <div
-            className="hidden md:flex w-14 h-14 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white p-1"
-            style={{ borderColor: "rgba(251, 245, 230, 0.4)" }}
+            className="hidden md:flex w-12 h-12 rounded-full border border-eucalipto/20 overflow-hidden flex-shrink-0 bg-white p-1 shadow-sm"
           >
             <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col">
-            <h2 className="font-serif font-bold tracking-wide text-2xl md:text-3xl text-white">
+            <h2 className="font-serif font-bold tracking-wide text-2xl md:text-3xl text-eucalipto">
               Nuestra Carta
             </h2>
             <p
-              className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold text-cream/80"
+              className="text-[9px] md:text-[10px] uppercase tracking-[0.25em] font-bold text-eucalipto/60"
             >
               Para Delivery & Recojo
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-4 md:gap-8 relative">
+        <div className="flex items-center gap-3 md:gap-6 relative">
           <button
             onClick={() => {
               setSidebarOpen(true);
             }}
-            className="relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5"
-            style={{ background: "#FBF5E6", color: "var(--color-eucalipto)" }}
+            className="relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-cream"
           >
             <ShoppingCart size={18} strokeWidth={2.5} />
             <span className="hidden md:inline">Ver Pedido</span>
             {totalItems > 0 && (
               <span
-                className="absolute -top-2 -right-2 text-white text-[10px] w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-md"
-                style={{ background: "#8B261D" }}
+                className="absolute -top-2 -right-2 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm bg-[#8B261D]"
               >
                 {totalItems}
               </span>
@@ -650,9 +640,9 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
           </button>
           <button
             onClick={onClose}
-            className="text-white/50 hover:text-white transition-colors p-2"
+            className="text-ink/50 hover:text-ink transition-colors p-2 rounded-full hover:bg-black/5"
           >
-            <X size={26} />
+            <X size={24} />
           </button>
         </div>
       </div>
