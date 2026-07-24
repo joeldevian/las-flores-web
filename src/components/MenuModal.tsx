@@ -522,18 +522,17 @@ function DishCard({ dish, categoryId }: DishCardProps) {
   return (
     <div className="bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-cream/50">
       {dish.image ? (
-        <div className="h-48 overflow-hidden relative m-2 rounded-t-xl rounded-b-3xl">
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
+        <div className="h-44 overflow-hidden relative m-2.5 rounded-xl border border-black/5">
+          <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
           <img
             src={dish.image}
             alt={dish.name}
-
             decoding="async"
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
       ) : (
-        <div className="h-48 m-2 rounded-t-xl rounded-b-3xl bg-black/5 flex items-center justify-center relative">
+        <div className="h-44 m-2.5 rounded-xl bg-black/5 flex items-center justify-center relative">
           <span className="font-serif italic text-black/30 text-xl px-4 text-center">
             {dish.name}
           </span>
@@ -564,9 +563,9 @@ function DishCard({ dish, categoryId }: DishCardProps) {
               image: dish.image,
             })
           }
-          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:bg-eucalipto-dark active:scale-[0.99] shadow-sm hover:shadow-md text-sm font-bold tracking-wide bg-eucalipto text-cream"
+          className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border border-eucalipto/30 text-eucalipto font-bold text-sm bg-eucalipto/5 hover:bg-eucalipto hover:text-white shadow-xs hover:shadow-sm active:scale-[0.99]"
         >
-          <Plus size={16} strokeWidth={3} />
+          <Plus size={15} strokeWidth={2.5} />
           Agregar
         </button>
       </div>
@@ -654,22 +653,18 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
           className="w-full md:w-72 flex-shrink-0 border-b md:border-b-0 md:border-r border-black/5 overflow-x-auto md:overflow-y-auto z-10 scrollbar-none"
           style={{ background: R.crema }}
         >
-          <div className="flex flex-row md:flex-col py-0 md:py-6 w-max min-w-full md:w-auto">
+          <div className="flex flex-row md:flex-col p-3 md:p-4 gap-1 w-max min-w-full md:w-auto">
             {categories.map((cat) => {
               const isActive = activeId === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveId(cat.id)}
-                  className={`text-center md:text-left whitespace-nowrap md:whitespace-normal px-6 md:px-8 py-4 md:py-4 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all border-b-4 md:border-b-0 md:border-l-4 ${
+                  className={`text-center md:text-left whitespace-nowrap md:whitespace-normal px-5 md:px-6 py-3.5 md:py-3.5 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all rounded-xl ${
                     isActive
-                      ? "bg-eucalipto/10"
-                      : "border-transparent text-black/50 hover:text-black/80 hover:bg-black/5"
+                      ? "bg-eucalipto text-cream shadow-xs font-bold"
+                      : "text-ink/60 hover:text-eucalipto hover:bg-black/5 font-medium"
                   }`}
-                  style={{
-                    borderColor: isActive ? "var(--color-eucalipto)" : "transparent",
-                    color: isActive ? "var(--color-eucalipto)" : undefined,
-                  }}
                 >
                   {cat.label}
                 </button>
