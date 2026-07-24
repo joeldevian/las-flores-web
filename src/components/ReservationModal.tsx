@@ -154,48 +154,48 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         </div>
 
         {/* Contenedor Principal con Scroll */}
-        <div className="flex-1 overflow-y-auto relative p-6 custom-scrollbar bg-gradient-to-br from-[#f8f4e6] via-[#f8f4e6] to-[#eaddcd]">
+        <div className="flex-1 overflow-y-auto relative px-6 pt-4 pb-6 custom-scrollbar bg-gradient-to-br from-[#f8f4e6] via-[#f8f4e6] to-[#eaddcd]">
           <div className="relative z-10 h-full">
             {/* --- PASO 1: COMENSALES --- */}
             {step === 1 && (
               <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="text-center mb-8">
-                  <h2 className="font-serif text-3xl font-bold text-ink mb-2">
+                <div className="text-center mb-6 mt-1">
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mb-1">
                     ¿Cuántos comensales?
                   </h2>
-                  <p className="text-sm text-ink/70">Selecciona el tamaño de tu grupo</p>
+                  <p className="text-xs text-ink/70">Selecciona la cantidad de personas</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  {["1", "2", "3", "4"].map((n) => (
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  {["1", "2", "3", "4", "5", "6"].map((n) => (
                     <button
                       key={n}
                       onClick={() => setForm((f) => ({ ...f, guests: n, customGuests: "" }))}
-                      className={`p-6 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1
+                      className={`py-3.5 px-2 rounded-xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-0.5
                         ${
-                          form.guests === n
-                            ? "bg-eucalipto text-white border-eucalipto shadow-md scale-[1.02]"
-                            : "bg-white/80 border-eucalipto/20 hover:border-eucalipto/50 text-eucalipto"
+                          form.guests === n && !form.customGuests
+                            ? "bg-eucalipto text-cream border-eucalipto shadow-sm scale-[1.02]"
+                            : "bg-white border-black/10 hover:border-eucalipto/40 text-eucalipto shadow-xs"
                         }`}
                     >
-                      <span className="text-3xl font-serif">{n}</span>
-                      <span className="text-xs uppercase tracking-widest">
+                      <span className="text-2xl font-serif font-bold">{n}</span>
+                      <span className="text-[10px] uppercase tracking-wider opacity-80">
                         {n === "1" ? "Persona" : "Personas"}
                       </span>
                     </button>
                   ))}
                 </div>
 
-                <div className="bg-white/80 p-4 rounded-2xl border-2 border-eucalipto/20 mt-2">
-                  <p className="text-xs uppercase tracking-widest text-ink/60 mb-3 font-bold">
-                    Tamaño personalizado
+                <div className="bg-white/90 p-3.5 rounded-xl border border-black/10 mt-1 shadow-xs">
+                  <p className="text-[10px] uppercase tracking-widest text-ink/60 mb-2 font-bold text-center">
+                    Grupo de más de 6 personas
                   </p>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <input
                       type="number"
-                      min="5"
-                      max="20"
-                      placeholder="Ej. 6"
+                      min="7"
+                      max="30"
+                      placeholder="Ej. 8"
                       value={form.customGuests}
                       onChange={(e) =>
                         setForm((f) => ({
@@ -204,26 +204,26 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                           guests: e.target.value,
                         }))
                       }
-                      className="flex-1 bg-transparent border-b-2 border-ink/20 focus:border-ink outline-none px-2 py-1 text-xl font-serif text-center transition-colors"
+                      className="flex-1 bg-black/5 border border-black/10 rounded-lg focus:border-eucalipto outline-none px-3 py-1.5 text-base font-serif text-center transition-colors"
                     />
-                    <span className="text-sm font-bold text-ink/70">Personas</span>
+                    <span className="text-xs font-bold text-ink/70">Personas</span>
                   </div>
                 </div>
 
-                <div className="mt-auto pt-8">
+                <div className="mt-auto pt-6">
                   <button
                     onClick={handleGuestsNext}
                     disabled={!form.guests}
-                    className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
+                    className={`w-full py-3.5 rounded-xl font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2 text-sm
                       ${
                         !form.guests
-                          ? "bg-white/80 text-ink/40 backdrop-blur-md border border-ink/10 cursor-not-allowed"
-                          : "bg-eucalipto text-cream hover:-translate-y-0.5 hover:shadow-lg"
+                          ? "bg-black/10 text-ink/40 border border-black/5 cursor-not-allowed"
+                          : "bg-eucalipto text-cream hover:bg-eucalipto-dark hover:shadow-md"
                       }`}
                   >
                     <svg
-                      width="20"
-                      height="20"
+                      width="18"
+                      height="18"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -238,7 +238,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     </svg>
                     {form.guests
                       ? `Continuar con ${form.guests} comensal${form.guests === "1" ? "" : "es"}`
-                      : "Selecciona tus comensales"}
+                      : "Selecciona comensales"}
                   </button>
                 </div>
               </div>
