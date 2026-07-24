@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import { Plus, X, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
-/* ─── Paleta Retablo Ayacuchano ─── */
+/* ─── Paleta de Lujo (Eucalipto & Crema) ─── */
 const R = {
-  rojo: "#C0392B",
-  verde: "#2A6135",
-  morado: "#3b0944",
-  amarillo: "#F4C430",
+  rojo: "#8B261D",
+  verde: "var(--color-eucalipto)",
+  morado: "var(--color-eucalipto)",
+  eucalipto: "var(--color-eucalipto)",
+  amarillo: "var(--color-eucalipto)",
   crema: "#FBF5E6",
   blanco: "#FFFFFF",
+  textoBoton: "#FBF5E6",
 };
 
 export interface Dish {
@@ -565,7 +567,7 @@ function DishCard({ dish, categoryId }: DishCardProps) {
             })
           }
           className="w-full py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg text-sm font-bold tracking-wide"
-          style={{ background: R.amarillo, color: R.morado }}
+          style={{ background: R.eucalipto, color: "#FBF5E6" }}
         >
           <Plus size={16} strokeWidth={3} />
           Agregar
@@ -604,18 +606,15 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
       {/* Header */}
       <div
         className="relative text-white py-5 px-6 md:px-10 flex items-center justify-between sticky top-0 z-20 shadow-md"
-        style={{ background: R.morado }}
+        style={{ background: R.eucalipto }}
       >
         <div
-          className="absolute bottom-0 left-0 right-0 h-[4px]"
-          style={{
-            background: `linear-gradient(90deg, ${R.verde} 0%, ${R.verde} 25%, ${R.amarillo} 25%, ${R.amarillo} 50%, ${R.rojo} 50%, ${R.rojo} 75%, ${R.morado} 75%)`,
-          }}
+          className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20"
         />
         <div className="flex items-center gap-4 relative">
           <div
             className="hidden md:flex w-14 h-14 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white p-1"
-            style={{ borderColor: R.amarillo }}
+            style={{ borderColor: "rgba(251, 245, 230, 0.4)" }}
           >
             <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
           </div>
@@ -624,8 +623,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
               Nuestra Carta
             </h2>
             <p
-              className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold"
-              style={{ color: R.amarillo }}
+              className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold text-cream/80"
             >
               Para Delivery & Recojo
             </p>
@@ -637,14 +635,14 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
               setSidebarOpen(true);
             }}
             className="relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5"
-            style={{ background: R.amarillo, color: R.morado }}
+            style={{ background: "#FBF5E6", color: "var(--color-eucalipto)" }}
           >
             <ShoppingCart size={18} strokeWidth={2.5} />
             <span className="hidden md:inline">Ver Pedido</span>
             {totalItems > 0 && (
               <span
                 className="absolute -top-2 -right-2 text-white text-[10px] w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-md"
-                style={{ background: R.rojo }}
+                style={{ background: "#8B261D" }}
               >
                 {totalItems}
               </span>
@@ -675,12 +673,12 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
                   onClick={() => setActiveId(cat.id)}
                   className={`text-center md:text-left whitespace-nowrap md:whitespace-normal px-6 md:px-8 py-4 md:py-4 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all border-b-4 md:border-b-0 md:border-l-4 ${
                     isActive
-                      ? "bg-black/5"
+                      ? "bg-eucalipto/10"
                       : "border-transparent text-black/50 hover:text-black/80 hover:bg-black/5"
                   }`}
                   style={{
-                    borderColor: isActive ? R.amarillo : "transparent",
-                    color: isActive ? R.morado : undefined,
+                    borderColor: isActive ? "var(--color-eucalipto)" : "transparent",
+                    color: isActive ? "var(--color-eucalipto)" : undefined,
                   }}
                 >
                   {cat.label}

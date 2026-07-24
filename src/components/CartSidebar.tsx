@@ -45,13 +45,14 @@ interface PaymentForm {
   cvv: string;
 }
 
-/* ─── Paleta Retablo Ayacuchano ─── */
+/* ─── Paleta de Lujo (Eucalipto & Crema) ─── */
 const R = {
-  rojo: "#C0392B", // Rojo vivo
-  verde: "#2A6135", // Verde hoja
-  morado: "#3b0944", // Morado profundo
-  amarillo: "#F4C430", // Amarillo oro vibrante (protagonista)
-  crema: "#FBF5E6", // Crema retablo
+  rojo: "#8B261D",
+  verde: "var(--color-eucalipto)",
+  morado: "var(--color-eucalipto)",
+  eucalipto: "var(--color-eucalipto)",
+  amarillo: "var(--color-eucalipto)",
+  crema: "#FBF5E6",
   blanco: "#FFFFFF",
 };
 
@@ -160,13 +161,10 @@ export function CartSidebar() {
         className="w-full max-w-md flex flex-col h-full shadow-2xl overflow-hidden"
         style={{ background: R.crema }}
       >
-        {/* ══ CABECERA — morado profundo con acentos amarillos ══ */}
-        <div className="relative flex-shrink-0 overflow-hidden" style={{ background: R.morado }}>
+        {/* ══ CABECERA — Eucalipto Elegante ══ */}
+        <div className="relative flex-shrink-0 overflow-hidden" style={{ background: "var(--color-eucalipto)" }}>
           <div
-            className="absolute bottom-0 left-0 right-0 h-[4px]"
-            style={{
-              background: `linear-gradient(90deg, ${R.verde} 0%, ${R.verde} 25%, ${R.amarillo} 25%, ${R.amarillo} 50%, ${R.rojo} 50%, ${R.rojo} 75%, ${R.morado} 75%)`,
-            }}
+            className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20"
           />
           <div className="flex items-center py-4 px-5 relative h-16">
             {/* Logo a la izquierda */}
@@ -175,7 +173,7 @@ export function CartSidebar() {
                 src="/favicon.png"
                 alt="Las Flores"
                 className="w-[38px] h-[38px] rounded-full object-cover border-2 shadow-sm bg-white"
-                style={{ borderColor: R.amarillo }}
+                style={{ borderColor: "rgba(251, 245, 230, 0.4)" }}
               />
             </div>
 
@@ -192,7 +190,7 @@ export function CartSidebar() {
             {/* Carrito e ícono de cerrar a la derecha */}
             <div className="absolute right-5 flex items-center gap-4">
               <div className="relative hidden sm:block">
-                <ShoppingBag size={20} style={{ color: R.amarillo }} strokeWidth={2} />
+                <ShoppingBag size={20} style={{ color: "#FBF5E6" }} strokeWidth={2} />
                 {totalItems > 0 && (
                   <span
                     className="absolute -top-1 -right-2 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm"
@@ -212,7 +210,7 @@ export function CartSidebar() {
           </div>
         </div>
 
-        {/* ══ BARRA DE PASOS — integrando más amarillo ══ */}
+        {/* ══ BARRA DE PASOS ══ */}
         {step !== "success" && (
           <div className="flex flex-shrink-0 bg-white border-b border-black/5 shadow-sm">
             {(["cart", "delivery", "payment"] as const).map((s, i) => {
@@ -226,20 +224,20 @@ export function CartSidebar() {
                   key={s}
                   className="flex-1 py-3 flex flex-col items-center gap-1 text-[10px] font-bold tracking-wider uppercase transition-all"
                   style={{
-                    borderBottom: isActive ? `3px solid ${R.amarillo}` : "3px solid transparent",
+                    borderBottom: isActive ? `3px solid var(--color-eucalipto)` : "3px solid transparent",
                   }}
                 >
                   <div
                     className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shadow-sm"
                     style={{
-                      background: isActive ? R.amarillo : isPast ? R.morado : "rgba(0,0,0,0.05)",
-                      color: isActive ? R.morado : isPast ? "white" : "rgba(0,0,0,0.3)",
+                      background: isActive || isPast ? "var(--color-eucalipto)" : "rgba(0,0,0,0.05)",
+                      color: isActive || isPast ? "white" : "rgba(0,0,0,0.3)",
                     }}
                   >
                     {isPast ? "✓" : i + 1}
                   </div>
                   <span
-                    style={{ color: isActive ? R.morado : isPast ? R.morado : "rgba(0,0,0,0.3)" }}
+                    style={{ color: isActive || isPast ? "var(--color-eucalipto)" : "rgba(0,0,0,0.3)" }}
                   >
                     {s === "cart" ? "Carrito" : s === "delivery" ? "Entrega" : "Pago"}
                   </span>
@@ -379,16 +377,14 @@ export function CartSidebar() {
                         label: "Delivery",
                         sub: "A tu puerta",
                         Icon: Truck,
-                        color: R.rojo,
                       },
                       {
                         type: "pickup" as OrderType,
                         label: "Para Llevar",
                         sub: "En restaurante",
                         Icon: Store,
-                        color: R.verde,
                       },
-                    ].map(({ type, label, sub, Icon, color }) => {
+                    ].map(({ type, label, sub, Icon }) => {
                       const active = orderType === type;
                       return (
                         <button
@@ -397,11 +393,11 @@ export function CartSidebar() {
                           onClick={() => setOrderType(type)}
                           className="rounded-xl py-4 text-center transition-all border-2 font-serif"
                           style={{
-                            background: active ? color : "white",
-                            borderColor: active ? color : `${color}30`,
-                            color: active ? "white" : `${color}`,
+                            background: active ? "var(--color-eucalipto)" : "white",
+                            borderColor: active ? "var(--color-eucalipto)" : "rgba(36,63,50,0.2)",
+                            color: active ? "white" : "var(--color-eucalipto)",
                             transform: active ? "scale(1.02)" : "scale(1)",
-                            boxShadow: active ? `0 6px 20px ${color}35` : "none",
+                            boxShadow: active ? "0 6px 20px rgba(36,63,50,0.2)" : "none",
                           }}
                         >
                           <Icon size={20} className="mx-auto mb-2" />
@@ -839,13 +835,13 @@ export function CartSidebar() {
           )}
         </div>
 
-        {/* ══ BOTONERA — Protagonismo del Amarillo ══ */}
+        {/* ══ BOTONERA — Eucalipto & Crema ══ */}
         <div className="p-5 flex-shrink-0 border-t border-black/5 bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
           {step === "cart" && items.length > 0 && (
             <button
               onClick={() => setStep("delivery")}
               className="w-full py-4 rounded-xl font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-              style={{ background: R.amarillo, color: R.morado }}
+              style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
             >
               Continuar — S/ {total.toFixed(2)}
             </button>
@@ -857,7 +853,7 @@ export function CartSidebar() {
                 type="button"
                 onClick={() => setStep("cart")}
                 className="flex-none w-12 h-[52px] rounded-xl flex items-center justify-center border-2 transition-colors hover:bg-black/5"
-                style={{ borderColor: `${R.amarillo}80`, color: R.morado }}
+                style={{ borderColor: "var(--color-eucalipto)", color: "var(--color-eucalipto)" }}
               >
                 <ArrowLeft size={20} />
               </button>
@@ -866,7 +862,7 @@ export function CartSidebar() {
                 form="delivery-form"
                 disabled={orderType === "delivery" && (!clientLocation || isTooFar)}
                 className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
-                style={{ background: R.amarillo, color: R.morado }}
+                style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
               >
                 Ir al pago
               </button>
@@ -879,7 +875,7 @@ export function CartSidebar() {
                 type="button"
                 onClick={() => setStep("delivery")}
                 className="flex-none w-12 h-[52px] rounded-xl flex items-center justify-center border-2 transition-colors hover:bg-black/5"
-                style={{ borderColor: `${R.amarillo}80`, color: R.morado }}
+                style={{ borderColor: "var(--color-eucalipto)", color: "var(--color-eucalipto)" }}
               >
                 <ArrowLeft size={20} />
               </button>
@@ -888,7 +884,7 @@ export function CartSidebar() {
                 form="payment-form"
                 disabled={processing}
                 className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
-                style={{ background: R.amarillo, color: R.morado }}
+                style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
               >
                 {processing ? "Procesando..." : `Pagar S/ ${total.toFixed(2)}`}
               </button>
@@ -899,7 +895,7 @@ export function CartSidebar() {
             <button
               onClick={handleClose}
               className="w-full py-4 rounded-xl font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-              style={{ background: R.amarillo, color: R.morado }}
+              style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
             >
               Volver a la carta
             </button>
