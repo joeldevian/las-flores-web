@@ -410,8 +410,7 @@ function RestaurantePage() {
             </button>
             <button
               onClick={() => startTransition(() => setIsMenuOpen(true))}
-              className="px-10 py-5 font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg rounded-xl hover:-translate-y-0.5"
-              style={{ background: "#3b0944", color: "white" }}
+              className="px-10 py-5 font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg rounded-xl hover:-translate-y-0.5 bg-eucalipto text-cream"
             >
               Pedir delivery
             </button>
