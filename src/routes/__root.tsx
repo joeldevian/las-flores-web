@@ -130,6 +130,19 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  // Auto-cerrar ventana emergente de OAuth al completar el login con Google
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.opener &&
+      (window.location.hash.includes("access_token") || window.location.search.includes("code"))
+    ) {
+      setTimeout(() => {
+        window.close();
+      }, 400);
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>

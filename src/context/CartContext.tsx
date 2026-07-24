@@ -23,21 +23,37 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("las_flores_cart");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isOpen, setIsOpen] = useState(false);
 
+  // Guardar en localStorage cada vez que cambien los ítems
+  const saveItems = (newItems: CartItem[]) => {
+    setItems(newItems);
+    try {
+      localStorage.setItem("las_flores_cart", JSON.stringify(newItems));
+    } catch (e) {
+      console.error("Error al guardar carrito:", e);
+    }
+  };
+
   const addItem = (newItem: Omit<CartItem, "quantity">) => {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.id === newItem.id);
-      if (existing) {
-        return prev.map((i) => (i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i));
-      }
-      return [...prev, { ...newItem, quantity: 1 }];
-    });
+    const existing = items.find((i) => i.id === newItem.id);
+    if (existing) {
+      saveItems(items.map((i) => (i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i)));
+    } else {
+      saveItems([...items, { ...newItem, quantity: 1 }]);
+    }
   };
 
   const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+    saveItems(items.filter((i) => i.id !== id));
   };
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -45,10 +61,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeItem(id);
       return;
     }
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity } : i)));
+    saveItems(items.map((i) => (i.id === id ? { ...i, quantity } : i)));
   };
 
-  const clearCart = () => setItems([]);
+  const clearCart = () => {
+    saveItems([]);
+  };
 
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);

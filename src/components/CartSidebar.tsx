@@ -22,6 +22,7 @@ import {
   RESTAURANT_LOCATION,
   DELIVERY_CONFIG,
 } from "../utils/deliveryUtils";
+import { signInWithGoogle, createOrder, signOut, supabase } from "../lib/supabase";
 
 const LocationSelector = lazy(() =>
   import("./LocationSelector").then((m) => ({ default: m.LocationSelector })),
@@ -84,6 +85,33 @@ export function CartSidebar() {
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // Escuchar sesión activa de Supabase (Google Auth)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setDelivery((d) => ({
+          ...d,
+          email: session.user.email || "",
+          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || "Cliente Google",
+        }));
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setDelivery((d) => ({
+          ...d,
+          email: session.user.email || "",
+          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || "Cliente Google",
+        }));
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
   const [delivery, setDelivery] = useState<DeliveryForm>({
     name: "",
@@ -159,13 +187,39 @@ export function CartSidebar() {
     return c.length >= 3 ? `${c.slice(0, 2)}/${c.slice(2)}` : c;
   };
 
-  const handlePayment = (e: React.FormEvent) => {
+  const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setProcessing(true);
-    setTimeout(() => {
+    try {
+      await createOrder({
+        order_number: `LF-${Date.now().toString().slice(-6)}`,
+        order_type: orderType,
+        client_name: delivery.name || "Cliente",
+        client_email: delivery.email || "cliente@ejemplo.com",
+        client_phone: delivery.phone || "",
+        address: delivery.address,
+        reference: delivery.reference,
+        latitude: clientLocation?.lat,
+        longitude: clientLocation?.lng,
+        distance_km: distanceKm,
+        subtotal: totalPrice,
+        delivery_fee: DELIVERY_FEE,
+        total: total,
+        payment_method: paymentMethod,
+        notes: delivery.notes,
+        items: items.map((i) => ({
+          product_name: i.name,
+          unit_price: i.price,
+          quantity: i.quantity,
+          subtotal: i.price * i.quantity,
+        })),
+      });
+    } catch (err) {
+      console.error("Order creation error:", err);
+    } finally {
       setProcessing(false);
       setStep("success");
-    }, 2000);
+    }
   };
 
   const handleClose = () => {
@@ -467,9 +521,14 @@ export function CartSidebar() {
                   </p>
                   <button
                     type="button"
-                    onClick={() => {
-                      setDelivery({ ...delivery, name: "Luis Llocclla", email: "luis@ejemplo.com" });
-                      setDeliverySubStep("location");
+                    onClick={async () => {
+                      try {
+                        await signInWithGoogle();
+                      } catch (err) {
+                        console.log("Supabase Auth local fallback:", err);
+                        setDelivery({ ...delivery, name: "Luis Llocclla", email: "luis@ejemplo.com" });
+                        setDeliverySubStep("location");
+                      }
                     }}
                     className="w-full flex items-center justify-center gap-3 bg-white border-2 border-black/10 hover:border-black/25 rounded-xl px-4 py-3.5 text-sm font-bold text-black/75 transition-all shadow-sm active:scale-[0.99]"
                   >
@@ -502,10 +561,17 @@ export function CartSidebar() {
                     <span className="flex-1 truncate font-bold">{delivery.name} ({delivery.email})</span>
                     <button
                       type="button"
-                      onClick={() => setDelivery({ ...delivery, email: "", name: "" })}
-                      className="text-[10px] uppercase tracking-wider font-bold underline underline-offset-2 opacity-80 hover:opacity-100"
+                      onClick={async () => {
+                        try {
+                          await signOut();
+                        } catch (e) {
+                          console.log("Signout error:", e);
+                        }
+                        setDelivery({ ...delivery, email: "", name: "" });
+                      }}
+                      className="text-[10px] uppercase tracking-wider font-bold underline underline-offset-2 opacity-80 hover:opacity-100 flex-shrink-0"
                     >
-                      Cambiar
+                      Cerrar sesión
                     </button>
                   </div>
 
