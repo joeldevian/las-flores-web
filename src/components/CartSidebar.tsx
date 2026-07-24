@@ -277,70 +277,51 @@ export function CartSidebar() {
                     return (
                       <div
                         key={item.id}
-                        className="flex gap-4 bg-white rounded-xl p-3.5 shadow-xs border border-black/5 group hover:shadow-sm transition-shadow"
+                        className="flex items-center gap-3.5 bg-white rounded-xl p-3 shadow-xs border border-black/5 group hover:shadow-sm transition-all"
                       >
                         {item.image && (
-                          <div className="relative flex items-center justify-center flex-shrink-0 group/retablo mx-1">
-                            {/* Panel Izquierdo (Decorativo) */}
-                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-l border-black/10 z-10 rounded-l-md overflow-hidden shadow-xs flex-shrink-0 flex items-center justify-center">
-                              <div
-                                className="w-full h-full bg-no-repeat bg-contain bg-center"
-                                style={{ backgroundImage: "url('/flor-retablo.png')" }}
-                              ></div>
-                            </div>
-
-                            {/* Imagen Central (Comida) */}
-                            <div
-                              className="w-[68px] h-[80px] z-20 shadow-xs border-[2px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0 bg-white"
-                              style={{ outline: `1px solid rgba(36,63,50,0.15)` }}
-                            >
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-full h-full object-cover group-hover/retablo:scale-110 transition-transform duration-500"
-                              />
-                            </div>
-
-                            {/* Panel Derecho (Decorativo) */}
-                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-r border-black/10 z-10 rounded-r-md overflow-hidden shadow-xs flex-shrink-0 flex items-center justify-center">
-                              <div
-                                className="w-full h-full bg-no-repeat bg-contain bg-center scale-x-[-1]"
-                                style={{ backgroundImage: "url('/flor-retablo.png')" }}
-                              ></div>
-                            </div>
+                          <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-black/5 shadow-xs bg-white">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
                           </div>
                         )}
-                        <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
-                          <div>
-                            <p className="font-serif text-sm font-bold leading-snug text-ink">
+                        <div className="flex-1 min-w-0 flex flex-col justify-between h-16 py-0.5">
+                          <div className="flex justify-between items-start gap-2">
+                            <p className="font-serif text-sm font-bold leading-snug text-ink truncate">
                               {item.name}
                             </p>
-                            <p className="text-sm font-serif font-bold mt-1 text-eucalipto">
-                              S/ {item.price.toFixed(2)}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border border-eucalipto/25 text-eucalipto transition-all hover:bg-eucalipto hover:text-white"
-                            >
-                              <Minus size={11} strokeWidth={3} />
-                            </button>
-                            <span className="text-sm font-bold w-5 text-center text-ink/70">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border border-eucalipto/25 text-eucalipto transition-all hover:bg-eucalipto hover:text-white"
-                            >
-                              <Plus size={11} strokeWidth={3} />
-                            </button>
                             <button
                               onClick={() => removeItem(item.id)}
-                              className="ml-auto opacity-30 hover:opacity-80 text-ink transition-opacity"
+                              className="text-black/30 hover:text-red-600 transition-colors p-1 rounded-lg hover:bg-red-50 -mr-1 -mt-1 flex-shrink-0"
+                              title="Eliminar plato"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={15} />
                             </button>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto">
+                            <p className="text-xs font-serif font-bold text-eucalipto">
+                              S/ {item.price.toFixed(2)}
+                            </p>
+                            <div className="flex items-center gap-1.5 bg-black/4 rounded-lg p-0.5 border border-black/5">
+                              <button
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-ink/70 hover:text-eucalipto hover:bg-white transition-all"
+                              >
+                                <Minus size={11} strokeWidth={2.5} />
+                              </button>
+                              <span className="text-xs font-bold w-4 text-center text-ink">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-ink/70 hover:text-eucalipto hover:bg-white transition-all"
+                              >
+                                <Plus size={11} strokeWidth={2.5} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -376,17 +357,27 @@ export function CartSidebar() {
                           key={type}
                           type="button"
                           onClick={() => setOrderType(type)}
-                          className={`rounded-xl py-4 text-center transition-all border-2 font-serif ${
+                          className={`rounded-xl p-3 text-left transition-all border-2 flex items-center gap-3 ${
                             active
-                              ? "bg-eucalipto/10 border-eucalipto text-eucalipto shadow-sm scale-[1.01]"
+                              ? "bg-eucalipto/10 border-eucalipto text-eucalipto shadow-xs"
                               : "bg-white border-black/10 text-ink/60 hover:border-black/20 hover:text-ink"
                           }`}
                         >
-                          <Icon size={20} className="mx-auto mb-2 opacity-90" />
-                          <span className="block font-bold text-sm">{label}</span>
-                          <span className="block text-[10px] mt-0.5 opacity-70 font-sans">
-                            {sub}
-                          </span>
+                          <div
+                            className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                              active ? "bg-eucalipto text-cream" : "bg-black/5 text-ink/60"
+                            }`}
+                          >
+                            <Icon size={18} />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block font-serif font-bold text-xs leading-tight">
+                              {label}
+                            </span>
+                            <span className="block text-[9.5px] mt-0.5 opacity-70 truncate font-sans">
+                              {sub}
+                            </span>
+                          </div>
                         </button>
                       );
                     })}
