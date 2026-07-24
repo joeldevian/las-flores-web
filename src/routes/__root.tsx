@@ -8,7 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { CartProvider } from "../context/CartContext";
 import { CartSidebar } from "../components/CartSidebar";
 
@@ -129,17 +129,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const isPopupCallback =
-    typeof window !== "undefined" &&
-    window.opener &&
-    (window.location.hash.includes("access_token") ||
-      window.location.search.includes("code") ||
-      window.location.hash.includes("error"));
+  const [isPopup, setIsPopup] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isAuthPopup =
+        window.name === "google_auth_popup" ||
+        Boolean(window.opener) ||
+        window.location.hash.includes("access_token") ||
+        window.location.search.includes("code") ||
+        window.location.hash.includes("error");
+
+      if (isAuthPopup) {
+        setIsPopup(true);
+      }
+    }
+  }, []);
 
   // Auto-cerrar la ventana emergente de OAuth después de que Supabase procese la sesión
   useEffect(() => {
-    if (isPopupCallback) {
-      // Permitir a Supabase procesar el token del hash
+    if (isPopup) {
       import("../lib/supabase").then(({ supabase }) => {
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (window.opener) {
@@ -149,25 +158,43 @@ function RootComponent() {
               console.log("PostMessage error:", e);
             }
           }
-          setTimeout(() => {
+          // Intentar cerrar la ventana inmediatamente
+          try {
+            window.close();
+          } catch (e) {
+            console.log("Window close error:", e);
+          }
+          const timer = setTimeout(() => {
             try {
               window.close();
             } catch (e) {
-              console.log("Window close error:", e);
+              console.log("Window close fallback:", e);
             }
-          }, 350);
+          }, 300);
+          return () => clearTimeout(timer);
         });
       });
     }
-  }, [isPopupCallback]);
+  }, [isPopup]);
 
   // Si es la ventana emergente de OAuth, mostrar únicamente un diseño limpio sin la web de fondo
-  if (isPopupCallback) {
+  if (isPopup) {
     return (
       <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center p-6 text-center">
         <div className="w-10 h-10 border-3 border-[#2C4A3E] border-t-transparent rounded-full animate-spin mb-4" />
         <h3 className="font-serif text-lg font-bold text-[#2C4A3E] mb-1">¡Autenticación Exitosa!</h3>
-        <p className="text-xs text-black/50">Cerrando ventana de acceso...</p>
+        <p className="text-xs text-black/50 mb-4">Cerrando ventana de acceso...</p>
+        <button
+          type="button"
+          onClick={() => {
+            try {
+              window.close();
+            } catch {}
+          }}
+          className="text-xs px-4 py-2 bg-[#2C4A3E] text-[#FBF5E6] rounded-xl font-bold hover:opacity-90 shadow-sm transition-all"
+        >
+          Cerrar ventana y continuar
+        </button>
       </div>
     );
   }

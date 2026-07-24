@@ -122,6 +122,16 @@ export async function signInWithGoogle() {
     if (!popup) {
       // Fallback si el navegador bloquea las ventanas emergentes
       window.location.href = data.url;
+    } else {
+      // Monitorear cuando la ventana emergente se cierre para forzar la sincronización
+      const timer = setInterval(async () => {
+        if (popup.closed) {
+          clearInterval(timer);
+          await supabase.auth.getSession();
+        }
+      }, 400);
+
+      setTimeout(() => clearInterval(timer), 120000);
     }
 
     return popup;
