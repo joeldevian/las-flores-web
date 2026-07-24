@@ -153,7 +153,7 @@ function EventosPage() {
           <div className="flex-1">
             <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
               <img
-                src={retabloImg}
+                src="/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp"
                 alt="Bodas y Recepciones"
                 className="w-full h-full object-cover"
               />
@@ -188,7 +188,7 @@ function EventosPage() {
           <div className="flex-1">
             <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
               <img
-                src={casaImg}
+                src="/imagenes-reales/EVENTOS-COORPORATIVAS/reuniones-corporativas.webp"
                 alt="Eventos Corporativos"
                 className="w-full h-full object-cover"
               />
@@ -223,7 +223,7 @@ function EventosPage() {
           <div className="flex-1">
             <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
               <img
-                src={equipoImg}
+                src="/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp"
                 alt="Almuerzos Especiales"
                 className="w-full h-full object-cover"
               />
