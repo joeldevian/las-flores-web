@@ -6,15 +6,11 @@ const platoPucaImg = "/gastronomia/puca-picante.webp"; // placeholder
 const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
-import { useState, useTransition, lazy, Suspense, useEffect } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-const ReservationModal = lazy(() =>
-  import("@/components/ReservationModal").then((m) => ({ default: m.ReservationModal })),
-);
-const MenuModal = lazy(() =>
-  import("@/components/MenuModal").then((m) => ({ default: m.MenuModal })),
-);
+import { ReservationModal } from "@/components/ReservationModal";
+import { MenuModal } from "@/components/MenuModal";
 
 export const Route = createFileRoute("/restaurante")({
   head: () => ({
@@ -419,12 +415,10 @@ function RestaurantePage() {
       </section>
 
       <SiteFooter />
-      <Suspense fallback={null}>
-        {isReservationOpen && (
-          <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />
-        )}
-        {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
-      </Suspense>
+      {isReservationOpen && (
+        <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />
+      )}
+      {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
     </div>
   );
 }

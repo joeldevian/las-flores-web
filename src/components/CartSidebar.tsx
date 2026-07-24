@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   Plus,
@@ -23,10 +23,7 @@ import {
   DELIVERY_CONFIG,
 } from "../utils/deliveryUtils";
 import { signInWithGoogle, createOrder, signOut, supabase } from "../lib/supabase";
-
-const LocationSelector = lazy(() =>
-  import("./LocationSelector").then((m) => ({ default: m.LocationSelector })),
-);
+import { LocationSelector } from "./LocationSelector";
 
 type Step = "cart" | "delivery" | "payment" | "success";
 type OrderType = "delivery" | "pickup";
@@ -621,16 +618,10 @@ export function CartSidebar() {
                       </div>
 
                       {isMounted && (
-                        <Suspense
-                          fallback={
-                            <div className="w-full h-[220px] rounded-xl border border-black/10 bg-black/5 animate-pulse" />
-                          }
-                        >
-                          <LocationSelector
-                            initialLocation={clientLocation}
-                            onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
-                          />
-                        </Suspense>
+                        <LocationSelector
+                          initialLocation={clientLocation}
+                          onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
+                        />
                       )}
 
                       {clientLocation ? (
