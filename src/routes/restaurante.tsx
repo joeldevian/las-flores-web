@@ -86,28 +86,28 @@ const generationStories: GenerationStory[] = [
 
 const chefRecommendations = [
   {
-    name: "Puca Picante Ancestral",
+    name: "Puca Picante",
     price: "S/ 65",
     description:
       "Remolacha fermentada, maní tostado y jugoso chicharrón crocante hecho en leña de molle.",
     image: "/imagenes-reales/RECOMENDACIONES-CHEF/puca.webp",
-    alt: "Puca Picante Ancestral",
+    alt: "Puca Picante",
   },
   {
-    name: "Cuy Chactado de la Casa",
+    name: "Cuy las Flores",
     price: "S/ 85",
     description:
       "El orgullo de Las Flores. Confitado con hierbas aromáticas y servido bajo la piedra caliente con papas doradas.",
     image: "/imagenes-reales/RECOMENDACIONES-CHEF/cuy-chactado.webp",
-    alt: "Cuy Chactado de la Casa",
+    alt: "Cuy las Flores",
   },
   {
-    name: "Chicharrón Tradicional",
+    name: "Chicharrón Huamanguino",
     price: "S/ 70",
     description:
       "Panceta de cerdo dorada lentamente en su propia manteca hasta lograr la crocancia perfecta, con mote y sarsa.",
     image: "/imagenes-reales/RECOMENDACIONES-CHEF/chicharon.webp",
-    alt: "Chicharrón Tradicional",
+    alt: "Chicharrón Huamanguino",
   },
 ];
 

@@ -12,10 +12,16 @@ const R = {
   blanco: "#FFFFFF",
 };
 
+export interface DishPrice {
+  label: string;
+  price: string;
+}
+
 export interface Dish {
   name: string;
   description: string;
   price: string;
+  prices?: DishPrice[];
   image?: string;
 }
 
@@ -179,6 +185,10 @@ export const categories: Category[] = [
         description:
           "Plato insignia, acompañado con papas nativas doradas, qapchi, choclo salteado en especias, ensalada criolla y chips de papas.",
         price: "S/ 68.00",
+        prices: [
+          { label: "Medio Cuy", price: "S/ 42.00" },
+          { label: "Cuy Entero", price: "S/ 68.00" },
+        ],
         image:
           "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
       },
@@ -516,6 +526,7 @@ interface DishCardProps {
 function DishCard({ dish, categoryId }: DishCardProps) {
   const { addItem } = useCart();
   const priceNum = parseFloat(dish.price.replace("S/ ", ""));
+  const hasMultiplePrices = dish.prices && dish.prices.length > 0;
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-[#F4C430]">
@@ -545,31 +556,67 @@ function DishCard({ dish, categoryId }: DishCardProps) {
           >
             {dish.name}
           </h3>
-          <span
-            className="font-bold text-sm flex-shrink-0 px-2 py-1 rounded-md"
-            style={{ background: `${R.rojo}15`, color: R.rojo }}
-          >
-            {dish.price}
-          </span>
+          {!hasMultiplePrices && (
+            <span
+              className="font-bold text-sm flex-shrink-0 px-2 py-1 rounded-md"
+              style={{ background: `${R.rojo}15`, color: R.rojo }}
+            >
+              {dish.price}
+            </span>
+          )}
         </div>
         <p className="text-black/60 text-xs flex-1 mb-5 leading-relaxed font-medium">
           {dish.description}
         </p>
-        <button
-          onClick={() =>
-            addItem({
-              id: `${categoryId}-${dish.name}`,
-              name: dish.name,
-              price: priceNum,
-              image: dish.image,
-            })
-          }
-          className="w-full py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg text-sm font-bold tracking-wide"
-          style={{ background: R.amarillo, color: R.morado }}
-        >
-          <Plus size={16} strokeWidth={3} />
-          Agregar
-        </button>
+        {hasMultiplePrices ? (
+          <div className="flex flex-col gap-2">
+            {dish.prices!.map((p) => {
+              const pNum = parseFloat(p.price.replace("S/ ", ""));
+              return (
+                <button
+                  key={p.label}
+                  onClick={() =>
+                    addItem({
+                      id: `${categoryId}-${dish.name}-${p.label}`,
+                      name: `${dish.name} (${p.label})`,
+                      price: pNum,
+                      image: dish.image,
+                    })
+                  }
+                  className="w-full py-3 rounded-xl flex items-center justify-between gap-2 transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg text-sm font-bold tracking-wide px-4"
+                  style={{ background: R.amarillo, color: R.morado }}
+                >
+                  <span className="flex items-center gap-2">
+                    <Plus size={16} strokeWidth={3} />
+                    {p.label}
+                  </span>
+                  <span
+                    className="font-bold text-xs px-2 py-0.5 rounded-md"
+                    style={{ background: `${R.rojo}20`, color: R.rojo }}
+                  >
+                    {p.price}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <button
+            onClick={() =>
+              addItem({
+                id: `${categoryId}-${dish.name}`,
+                name: dish.name,
+                price: priceNum,
+                image: dish.image,
+              })
+            }
+            className="w-full py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg text-sm font-bold tracking-wide"
+            style={{ background: R.amarillo, color: R.morado }}
+          >
+            <Plus size={16} strokeWidth={3} />
+            Agregar
+          </button>
+        )}
       </div>
     </div>
   );
