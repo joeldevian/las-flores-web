@@ -54,9 +54,9 @@ type GenerationStory = {
 
 const generationStories: GenerationStory[] = [
   {
-    generation: "Primera generación",
-    name: "Fundadora",
-    image: "/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp",
+    generation: "Origen",
+    name: "Mamina",
+    image: "/imagenes-reales/FAMILIA-HISTORIA/mamina.webp",
     alt: "Fundadora de Las Flores en la cocina",
     summary:
       "Mamina abrió la primera casa de sabor, donde la hospitalidad, el fuego y la memoria compartida dieron forma a la identidad de Las Flores.",
@@ -64,9 +64,9 @@ const generationStories: GenerationStory[] = [
       "Puso la base de la cocina familiar y consolidó el vínculo entre tradición, hogar y mesa.",
   },
   {
-    generation: "La Consolidación · 1990s",
+    generation: "La Consolidación",
     name: "Gloria",
-    image: "/Gloria.webp",
+    image: "/imagenes-reales/FAMILIA-HISTORIA/gloria.webp",
     alt: "Gloria en la etapa de consolidación del restaurante Las Flores",
     summary:
       "Gloria tomó las riendas y transformó el comedor familiar en un santuario gastronómico, formalizando el negocio y llevando el sabor de Ayacucho a nuevos horizontes sin perder la esencia.",
@@ -75,7 +75,7 @@ const generationStories: GenerationStory[] = [
   {
     generation: "El Legado",
     name: "Mijail",
-    image: "/Captura%20de%20pantalla%202026-07-22%20162318.webp",
+    image: "/imagenes-reales/FAMILIA-HISTORIA/mijail.webp",
     alt: "Mijail junto a la tercera generación de Las Flores",
     summary:
       "Mijail lidera la tercera generación, preservando el fuego original y llevando nuestra tradición culinaria hacia una experiencia contemporánea.",
@@ -86,39 +86,42 @@ const generationStories: GenerationStory[] = [
 
 const chefRecommendations = [
   {
-    name: "Puca Picante Ancestral",
+    name: "Puca Picante",
     price: "S/ 65",
     description:
       "Remolacha fermentada, maní tostado y jugoso chicharrón crocante hecho en leña de molle.",
-    image: "/gastronomia/puca-picante.webp",
-    alt: "Puca Picante Ancestral",
+    image: "/imagenes-reales/RECOMENDACIONES-CHEF/puca.webp",
+    alt: "Puca Picante",
   },
   {
-    name: "Cuy Chactado de la Casa",
+    name: "Cuy las Flores",
     price: "S/ 85",
     description:
       "El orgullo de Las Flores. Confitado con hierbas aromáticas y servido bajo la piedra caliente con papas doradas.",
-    image: "/gastronomia/cuy-chactado.webp",
-    alt: "Cuy Chactado de la Casa",
+    image: "/imagenes-reales/RECOMENDACIONES-CHEF/cuy-chactado.webp",
+    alt: "Cuy las Flores",
   },
   {
-    name: "Chicharrón Tradicional",
+    name: "Chicharrón Huamanguino",
     price: "S/ 70",
     description:
       "Panceta de cerdo dorada lentamente en su propia manteca hasta lograr la crocancia perfecta, con mote y sarsa.",
-    image: "/gastronomia/chicharron.webp",
-    alt: "Chicharrón Tradicional",
+    image: "/imagenes-reales/RECOMENDACIONES-CHEF/chicharon.webp",
+    alt: "Chicharrón Huamanguino",
   },
 ];
 
-function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
+function GenerationFlipCard({ generation, flipped, onFlip }: { generation: GenerationStory; flipped: boolean; onFlip: () => void }) {
   return (
     <article className="group h-full [perspective:1400px]">
       <div
         tabIndex={0}
+        onClick={onFlip}
         className="relative h-[380px] md:h-[420px] w-full overflow-hidden rounded-[2rem] bg-transparent text-left cursor-pointer focus:outline-none"
       >
-        <div className="relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus:[transform:rotateY(180deg)] shadow-xl">
+        <div
+          className={`relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] md:group-hover:[transform:rotateY(180deg)] md:group-focus:[transform:rotateY(180deg)] shadow-xl ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
+        >
           {/* Front Face */}
           <div
             className="absolute inset-0 h-full w-full rounded-[2rem] overflow-hidden bg-ink"
@@ -173,6 +176,8 @@ function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
 }
 
 function GenerationsSection() {
+  const [activeCard, setActiveCard] = useState<string | null>(null);
+
   return (
     <section id="historia" className="bg-cream py-16 md:py-20 px-6">
       <div className="max-w-7xl mx-auto">
@@ -187,7 +192,12 @@ function GenerationsSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8">
           {generationStories.map((generation) => (
-            <GenerationFlipCard key={generation.name} generation={generation} />
+            <GenerationFlipCard
+              key={generation.name}
+              generation={generation}
+              flipped={activeCard === generation.name}
+              onFlip={() => setActiveCard((prev) => prev === generation.name ? null : generation.name)}
+            />
           ))}
         </div>
       </div>
@@ -376,7 +386,7 @@ function RestaurantePage() {
           <div className="flex-1 w-full">
             <div className="relative aspect-4/3 rounded-sm overflow-hidden group">
               <img
-                src={casaImg}
+                src="/imagenes-reales/GALERIA/evento_corporativo.webp"
                 alt="Salón para eventos corporativos"
                 loading="lazy"
                 decoding="async"
