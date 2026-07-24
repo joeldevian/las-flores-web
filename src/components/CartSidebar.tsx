@@ -223,10 +223,11 @@ export function CartSidebar() {
                   }}
                 >
                   <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shadow-sm"
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all"
                     style={{
-                      background: isActive || isPast ? "var(--color-eucalipto)" : "rgba(0,0,0,0.05)",
-                      color: isActive || isPast ? "white" : "rgba(0,0,0,0.3)",
+                      background: isActive ? "rgba(36,63,50,0.1)" : isPast ? "var(--color-eucalipto)" : "rgba(0,0,0,0.05)",
+                      color: isActive ? "var(--color-eucalipto)" : isPast ? "white" : "rgba(0,0,0,0.3)",
+                      border: isActive ? "1.5px solid var(--color-eucalipto)" : "none",
                     }}
                   >
                     {isPast ? "✓" : i + 1}
@@ -276,12 +277,12 @@ export function CartSidebar() {
                     return (
                       <div
                         key={item.id}
-                        className="flex gap-4 bg-white rounded-xl p-3 shadow-sm group hover:shadow-md transition-shadow border-l-4 border-eucalipto"
+                        className="flex gap-4 bg-white rounded-xl p-3.5 shadow-xs border border-black/5 group hover:shadow-sm transition-shadow"
                       >
                         {item.image && (
                           <div className="relative flex items-center justify-center flex-shrink-0 group/retablo mx-1">
                             {/* Panel Izquierdo (Decorativo) */}
-                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-l border-black/10 z-10 rounded-l-md overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center">
+                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-l border-black/10 z-10 rounded-l-md overflow-hidden shadow-xs flex-shrink-0 flex items-center justify-center">
                               <div
                                 className="w-full h-full bg-no-repeat bg-contain bg-center"
                                 style={{ backgroundImage: "url('/flor-retablo.png')" }}
@@ -290,8 +291,8 @@ export function CartSidebar() {
 
                             {/* Imagen Central (Comida) */}
                             <div
-                              className="w-[68px] h-[80px] z-20 shadow-md border-[3px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0 bg-white"
-                              style={{ outline: `2px solid rgba(36,63,50,0.2)` }}
+                              className="w-[68px] h-[80px] z-20 shadow-xs border-[2px] border-white rounded-t-full rounded-b-xl overflow-hidden flex-shrink-0 bg-white"
+                              style={{ outline: `1px solid rgba(36,63,50,0.15)` }}
                             >
                               <img
                                 src={item.image}
@@ -301,7 +302,7 @@ export function CartSidebar() {
                             </div>
 
                             {/* Panel Derecho (Decorativo) */}
-                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-r border-black/10 z-10 rounded-r-md overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center">
+                            <div className="w-[24px] h-[76px] bg-[#f9f8f6] border-y border-r border-black/10 z-10 rounded-r-md overflow-hidden shadow-xs flex-shrink-0 flex items-center justify-center">
                               <div
                                 className="w-full h-full bg-no-repeat bg-contain bg-center scale-x-[-1]"
                                 style={{ backgroundImage: "url('/flor-retablo.png')" }}
@@ -321,7 +322,7 @@ export function CartSidebar() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border border-eucalipto/30 text-eucalipto transition-all hover:bg-eucalipto hover:text-white"
+                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border border-eucalipto/25 text-eucalipto transition-all hover:bg-eucalipto hover:text-white"
                             >
                               <Minus size={11} strokeWidth={3} />
                             </button>
@@ -330,7 +331,7 @@ export function CartSidebar() {
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold bg-eucalipto text-white transition-all hover:bg-eucalipto-dark"
+                              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold border border-eucalipto/25 text-eucalipto transition-all hover:bg-eucalipto hover:text-white"
                             >
                               <Plus size={11} strokeWidth={3} />
                             </button>
@@ -375,16 +376,13 @@ export function CartSidebar() {
                           key={type}
                           type="button"
                           onClick={() => setOrderType(type)}
-                          className="rounded-xl py-4 text-center transition-all border-2 font-serif"
-                          style={{
-                            background: active ? "var(--color-eucalipto)" : "white",
-                            borderColor: active ? "var(--color-eucalipto)" : "rgba(36,63,50,0.2)",
-                            color: active ? "white" : "var(--color-eucalipto)",
-                            transform: active ? "scale(1.02)" : "scale(1)",
-                            boxShadow: active ? "0 6px 20px rgba(36,63,50,0.2)" : "none",
-                          }}
+                          className={`rounded-xl py-4 text-center transition-all border-2 font-serif ${
+                            active
+                              ? "bg-eucalipto/10 border-eucalipto text-eucalipto shadow-sm scale-[1.01]"
+                              : "bg-white border-black/10 text-ink/60 hover:border-black/20 hover:text-ink"
+                          }`}
                         >
-                          <Icon size={20} className="mx-auto mb-2" />
+                          <Icon size={20} className="mx-auto mb-2 opacity-90" />
                           <span className="block font-bold text-sm">{label}</span>
                           <span className="block text-[10px] mt-0.5 opacity-70 font-sans">
                             {sub}
