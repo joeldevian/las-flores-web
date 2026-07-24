@@ -66,17 +66,29 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     };
   }, [open]);
 
-  // Escuchar sesión activa de Supabase (Google Auth)
+  // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const syncSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         setForm((f) => ({
           ...f,
           email: session.user.email || "",
-          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || "Usuario Google",
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            session.user.email ||
+            "Usuario Google",
         }));
+        setStep((s) => (s === 4 ? 5 : s));
+      } else {
+        setForm((f) => ({ ...f, email: "", name: "" }));
       }
-    });
+    };
+
+    syncSession();
 
     const {
       data: { subscription },
@@ -85,13 +97,33 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         setForm((f) => ({
           ...f,
           email: session.user.email || "",
-          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || "Usuario Google",
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            session.user.email ||
+            "Usuario Google",
         }));
         setStep((s) => (s === 4 ? 5 : s));
+      } else {
+        setForm((f) => ({ ...f, email: "", name: "" }));
       }
     });
 
-    return () => subscription.unsubscribe();
+    const handleFocus = () => syncSession();
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "SUPABASE_AUTH_SUCCESS") {
+        syncSession();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("message", handleMessage);
+    };
   }, []);
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>

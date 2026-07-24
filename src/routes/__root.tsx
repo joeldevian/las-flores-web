@@ -136,22 +136,28 @@ function RootComponent() {
       window.location.search.includes("code") ||
       window.location.hash.includes("error"));
 
-  // Auto-cerrar de inmediato la ventana emergente de OAuth
+  // Auto-cerrar la ventana emergente de OAuth después de que Supabase procese la sesión
   useEffect(() => {
     if (isPopupCallback) {
-      try {
-        window.close();
-      } catch (e) {
-        console.log("Window close error:", e);
-      }
-      const timer = setTimeout(() => {
-        try {
-          window.close();
-        } catch (e) {
-          console.log("Window close fallback:", e);
-        }
-      }, 200);
-      return () => clearTimeout(timer);
+      // Permitir a Supabase procesar el token del hash
+      import("../lib/supabase").then(({ supabase }) => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (window.opener) {
+            try {
+              window.opener.postMessage({ type: "SUPABASE_AUTH_SUCCESS", session }, "*");
+            } catch (e) {
+              console.log("PostMessage error:", e);
+            }
+          }
+          setTimeout(() => {
+            try {
+              window.close();
+            } catch (e) {
+              console.log("Window close error:", e);
+            }
+          }, 350);
+        });
+      });
     }
   }, [isPopupCallback]);
 

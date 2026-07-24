@@ -87,17 +87,28 @@ export function CartSidebar() {
     setIsMounted(true);
   }, []);
 
-  // Escuchar sesión activa de Supabase (Google Auth)
+  // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const syncSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         setDelivery((d) => ({
           ...d,
           email: session.user.email || "",
-          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || "Cliente Google",
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            session.user.email ||
+            "Cliente Google",
         }));
+      } else {
+        setDelivery((d) => ({ ...d, email: "", name: "" }));
       }
-    });
+    };
+
+    syncSession();
 
     const {
       data: { subscription },
@@ -106,12 +117,32 @@ export function CartSidebar() {
         setDelivery((d) => ({
           ...d,
           email: session.user.email || "",
-          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || "Cliente Google",
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            session.user.email ||
+            "Cliente Google",
         }));
+      } else {
+        setDelivery((d) => ({ ...d, email: "", name: "" }));
       }
     });
 
-    return () => subscription.unsubscribe();
+    const handleFocus = () => syncSession();
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "SUPABASE_AUTH_SUCCESS") {
+        syncSession();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("message", handleMessage);
+    };
   }, []);
   const [delivery, setDelivery] = useState<DeliveryForm>({
     name: "",
