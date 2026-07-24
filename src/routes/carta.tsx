@@ -39,7 +39,7 @@ function CartaPage() {
         <div className="flex-none">
           <div
             className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white shadow-sm flex items-center justify-center p-1"
-            style={{ borderColor: "#F4C430" }}
+            style={{ borderColor: "var(--color-cream)" }}
           >
             <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
           </div>
@@ -151,8 +151,8 @@ function CartaPage() {
                         image: dish.image,
                       });
                     }}
-                    className="w-full py-3 md:py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-retablo"
-                    style={{ background: "#F4C430", color: "#4B2840" }} // Retablo Yellow and Purple
+                    className="w-full py-3 md:py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-eucalipto/30"
+                    style={{ background: "var(--color-cream)", color: "var(--color-eucalipto)" }} // Refined Luxury Eucalipto and Cream
                   >
                     + Agregar
                   </button>

@@ -518,7 +518,7 @@ function DishCard({ dish, categoryId }: DishCardProps) {
   const priceNum = parseFloat(dish.price.replace("S/ ", ""));
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-[#F4C430]">
+    <div className="bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-cream/50">
       {dish.image ? (
         <div className="h-48 overflow-hidden relative m-2 rounded-t-xl rounded-b-3xl">
           <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />

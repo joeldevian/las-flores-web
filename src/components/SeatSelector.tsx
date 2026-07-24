@@ -38,10 +38,10 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
             <button
               key={z.id}
               onClick={() => setSelectedZone(z.id)}
-              className="w-full p-6 bg-white/80 backdrop-blur-sm border-2 border-transparent hover:border-[#F4C430] rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between group"
+              className="w-full p-6 bg-white/80 backdrop-blur-sm border-2 border-transparent hover:border-cream/50 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between group"
             >
               <span className="font-bold text-lg text-ink">{z.name}</span>
-              <span className="text-sm font-normal opacity-0 group-hover:opacity-100 transition-opacity text-[#3b0944]">
+              <span className="text-sm font-normal opacity-0 group-hover:opacity-100 transition-opacity text-eucalipto">
                 Ver mapa &rarr;
               </span>
             </button>
@@ -61,7 +61,7 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
               setSelectedZone(null);
               setSelectedTable(null);
             }}
-            className="text-sm font-bold mb-4 self-start flex items-center gap-2 hover:text-[#F4C430] transition-colors"
+            className="text-sm font-bold mb-4 self-start flex items-center gap-2 hover:text-cream transition-colors"
           >
             &larr; Volver a zonas
           </button>
@@ -74,13 +74,13 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
             <svg viewBox="0 0 100 100" className="w-full max-w-[280px] drop-shadow-md">
               <rect x="0" y="0" width="100" height="100" fill="#ffffff" rx="8" />
               {/* Decoración del salón */}
-              <rect x="35" y="92" width="30" height="8" fill="#3b0944" opacity="0.1" />
+              <rect x="35" y="92" width="30" height="8" fill="var(--color-eucalipto)" opacity="0.1" />
               <text
                 x="50"
                 y="97"
                 fontSize="4"
                 textAnchor="middle"
-                fill="#3b0944"
+                fill="var(--color-eucalipto)"
                 opacity="0.5"
                 fontWeight="bold"
               >
@@ -106,8 +106,8 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
                     cx={t.x}
                     cy={t.y}
                     r="9"
-                    fill={selectedTable === t.id ? "#F4C430" : t.available ? "#ffffff" : "#f3f4f6"}
-                    stroke={selectedTable === t.id ? "#3b0944" : "#d1d5db"}
+                    fill={selectedTable === t.id ? "var(--color-eucalipto)" : t.available ? "#ffffff" : "#f3f4f6"}
+                    stroke={selectedTable === t.id ? "var(--color-eucalipto-dark)" : "#d1d5db"}
                     strokeWidth={selectedTable === t.id ? "2" : "1"}
                   />
                   <text
@@ -116,7 +116,7 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
                     fontSize="4"
                     textAnchor="middle"
                     fontWeight="bold"
-                    fill="#3b0944"
+                    fill="var(--color-eucalipto)"
                   >
                     {t.id}
                   </text>
@@ -135,7 +135,7 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
               Ocupada
             </span>
             <span className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#F4C430] border-2 border-[#3b0944]"></div> Tu
+              <div className="w-3 h-3 rounded-full bg-cream border-2 border-eucalipto"></div> Tu
               mesa
             </span>
           </div>
@@ -144,7 +144,7 @@ export function SeatSelector({ onSelectTable, onSkip }: SeatSelectorProps) {
             disabled={!selectedTable}
             onClick={() => onSelectTable(`${selectedZone}-${selectedTable}`)}
             className="w-full mt-6 py-4 font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg rounded-xl disabled:opacity-50 disabled:transform-none hover:-translate-y-0.5"
-            style={{ background: "#F4C430", color: "#3b0944" }}
+            style={{ background: "var(--color-cream)", color: "var(--color-eucalipto)" }}
           >
             Confirmar Mesa {selectedTable || ""}
           </button>
