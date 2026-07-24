@@ -115,6 +115,19 @@ export function CartSidebar() {
     }
   };
 
+  // Solicitar ubicación GPS automáticamente al entrar a la etapa de ubicación
+  useEffect(() => {
+    if (
+      step === "delivery" &&
+      orderType === "delivery" &&
+      delivery.email &&
+      deliverySubStep === "location" &&
+      !clientLocation
+    ) {
+      handleUseGPS();
+    }
+  }, [step, orderType, delivery.email, deliverySubStep, clientLocation]);
+
   // Calcular la distancia y el costo
   const distanceKm = clientLocation
     ? calculateDistanceKm(
