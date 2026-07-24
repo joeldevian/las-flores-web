@@ -129,19 +129,42 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isPopupCallback =
+    typeof window !== "undefined" &&
+    window.opener &&
+    (window.location.hash.includes("access_token") ||
+      window.location.search.includes("code") ||
+      window.location.hash.includes("error"));
 
-  // Auto-cerrar ventana emergente de OAuth al completar el login con Google
+  // Auto-cerrar de inmediato la ventana emergente de OAuth
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.opener &&
-      (window.location.hash.includes("access_token") || window.location.search.includes("code"))
-    ) {
-      setTimeout(() => {
+    if (isPopupCallback) {
+      try {
         window.close();
-      }, 400);
+      } catch (e) {
+        console.log("Window close error:", e);
+      }
+      const timer = setTimeout(() => {
+        try {
+          window.close();
+        } catch (e) {
+          console.log("Window close fallback:", e);
+        }
+      }, 200);
+      return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isPopupCallback]);
+
+  // Si es la ventana emergente de OAuth, mostrar únicamente un diseño limpio sin la web de fondo
+  if (isPopupCallback) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-10 h-10 border-3 border-[#2C4A3E] border-t-transparent rounded-full animate-spin mb-4" />
+        <h3 className="font-serif text-lg font-bold text-[#2C4A3E] mb-1">¡Autenticación Exitosa!</h3>
+        <p className="text-xs text-black/50">Cerrando ventana de acceso...</p>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
