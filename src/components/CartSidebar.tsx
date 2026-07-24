@@ -77,6 +77,7 @@ export function CartSidebar() {
     totalItems,
   } = useCart();
   const [step, setStep] = useState<Step>("cart");
+  const [deliverySubStep, setDeliverySubStep] = useState<"location" | "details">("location");
   const [orderType, setOrderType] = useState<OrderType>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<"yape" | "card">("yape");
   const [isMounted, setIsMounted] = useState(false);
@@ -100,6 +101,19 @@ export function CartSidebar() {
   });
   const [processing, setProcessing] = useState(false);
   const [clientLocation, setClientLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const handleUseGPS = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setClientLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        (err) => {
+          console.error("GPS error:", err);
+        }
+      );
+    }
+  };
 
   // Calcular la distancia y el costo
   const distanceKm = clientLocation
@@ -429,15 +443,22 @@ export function CartSidebar() {
 
               {!delivery.email ? (
                 <div className="py-10 text-center px-6 bg-white rounded-xl border border-black/5 shadow-sm">
-                  <p className="text-sm text-black/55 mb-5 leading-relaxed font-medium">
-                    Inicia sesión con Google para continuar tu pedido de forma segura.
+                  <div className="w-12 h-12 rounded-full bg-eucalipto/10 text-eucalipto flex items-center justify-center mx-auto mb-4">
+                    <Lock size={22} />
+                  </div>
+                  <h3 className="font-serif font-bold text-lg text-ink mb-1">
+                    Identifícate para continuar
+                  </h3>
+                  <p className="text-xs text-black/55 mb-6 leading-relaxed">
+                    Inicia sesión con tu cuenta de Google para calcular el envío y personalizar tus notas.
                   </p>
                   <button
                     type="button"
-                    onClick={() =>
-                      setDelivery({ ...delivery, name: "Luis Llocclla", email: "luis@ejemplo.com" })
-                    }
-                    className="w-full flex items-center justify-center gap-3 bg-white border-2 border-black/10 hover:border-black/25 rounded-xl px-4 py-3.5 text-sm font-bold text-black/75 transition-all shadow-sm"
+                    onClick={() => {
+                      setDelivery({ ...delivery, name: "Luis Llocclla", email: "luis@ejemplo.com" });
+                      setDeliverySubStep("location");
+                    }}
+                    className="w-full flex items-center justify-center gap-3 bg-white border-2 border-black/10 hover:border-black/25 rounded-xl px-4 py-3.5 text-sm font-bold text-black/75 transition-all shadow-sm active:scale-[0.99]"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path
@@ -462,58 +483,65 @@ export function CartSidebar() {
                 </div>
               ) : (
                 <div className="space-y-4 animate-in fade-in duration-300">
-                  <div
-                    className="flex items-center gap-2.5 p-3 rounded-xl text-sm font-medium border"
-                    style={{
-                      background: `${R.verde}10`,
-                      borderColor: `${R.verde}30`,
-                      color: R.verde,
-                    }}
-                  >
+                  {/* Banner de Usuario Google */}
+                  <div className="flex items-center gap-2.5 p-3 rounded-xl text-xs font-medium border bg-eucalipto/10 border-eucalipto/20 text-eucalipto">
                     <CheckCircle size={16} />
-                    <span className="flex-1 truncate">{delivery.email}</span>
+                    <span className="flex-1 truncate font-bold">{delivery.name} ({delivery.email})</span>
                     <button
                       type="button"
                       onClick={() => setDelivery({ ...delivery, email: "", name: "" })}
-                      className="text-[10px] uppercase tracking-wider font-bold underline underline-offset-2 opacity-70 hover:opacity-100"
+                      className="text-[10px] uppercase tracking-wider font-bold underline underline-offset-2 opacity-80 hover:opacity-100"
                     >
                       Cambiar
                     </button>
                   </div>
 
-                  <div>
-                    <Label>Nombre completo</Label>
-                    <input
-                      required
-                      value={delivery.name}
-                      readOnly
-                      className={`${inputCls} bg-black/5 cursor-not-allowed text-black/40`}
-                    />
-                  </div>
-                  <div>
-                    <Label>Teléfono / Celular *</Label>
-                    <input
-                      required
-                      value={delivery.phone}
-                      onChange={(e) => setDelivery({ ...delivery, phone: e.target.value })}
-                      placeholder="987 654 321"
-                      className={inputCls}
-                    />
-                  </div>
-                  <div>
-                    <Label>Notas o Comentarios (Opcional)</Label>
-                    <textarea
-                      value={delivery.notes}
-                      onChange={(e) => setDelivery({ ...delivery, notes: e.target.value })}
-                      placeholder="Sin cebolla, o entregar a las 2:00 PM..."
-                      className={`${inputCls} resize-none min-h-[80px]`}
-                    />
-                  </div>
+                  {/* ETAPA A: PINEAR UBICACIÓN (Solo si es Delivery) */}
+                  {orderType === "delivery" && deliverySubStep === "location" && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-300">
+                      <div className="flex items-center justify-between">
+                        <Label>1. Fijar Ubicación en el Mapa *</Label>
+                        <button
+                          type="button"
+                          onClick={handleUseGPS}
+                          className="text-[11px] font-bold text-eucalipto flex items-center gap-1 hover:underline mb-2"
+                        >
+                          <MapPin size={13} /> usar mi GPS
+                        </button>
+                      </div>
 
-                  {orderType === "delivery" && (
-                    <>
+                      {isMounted && (
+                        <Suspense
+                          fallback={
+                            <div className="w-full h-[220px] rounded-xl border border-black/10 bg-black/5 animate-pulse" />
+                          }
+                        >
+                          <LocationSelector
+                            initialLocation={clientLocation}
+                            onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
+                          />
+                        </Suspense>
+                      )}
+
+                      {clientLocation ? (
+                        <div className="p-3 bg-white rounded-xl border border-black/5 text-xs text-ink/80 flex items-center justify-between">
+                          <span>📍 Distancia estimada: <strong>{distanceKm.toFixed(1)} km</strong></span>
+                          <span className="font-bold text-eucalipto">Costo: S/ {DELIVERY_FEE.toFixed(2)}</span>
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-black/50 font-medium">
+                          Mueve el pin rojo o haz clic en el mapa para marcar tu ubicación exacta en Huamanga.
+                        </p>
+                      )}
+
+                      {isTooFar && (
+                        <p className="text-xs text-red-600 font-bold flex items-center gap-1">
+                          <AlertTriangle size={14} /> Fuera de zona de reparto (Máx {DELIVERY_CONFIG.maxRadiusKm} km)
+                        </p>
+                      )}
+
                       <div>
-                        <Label>Dirección *</Label>
+                        <Label>Dirección exacta *</Label>
                         <input
                           required
                           value={delivery.address}
@@ -523,45 +551,57 @@ export function CartSidebar() {
                         />
                       </div>
                       <div>
-                        <Label>Referencia</Label>
+                        <Label>Referencia de entrega</Label>
                         <input
                           value={delivery.reference}
                           onChange={(e) => setDelivery({ ...delivery, reference: e.target.value })}
-                          placeholder="Frente al parque, edificio blanco..."
+                          placeholder="Frente al parque, portón blanco..."
                           className={inputCls}
                         />
                       </div>
-                      <div>
-                        <Label>Ubicación exacta *</Label>
-                        {isMounted && (
-                          <Suspense
-                            fallback={
-                              <div className="w-full h-[250px] rounded-xl border-2 border-black/10 bg-black/5 animate-pulse" />
-                            }
+                    </div>
+                  )}
+
+                  {/* ETAPA B: TELÉFONO Y NOTAS (O cuando es Para Llevar) */}
+                  {(deliverySubStep === "details" || orderType === "pickup") && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-3 duration-300">
+                      {orderType === "delivery" && clientLocation && (
+                        <div className="p-3 bg-white rounded-xl border border-black/10 flex items-center justify-between text-xs">
+                          <div className="min-w-0 pr-2">
+                            <span className="block font-bold text-ink truncate">📍 {delivery.address || "Ubicación fijada"}</span>
+                            <span className="block text-[10px] text-black/50">A {distanceKm.toFixed(1)} km del restaurante</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setDeliverySubStep("location")}
+                            className="text-[11px] font-bold text-eucalipto hover:underline flex-shrink-0"
                           >
-                            <LocationSelector
-                              initialLocation={clientLocation}
-                              onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
-                            />
-                          </Suspense>
-                        )}
-                        {clientLocation ? (
-                          <p className="text-[10px] text-black/40 mt-1.5 font-medium">
-                            Distancia al restaurante: {distanceKm.toFixed(1)} km
-                          </p>
-                        ) : (
-                          <p className="text-[10px] text-black/40 mt-1.5 font-medium">
-                            Mueve el pin rojo o haz clic en el mapa para marcar tu ubicación exacta.
-                          </p>
-                        )}
-                        {isTooFar && (
-                          <p className="text-xs text-red-600 font-bold mt-1.5 flex items-center gap-1">
-                            <AlertTriangle size={14} /> Fuera de zona de reparto (Máx{" "}
-                            {DELIVERY_CONFIG.maxRadiusKm} km)
-                          </p>
-                        )}
+                            Modificar mapa
+                          </button>
+                        </div>
+                      )}
+
+                      <div>
+                        <Label>Teléfono / Celular *</Label>
+                        <input
+                          required
+                          value={delivery.phone}
+                          onChange={(e) => setDelivery({ ...delivery, phone: e.target.value })}
+                          placeholder="987 654 321"
+                          className={inputCls}
+                        />
                       </div>
-                    </>
+
+                      <div>
+                        <Label>Notas o Comentarios del pedido (Opcional)</Label>
+                        <textarea
+                          value={delivery.notes}
+                          onChange={(e) => setDelivery({ ...delivery, notes: e.target.value })}
+                          placeholder="Sin cebolla, aliño aparte, o entregar a las 2:00 PM..."
+                          className={`${inputCls} resize-none min-h-[90px]`}
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
               )}
@@ -819,21 +859,40 @@ export function CartSidebar() {
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => setStep("cart")}
+                onClick={() => {
+                  if (deliverySubStep === "details" && orderType === "delivery") {
+                    setDeliverySubStep("location");
+                  } else {
+                    setStep("cart");
+                  }
+                }}
                 className="flex-none w-12 h-[52px] rounded-xl flex items-center justify-center border-2 transition-colors hover:bg-black/5"
                 style={{ borderColor: "var(--color-eucalipto)", color: "var(--color-eucalipto)" }}
               >
                 <ArrowLeft size={20} />
               </button>
-              <button
-                type="submit"
-                form="delivery-form"
-                disabled={orderType === "delivery" && (!clientLocation || isTooFar)}
-                className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
-                style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
-              >
-                Ir al pago
-              </button>
+
+              {orderType === "delivery" && deliverySubStep === "location" ? (
+                <button
+                  type="button"
+                  onClick={() => setDeliverySubStep("details")}
+                  disabled={!delivery.email || !clientLocation || isTooFar || !delivery.address}
+                  className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+                  style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
+                >
+                  Continuar a datos &rarr;
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  form="delivery-form"
+                  disabled={!delivery.email || (orderType === "delivery" && (!clientLocation || isTooFar)) || !delivery.phone}
+                  className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+                  style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
+                >
+                  Ir al pago
+                </button>
+              )}
             </div>
           )}
 
