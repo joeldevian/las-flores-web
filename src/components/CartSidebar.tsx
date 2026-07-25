@@ -291,15 +291,14 @@ export function CartSidebar() {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[110] flex">
-      <div className="flex-1 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300">
+      {/* Fondo oscuro con blur */}
+      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm" onClick={handleClose} />
 
+      {/* Modal flotante central */}
       <div
-        className="w-full max-w-md flex flex-col h-full shadow-2xl overflow-hidden"
-        style={{ background: R.crema }}
+        className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200"
       >
         {/* ══ CABECERA — Elegante y Fina ══ */}
         <div className="relative flex-shrink-0 bg-cream/95 backdrop-blur-md border-b border-black/5 shadow-sm">
