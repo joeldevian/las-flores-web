@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Plus,
@@ -85,9 +86,21 @@ export function CartSidebar() {
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  // Ref para medir si ya estamos completamente en el cliente (evita problemas de hidratación SSR)
+  const portalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Crear un nodo portal dedicado directamente en body para evitar
+    // problemas de stacking context y pointer-events heredados del árbol del root
+    const el = document.createElement("div");
+    el.setAttribute("id", "cart-sidebar-portal");
+    document.body.appendChild(el);
+    portalRef.current = el;
     setIsMounted(true);
+    return () => {
+      document.body.removeChild(el);
+      portalRef.current = null;
+    };
   }, []);
 
   // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
@@ -317,9 +330,9 @@ export function CartSidebar() {
     }
   };
 
-  if (!isOpen) return null;
+  if (!isMounted || !portalRef.current || !isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300">
       {/* Fondo oscuro con blur */}
       <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm cursor-pointer" onClick={handleClose} />
@@ -1137,6 +1150,7 @@ export function CartSidebar() {
         onClose={() => setIsHistoryOpen(false)}
         user={activeUser}
       />
-    </div>
+    </div>,
+    portalRef.current
   );
 }
