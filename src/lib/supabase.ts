@@ -97,11 +97,16 @@ export interface OrderPayload {
  * Iniciar sesión con Google OAuth mediante ventana emergente Popup (sin perder el carrito ni la página actual)
  */
 export async function signInWithGoogle() {
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://las-flores-web-oo79.vercel.app";
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
       skipBrowserRedirect: true,
-      redirectTo: window.location.origin,
+      redirectTo: `${currentOrigin}/`,
     },
   });
 
