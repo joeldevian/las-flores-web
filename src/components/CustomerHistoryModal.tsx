@@ -31,10 +31,10 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (open && user) {
+    if (open && user?.id) {
       loadHistory();
     }
-  }, [open, user]);
+  }, [open, user?.id]);
 
   const loadHistory = async () => {
     if (!user) return;

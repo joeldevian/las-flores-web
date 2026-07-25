@@ -78,7 +78,9 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      setActiveUser(session?.user || null);
+      const newUser = session?.user || null;
+
+      setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
       if (session?.user) {
         setForm((f) => ({
           ...f,
@@ -100,7 +102,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setActiveUser(session?.user || null);
+      const newUser = session?.user || null;
+      setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
       if (session?.user) {
         setForm((f) => ({
           ...f,
@@ -135,12 +138,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     window.addEventListener("supabase_auth_changed", handleCustomAuth);
     window.addEventListener("storage", handleStorage);
 
-    // Auto-poll cada 1s cuando el modal está abierto para garantizar la actualización
-    const interval = setInterval(syncSession, 1000);
-
     return () => {
       subscription.unsubscribe();
-      clearInterval(interval);
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("message", handleMessage);
       window.removeEventListener("supabase_auth_changed", handleCustomAuth);
