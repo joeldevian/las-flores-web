@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface CartItem {
   id: string;
@@ -23,15 +23,20 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Cargar carrito desde localStorage únicamente después de montar en el cliente (evita error 418 de hidratación)
+  useEffect(() => {
     try {
       const saved = localStorage.getItem("las_flores_cart");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
+      if (saved) {
+        setItems(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error("Error al cargar carrito desde localStorage:", e);
     }
-  });
-  const [isOpen, setIsOpen] = useState(false);
+  }, []);
 
   // Guardar en localStorage cada vez que cambien los ítems
   const saveItems = (newItems: CartItem[]) => {
