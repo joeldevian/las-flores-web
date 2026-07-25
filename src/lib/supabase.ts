@@ -135,6 +135,44 @@ export async function signInWithGoogle() {
   return data;
 }
 
+export interface ProfileUpdatePayload {
+  full_name?: string;
+  phone?: string;
+  birth_date?: string;
+}
+
+/**
+ * Actualizar información de perfil del usuario en Supabase Auth y la tabla profiles
+ */
+export async function updateUserProfile(payload: ProfileUpdatePayload) {
+  const { data, error } = await supabase.auth.updateUser({
+    data: {
+      full_name: payload.full_name,
+      phone: payload.phone,
+      birth_date: payload.birth_date,
+    },
+  });
+
+  if (error) throw error;
+
+  // Sincronizar de forma opcional con la tabla 'profiles' en Supabase si existe
+  if (data?.user?.id) {
+    try {
+      await supabase.from("profiles").upsert({
+        id: data.user.id,
+        email: data.user.email,
+        full_name: payload.full_name,
+        phone: payload.phone,
+        updated_at: new Date().toISOString(),
+      });
+    } catch {
+      // Ignorar si la tabla profiles no tiene permisos o RLS está activo
+    }
+  }
+
+  return data;
+}
+
 /**
  * Cerrar sesión
  */

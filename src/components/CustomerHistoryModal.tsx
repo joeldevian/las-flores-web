@@ -9,12 +9,17 @@ import {
   UtensilsCrossed,
   RefreshCw,
   LogOut,
+  User as UserIcon,
+  Phone,
+  Check,
+  Edit3,
 } from "lucide-react";
 import {
   supabase,
   signOut,
   getUserOrders,
   getUserReservations,
+  updateUserProfile,
 } from "../lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -25,11 +30,30 @@ interface CustomerHistoryModalProps {
 }
 
 export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryModalProps) {
-  const [activeTab, setActiveTab] = useState<"orders" | "reservations">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "reservations" | "profile">("orders");
   const [orders, setOrders] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const loadedUserIdRef = useRef<string | null>(null);
+
+  // Estado para edición de perfil
+  const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileBirthDate, setProfileBirthDate] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setProfileName(
+        user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          ""
+      );
+      setProfilePhone(user.user_metadata?.phone || user.phone || "");
+      setProfileBirthDate(user.user_metadata?.birth_date || "");
+    }
+  }, [user]);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,6 +100,40 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
       onClose();
     } catch (e) {
       console.error("Error al cerrar sesión:", e);
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingProfile(true);
+    setProfileMessage(null);
+
+    try {
+      const updated = await updateUserProfile({
+        full_name: profileName.trim(),
+        phone: profilePhone.trim(),
+        birth_date: profileBirthDate,
+      });
+
+      setProfileMessage({
+        type: "success",
+        text: "¡Perfil actualizado con éxito!",
+      });
+
+      // Disparar evento global para sincronizar el nombre en toda la aplicación
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("supabase_auth_changed", { detail: updated?.user })
+        );
+      }
+    } catch (err: any) {
+      console.error("Error al actualizar perfil:", err);
+      setProfileMessage({
+        type: "error",
+        text: err?.message || "No se pudo actualizar el perfil. Inténtalo de nuevo.",
+      });
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -130,32 +188,45 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           </button>
         </div>
 
-        {/* Pestañas de Historial */}
-        <div className="flex border-b border-black/5 bg-white/50 px-4 pt-3 gap-2">
+        {/* Pestañas de Historial y Perfil */}
+        <div className="flex border-b border-black/5 bg-white/50 px-3 pt-3 gap-1.5 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab("orders")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
               activeTab === "orders"
                 ? "border-eucalipto text-eucalipto bg-white shadow-xs"
                 : "border-transparent text-black/50 hover:text-black/80"
             }`}
           >
-            <ShoppingBag size={15} />
-            <span>Mis Pedidos ({orders.length})</span>
+            <ShoppingBag size={14} />
+            <span>Pedidos ({orders.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("reservations")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
               activeTab === "reservations"
                 ? "border-eucalipto text-eucalipto bg-white shadow-xs"
                 : "border-transparent text-black/50 hover:text-black/80"
             }`}
           >
-            <Calendar size={15} />
-            <span>Mis Reservas ({reservations.length})</span>
+            <Calendar size={14} />
+            <span>Reservas ({reservations.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("profile")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
+              activeTab === "profile"
+                ? "border-eucalipto text-eucalipto bg-white shadow-xs"
+                : "border-transparent text-black/50 hover:text-black/80"
+            }`}
+          >
+            <UserIcon size={14} />
+            <span>Mi Perfil</span>
           </button>
         </div>
 
@@ -233,60 +304,173 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
                 </div>
               ))
             )
-          ) : /* --- TABLA / LISTA DE RESERVAS --- */
-          reservations.length === 0 ? (
-            <div className="py-16 text-center px-6 bg-white/70 rounded-2xl border border-black/5">
-              <Calendar size={32} className="text-black/30 mx-auto mb-3" />
-              <h4 className="font-serif font-bold text-base text-ink mb-1">
-                No tienes reservas agendadas
-              </h4>
-              <p className="text-xs text-black/50 leading-relaxed">
-                Reserva tu mesa con anticipación para disfrutar de nuestra experiencia culinaria.
-              </p>
-            </div>
+          ) : activeTab === "reservations" ? (
+            /* --- TABLA / LISTA DE RESERVAS --- */
+            reservations.length === 0 ? (
+              <div className="py-16 text-center px-6 bg-white/70 rounded-2xl border border-black/5">
+                <Calendar size={32} className="text-black/30 mx-auto mb-3" />
+                <h4 className="font-serif font-bold text-base text-ink mb-1">
+                  No tienes reservas agendadas
+                </h4>
+                <p className="text-xs text-black/50 leading-relaxed">
+                  Reserva tu mesa con anticipación para disfrutar de nuestra experiencia culinaria.
+                </p>
+              </div>
+            ) : (
+              reservations.map((res) => (
+                <div
+                  key={res.id}
+                  className="bg-white rounded-2xl p-4 border border-black/5 shadow-xs space-y-3 hover:border-eucalipto/30 transition-all"
+                >
+                  <div className="flex items-center justify-between border-b border-black/5 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-eucalipto/10 text-eucalipto flex items-center justify-center font-bold text-xs">
+                        <Users size={14} />
+                      </div>
+                      <div>
+                        <span className="font-serif font-bold text-sm text-ink block">
+                          {res.guest_count} {res.guest_count === 1 ? "Comensal" : "Comensales"}
+                        </span>
+                        <span className="text-[10px] text-black/45 capitalize block">
+                          {res.service_type}
+                        </span>
+                      </div>
+                    </div>
+
+                    <ReservationStatusBadge status={res.status} />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-black/75">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar size={13} className="text-eucalipto/70" />
+                      <span>{res.reservation_date}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={13} className="text-eucalipto/70" />
+                      <span>{res.reservation_time}</span>
+                    </div>
+                  </div>
+
+                  {res.table_number && (
+                    <div className="p-2 bg-eucalipto/5 rounded-xl border border-eucalipto/10 text-xs font-bold text-eucalipto flex items-center gap-1.5">
+                      <MapPin size={13} />
+                      <span>Mesa asignada: {res.table_number}</span>
+                    </div>
+                  )}
+                </div>
+              ))
+            )
           ) : (
-            reservations.map((res) => (
-              <div
-                key={res.id}
-                className="bg-white rounded-2xl p-4 border border-black/5 shadow-xs space-y-3 hover:border-eucalipto/30 transition-all"
-              >
-                <div className="flex items-center justify-between border-b border-black/5 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-eucalipto/10 text-eucalipto flex items-center justify-center font-bold text-xs">
-                      <Users size={14} />
-                    </div>
-                    <div>
-                      <span className="font-serif font-bold text-sm text-ink block">
-                        {res.guest_count} {res.guest_count === 1 ? "Comensal" : "Comensales"}
-                      </span>
-                      <span className="text-[10px] text-black/45 capitalize block">
-                        {res.service_type}
-                      </span>
-                    </div>
-                  </div>
-
-                  <ReservationStatusBadge status={res.status} />
+            /* --- FORMULARIO EDITAR PERFIL DE USUARIO --- */
+            <form onSubmit={handleSaveProfile} className="space-y-4 py-1">
+              <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-black/5 pb-3">
+                  <h4 className="font-serif font-bold text-base text-ink flex items-center gap-2">
+                    <UserIcon size={18} className="text-eucalipto" />
+                    <span>Datos del Cliente</span>
+                  </h4>
+                  <span className="text-[10px] text-eucalipto font-bold bg-eucalipto/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Información Oficial
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs text-black/75">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar size={13} className="text-eucalipto/70" />
-                    <span>{res.reservation_date}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={13} className="text-eucalipto/70" />
-                    <span>{res.reservation_time}</span>
-                  </div>
-                </div>
+                <p className="text-xs text-black/60 leading-relaxed">
+                  Completa tu información para agilizar tus pedidos y reservas. Usamos estos datos únicamente para atención al cliente y sorpresas especiales.
+                </p>
 
-                {res.table_number && (
-                  <div className="p-2 bg-eucalipto/5 rounded-xl border border-eucalipto/10 text-xs font-bold text-eucalipto flex items-center gap-1.5">
-                    <MapPin size={13} />
-                    <span>Mesa asignada: {res.table_number}</span>
+                {profileMessage && (
+                  <div
+                    className={`p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
+                      profileMessage.type === "success"
+                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                        : "bg-red-50 text-red-800 border border-red-200"
+                    }`}
+                  >
+                    {profileMessage.type === "success" && <Check size={16} />}
+                    <span>{profileMessage.text}</span>
                   </div>
                 )}
+
+                {/* Nombre Completo */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
+                    Nombre Completo
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                    placeholder="Ej: Luis Llocclla"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink"
+                  />
+                </div>
+
+                {/* Teléfono / WhatsApp */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
+                    Teléfono / WhatsApp de Contacto
+                  </label>
+                  <input
+                    type="tel"
+                    value={profilePhone}
+                    onChange={(e) => setProfilePhone(e.target.value)}
+                    placeholder="Ej: 987654321"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink"
+                  />
+                  <span className="text-[10px] text-black/45 mt-1 block">
+                    Para enviarte confirmaciones de reserva o actualizaciones de delivery.
+                  </span>
+                </div>
+
+                {/* Fecha de Nacimiento */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
+                    Fecha de Nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    value={profileBirthDate}
+                    onChange={(e) => setProfileBirthDate(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink"
+                  />
+                  <span className="text-[10px] text-eucalipto font-medium mt-1 block">
+                    🎂 ¡Te prepararemos una cortesía especial en el día de tu cumpleaños!
+                  </span>
+                </div>
+
+                {/* Correo Electrónico (No editable) */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-black/45 mb-1">
+                    Correo Electrónico (Asociado a tu cuenta)
+                  </label>
+                  <input
+                    type="email"
+                    disabled
+                    value={user.email || ""}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 text-xs bg-black/5 text-black/50 cursor-not-allowed font-medium"
+                  />
+                </div>
               </div>
-            ))
+
+              <button
+                type="submit"
+                disabled={savingProfile}
+                className="w-full py-3 bg-eucalipto text-cream rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:bg-eucalipto/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {savingProfile ? (
+                  <>
+                    <RefreshCw size={15} className="animate-spin" />
+                    <span>Guardando cambios...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check size={15} />
+                    <span>Guardar Cambios de Perfil</span>
+                  </>
+                )}
+              </button>
+            </form>
           )}
         </div>
 

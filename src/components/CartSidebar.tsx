@@ -114,6 +114,7 @@ export function CartSidebar() {
               session.user.user_metadata?.name ||
               session.user.email ||
               "Cliente Google",
+            phone: d.phone || session.user.user_metadata?.phone || session.user.phone || "",
           }));
         }
       } catch (e) {
@@ -139,6 +140,7 @@ export function CartSidebar() {
             session.user.user_metadata?.name ||
             session.user.email ||
             "Cliente Google",
+          phone: d.phone || session.user.user_metadata?.phone || session.user.phone || "",
         }));
       }
     });
