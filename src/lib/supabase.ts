@@ -163,6 +163,7 @@ export async function updateUserProfile(payload: ProfileUpdatePayload) {
         email: data.user.email,
         full_name: payload.full_name,
         phone: payload.phone,
+        birth_date: payload.birth_date,
         updated_at: new Date().toISOString(),
       });
     } catch {

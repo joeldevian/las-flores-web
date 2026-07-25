@@ -88,7 +88,17 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         if (isCancelled) return;
 
         const newUser = session?.user || null;
-        setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
+        setActiveUser((prev) => {
+          if (!prev && !newUser) return null;
+          if (!prev || !newUser) return newUser;
+          if (
+            prev.id !== newUser.id ||
+            JSON.stringify(prev.user_metadata) !== JSON.stringify(newUser.user_metadata)
+          ) {
+            return newUser;
+          }
+          return prev;
+        });
 
         if (session?.user) {
           // Solo actualizar form si el usuario no ha editado manualmente
@@ -117,7 +127,18 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (isCancelled) return;
       const newUser = session?.user || null;
-      setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
+      setActiveUser((prev) => {
+        if (!prev && !newUser) return null;
+        if (!prev || !newUser) return newUser;
+        if (
+          prev.id !== newUser.id ||
+          JSON.stringify(prev.user_metadata) !== JSON.stringify(newUser.user_metadata)
+        ) {
+          return newUser;
+        }
+        return prev;
+      });
+
       if (session?.user && !userFormEditedRef.current) {
         setForm((f) => ({
           ...f,
@@ -137,7 +158,13 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         syncSession();
       }
     };
-    const handleCustomAuth = () => syncSession();
+    const handleCustomAuth = (e: Event) => {
+      const customUser = (e as CustomEvent).detail;
+      if (customUser) {
+        setActiveUser(customUser);
+      }
+      syncSession();
+    };
     const handleStorage = (e: StorageEvent) => {
       if (e.key?.includes("supabase")) {
         syncSession();
