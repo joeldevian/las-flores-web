@@ -14,7 +14,12 @@ export function SiteFooter() {
       // Revisa si ya hay sesión
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        window.location.href = "/restaurante";
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+        if (profile?.role === 'admin') {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/restaurante";
+        }
         setSigningIn(false);
         return;
       }
@@ -24,7 +29,12 @@ export function SiteFooter() {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
         if (newSession) {
           subscription.unsubscribe();
-          window.location.href = "/restaurante";
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', newSession.user.id).single();
+          if (profile?.role === 'admin') {
+            window.location.href = "/admin";
+          } else {
+            window.location.href = "/restaurante";
+          }
           setSigningIn(false);
         }
       });
