@@ -300,47 +300,39 @@ export function CartSidebar() {
       <div
         className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200"
       >
-        {/* ══ CABECERA — Elegante y Fina ══ */}
-        <div className="relative flex-shrink-0 bg-cream/95 backdrop-blur-md border-b border-black/5 shadow-sm">
-          <div className="flex items-center py-4 px-5 relative h-16">
-            {/* Logo a la izquierda */}
-            <div className="absolute left-5 flex items-center">
-              <img
-                src="/favicon.png"
-                alt="Las Flores"
-                className="w-[38px] h-[38px] rounded-full object-cover border shadow-sm bg-white p-0.5 border-eucalipto/20"
-              />
+        {/* ══ CABECERA — Elegante, Fina y Consistente ══ */}
+        <div className="relative flex-shrink-0 bg-white border-b border-black/5 p-4 md:p-5 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-3">
+            <img
+              src="/favicon.png"
+              alt="Las Flores"
+              className="w-9 h-9 rounded-full object-cover border shadow-xs bg-white p-0.5 border-eucalipto/20"
+            />
+            <span className="font-serif text-lg font-bold tracking-wide text-eucalipto">
+              {step === "cart" && "Tu Pedido"}
+              {step === "delivery" && "Datos de Entrega"}
+              {step === "payment" && "Método de Pago"}
+              {step === "success" && "Pedido Confirmado"}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative hidden sm:block">
+              <ShoppingBag size={20} className="text-eucalipto" strokeWidth={2} />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-2 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs bg-[#8B261D] text-white">
+                  {totalItems}
+                </span>
+              )}
             </div>
 
-            {/* Título centrado */}
-            <div className="flex-1 text-center">
-              <span className="font-serif text-[1.15rem] font-bold tracking-wide text-eucalipto">
-                {step === "cart" && "Tu Pedido"}
-                {step === "delivery" && "Datos de Entrega"}
-                {step === "payment" && "Método de Pago"}
-                {step === "success" && "Pedido Confirmado"}
-              </span>
-            </div>
-
-            {/* Carrito e ícono de cerrar a la derecha */}
-            <div className="absolute right-5 flex items-center gap-4">
-              <div className="relative hidden sm:block">
-                <ShoppingBag size={20} className="text-eucalipto" strokeWidth={2} />
-                {totalItems > 0 && (
-                  <span
-                    className="absolute -top-1 -right-2 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm bg-[#8B261D] text-white"
-                  >
-                    {totalItems}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={handleClose}
-                className="text-ink/50 hover:text-ink transition-colors p-1 rounded-full hover:bg-black/5"
-              >
-                <X size={22} />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all cursor-pointer z-20"
+            >
+              <X size={18} />
+            </button>
           </div>
         </div>
 
