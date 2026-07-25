@@ -29,6 +29,32 @@ interface CustomerHistoryModalProps {
   user: User | null;
 }
 
+const MONTHS = [
+  { value: "01", label: "Enero" },
+  { value: "02", label: "Febrero" },
+  { value: "03", label: "Marzo" },
+  { value: "04", label: "Abril" },
+  { value: "05", label: "Mayo" },
+  { value: "06", label: "Junio" },
+  { value: "07", label: "Julio" },
+  { value: "08", label: "Agosto" },
+  { value: "09", label: "Setiembre" },
+  { value: "10", label: "Octubre" },
+  { value: "11", label: "Noviembre" },
+  { value: "12", label: "Diciembre" },
+];
+
+const DAYS = Array.from({ length: 31 }, (_, i) => {
+  const d = i + 1;
+  return { value: d < 10 ? `0${d}` : `${d}`, label: `${d}` };
+});
+
+const currentYear = new Date().getFullYear();
+const YEARS = Array.from({ length: 80 }, (_, i) => {
+  const y = currentYear - 6 - i;
+  return { value: `${y}`, label: `${y}` };
+});
+
 export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryModalProps) {
   const [activeTab, setActiveTab] = useState<"orders" | "reservations" | "profile">("orders");
   const [orders, setOrders] = useState<any[]>([]);
@@ -40,6 +66,9 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const [profileName, setProfileName] = useState("");
   const [profilePhone, setProfilePhone] = useState("");
   const [profileBirthDate, setProfileBirthDate] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthYear, setBirthYear] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -51,9 +80,29 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           ""
       );
       setProfilePhone(user.user_metadata?.phone || user.phone || "");
-      setProfileBirthDate(user.user_metadata?.birth_date || "");
+      const rawDate = user.user_metadata?.birth_date || "";
+      setProfileBirthDate(rawDate);
+      if (rawDate) {
+        const parts = rawDate.split("-");
+        if (parts.length === 3) {
+          setBirthYear(parts[0]);
+          setBirthMonth(parts[1]);
+          setBirthDay(parts[2]);
+        }
+      }
     }
   }, [user]);
+
+  const handleDateChange = (d: string, m: string, y: string) => {
+    setBirthDay(d);
+    setBirthMonth(m);
+    setBirthYear(y);
+    if (d && m && y) {
+      setProfileBirthDate(`${y}-${m}-${d}`);
+    } else {
+      setProfileBirthDate("");
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -423,18 +472,55 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
                   </span>
                 </div>
 
-                {/* Fecha de Nacimiento */}
+                {/* Fecha de Nacimiento con 3 Dropdowns ultra fáciles */}
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
                     Fecha de Nacimiento
                   </label>
-                  <input
-                    type="date"
-                    value={profileBirthDate}
-                    onChange={(e) => setProfileBirthDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink"
-                  />
-                  <span className="text-[10px] text-eucalipto font-medium mt-1 block">
+                  <div className="grid grid-cols-3 gap-2">
+                    {/* Día */}
+                    <select
+                      value={birthDay}
+                      onChange={(e) => handleDateChange(e.target.value, birthMonth, birthYear)}
+                      className="w-full px-2.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink cursor-pointer"
+                    >
+                      <option value="">Día</option>
+                      {DAYS.map((d) => (
+                        <option key={d.value} value={d.value}>
+                          {d.label}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Mes */}
+                    <select
+                      value={birthMonth}
+                      onChange={(e) => handleDateChange(birthDay, e.target.value, birthYear)}
+                      className="w-full px-2.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink cursor-pointer"
+                    >
+                      <option value="">Mes</option>
+                      {MONTHS.map((m) => (
+                        <option key={m.value} value={m.value}>
+                          {m.label}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Año */}
+                    <select
+                      value={birthYear}
+                      onChange={(e) => handleDateChange(birthDay, birthMonth, e.target.value)}
+                      className="w-full px-2.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-ink cursor-pointer"
+                    >
+                      <option value="">Año</option>
+                      {YEARS.map((y) => (
+                        <option key={y.value} value={y.value}>
+                          {y.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <span className="text-[10px] text-eucalipto font-medium mt-1.5 block">
                     🎂 ¡Te prepararemos una cortesía especial en el día de tu cumpleaños!
                   </span>
                 </div>
