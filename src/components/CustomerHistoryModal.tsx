@@ -66,6 +66,9 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const [profileName, setProfileName] = useState("");
   const [profilePhone, setProfilePhone] = useState("");
   const [profileBirthDate, setProfileBirthDate] = useState("");
+  const [initialName, setInitialName] = useState("");
+  const [initialPhone, setInitialPhone] = useState("");
+  const [initialBirthDate, setInitialBirthDate] = useState("");
   const [birthDay, setBirthDay] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
   const [birthYear, setBirthYear] = useState("");
@@ -74,16 +77,23 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
 
   useEffect(() => {
     if (user) {
-      setProfileName(
-        user.user_metadata?.full_name ||
-          user.user_metadata?.name ||
-          ""
-      );
-      setProfilePhone(user.user_metadata?.phone || user.phone || "");
-      const rawDate = user.user_metadata?.birth_date || "";
-      setProfileBirthDate(rawDate);
-      if (rawDate) {
-        const parts = rawDate.split("-");
+      const nameVal = user.user_metadata?.full_name || user.user_metadata?.name || "";
+      const phoneVal = user.user_metadata?.phone !== undefined && user.user_metadata?.phone !== null
+        ? String(user.user_metadata.phone)
+        : String(user.phone || "");
+      const dateVal = user.user_metadata?.birth_date || "";
+
+      setProfileName(nameVal);
+      setInitialName(nameVal);
+
+      setProfilePhone(phoneVal);
+      setInitialPhone(phoneVal);
+
+      setProfileBirthDate(dateVal);
+      setInitialBirthDate(dateVal);
+
+      if (dateVal) {
+        const parts = dateVal.split("-");
         if (parts.length === 3) {
           setBirthYear(parts[0]);
           setBirthMonth(parts[1]);
@@ -92,6 +102,12 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
       }
     }
   }, [user]);
+
+  const hasChanges =
+    activeTab === "profile" &&
+    (profileName.trim() !== initialName.trim() ||
+      profilePhone.trim() !== initialPhone.trim() ||
+      profileBirthDate !== initialBirthDate);
 
   const handleDateChange = (d: string, m: string, y: string) => {
     setBirthDay(d);
@@ -152,24 +168,33 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
     }
   };
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveProfile = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setSavingProfile(true);
     setProfileMessage(null);
 
+    const nameToSave = profileName.trim();
+    const phoneToSave = profilePhone.trim();
+    const dateToSave = profileBirthDate;
+
     try {
       const updated = await updateUserProfile({
-        full_name: profileName.trim(),
-        phone: profilePhone.trim(),
-        birth_date: profileBirthDate,
+        full_name: nameToSave,
+        phone: phoneToSave,
+        birth_date: dateToSave,
       });
+
+      // Actualizar valores iniciales para desactivar el modo edición y volver a 'Aceptar'
+      setInitialName(nameToSave);
+      setInitialPhone(phoneToSave);
+      setInitialBirthDate(dateToSave);
 
       setProfileMessage({
         type: "success",
         text: "¡Perfil actualizado con éxito!",
       });
 
-      // Disparar evento global para sincronizar el nombre en toda la aplicación
+      // Disparar evento global para sincronizar en toda la aplicación
       if (typeof window !== "undefined") {
         window.dispatchEvent(
           new CustomEvent("supabase_auth_changed", { detail: updated?.user })
@@ -538,29 +563,11 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
                   />
                 </div>
               </div>
-
-              <button
-                type="submit"
-                disabled={savingProfile}
-                className="w-full py-3 bg-eucalipto text-cream rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:bg-eucalipto/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {savingProfile ? (
-                  <>
-                    <RefreshCw size={15} className="animate-spin" />
-                    <span>Guardando cambios...</span>
-                  </>
-                ) : (
-                  <>
-                    <Check size={15} />
-                    <span>Guardar Cambios de Perfil</span>
-                  </>
-                )}
-              </button>
             </form>
           )}
         </div>
 
-        {/* Footer con opción de cerrar sesión */}
+        {/* Footer con opción de cerrar sesión y acción (Aceptar / Guardar Cambios) */}
         <div className="p-4 bg-white border-t border-black/5 flex items-center justify-between">
           <button
             type="button"
@@ -571,13 +578,34 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
             <span>Cerrar sesión</span>
           </button>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs"
-          >
-            Aceptar
-          </button>
+          {hasChanges ? (
+            <button
+              type="button"
+              onClick={() => handleSaveProfile()}
+              disabled={savingProfile}
+              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50"
+            >
+              {savingProfile ? (
+                <>
+                  <RefreshCw size={14} className="animate-spin" />
+                  <span>Guardando...</span>
+                </>
+              ) : (
+                <>
+                  <Check size={14} />
+                  <span>Guardar Cambios</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onClose}
+              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs"
+            >
+              Aceptar
+            </button>
+          )}
         </div>
       </div>
     </div>
