@@ -288,11 +288,7 @@ export function CartSidebar() {
     }
   };
 
-  const handleClose = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  const handleClose = () => {
     setIsOpen(false);
     if (step === "success") {
       clearCart();
@@ -307,14 +303,14 @@ export function CartSidebar() {
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300">
       {/* Fondo oscuro con blur */}
-      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm cursor-pointer z-0" onClick={handleClose} />
+      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm cursor-pointer" onClick={handleClose} />
 
       {/* Modal flotante central */}
       <div
         className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200"
       >
         {/* ══ CABECERA — Elegante, Fina y Consistente ══ */}
-        <div className="relative flex-shrink-0 bg-white border-b border-black/5 p-4 md:p-5 flex items-center justify-between shadow-xs z-10">
+        <div className="p-4 md:p-5 bg-white border-b border-black/5 flex items-center justify-between shadow-xs flex-shrink-0">
           <div className="flex items-center gap-3">
             <img
               src="/favicon.png"
@@ -342,9 +338,9 @@ export function CartSidebar() {
             <button
               type="button"
               onClick={handleClose}
-              className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all cursor-pointer z-30 relative"
+              className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all cursor-pointer"
             >
-              <X size={18} className="pointer-events-none" />
+              <X size={18} />
             </button>
           </div>
         </div>
