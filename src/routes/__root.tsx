@@ -181,33 +181,32 @@ function RootComponent() {
     }
   }, [isPopup]);
 
-  // Si es la ventana emergente de OAuth, mostrar únicamente un diseño limpio sin la web de fondo
-  if (isPopup) {
-    return (
-      <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-10 h-10 border-3 border-[#2C4A3E] border-t-transparent rounded-full animate-spin mb-4" />
-        <h3 className="font-serif text-lg font-bold text-[#2C4A3E] mb-1">¡Autenticación Exitosa!</h3>
-        <p className="text-xs text-black/50 mb-4">Cerrando ventana de acceso...</p>
-        <button
-          type="button"
-          onClick={() => {
-            try {
-              window.close();
-            } catch {}
-          }}
-          className="text-xs px-4 py-2 bg-[#2C4A3E] text-[#FBF5E6] rounded-xl font-bold hover:opacity-90 shadow-sm transition-all"
-        >
-          Cerrar ventana y continuar
-        </button>
-      </div>
-    );
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>
-        <Outlet />
-        <CartSidebar />
+        {isPopup ? (
+          <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center p-6 text-center">
+            <div className="w-10 h-10 border-3 border-[#2C4A3E] border-t-transparent rounded-full animate-spin mb-4" />
+            <h3 className="font-serif text-lg font-bold text-[#2C4A3E] mb-1">¡Autenticación Exitosa!</h3>
+            <p className="text-xs text-black/50 mb-4">Cerrando ventana de acceso...</p>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  window.close();
+                } catch {}
+              }}
+              className="text-xs px-4 py-2 bg-[#2C4A3E] text-[#FBF5E6] rounded-xl font-bold hover:opacity-90 shadow-sm transition-all"
+            >
+              Cerrar ventana y continuar
+            </button>
+          </div>
+        ) : (
+          <>
+            <Outlet />
+            <CartSidebar />
+          </>
+        )}
       </CartProvider>
     </QueryClientProvider>
   );
