@@ -571,35 +571,11 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
                   />
                 </div>
               </div>
-
-              {/* Botón destacado dentro del formulario cuando hay cambios pendientes */}
-              {hasChanges && (
-                <div className="pt-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                  <button
-                    type="button"
-                    onClick={() => handleSaveProfile()}
-                    disabled={savingProfile}
-                    className="w-full py-3 px-4 bg-eucalipto text-cream rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:bg-eucalipto/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {savingProfile ? (
-                      <>
-                        <RefreshCw size={15} className="animate-spin" />
-                        <span>Guardando cambios...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Save size={15} />
-                        <span>Guardar Cambios de Perfil</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
             </form>
           )}
         </div>
 
-        {/* Footer con opción de cerrar sesión y Aceptar (que guarda automáticamente si hay cambios) */}
+        {/* Footer con opción de cerrar sesión y acción dinámicas (Aceptar / Guardar Cambios) */}
         <div className="p-4 bg-white border-t border-black/5 flex items-center justify-between">
           <button
             type="button"
@@ -610,21 +586,34 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
             <span>Cerrar sesión</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleCloseOrAccept}
-            disabled={savingProfile}
-            className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50"
-          >
-            {savingProfile ? (
-              <>
-                <RefreshCw size={14} className="animate-spin" />
-                <span>Guardando...</span>
-              </>
-            ) : (
-              <span>Aceptar</span>
-            )}
-          </button>
+          {hasChanges ? (
+            <button
+              type="button"
+              onClick={() => handleSaveProfile()}
+              disabled={savingProfile}
+              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50"
+            >
+              {savingProfile ? (
+                <>
+                  <RefreshCw size={14} className="animate-spin" />
+                  <span>Guardando...</span>
+                </>
+              ) : (
+                <>
+                  <Check size={14} />
+                  <span>Guardar Cambios</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onClose}
+              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs"
+            >
+              Aceptar
+            </button>
+          )}
         </div>
       </div>
     </div>
