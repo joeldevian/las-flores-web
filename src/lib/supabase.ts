@@ -271,19 +271,17 @@ export async function createOrder(payload: OrderPayload) {
  */
 export async function getUserOrders(userId?: string, email?: string) {
   try {
+    if (!userId && !email) return [];
+
     let query = supabase
       .from("orders")
       .select("*, order_items(*)")
       .order("created_at", { ascending: false });
 
-    if (userId && email) {
-      query = query.or(`user_id.eq.${userId},client_email.eq.${email}`);
+    if (email) {
+      query = query.eq("client_email", email);
     } else if (userId) {
       query = query.eq("user_id", userId);
-    } else if (email) {
-      query = query.eq("client_email", email);
-    } else {
-      return [];
     }
 
     const { data, error } = await query;
@@ -303,19 +301,17 @@ export async function getUserOrders(userId?: string, email?: string) {
  */
 export async function getUserReservations(userId?: string, email?: string) {
   try {
+    if (!userId && !email) return [];
+
     let query = supabase
       .from("reservations")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (userId && email) {
-      query = query.or(`user_id.eq.${userId},client_email.eq.${email}`);
+    if (email) {
+      query = query.eq("client_email", email);
     } else if (userId) {
       query = query.eq("user_id", userId);
-    } else if (email) {
-      query = query.eq("client_email", email);
-    } else {
-      return [];
     }
 
     const { data, error } = await query;

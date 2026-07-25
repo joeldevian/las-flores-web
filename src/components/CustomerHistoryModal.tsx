@@ -29,6 +29,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const [orders, setOrders] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const loadedUserRef = useState<string | null>(null);
 
   useEffect(() => {
     if (open && user?.id) {
@@ -38,7 +39,10 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
 
   const loadHistory = async () => {
     if (!user) return;
-    setLoading(true);
+    // Solo mostrar el spinner si aún no tenemos datos cargados
+    if (orders.length === 0 && reservations.length === 0) {
+      setLoading(true);
+    }
     try {
       const [userOrders, userRes] = await Promise.all([
         getUserOrders(user.id, user.email),
