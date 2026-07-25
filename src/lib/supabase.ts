@@ -251,3 +251,67 @@ export async function createOrder(payload: OrderPayload) {
 
   return order;
 }
+
+/**
+ * Obtener el historial de pedidos del usuario autenticado
+ */
+export async function getUserOrders(userId?: string, email?: string) {
+  try {
+    let query = supabase
+      .from("orders")
+      .select("*, order_items(*)")
+      .order("created_at", { ascending: false });
+
+    if (userId && email) {
+      query = query.or(`user_id.eq.${userId},client_email.eq.${email}`);
+    } else if (userId) {
+      query = query.eq("user_id", userId);
+    } else if (email) {
+      query = query.eq("client_email", email);
+    } else {
+      return [];
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      console.error("Error al obtener pedidos del usuario:", error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error("Excepción al obtener pedidos:", err);
+    return [];
+  }
+}
+
+/**
+ * Obtener el historial de reservas del usuario autenticado
+ */
+export async function getUserReservations(userId?: string, email?: string) {
+  try {
+    let query = supabase
+      .from("reservations")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (userId && email) {
+      query = query.or(`user_id.eq.${userId},client_email.eq.${email}`);
+    } else if (userId) {
+      query = query.eq("user_id", userId);
+    } else if (email) {
+      query = query.eq("client_email", email);
+    } else {
+      return [];
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      console.error("Error al obtener reservas del usuario:", error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error("Excepción al obtener reservas:", err);
+    return [];
+  }
+}

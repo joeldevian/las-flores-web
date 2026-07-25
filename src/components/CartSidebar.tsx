@@ -14,6 +14,7 @@ import {
   Lock,
   ArrowLeft,
   AlertTriangle,
+  Clock,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import {
@@ -24,6 +25,8 @@ import {
 } from "../utils/deliveryUtils";
 import { signInWithGoogle, createOrder, signOut, supabase } from "../lib/supabase";
 import { LocationSelector } from "./LocationSelector";
+import { CustomerHistoryModal } from "./CustomerHistoryModal";
+import type { User } from "@supabase/supabase-js";
 
 type Step = "cart" | "delivery" | "payment" | "success";
 type OrderType = "delivery" | "pickup";
@@ -79,6 +82,8 @@ export function CartSidebar() {
   const [orderType, setOrderType] = useState<OrderType>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<"yape" | "card">("yape");
   const [isMounted, setIsMounted] = useState(false);
+  const [activeUser, setActiveUser] = useState<User | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -90,6 +95,7 @@ export function CartSidebar() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      setActiveUser(session?.user || null);
       if (session?.user) {
         setDelivery((d) => ({
           ...d,
@@ -110,6 +116,7 @@ export function CartSidebar() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      setActiveUser(session?.user || null);
       if (session?.user) {
         setDelivery((d) => ({
           ...d,
@@ -313,6 +320,57 @@ export function CartSidebar() {
             </div>
           </div>
         </div>
+
+        {/* ══ BANNER DE USUARIO Y NAVEGACIÓN DE HISTORIAL ══ */}
+        {activeUser ? (
+          <div className="bg-eucalipto/10 border-b border-eucalipto/15 px-5 py-2.5 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              {activeUser.user_metadata?.avatar_url ? (
+                <img
+                  src={activeUser.user_metadata.avatar_url}
+                  alt=""
+                  className="w-5 h-5 rounded-full object-cover border border-eucalipto/30"
+                />
+              ) : (
+                <div className="w-5 h-5 rounded-full bg-eucalipto text-cream flex items-center justify-center text-[10px] font-serif font-bold">
+                  {(activeUser.user_metadata?.full_name || activeUser.email || "C")
+                    .charAt(0)
+                    .toUpperCase()}
+                </div>
+              )}
+              <span className="font-bold text-eucalipto truncate max-w-[170px]">
+                Hola, {(activeUser.user_metadata?.full_name || activeUser.email || "Cliente").split(" ")[0]}
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsHistoryOpen(true)}
+              className="text-[11px] font-bold text-eucalipto hover:text-ink transition-colors flex items-center gap-1 bg-white/80 px-2.5 py-1 rounded-full border border-eucalipto/20 shadow-2xs"
+            >
+              <Clock size={12} />
+              <span>Mis Pedidos & Reservas 📋</span>
+            </button>
+          </div>
+        ) : (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-2 flex items-center justify-between text-[11px]">
+            <span className="text-black/70 font-medium">¿Tienes cuenta con Google?</span>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  await signInWithGoogle();
+                } catch (e) {
+                  console.error(e);
+                }
+              }}
+              className="font-bold text-eucalipto hover:underline"
+            >
+              Ingresar para ver historial
+            </button>
+          </div>
+        )}
 
         {/* ══ BARRA DE PASOS ══ */}
         {step !== "success" && (
@@ -1030,6 +1088,12 @@ export function CartSidebar() {
           )}
         </div>
       </div>
+
+      <CustomerHistoryModal
+        open={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        user={activeUser}
+      />
     </div>
   );
 }

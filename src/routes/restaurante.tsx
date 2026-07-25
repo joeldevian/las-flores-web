@@ -286,7 +286,7 @@ function RestaurantePage() {
             className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? "" : "brightness-0 invert"}`}
           />
         </Link>
-        <div className="flex-1 flex justify-end items-center gap-3 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
+        <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
           <button
             onClick={() => setIsReservationOpen(true)}
             className="hover:text-retama transition-colors"

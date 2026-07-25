@@ -11,6 +11,7 @@ import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { ReservationModal } from "@/components/ReservationModal";
 import { MenuModal } from "@/components/MenuModal";
+import { UserAccountMenu } from "@/components/UserAccountMenu";
 
 export const Route = createFileRoute("/eventos")({
   head: () => ({

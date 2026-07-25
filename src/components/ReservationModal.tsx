@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { SeatSelector } from "./SeatSelector";
 import { signInWithGoogle, createReservation, supabase } from "../lib/supabase";
+import { CustomerHistoryModal } from "./CustomerHistoryModal";
+import type { User } from "@supabase/supabase-js";
+import { Clock } from "lucide-react";
 
 interface ReservationModalProps {
   open: boolean;
@@ -54,6 +57,9 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     email: "", // Guardado por Google Login (mock)
   });
 
+  const [activeUser, setActiveUser] = useState<User | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
   // Evitar scroll en el fondo cuando el modal está abierto
   useEffect(() => {
     if (open) {
@@ -66,12 +72,13 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     };
   }, [open]);
 
-  // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
+  // Escuchar sesión activa de Supabase (Google Auth) y sincronizar datos de usuario
   useEffect(() => {
     const syncSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      setActiveUser(session?.user || null);
       if (session?.user) {
         setForm((f) => ({
           ...f,
@@ -93,6 +100,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      setActiveUser(session?.user || null);
       if (session?.user) {
         setForm((f) => ({
           ...f,
@@ -249,6 +257,57 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             </svg>
           </button>
         </div>
+
+        {/* Banner de Usuario / Historial en Reservas */}
+        {activeUser ? (
+          <div className="bg-[#2C4A3E]/10 border-b border-[#2C4A3E]/15 px-5 py-2 flex items-center justify-between text-xs z-10">
+            <div className="flex items-center gap-2">
+              {activeUser.user_metadata?.avatar_url ? (
+                <img
+                  src={activeUser.user_metadata.avatar_url}
+                  alt=""
+                  className="w-5 h-5 rounded-full object-cover border border-[#2C4A3E]/30"
+                />
+              ) : (
+                <div className="w-5 h-5 rounded-full bg-[#2C4A3E] text-cream flex items-center justify-center text-[10px] font-serif font-bold">
+                  {(activeUser.user_metadata?.full_name || activeUser.email || "C")
+                    .charAt(0)
+                    .toUpperCase()}
+                </div>
+              )}
+              <span className="font-bold text-[#2C4A3E] truncate max-w-[170px]">
+                Hola, {(activeUser.user_metadata?.full_name || activeUser.email || "Cliente").split(" ")[0]}
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsHistoryOpen(true)}
+              className="text-[11px] font-bold text-[#2C4A3E] hover:text-ink transition-colors flex items-center gap-1 bg-white/80 px-2.5 py-1 rounded-full border border-[#2C4A3E]/20 shadow-2xs"
+            >
+              <Clock size={12} />
+              <span>Mi Historial 📋</span>
+            </button>
+          </div>
+        ) : (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-1.5 flex items-center justify-between text-[11px] z-10">
+            <span className="text-black/70 font-medium">¿Tienes cuenta con Google?</span>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  await signInWithGoogle();
+                } catch (e) {
+                  console.error(e);
+                }
+              }}
+              className="font-bold text-[#2C4A3E] hover:underline"
+            >
+              Ingresar para ver reservas
+            </button>
+          </div>
+        )}
 
         {/* Contenedor Principal con Scroll */}
         <div className="flex-1 overflow-y-auto relative px-6 pt-4 pb-6 custom-scrollbar bg-gradient-to-br from-[#f8f4e6] via-[#f8f4e6] to-[#eaddcd]">
@@ -739,6 +798,12 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
           </div>
         )}
       </div>
+
+      <CustomerHistoryModal
+        open={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        user={activeUser}
+      />
     </div>
   );
 }
