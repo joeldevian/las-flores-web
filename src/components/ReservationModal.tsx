@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { SeatSelector } from "./SeatSelector";
 import { signInWithGoogle, createReservation, supabase } from "../lib/supabase";
 import { CustomerHistoryModal } from "./CustomerHistoryModal";
@@ -19,19 +19,6 @@ const R = {
   rojo: "#8B0000",
 };
 
-// Generar fechas próximas
-const today = new Date();
-const DATES = Array.from({ length: 7 }).map((_, i) => {
-  const d = new Date(today);
-  d.setDate(today.getDate() + i);
-  return {
-    value: d.toISOString().split("T")[0],
-    dayName: d.toLocaleDateString("es-PE", { weekday: "short" }),
-    dayNum: d.getDate(),
-    month: d.toLocaleDateString("es-PE", { month: "short" }),
-  };
-});
-
 const SERVICES = [
   {
     id: "almuerzo",
@@ -45,6 +32,20 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
   const [step, setStep] = useState(1);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const DATES = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      return {
+        value: d.toISOString().split("T")[0],
+        dayName: d.toLocaleDateString("es-PE", { weekday: "short" }),
+        dayNum: d.getDate(),
+        month: d.toLocaleDateString("es-PE", { month: "short" }),
+      };
+    });
+  }, []);
 
   const [form, setForm] = useState({
     guests: "",

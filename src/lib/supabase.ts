@@ -142,7 +142,7 @@ export interface ProfileUpdatePayload {
 }
 
 /**
- * Actualizar información de perfil del usuario en Supabase Auth y la tabla profiles
+ * Actualizar información de perfil del usuario en Supabase Auth
  */
 export async function updateUserProfile(payload: ProfileUpdatePayload) {
   const { data, error } = await supabase.auth.updateUser({
@@ -154,22 +154,6 @@ export async function updateUserProfile(payload: ProfileUpdatePayload) {
   });
 
   if (error) throw error;
-
-  // Sincronizar de forma opcional con la tabla 'profiles' en Supabase si existe
-  if (data?.user?.id) {
-    try {
-      await supabase.from("profiles").upsert({
-        id: data.user.id,
-        email: data.user.email,
-        full_name: payload.full_name,
-        phone: payload.phone,
-        birth_date: payload.birth_date,
-        updated_at: new Date().toISOString(),
-      });
-    } catch {
-      // Ignorar si la tabla profiles no tiene permisos o RLS está activo
-    }
-  }
 
   return data;
 }
