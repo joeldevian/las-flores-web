@@ -128,38 +128,25 @@ export async function signInWithGoogle() {
       // Fallback si el navegador bloquea las ventanas emergentes
       window.location.href = data.url;
     } else {
-      // Monitorear sesión en tiempo real mientras el popup está abierto
+      // Monitorear únicamente la sesión en Supabase sin inspeccionar el objeto popup (evita cualquier aviso COOP)
+      let checks = 0;
       const timer = setInterval(async () => {
+        checks++;
         try {
           const {
             data: { session },
           } = await supabase.auth.getSession();
+
           if (session?.user) {
             window.dispatchEvent(new CustomEvent("supabase_auth_changed", { detail: session }));
             clearInterval(timer);
-            return;
-          }
-
-          let isClosed = false;
-          try {
-            isClosed = popup.closed;
-          } catch {
-            // Ignorar restricciones COOP cross-origin opener policy
-          }
-
-          if (isClosed) {
+          } else if (checks >= 40) {
             clearInterval(timer);
-            const {
-              data: { session: finalSession },
-            } = await supabase.auth.getSession();
-            window.dispatchEvent(new CustomEvent("supabase_auth_changed", { detail: finalSession }));
           }
         } catch {
-          // Ignorar cualquier fallo temporal en el intervalo
+          // Ignorar excepciones temporales
         }
-      }, 500);
-
-      setTimeout(() => clearInterval(timer), 45000);
+      }, 800);
     }
   }
   return data;
