@@ -151,6 +151,10 @@ function RootComponent() {
     if (isPopup) {
       import("../lib/supabase").then(({ supabase }) => {
         supabase.auth.getSession().then(({ data: { session } }) => {
+          try {
+            localStorage.setItem("supabase_auth_sync", Date.now().toString());
+          } catch {}
+
           if (window.opener) {
             try {
               window.opener.postMessage({ type: "SUPABASE_AUTH_SUCCESS", session }, "*");
