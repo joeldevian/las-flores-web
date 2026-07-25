@@ -11,7 +11,6 @@ const platoMondongoImg =
 const platoMaizImg =
   "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/POSTRES Y BEBIDAS/CHAPLA/chapla.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
-import { UserAccountMenu } from "@/components/UserAccountMenu";
 
 export const Route = createFileRoute("/")({
   head: () => ({

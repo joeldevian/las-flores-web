@@ -6,7 +6,6 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  ScrollRestoration,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { CartProvider } from "../context/CartContext";
@@ -135,10 +134,10 @@ function RootComponent() {
     if (typeof window !== "undefined") {
       const isAuthPopup =
         window.name === "google_auth_popup" ||
-        Boolean(window.opener) ||
-        window.location.hash.includes("access_token") ||
-        window.location.search.includes("code") ||
-        window.location.hash.includes("error");
+        (Boolean(window.opener) && (
+          window.location.hash.includes("access_token") ||
+          window.location.hash.includes("error_description")
+        ));
 
       if (isAuthPopup) {
         setIsPopup(true);
@@ -157,7 +156,7 @@ function RootComponent() {
 
           if (window.opener) {
             try {
-              window.opener.postMessage({ type: "SUPABASE_AUTH_SUCCESS", session }, "*");
+              window.opener.postMessage({ type: "SUPABASE_AUTH_SUCCESS" }, window.location.origin);
             } catch (e) {
               console.log("PostMessage error:", e);
             }

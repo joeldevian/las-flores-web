@@ -83,6 +83,7 @@ export function CartSidebar() {
   const [paymentMethod, setPaymentMethod] = useState<"yape" | "card">("yape");
   const [isMounted, setIsMounted] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
+  const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   useEffect(() => {
@@ -238,9 +239,10 @@ export function CartSidebar() {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setProcessing(true);
+    const orderNum = `LF-${Date.now().toString().slice(-6)}`;
     try {
       await createOrder({
-        order_number: `LF-${Date.now().toString().slice(-6)}`,
+        order_number: orderNum,
         order_type: orderType,
         client_name: delivery.name || "Cliente",
         client_email: delivery.email || "cliente@ejemplo.com",
@@ -262,11 +264,13 @@ export function CartSidebar() {
           subtotal: i.price * i.quantity,
         })),
       });
+      setCreatedOrderNumber(orderNum);
+      setStep("success");
     } catch (err) {
       console.error("Order creation error:", err);
+      alert("Error al procesar el pedido. Por favor, intenta de nuevo.");
     } finally {
       setProcessing(false);
-      setStep("success");
     }
   };
 
@@ -1009,7 +1013,7 @@ export function CartSidebar() {
               </div>
               <p className="text-xs text-black/30 font-medium">
                 Pedido{" "}
-                <strong style={{ color: R.morado }}>#LF{Date.now().toString().slice(-6)}</strong>
+                <strong style={{ color: R.morado }}>#{createdOrderNumber}</strong>
               </p>
             </div>
           )}

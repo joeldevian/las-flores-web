@@ -31,7 +31,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem("las_flores_cart");
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+        }
       }
     } catch (e) {
       console.error("Error al cargar carrito desde localStorage:", e);
@@ -49,16 +52,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const addItem = (newItem: Omit<CartItem, "quantity">) => {
-    const existing = items.find((i) => i.id === newItem.id);
-    if (existing) {
-      saveItems(items.map((i) => (i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i)));
-    } else {
-      saveItems([...items, { ...newItem, quantity: 1 }]);
-    }
+    setItems((prev) => {
+      const existing = prev.find((i) => i.id === newItem.id);
+      const updated = existing
+        ? prev.map((i) => (i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i))
+        : [...prev, { ...newItem, quantity: 1 }];
+      try {
+        localStorage.setItem("las_flores_cart", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const removeItem = (id: string) => {
-    saveItems(items.filter((i) => i.id !== id));
+    setItems((prev) => {
+      const updated = prev.filter((i) => i.id !== id);
+      try {
+        localStorage.setItem("las_flores_cart", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -66,7 +79,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeItem(id);
       return;
     }
-    saveItems(items.map((i) => (i.id === id ? { ...i, quantity } : i)));
+    setItems((prev) => {
+      const updated = prev.map((i) => (i.id === id ? { ...i, quantity } : i));
+      try {
+        localStorage.setItem("las_flores_cart", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const clearCart = () => {

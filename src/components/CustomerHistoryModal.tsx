@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ShoppingBag,
   Calendar,
@@ -29,33 +29,46 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const [orders, setOrders] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const loadedUserRef = useState<string | null>(null);
+  const loadedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (open && user?.id) {
-      loadHistory();
-    }
-  }, [open, user?.id]);
+    let cancelled = false;
 
-  const loadHistory = async () => {
-    if (!user) return;
-    // Solo mostrar el spinner si aún no tenemos datos cargados
-    if (orders.length === 0 && reservations.length === 0) {
-      setLoading(true);
+    if (open && user?.id) {
+      // Si cambió de usuario, limpiar datos anteriores
+      if (loadedUserIdRef.current !== user.id) {
+        setOrders([]);
+        setReservations([]);
+        loadedUserIdRef.current = user.id;
+      }
+
+      const fetchHistory = async () => {
+        setLoading(true);
+        try {
+          const [userOrders, userRes] = await Promise.all([
+            getUserOrders(user.id, user.email),
+            getUserReservations(user.id, user.email),
+          ]);
+          if (!cancelled) {
+            setOrders(userOrders);
+            setReservations(userRes);
+          }
+        } catch (e) {
+          console.error("Error al cargar historial:", e);
+        } finally {
+          if (!cancelled) {
+            setLoading(false);
+          }
+        }
+      };
+
+      fetchHistory();
     }
-    try {
-      const [userOrders, userRes] = await Promise.all([
-        getUserOrders(user.id, user.email),
-        getUserReservations(user.id, user.email),
-      ]);
-      setOrders(userOrders);
-      setReservations(userRes);
-    } catch (e) {
-      console.error("Error al cargar historial:", e);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, user?.id, user?.email]);
 
   const handleSignOut = async () => {
     try {

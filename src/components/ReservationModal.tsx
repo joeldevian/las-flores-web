@@ -165,9 +165,9 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
-    } catch {
-      setForm((f) => ({ ...f, name: "Usuario Google", email: "usuario@gmail.com" }));
-      setStep(5);
+    } catch (e) {
+      console.error("Google login error:", e);
+      // No forzar datos falsos — el usuario puede reintentar
     }
   };
 
@@ -183,10 +183,11 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         client_name: form.name || "Usuario Google",
         client_email: form.email || "usuario@gmail.com",
       });
+      setStep(6);
     } catch (e) {
       console.error("Reservation save error:", e);
+      alert("Error al guardar la reserva. Por favor, intenta de nuevo.");
     }
-    setStep(6);
   };
 
   const handleRandomTable = async () => {
@@ -201,10 +202,11 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         client_name: form.name || "Usuario Google",
         client_email: form.email || "usuario@gmail.com",
       });
+      setStep(6);
     } catch (e) {
       console.error("Reservation save error:", e);
+      alert("Error al guardar la reserva. Por favor, intenta de nuevo.");
     }
-    setStep(6);
   };
 
   if (!open) return null;
