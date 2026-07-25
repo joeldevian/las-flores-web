@@ -288,6 +288,25 @@ export function CartSidebar() {
     }
   };
 
+  // Bloquear scroll de pantalla y escuchar tecla Escape para cerrar
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, setIsOpen]);
+
   const handleClose = () => {
     setIsOpen(false);
     if (step === "success") {
