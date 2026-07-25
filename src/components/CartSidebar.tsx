@@ -92,7 +92,6 @@ export function CartSidebar() {
 
   // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
   useEffect(() => {
-    if (!isOpen) return;
     let isCancelled = false;
 
     const syncSession = async () => {
@@ -103,7 +102,8 @@ export function CartSidebar() {
         if (isCancelled) return;
 
         const newUser = session?.user || null;
-        setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
+        setActiveUser(newUser);
+
         if (session?.user) {
           setDelivery((d) => ({
             ...d,
@@ -129,7 +129,8 @@ export function CartSidebar() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (isCancelled) return;
       const newUser = session?.user || null;
-      setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
+      setActiveUser(newUser);
+
       if (session?.user) {
         setDelivery((d) => ({
           ...d,
@@ -150,7 +151,13 @@ export function CartSidebar() {
         syncSession();
       }
     };
-    const handleCustomAuth = () => syncSession();
+    const handleCustomAuth = (e: Event) => {
+      const customUser = (e as CustomEvent).detail;
+      if (customUser) {
+        setActiveUser(customUser);
+      }
+      syncSession();
+    };
     const handleStorage = (e: StorageEvent) => {
       if (e.key?.includes("supabase")) {
         syncSession();
@@ -168,7 +175,7 @@ export function CartSidebar() {
       window.removeEventListener("supabase_auth_changed", handleCustomAuth);
       window.removeEventListener("storage", handleStorage);
     };
-  }, [isOpen]);
+  }, []);
   const [delivery, setDelivery] = useState<DeliveryForm>({
     name: "",
     phone: "",
