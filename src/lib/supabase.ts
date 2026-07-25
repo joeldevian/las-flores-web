@@ -128,19 +128,27 @@ export async function signInWithGoogle() {
       // Fallback si el navegador bloquea las ventanas emergentes
       window.location.href = data.url;
     } else {
-      // Monitorear cuando la ventana emergente se cierre para forzar la sincronización
+      // Monitorear sesión en tiempo real mientras el popup está abierto
       const timer = setInterval(async () => {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session?.user) {
+          window.dispatchEvent(new CustomEvent("supabase_auth_changed", { detail: session }));
+        }
         if (popup.closed) {
           clearInterval(timer);
-          await supabase.auth.getSession();
+          const {
+            data: { session: finalSession },
+          } = await supabase.auth.getSession();
+          window.dispatchEvent(new CustomEvent("supabase_auth_changed", { detail: finalSession }));
         }
-      }, 400);
+      }, 500);
 
-      setTimeout(() => clearInterval(timer), 120000);
+      setTimeout(() => clearInterval(timer), 60000);
     }
-
-    return popup;
   }
+  return data;
 }
 
 /**

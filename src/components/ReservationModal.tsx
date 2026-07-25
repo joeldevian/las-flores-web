@@ -123,16 +123,30 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         syncSession();
       }
     };
+    const handleCustomAuth = () => syncSession();
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key?.includes("auth-token") || e.key?.includes("supabase")) {
+        syncSession();
+      }
+    };
 
     window.addEventListener("focus", handleFocus);
     window.addEventListener("message", handleMessage);
+    window.addEventListener("supabase_auth_changed", handleCustomAuth);
+    window.addEventListener("storage", handleStorage);
+
+    // Auto-poll cada 1s cuando el modal está abierto para garantizar la actualización
+    const interval = setInterval(syncSession, 1000);
 
     return () => {
       subscription.unsubscribe();
+      clearInterval(interval);
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("message", handleMessage);
+      window.removeEventListener("supabase_auth_changed", handleCustomAuth);
+      window.removeEventListener("storage", handleStorage);
     };
-  }, []);
+  }, [open]);
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
