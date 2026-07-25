@@ -599,7 +599,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           )}
         </div>
 
-        {/* Footer con opción de cerrar sesión y acción (Aceptar / Guardar Cambios) */}
+        {/* Footer con opción de cerrar sesión y Aceptar (que guarda automáticamente si hay cambios) */}
         <div className="p-4 bg-white border-t border-black/5 flex items-center justify-between">
           <button
             type="button"
@@ -610,34 +610,21 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
             <span>Cerrar sesión</span>
           </button>
 
-          {hasChanges ? (
-            <button
-              type="button"
-              onClick={() => handleSaveProfile()}
-              disabled={savingProfile}
-              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50"
-            >
-              {savingProfile ? (
-                <>
-                  <RefreshCw size={14} className="animate-spin" />
-                  <span>Guardando...</span>
-                </>
-              ) : (
-                <>
-                  <Check size={14} />
-                  <span>Guardar Cambios</span>
-                </>
-              )}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleCloseOrAccept}
-              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs"
-            >
-              Aceptar
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleCloseOrAccept}
+            disabled={savingProfile}
+            className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50"
+          >
+            {savingProfile ? (
+              <>
+                <RefreshCw size={14} className="animate-spin" />
+                <span>Guardando...</span>
+              </>
+            ) : (
+              <span>Aceptar</span>
+            )}
+          </button>
         </div>
       </div>
     </div>
