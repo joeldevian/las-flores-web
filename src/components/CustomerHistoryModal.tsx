@@ -13,6 +13,7 @@ import {
   Phone,
   Check,
   Edit3,
+  Save,
 } from "lucide-react";
 import {
   supabase,
@@ -211,6 +212,13 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
     }
   };
 
+  const handleCloseOrAccept = async () => {
+    if (hasChanges) {
+      await handleSaveProfile();
+    }
+    onClose();
+  };
+
   if (!open || !user) return null;
 
   const fullName =
@@ -225,7 +233,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300">
       {/* Fondo oscuro con blur */}
-      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm" onClick={handleCloseOrAccept} />
 
       {/* Modal flotante central */}
       <div className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200">
@@ -255,7 +263,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           </div>
 
           <button
-            onClick={onClose}
+            onClick={handleCloseOrAccept}
             className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all"
           >
             <X size={18} />
@@ -563,6 +571,30 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
                   />
                 </div>
               </div>
+
+              {/* Botón destacado dentro del formulario cuando hay cambios pendientes */}
+              {hasChanges && (
+                <div className="pt-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveProfile()}
+                    disabled={savingProfile}
+                    className="w-full py-3 px-4 bg-eucalipto text-cream rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:bg-eucalipto/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {savingProfile ? (
+                      <>
+                        <RefreshCw size={15} className="animate-spin" />
+                        <span>Guardando cambios...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save size={15} />
+                        <span>Guardar Cambios de Perfil</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </form>
           )}
         </div>
@@ -600,7 +632,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           ) : (
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCloseOrAccept}
               className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs"
             >
               Aceptar
