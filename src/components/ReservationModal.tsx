@@ -73,27 +73,40 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
   }, [open]);
 
   // Escuchar sesión activa de Supabase (Google Auth) y sincronizar datos de usuario
-  useEffect(() => {
-    const syncSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const newUser = session?.user || null;
+  const userFormEditedRef = useRef(false);
 
-      setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
-      if (session?.user) {
-        setForm((f) => ({
-          ...f,
-          email: session.user.email || "",
-          name:
-            session.user.user_metadata?.full_name ||
-            session.user.user_metadata?.name ||
-            session.user.email ||
-            "Usuario Google",
-        }));
-        setStep((s) => (s === 4 ? 5 : s));
-      } else {
-        setForm((f) => ({ ...f, email: "", name: "" }));
+  useEffect(() => {
+    if (!open) return;
+
+    let isCancelled = false;
+
+    const syncSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (isCancelled) return;
+
+        const newUser = session?.user || null;
+        setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
+
+        if (session?.user) {
+          // Solo actualizar form si el usuario no ha editado manualmente
+          if (!userFormEditedRef.current) {
+            setForm((f) => ({
+              ...f,
+              email: session.user.email || f.email,
+              name:
+                session.user.user_metadata?.full_name ||
+                session.user.user_metadata?.name ||
+                session.user.email ||
+                f.name || "Usuario Google",
+            }));
+          }
+          setStep((s) => (s === 4 ? 5 : s));
+        }
+      } catch (e) {
+        console.error("Error syncing session:", e);
       }
     };
 
@@ -102,25 +115,23 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isCancelled) return;
       const newUser = session?.user || null;
       setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
-      if (session?.user) {
+      if (session?.user && !userFormEditedRef.current) {
         setForm((f) => ({
           ...f,
-          email: session.user.email || "",
+          email: session.user.email || f.email,
           name:
             session.user.user_metadata?.full_name ||
             session.user.user_metadata?.name ||
             session.user.email ||
-            "Usuario Google",
+            f.name || "Usuario Google",
         }));
         setStep((s) => (s === 4 ? 5 : s));
-      } else {
-        setForm((f) => ({ ...f, email: "", name: "" }));
       }
     });
 
-    const handleFocus = () => syncSession();
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "SUPABASE_AUTH_SUCCESS") {
         syncSession();
@@ -128,19 +139,18 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     };
     const handleCustomAuth = () => syncSession();
     const handleStorage = (e: StorageEvent) => {
-      if (e.key?.includes("auth-token") || e.key?.includes("supabase")) {
+      if (e.key?.includes("supabase")) {
         syncSession();
       }
     };
 
-    window.addEventListener("focus", handleFocus);
     window.addEventListener("message", handleMessage);
     window.addEventListener("supabase_auth_changed", handleCustomAuth);
     window.addEventListener("storage", handleStorage);
 
     return () => {
+      isCancelled = true;
       subscription.unsubscribe();
-      window.removeEventListener("focus", handleFocus);
       window.removeEventListener("message", handleMessage);
       window.removeEventListener("supabase_auth_changed", handleCustomAuth);
       window.removeEventListener("storage", handleStorage);

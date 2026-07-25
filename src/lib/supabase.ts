@@ -127,27 +127,10 @@ export async function signInWithGoogle() {
     if (!popup) {
       // Fallback si el navegador bloquea las ventanas emergentes
       window.location.href = data.url;
-    } else {
-      // Monitorear únicamente la sesión en Supabase sin inspeccionar el objeto popup (evita cualquier aviso COOP)
-      let checks = 0;
-      const timer = setInterval(async () => {
-        checks++;
-        try {
-          const {
-            data: { session },
-          } = await supabase.auth.getSession();
-
-          if (session?.user) {
-            window.dispatchEvent(new CustomEvent("supabase_auth_changed", { detail: session }));
-            clearInterval(timer);
-          } else if (checks >= 40) {
-            clearInterval(timer);
-          }
-        } catch {
-          // Ignorar excepciones temporales
-        }
-      }, 800);
     }
+    // No usamos setInterval/polling — la sesión se detecta automáticamente
+    // mediante supabase.auth.onAuthStateChange() ya suscrito en los componentes.
+    // El popup se auto-cierra en __root.tsx y dispara eventos de sincronización.
   }
   return data;
 }

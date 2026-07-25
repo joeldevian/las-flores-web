@@ -92,25 +92,32 @@ export function CartSidebar() {
 
   // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
   useEffect(() => {
-    const syncSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const newUser = session?.user || null;
+    if (!isOpen) return;
+    let isCancelled = false;
 
-      setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
-      if (session?.user) {
-        setDelivery((d) => ({
-          ...d,
-          email: session.user.email || "",
-          name:
-            session.user.user_metadata?.full_name ||
-            session.user.user_metadata?.name ||
-            session.user.email ||
-            "Cliente Google",
-        }));
-      } else {
-        setDelivery((d) => ({ ...d, email: "", name: "" }));
+    const syncSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (isCancelled) return;
+
+        const newUser = session?.user || null;
+        setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
+        if (session?.user) {
+          setDelivery((d) => ({
+            ...d,
+            email: d.email || session.user.email || "",
+            name:
+              d.name ||
+              session.user.user_metadata?.full_name ||
+              session.user.user_metadata?.name ||
+              session.user.email ||
+              "Cliente Google",
+          }));
+        }
+      } catch (e) {
+        console.error("Error syncing cart auth session:", e);
       }
     };
 
@@ -119,24 +126,23 @@ export function CartSidebar() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isCancelled) return;
       const newUser = session?.user || null;
       setActiveUser((prev) => (prev?.id === newUser?.id ? prev : newUser));
       if (session?.user) {
         setDelivery((d) => ({
           ...d,
-          email: session.user.email || "",
+          email: d.email || session.user.email || "",
           name:
+            d.name ||
             session.user.user_metadata?.full_name ||
             session.user.user_metadata?.name ||
             session.user.email ||
             "Cliente Google",
         }));
-      } else {
-        setDelivery((d) => ({ ...d, email: "", name: "" }));
       }
     });
 
-    const handleFocus = () => syncSession();
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "SUPABASE_AUTH_SUCCESS") {
         syncSession();
@@ -144,19 +150,18 @@ export function CartSidebar() {
     };
     const handleCustomAuth = () => syncSession();
     const handleStorage = (e: StorageEvent) => {
-      if (e.key?.includes("auth-token") || e.key?.includes("supabase")) {
+      if (e.key?.includes("supabase")) {
         syncSession();
       }
     };
 
-    window.addEventListener("focus", handleFocus);
     window.addEventListener("message", handleMessage);
     window.addEventListener("supabase_auth_changed", handleCustomAuth);
     window.addEventListener("storage", handleStorage);
 
     return () => {
+      isCancelled = true;
       subscription.unsubscribe();
-      window.removeEventListener("focus", handleFocus);
       window.removeEventListener("message", handleMessage);
       window.removeEventListener("supabase_auth_changed", handleCustomAuth);
       window.removeEventListener("storage", handleStorage);
