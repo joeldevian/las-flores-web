@@ -759,27 +759,27 @@ function Index() {
               {
                 img: "/gastronomia/puca-picante.webp",
                 nombre: "Puca Picante",
-                desc: "Remolacha, maní tostado y chicharrón sobre arroz graneado.",
+                desc: "Guiso de papa vieja en salsa de ají panca con maní tostado, trozos de carne de cerdo, especias y chicharrón",
               },
               {
                 img: "/gastronomia/mondongo.webp",
                 nombre: "Mondongo",
-                desc: "Sopa ancestral de mote, panceta y hierbas de la puna.",
+                desc: " Preparado con maíz pelado, mix de carnes y hierbas andinas en una cocción que concentra su sabor y carácter tradicional.",
               },
               {
                 img: "/gastronomia/cuy-chactado.webp",
                 nombre: "Cuy Chactado",
-                desc: "Confitado con hierbas y servido bajo la piedra caliente.",
+                desc: "Consiste en un conejillo de indias entero aplanado y frito en abundante aceite hasta quedar muy crujiente",
               },
               {
                 img: "/gastronomia/chicharron.webp",
                 nombre: "Chicharrón",
-                desc: "Cerdo dorado en su propia manteca con sarsa criolla.",
+                desc: "Elaborado con trozos de carne, grasa o piel de cerdo fritos en su propia manteca.",
               },
               {
                 img: "/gastronomia/qapchi.webp",
                 nombre: "Qapchi",
-                desc: "Queso fresco, rocoto y huacatay sobre papas nativas.",
+                desc: "Elaborada principalmente a base de queso fresco o de la sierra, rocoto, cebolla china, leche y acompañado de papas nativas",
               },
             ].map((p) => (
               <article key={p.nombre} className="flex flex-col group">
