@@ -50,9 +50,9 @@ type GenerationStory = {
 
 const generationStories: GenerationStory[] = [
   {
-    generation: "Primera generación",
-    name: "Fundadora",
-    image: "/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp",
+    generation: "Origen",
+    name: "Mamina",
+    image: "/imagenes-reales/FAMILIA-HISTORIA/mamina.webp",
     alt: "Fundadora de Las Flores en la cocina",
     summary:
       "Mamina abrió la primera casa de sabor, donde la hospitalidad, el fuego y la memoria compartida dieron forma a la identidad de Las Flores.",
@@ -60,18 +60,18 @@ const generationStories: GenerationStory[] = [
       "Puso la base de la cocina familiar y consolidó el vínculo entre tradición, hogar y mesa.",
   },
   {
-    generation: "La Consolidación · 1990s",
+    generation: "Consolidación",
     name: "Gloria",
-    image: "/Gloria.webp",
+    image: "/imagenes-reales/FAMILIA-HISTORIA/gloria.webp",
     alt: "Gloria en la etapa de consolidación del restaurante Las Flores",
     summary:
       "Gloria tomó las riendas y transformó el comedor familiar en un santuario gastronómico, formalizando el negocio y llevando el sabor de Ayacucho a nuevos horizontes sin perder la esencia.",
     contribution: "Formalizó el negocio y proyectó la cocina de Ayacucho hacia nuevos horizontes.",
   },
   {
-    generation: "El Legado",
+    generation: "Legado",
     name: "Mijail",
-    image: "/Captura%20de%20pantalla%202026-07-22%20162318.webp",
+    image: "/imagenes-reales/FAMILIA-HISTORIA/mijail.webp",
     alt: "Mijail junto a la tercera generación de Las Flores",
     summary:
       "Mijail lidera la tercera generación, preservando el fuego original y llevando nuestra tradición culinaria hacia una experiencia contemporánea.",
@@ -86,7 +86,7 @@ const chefRecommendations = [
     price: "S/ 65",
     description:
       "Remolacha fermentada, maní tostado y jugoso chicharrón crocante hecho en leña de molle.",
-    image: "/gastronomia/puca-picante.webp",
+    image: "/imagenes-reales/RECOMENDACIONES-CHEF/puca.webp",
     alt: "Puca Picante Ancestral",
   },
   {
@@ -94,7 +94,7 @@ const chefRecommendations = [
     price: "S/ 85",
     description:
       "El orgullo de Las Flores. Confitado con hierbas aromáticas y servido bajo la piedra caliente con papas doradas.",
-    image: "/gastronomia/cuy-chactado.webp",
+    image: "/imagenes-reales/RECOMENDACIONES-CHEF/cuy-chactado.webp",
     alt: "Cuy Chactado de la Casa",
   },
   {
@@ -102,7 +102,7 @@ const chefRecommendations = [
     price: "S/ 70",
     description:
       "Panceta de cerdo dorada lentamente en su propia manteca hasta lograr la crocancia perfecta, con mote y sarsa.",
-    image: "/gastronomia/chicharron.webp",
+    image: "/imagenes-reales/RECOMENDACIONES-CHEF/chicharon.webp",
     alt: "Chicharrón Tradicional",
   },
 ];
@@ -372,7 +372,7 @@ function RestaurantePage() {
           <div className="flex-1 w-full">
             <div className="relative aspect-4/3 rounded-sm overflow-hidden group">
               <img
-                src={casaImg}
+                src="/imagenes-reales/GALERIA/evento_corporativo.webp"
                 alt="Salón para eventos corporativos"
                 loading="lazy"
                 decoding="async"
