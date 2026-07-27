@@ -340,7 +340,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
               className="text-[11px] font-bold text-[#2C4A3E] hover:text-ink transition-colors flex items-center gap-1 bg-white/80 px-2.5 py-1 rounded-full border border-[#2C4A3E]/20 shadow-2xs"
             >
               <Clock size={12} />
-              <span>Mi Historial 📋</span>
+              <span>Mi Historial</span>
             </button>
           </div>
         ) : (

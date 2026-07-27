@@ -554,7 +554,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
                     </select>
                   </div>
                   <span className="text-[10px] text-eucalipto font-medium mt-1.5 block">
-                    🎂 ¡Te prepararemos una cortesía especial en el día de tu cumpleaños!
+                    ¡Te prepararemos una cortesía especial en el día de tu cumpleaños!
                   </span>
                 </div>
 

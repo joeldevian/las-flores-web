@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   AlertTriangle,
   Clock,
+  ClipboardList,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import {
@@ -406,7 +407,8 @@ export function CartSidebar() {
               className="text-[11px] font-bold text-eucalipto hover:text-ink transition-colors flex items-center gap-1 bg-white/80 px-2.5 py-1 rounded-full border border-eucalipto/20 shadow-2xs"
             >
               <Clock size={12} />
-              <span>Mis Pedidos & Reservas 📋</span>
+              <span>Mis Pedidos & Reservas</span>
+              <ClipboardList size={12} />
             </button>
           </div>
         ) : (
