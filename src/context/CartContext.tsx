@@ -1,11 +1,19 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface CartCustomizations {
+  bebidaFria?: string;
+  bebidaCaliente?: string;
+  sandwich?: string;
+  acompanamiento?: string;
+}
+
 export interface CartItem {
   id: string;
   name: string;
   price: number;
   quantity: number;
   image?: string;
+  customizations?: CartCustomizations;
 }
 
 interface CartContextType {

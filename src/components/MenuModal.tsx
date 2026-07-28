@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, X, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { BreakfastCustomizationModal } from "./BreakfastCustomizationModal";
 
 /* ─── Paleta de Lujo (Eucalipto & Crema) ─── */
 const R = {
@@ -513,14 +514,34 @@ export const categories: Category[] = [
 interface DishCardProps {
   dish: Dish;
   categoryId: string;
+  onSelectBreakfast?: (dish: Dish) => void;
 }
 
-function DishCard({ dish, categoryId }: DishCardProps) {
+function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
   const { addItem } = useCart();
   const priceNum = parseFloat(dish.price.replace("S/ ", ""));
+  const isBreakfast = categoryId === "desayuno";
+
+  const handleAdd = () => {
+    if (isBreakfast && onSelectBreakfast) {
+      onSelectBreakfast(dish);
+    } else {
+      addItem({
+        id: `${categoryId}-${dish.name}`,
+        name: dish.name,
+        price: priceNum,
+        image: dish.image,
+      });
+    }
+  };
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-cream/50">
+    <div
+      onClick={isBreakfast ? handleAdd : undefined}
+      className={`bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-cream/50 ${
+        isBreakfast ? "cursor-pointer" : ""
+      }`}
+    >
       {dish.image ? (
         <div className="h-44 overflow-hidden relative m-2.5 rounded-xl border border-black/5">
           <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
@@ -540,14 +561,10 @@ function DishCard({ dish, categoryId }: DishCardProps) {
       )}
       <div className="px-5 pb-5 pt-3 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-3 mb-2">
-          <h3
-            className="text-lg font-serif font-bold leading-tight text-ink"
-          >
+          <h3 className="text-lg font-serif font-bold leading-tight text-ink">
             {dish.name}
           </h3>
-          <span
-            className="font-serif font-bold text-sm flex-shrink-0 px-3 py-1 rounded-full bg-eucalipto/10 text-eucalipto"
-          >
+          <span className="font-serif font-bold text-sm flex-shrink-0 px-3 py-1 rounded-full bg-eucalipto/10 text-eucalipto">
             {dish.price}
           </span>
         </div>
@@ -555,18 +572,14 @@ function DishCard({ dish, categoryId }: DishCardProps) {
           {dish.description}
         </p>
         <button
-          onClick={() =>
-            addItem({
-              id: `${categoryId}-${dish.name}`,
-              name: dish.name,
-              price: priceNum,
-              image: dish.image,
-            })
-          }
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAdd();
+          }}
           className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border border-eucalipto/30 text-eucalipto font-bold text-sm bg-eucalipto/5 hover:bg-eucalipto hover:text-white shadow-xs hover:shadow-sm active:scale-[0.99]"
         >
           <Plus size={15} strokeWidth={2.5} />
-          Agregar
+          {isBreakfast ? "Personalizar y Agregar" : "Agregar"}
         </button>
       </div>
     </div>
@@ -580,6 +593,7 @@ interface MenuModalProps {
 
 export function MenuModal({ open, onClose }: MenuModalProps) {
   const [activeId, setActiveId] = useState("chef");
+  const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
   const { totalItems, setIsOpen: setSidebarOpen } = useCart();
 
   useEffect(() => {
@@ -693,12 +707,23 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 pb-32 animate-in fade-in slide-in-from-bottom-8 duration-500"
             >
               {active.dishes.map((dish, i) => (
-                <DishCard key={i} dish={dish} categoryId={activeId} />
+                <DishCard
+                  key={i}
+                  dish={dish}
+                  categoryId={activeId}
+                  onSelectBreakfast={(d) => setSelectedBreakfastDish(d)}
+                />
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      <BreakfastCustomizationModal
+        dish={selectedBreakfastDish}
+        open={!!selectedBreakfastDish}
+        onClose={() => setSelectedBreakfastDish(null)}
+      />
     </div>
   );
 }

@@ -285,12 +285,24 @@ export function CartSidebar() {
         total: total,
         payment_method: paymentMethod,
         notes: delivery.notes,
-        items: items.map((i) => ({
-          product_name: i.name,
-          unit_price: i.price,
-          quantity: i.quantity,
-          subtotal: i.price * i.quantity,
-        })),
+        items: items.map((i) => {
+          const opts = i.customizations
+            ? [
+                i.customizations.bebidaFria,
+                i.customizations.bebidaCaliente,
+                i.customizations.sandwich,
+                i.customizations.acompanamiento,
+              ]
+                .filter(Boolean)
+                .join(", ")
+            : "";
+          return {
+            product_name: opts ? `${i.name} (${opts})` : i.name,
+            unit_price: i.price,
+            quantity: i.quantity,
+            subtotal: i.price * i.quantity,
+          };
+        }),
       });
       setCreatedOrderNumber(orderNum);
       setStep("success");
@@ -502,10 +514,10 @@ export function CartSidebar() {
                     return (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3.5 bg-white rounded-xl p-3 shadow-xs border border-black/5 group hover:shadow-sm transition-all"
+                        className="flex items-start gap-3.5 bg-white rounded-xl p-3 shadow-xs border border-black/5 group hover:shadow-sm transition-all"
                       >
                         {item.image && (
-                          <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-black/5 shadow-xs bg-white">
+                          <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-black/5 shadow-xs bg-white mt-0.5">
                             <img
                               src={item.image}
                               alt={item.name}
@@ -513,11 +525,37 @@ export function CartSidebar() {
                             />
                           </div>
                         )}
-                        <div className="flex-1 min-w-0 flex flex-col justify-between h-16 py-0.5">
+                        <div className="flex-1 min-w-0 flex flex-col justify-between min-h-16 py-0.5">
                           <div className="flex justify-between items-start gap-2">
-                            <p className="font-serif text-sm font-bold leading-snug text-ink truncate">
-                              {item.name}
-                            </p>
+                            <div>
+                              <p className="font-serif text-sm font-bold leading-snug text-ink">
+                                {item.name}
+                              </p>
+                              {item.customizations && (
+                                <div className="mt-1 space-y-0.5">
+                                  {item.customizations.bebidaFria && (
+                                    <p className="text-[10px] text-black/60 font-medium">
+                                      • <span className="font-bold text-eucalipto">Fría:</span> {item.customizations.bebidaFria}
+                                    </p>
+                                  )}
+                                  {item.customizations.bebidaCaliente && (
+                                    <p className="text-[10px] text-black/60 font-medium">
+                                      • <span className="font-bold text-eucalipto">Caliente:</span> {item.customizations.bebidaCaliente}
+                                    </p>
+                                  )}
+                                  {item.customizations.sandwich && (
+                                    <p className="text-[10px] text-black/60 font-medium">
+                                      • <span className="font-bold text-eucalipto">Sándwich:</span> {item.customizations.sandwich}
+                                    </p>
+                                  )}
+                                  {item.customizations.acompanamiento && (
+                                    <p className="text-[10px] text-black/60 font-medium">
+                                      • <span className="font-bold text-eucalipto">Acompañante:</span> {item.customizations.acompanamiento}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                            </div>
                             <button
                               onClick={() => removeItem(item.id)}
                               className="text-black/30 hover:text-red-600 transition-colors p-1 rounded-lg hover:bg-red-50 -mr-1 -mt-1 flex-shrink-0"
@@ -526,7 +564,7 @@ export function CartSidebar() {
                               <Trash2 size={15} />
                             </button>
                           </div>
-                          <div className="flex items-center justify-between mt-auto">
+                          <div className="flex items-center justify-between mt-2 pt-1 border-t border-black/4">
                             <p className="text-xs font-serif font-bold text-eucalipto">
                               S/ {item.price.toFixed(2)}
                             </p>
