@@ -754,32 +754,27 @@ function Index() {
               atraviesan generaciones.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                img: "/gastronomia/puca-picante.webp",
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Puca-Picante.webp",
                 nombre: "Puca Picante",
-                desc: "Guiso de papa vieja en salsa de ají panca con maní tostado, trozos de carne de cerdo, especias y chicharrón",
+                desc: "Presente en festividades y picanterías, la puca picante es un emblemático guiso de intenso color rojo elaborado a base de papa, maní tostado, betarraga y chicharrón de cerdo. Degustarlo brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
               },
               {
-                img: "/gastronomia/mondongo.webp",
-                nombre: "Mondongo",
-                desc: " Preparado con maíz pelado, mix de carnes y hierbas andinas en una cocción que concentra su sabor y carácter tradicional.",
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Mondongo%20Ayacuchano.webp",
+                nombre: "Mondongo Ayacuchano",
+                desc: "Presente tradicionalmente en las mañanas de los domingos, el mondongo ayacuchano es un contundente y reparador caldo de maíz mote, carnes, panza y hierbabuena. Degustar esta clásica tradición dominical brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
               },
               {
-                img: "/gastronomia/cuy-chactado.webp",
-                nombre: "Cuy Chactado",
-                desc: "Consiste en un conejillo de indias entero aplanado y frito en abundante aceite hasta quedar muy crujiente",
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Cuy-Frito-Ayacuchano.webp",
+                nombre: "Cuy Frito Ayacuchano",
+                desc: "Presente en las celebraciones y picanterías tradicionales, el cuy frito ayacuchano es un plato crujiente y emblemático elaborado con el cuy, un animal andino cuyo consumo se remonta a la época prehispánica. Degustarlo brinda una excelente oportunidad para disfrutar de esta herencia milenaria, recordando siempre que nuestros platos en la carta son variados.",
               },
               {
-                img: "/gastronomia/chicharron.webp",
-                nombre: "Chicharrón",
-                desc: "Elaborado con trozos de carne, grasa o piel de cerdo fritos en su propia manteca.",
-              },
-              {
-                img: "/gastronomia/qapchi.webp",
-                nombre: "Qapchi",
-                desc: "Elaborada principalmente a base de queso fresco o de la sierra, rocoto, cebolla china, leche y acompañado de papas nativas",
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Chorizo-Ayacuchano.webp",
+                nombre: "Chorizo Ayacuchano",
+                desc: "Presente en las tradicionales picanterías y festividades de la región, especialmente durante Semana Santa, el chorizo ayacuchano es un emblemático plato a base de carne de cerdo finamente picada y macerada en ají panca que se sirve sin embutir. Degustar este sabroso manjar tradicional brinda una excelente oportunidad para disfrutar de la auténtica y única riqueza gastronómica local.",
               },
             ].map((p) => (
               <article key={p.nombre} className="flex flex-col group">
