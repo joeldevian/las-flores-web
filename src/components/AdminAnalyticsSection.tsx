@@ -97,8 +97,9 @@ export function AdminAnalyticsSection({
 
     orderItems.forEach((item) => {
       if (validOrderIds.has(item.order_id)) {
-        const pId = item.product_id || item.products?.name || "Desconocido";
-        const pName = item.products?.name || "Producto " + pId;
+        const rawName = item.product_name || item.products?.name || "Producto Desconocido";
+        const pId = rawName;
+        const pName = rawName;
         const qty = Number(item.quantity || 1);
         const price = Number(item.unit_price || 0);
 

@@ -213,7 +213,7 @@ export function AdminOrderDetailModal({
                               />
                             )}
                             <div>
-                              <div className="font-semibold text-gray-900">{item.products?.name || "Producto"}</div>
+                              <div className="font-semibold text-gray-900">{item.product_name || item.products?.name || "Producto"}</div>
                               {item.notes && <div className="text-xs text-gray-400">{item.notes}</div>}
                             </div>
                           </div>
