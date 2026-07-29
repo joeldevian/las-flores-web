@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { X, Loader2, Utensils, DollarSign, FileText, Image as ImageIcon, Tag, Upload, Trash2, CheckCircle2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { X, Loader2, Utensils, DollarSign, FileText, Image as ImageIcon, Tag, Upload, Trash2, CheckCircle2, RefreshCw, Sparkles, AlertCircle } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { compressImageToWebP } from "../lib/webp-compressor";
 
@@ -29,9 +29,11 @@ export function AdminProductModal({
   
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [compressing, setCompressing] = useState(false);
-  const [compressStats, setCompressStats] = useState<{ origKb: number; compKb: number } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccessMsg, setUploadSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -50,37 +52,59 @@ export function AdminProductModal({
         setImageUrl("");
         setIsAvailable(true);
       }
-      setCompressStats(null);
+      setUploadSuccessMsg("");
       setErrorMsg("");
     }
   }, [isOpen, product, categories]);
 
   if (!isOpen) return null;
 
-  // Handle file selection and automatic WebP compression (RLF-175, RLF-178, RLF-185)
-  const handleFileCompress = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Zero-IT Staff Image Upload: Compress & Upload to Supabase Storage automatically
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setCompressing(true);
+    setUploading(true);
     setErrorMsg("");
+    setUploadSuccessMsg("");
 
     try {
-      const result = await compressImageToWebP(file, 1200, 1200, 0.85);
-      setImageUrl(result.dataUrl);
-      setCompressStats({
-        origKb: result.originalSizeKb,
-        compKb: result.compressedSizeKb,
-      });
+      // 1. Compress image to optimized WebP in browser
+      const compressed = await compressImageToWebP(file, 1200, 1200, 0.85);
+
+      // 2. Try uploading to Supabase Storage bucket 'products'
+      const cleanFileName = `plato_${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
+      
+      const { data: uploadData, error: uploadErr } = await supabase.storage
+        .from("products")
+        .upload(cleanFileName, compressed.blob, {
+          contentType: "image/webp",
+          upsert: true,
+        });
+
+      if (!uploadErr && uploadData) {
+        // Successfully stored in Supabase Storage CDN!
+        const { data: publicUrlData } = supabase.storage
+          .from("products")
+          .getPublicUrl(cleanFileName);
+
+        setImageUrl(publicUrlData.publicUrl);
+        setUploadSuccessMsg(`¡Imagen optimizada (${compressed.originalSizeKb}KB ➔ ${compressed.compressedSizeKb}KB WebP) y subida con éxito!`);
+      } else {
+        // Fallback: If bucket is not public/ready, use compressed Data URL directly
+        console.warn("Storage upload fallback to compressed Data URL:", uploadErr);
+        setImageUrl(compressed.dataUrl);
+        setUploadSuccessMsg(`¡Foto optimizada a WebP (${compressed.compressedSizeKb} KB) y lista para guardar!`);
+      }
     } catch (err: any) {
-      console.error("Error al comprimir imagen:", err);
-      setErrorMsg("No se pudo comprimir la imagen seleccionada.");
+      console.error("Error al procesar la foto:", err);
+      setErrorMsg("No se pudo procesar la foto seleccionada. Intenta con otra imagen.");
     } finally {
-      setCompressing(false);
+      setUploading(false);
     }
   };
 
-  // Delete product logic (RLF-172)
+  // Delete product logic
   const handleDeleteProduct = async () => {
     if (!product) return;
     const confirmDelete = window.confirm(`¿Estás seguro de eliminar permanentemente "${product.name}"?`);
@@ -128,7 +152,7 @@ export function AdminProductModal({
       };
 
       if (product) {
-        // Update (RLF-171)
+        // Update
         const { error } = await supabase
           .from("products")
           .update(payload)
@@ -136,7 +160,7 @@ export function AdminProductModal({
 
         if (error) throw error;
       } else {
-        // Create (RLF-165)
+        // Create
         const { error } = await supabase
           .from("products")
           .insert([payload]);
@@ -148,7 +172,7 @@ export function AdminProductModal({
       onClose();
     } catch (err: any) {
       console.error("Error saving product:", err);
-      setErrorMsg(err.message || "Error al guardar el producto.");
+      setErrorMsg(err.message || "Error al guardar el plato.");
     } finally {
       setSaving(false);
     }
@@ -163,7 +187,7 @@ export function AdminProductModal({
           <div className="flex items-center gap-2.5">
             <Utensils className="text-[#D4AF37]" size={20} />
             <h2 className="font-serif text-lg font-bold">
-              {product ? "Editar Plato en Carta" : "Crear Nuevo Plato"}
+              {product ? "Editar / Actualizar Plato" : "Nuevo Lanzamiento o Promoción"}
             </h2>
           </div>
           <button
@@ -178,22 +202,30 @@ export function AdminProductModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           
           {errorMsg && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl">
-              {errorMsg}
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl flex items-center gap-2">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {uploadSuccessMsg && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-xl flex items-center gap-2">
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+              <span>{uploadSuccessMsg}</span>
             </div>
           )}
 
           {/* Name */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-              <FileText size={13} className="text-emerald-700" /> Nombre del Plato *
+              <FileText size={13} className="text-emerald-700" /> Nombre del Plato o Promoción *
             </label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ej: Puca Picante con Chicharrón"
+              placeholder="Ej: Promoción Fiestas Patrias - Cuy Chactado"
               className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D] focus:bg-white transition-all font-semibold"
             />
           </div>
@@ -238,77 +270,109 @@ export function AdminProductModal({
           {/* Description */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-              Descripción Corta / Ingredientes
+              Descripción o Detalles de la Promoción
             </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Preparado tradicional con maní molido, ají puca y panceta crocante..."
+              placeholder="Descripción del plato, ingredientes o términos del lanzamiento..."
               className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D] focus:bg-white transition-all"
             />
           </div>
 
-          {/* Image Option: URL or Compressed WebP Upload */}
-          <div className="space-y-2 pt-1">
+          {/* Staff Image Upload Section */}
+          <div className="space-y-3 pt-2">
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center justify-between">
               <span className="flex items-center gap-1">
-                <ImageIcon size={13} className="text-emerald-700" /> Imagen del Plato
+                <ImageIcon size={14} className="text-emerald-700" /> Foto del Plato / Promoción
               </span>
-              <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">
-                Compresor WebP Integrado
+              <span className="text-[10px] text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                Almacenamiento Automático
               </span>
             </label>
 
-            {/* Direct File Upload with Auto-WebP Compression */}
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border border-dashed border-gray-300 rounded-xl hover:bg-gray-100/80 transition-colors">
-              <Upload size={18} className="text-emerald-700 shrink-0" />
-              <div className="flex-1">
-                <input
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp"
-                  onChange={handleFileCompress}
-                  disabled={compressing}
-                  className="text-xs text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#14231D] file:text-white hover:file:bg-[#1E322A] cursor-pointer"
-                />
-                {compressing && (
-                  <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 mt-1">
-                    <Loader2 size={12} className="animate-spin" /> Comprimiendo a WebP óptimo...
-                  </p>
-                )}
-                {compressStats && (
-                  <p className="text-[11px] text-emerald-800 font-bold flex items-center gap-1 mt-1">
-                    <CheckCircle2 size={12} /> {compressStats.origKb} KB ➔ {compressStats.compKb} KB (WebP Optimizado)
-                  </p>
-                )}
+            {/* Current Image Preview & Change Button */}
+            {imageUrl ? (
+              <div className="flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-white border border-gray-200 shrink-0 shadow-sm">
+                  <img src={imageUrl} alt="Vista previa" className="w-full h-full object-cover" />
+                </div>
+                
+                <div className="flex-1 space-y-1">
+                  <span className="text-xs font-bold text-emerald-800 flex items-center gap-1">
+                    <CheckCircle2 size={13} /> Imagen Cargar y Lista
+                  </span>
+                  <p className="text-[11px] text-gray-500 line-clamp-1 break-all">{imageUrl}</p>
+                  
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="mt-1 px-3 py-1 bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+                  >
+                    {uploading ? <Loader2 size={12} className="animate-spin text-emerald-700" /> : <RefreshCw size={12} className="text-emerald-700" />}
+                    <span>Actualizar / Cambiar Foto</span>
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              /* One-Click Upload Area for Staff */
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="p-5 border-2 border-dashed border-emerald-600/40 bg-emerald-50/40 hover:bg-emerald-50 rounded-2xl text-center cursor-pointer transition-colors group"
+              >
+                <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                  {uploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+                </div>
+                <span className="text-xs font-bold text-[#14231D] block">
+                  {uploading ? "Optimizando y Subiendo Foto..." : "Haga clic aquí para Seleccionar Foto (Celular o PC)"}
+                </span>
+                <span className="text-[11px] text-gray-500 block mt-0.5">
+                  El sistema comprime la foto automáticamente y genera su enlace permanente.
+                </span>
+              </div>
+            )}
 
-            {/* URL input fallback with Google Drive auto-converter */}
+            {/* Hidden Input File */}
             <input
-              type="text"
-              value={imageUrl}
-              onChange={(e) => {
-                const inputVal = e.target.value;
-                if (inputVal.includes("drive.google.com")) {
-                  const match = inputVal.match(/\/d\/([a-zA-Z0-9_-]+)/) || inputVal.match(/id=([a-zA-Z0-9_-]+)/);
-                  if (match && match[1]) {
-                    setImageUrl(`https://drive.google.com/uc?export=view&id=${match[1]}`);
-                    return;
-                  }
-                }
-                setImageUrl(inputVal);
-              }}
-              placeholder="O ingresa una URL / enlace de Google Drive público..."
-              className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+              ref={fileInputRef}
+              type="file"
+              accept="image/png, image/jpeg, image/webp"
+              onChange={handleFileUpload}
+              className="hidden"
             />
+
+            {/* Manual URL Fallback / Google Drive converter */}
+            <details className="text-xs text-gray-500">
+              <summary className="cursor-pointer hover:text-gray-800 font-semibold py-1">
+                ¿Prefieres ingresar o pegar un enlace manualmente?
+              </summary>
+              <input
+                type="text"
+                value={imageUrl}
+                onChange={(e) => {
+                  const inputVal = e.target.value;
+                  if (inputVal.includes("drive.google.com")) {
+                    const match = inputVal.match(/\/d\/([a-zA-Z0-9_-]+)/) || inputVal.match(/id=([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) {
+                      setImageUrl(`https://drive.google.com/uc?export=view&id=${match[1]}`);
+                      return;
+                    }
+                  }
+                  setImageUrl(inputVal);
+                }}
+                placeholder="Pega la URL de la foto o enlace público de Google Drive..."
+                className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+              />
+            </details>
           </div>
 
           {/* Availability Toggle */}
           <div className="pt-2 flex items-center justify-between p-3.5 bg-gray-50 border border-gray-200 rounded-xl">
             <div>
-              <span className="text-xs font-bold text-gray-900 block">Disponibilidad en Carta</span>
-              <span className="text-[11px] text-gray-500">¿El plato se puede pedir en la web?</span>
+              <span className="text-xs font-bold text-gray-900 block">Disponibilidad en Carta Web</span>
+              <span className="text-[11px] text-gray-500">¿El plato o promoción está activo para clientes?</span>
             </div>
             
             <button
@@ -329,7 +393,7 @@ export function AdminProductModal({
           {/* Modal Actions */}
           <div className="pt-4 flex items-center justify-between border-t border-gray-100 mt-6">
             
-            {/* Delete button (RLF-172) */}
+            {/* Delete button */}
             {product ? (
               <button
                 type="button"
@@ -353,11 +417,11 @@ export function AdminProductModal({
 
               <button
                 type="submit"
-                disabled={saving || compressing}
+                disabled={saving || uploading}
                 className="px-6 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] text-xs font-bold shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
               >
                 {saving ? <Loader2 size={14} className="animate-spin text-[#D4AF37]" /> : null}
-                {product ? "Guardar Cambios" : "Crear Producto"}
+                {product ? "Guardar Cambios" : "Publicar en Carta"}
               </button>
             </div>
 

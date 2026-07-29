@@ -1,13 +1,13 @@
 /**
- * WebP Image Compressor Utility for Las Flores CMS (RLF-175, RLF-178, RLF-185)
- * Converts JPG/PNG/heavy images into optimized WebP data URLs or Blobs in-browser.
+ * WebP Image Compressor Utility for Las Flores CMS
+ * Converts JPG/PNG/heavy images into optimized WebP Blobs and Data URLs in-browser.
  */
 export async function compressImageToWebP(
   file: File,
   maxWidth = 1200,
   maxHeight = 1200,
   quality = 0.85
-): Promise<{ dataUrl: string; originalSizeKb: number; compressedSizeKb: number }> {
+): Promise<{ dataUrl: string; blob: Blob; originalSizeKb: number; compressedSizeKb: number }> {
   return new Promise((resolve, reject) => {
     const originalSizeKb = Math.round(file.size / 1024);
     const reader = new FileReader();
@@ -40,15 +40,22 @@ export async function compressImageToWebP(
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convert to WebP format
         const dataUrl = canvas.toDataURL("image/webp", quality);
-        const compressedSizeKb = Math.round((dataUrl.length * 0.75) / 1024);
 
-        resolve({
-          dataUrl,
-          originalSizeKb,
-          compressedSizeKb,
-        });
+        canvas.toBlob(
+          (blob) => {
+            const finalBlob = blob || new Blob();
+            const compressedSizeKb = Math.round(finalBlob.size / 1024);
+            resolve({
+              dataUrl,
+              blob: finalBlob,
+              originalSizeKb,
+              compressedSizeKb,
+            });
+          },
+          "image/webp",
+          quality
+        );
       };
 
       img.onerror = (err) => reject(err);
