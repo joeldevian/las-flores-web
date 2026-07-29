@@ -255,11 +255,13 @@ function AdminRoute() {
           
           {/* Logo & Title */}
           <div className="flex items-center gap-4">
-            <img
-              src="/favicon.png"
-              alt="Las Flores Logo"
-              className="h-10 w-10 object-contain drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]"
-            />
+            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-[#D4AF37]/50 shadow-md shrink-0">
+              <img
+                src="/favicon.png"
+                alt="Las Flores Logo"
+                className="w-full h-full object-contain rounded-lg"
+              />
+            </div>
             <div className="h-7 w-px bg-white/15 hidden sm:block" />
             <div>
               <h1 className="font-serif text-lg font-bold tracking-tight text-[#FAF8F5] flex items-center gap-2.5">
