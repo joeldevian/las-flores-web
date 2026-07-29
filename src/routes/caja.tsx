@@ -27,6 +27,7 @@ export const Route = createFileRoute("/caja")({
 
 function CashierDashboardRoute() {
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [orderItems, setOrderItems] = useState<any[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -42,6 +43,39 @@ function CashierDashboardRoute() {
 
   // Floating Toast Alert for new incoming order
   const [newOrderNotification, setNewOrderNotification] = useState<any | null>(null);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        window.location.href = "/restaurante";
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+      const userRole = profile?.role?.toLowerCase();
+      // Permitir acceso a admin, cashier y staff
+      if (userRole !== "admin" && userRole !== "cashier" && userRole !== "staff") {
+        console.warn("Acceso denegado a caja. Rol insuficiente:", userRole);
+        window.location.href = "/restaurante";
+        return;
+      }
+
+      setIsAuthorized(true);
+      await fetchData();
+    } catch (err) {
+      console.error("Error al comprobar permisos de caja:", err);
+      window.location.href = "/restaurante";
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchData = async () => {
     setRefreshing(true);
@@ -69,7 +103,7 @@ function CashierDashboardRoute() {
   };
 
   useEffect(() => {
-    fetchData();
+    checkAuth();
 
     // Supabase Realtime Listener with Sound Alert
     const channel = supabase
