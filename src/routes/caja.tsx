@@ -151,9 +151,9 @@ function CashierDashboardRoute() {
 
       if (error) throw error;
       await fetchData();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error updating order status:", err);
-      alert("No se pudo actualizar el estado del pedido.");
+      alert(`No se pudo actualizar el estado del pedido: ${err?.message || "Revisa la política RLS en Supabase."}`);
     }
   };
 
