@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, signOut } from "../lib/supabase";
 import {
@@ -293,6 +293,14 @@ function AdminRoute() {
 
           {/* Action Tools */}
           <div className="flex items-center gap-3">
+            <Link
+              to="/caja"
+              className="px-3.5 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#c29f2e] text-[#14231D] text-xs font-bold font-serif flex items-center gap-1.5 transition-all shadow-md"
+              title="Abrir Panel Operativo de Caja y Cocina"
+            >
+              <span>🛎️ Panel Caja / Cocina</span>
+            </Link>
+
             <button
               onClick={fetchData}
               disabled={refreshing}
