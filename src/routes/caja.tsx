@@ -110,27 +110,18 @@ function CashierDashboardRoute() {
       .channel("cashier-realtime-orders")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "orders" },
+        { event: "*", schema: "public", table: "orders" },
         (payload) => {
-          const newOrder = payload.new;
-          console.log("🛎️ ¡Nuevo pedido entrante!", newOrder);
-
-          // Play Sound Chime if enabled
-          if (soundEnabled) {
-            playOrderChime();
+          console.log("🛎️ Evento Realtime en pedidos:", payload);
+          
+          if (payload.eventType === "INSERT") {
+            const newOrder = payload.new;
+            if (soundEnabled) {
+              playOrderChime();
+            }
+            setNewOrderNotification(newOrder);
           }
 
-          // Trigger Toast Notification
-          setNewOrderNotification(newOrder);
-
-          // Refresh list
-          fetchData();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "orders" },
-        () => {
           fetchData();
         }
       )
