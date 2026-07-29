@@ -410,32 +410,33 @@ function AdminRoute() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6 bg-white p-2.5 rounded-2xl border border-gray-100 shadow-sm">
           
-          <div className="flex items-center gap-1 overflow-x-auto p-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto p-1">
+            
+            {/* BI Tab - FIRST */}
             <button
-              onClick={() => setActiveTab("reservations")}
+              onClick={() => setActiveTab("analytics")}
               className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
-                activeTab === "reservations"
-                  ? "bg-[#14231D] text-cream shadow-md"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                activeTab === "analytics"
+                  ? "bg-[#14231D] text-cream shadow-md ring-2 ring-[#14231D]/20"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
             >
-              <Calendar size={18} />
-              Reservas
-              <span className={`px-2 py-0.5 text-xs rounded-full ${
-                activeTab === "reservations" ? "bg-retama text-[#14231D]" : "bg-gray-100 text-gray-600"
-              }`}>
-                {reservations.length}
+              <BarChart3 size={18} className={activeTab === "analytics" ? "text-retama" : "text-eucalipto"} />
+              📊 BI & Inteligencia de Negocios
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-retama/20 text-amber-800 font-extrabold border border-retama/30">
+                PRO
               </span>
             </button>
 
+            {/* Pedidos Tab */}
             <button
               onClick={() => setActiveTab("orders")}
               className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                 activeTab === "orders"
                   ? "bg-[#14231D] text-cream shadow-md"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
             >
               <ShoppingBag size={18} />
@@ -447,12 +448,31 @@ function AdminRoute() {
               </span>
             </button>
 
+            {/* Reservas Tab */}
+            <button
+              onClick={() => setActiveTab("reservations")}
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                activeTab === "reservations"
+                  ? "bg-[#14231D] text-cream shadow-md"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
+            >
+              <Calendar size={18} />
+              Reservas
+              <span className={`px-2 py-0.5 text-xs rounded-full ${
+                activeTab === "reservations" ? "bg-retama text-[#14231D]" : "bg-gray-100 text-gray-600"
+              }`}>
+                {reservations.length}
+              </span>
+            </button>
+
+            {/* Carta Tab */}
             <button
               onClick={() => setActiveTab("menu")}
               className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                 activeTab === "menu"
                   ? "bg-[#14231D] text-cream shadow-md"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
             >
               <MenuIcon size={18} />
@@ -462,18 +482,6 @@ function AdminRoute() {
               }`}>
                 {products.length}
               </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("analytics")}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
-                activeTab === "analytics"
-                  ? "bg-[#14231D] text-cream shadow-md"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              <BarChart3 size={18} className="text-retama" />
-              BI & Reportes
             </button>
           </div>
 
