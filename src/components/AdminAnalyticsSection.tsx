@@ -4,7 +4,6 @@ import {
   DollarSign,
   ShoppingBag,
   Award,
-  Calendar,
   Download,
   Printer,
   PieChart as PieChartIcon,
@@ -13,9 +12,8 @@ import {
   Percent,
   Clock,
   CreditCard,
-  Utensils,
-  Layers,
-  Sparkles,
+  Truck,
+  Store,
   Info,
 } from "lucide-react";
 
@@ -172,7 +170,7 @@ export function AdminAnalyticsSection({
       { label: "08:00 - 11:00 (Mañana)", count: 0, revenue: 0 },
       { label: "11:00 - 14:00 (Almuerzo)", count: 0, revenue: 0 },
       { label: "14:00 - 17:00 (Tarde)", count: 0, revenue: 0 },
-      { label: "17:00 - 20:00 (Cena 1)", count: 0, revenue: 0 },
+      { label: "17:00 - 20:00 (Cena)", count: 0, revenue: 0 },
       { label: "20:00 - 23:00 (Noche)", count: 0, revenue: 0 },
     ];
 
@@ -206,11 +204,11 @@ export function AdminAnalyticsSection({
 
   // Payment Methods Breakdown
   const paymentMethodsData = useMemo(() => {
-    const methods: Record<string, { label: string; count: number; revenue: number; color: string }> = {
-      yape: { label: "Yape / Plin", count: 0, revenue: 0, color: "bg-purple-600 text-purple-700 border-purple-200" },
-      card: { label: "Tarjeta de Crédito / Débito", count: 0, revenue: 0, color: "bg-blue-600 text-blue-700 border-blue-200" },
-      cash: { label: "Efectivo", count: 0, revenue: 0, color: "bg-emerald-600 text-emerald-700 border-emerald-200" },
-      other: { label: "Otro / Transferencia", count: 0, revenue: 0, color: "bg-gray-600 text-gray-700 border-gray-200" },
+    const methods: Record<string, { label: string; count: number; revenue: number }> = {
+      yape: { label: "Yape / Plin", count: 0, revenue: 0 },
+      card: { label: "Tarjeta de Crédito / Débito", count: 0, revenue: 0 },
+      cash: { label: "Efectivo", count: 0, revenue: 0 },
+      other: { label: "Otro / Transferencia", count: 0, revenue: 0 },
     };
 
     validOrders.forEach((o) => {
@@ -270,7 +268,7 @@ export function AdminAnalyticsSection({
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-300">
       
-      {/* Printable Executive Header Header (Hidden screen, Visible on Print) */}
+      {/* Printable Executive Header (Hidden screen, Visible on Print) */}
       <div className="hidden print:block mb-8 text-center border-b pb-6">
         <h1 className="text-2xl font-bold text-gray-900">RESTAURANTE LAS FLORES S.A.C.</h1>
         <p className="text-xs text-gray-500">Reporte Ejecutivo de Inteligencia de Negocios & Ventas</p>
@@ -278,24 +276,24 @@ export function AdminAnalyticsSection({
       </div>
 
       {/* Timeframe & Export Controls Header */}
-      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 bg-gray-50/80 p-5 rounded-2xl border border-gray-100 print:hidden">
+      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 bg-gray-50/80 p-5 rounded-2xl border border-gray-200/80 print:hidden">
         <div>
-          <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="text-eucalipto" size={20} />
+          <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <BarChart3 className="text-[#14231D]" size={18} />
             Inteligencia de Negocios & Analítica Avanzada
-            <span className="text-xs px-2 py-0.5 rounded-full bg-eucalipto/10 text-eucalipto font-semibold border border-eucalipto/20">
-              Enterprise
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#14231D]/10 text-[#14231D] font-bold border border-[#14231D]/20">
+              Corporativo
             </span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Analizando {validOrders.length} pedidos efectivos por un total de <strong>S/ {totalRevenue.toFixed(2)}</strong>
+            Analizando {validOrders.length} pedidos efectivos por un monto total de <strong>S/ {totalRevenue.toFixed(2)}</strong>
           </p>
         </div>
 
         <div className="flex items-center gap-3 w-full xl:w-auto flex-wrap">
           
           {/* Timeframe Selector Pills */}
-          <div className="bg-white border border-gray-200 rounded-xl p-1 flex items-center shadow-sm text-xs font-semibold overflow-x-auto">
+          <div className="bg-white border border-gray-200 rounded-xl p-1 flex items-center shadow-sm text-xs font-bold overflow-x-auto">
             {[
               { id: "today", label: "Hoy" },
               { id: "week", label: "7 Días" },
@@ -308,7 +306,7 @@ export function AdminAnalyticsSection({
                 onClick={() => setTimeframe(tf.id as any)}
                 className={`px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                   timeframe === tf.id
-                    ? "bg-[#14231D] text-cream shadow-sm"
+                    ? "bg-[#14231D] text-[#FAF8F5] shadow-sm"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 }`}
               >
@@ -317,22 +315,22 @@ export function AdminAnalyticsSection({
             ))}
           </div>
 
-          {/* Custom Date Pickers (Shown if timeframe === 'custom') */}
+          {/* Custom Date Pickers */}
           {timeframe === "custom" && (
             <div className="flex items-center gap-2 bg-white border border-gray-200 p-1.5 rounded-xl shadow-sm animate-in fade-in zoom-in-95">
-              <span className="text-[11px] font-bold text-gray-400 pl-1">Desde:</span>
+              <span className="text-[11px] font-bold text-gray-500 pl-1">Desde:</span>
               <input
                 type="date"
                 value={customStartDate}
                 onChange={(e) => setCustomStartDate(e.target.value)}
-                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-eucalipto"
+                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
               />
-              <span className="text-[11px] font-bold text-gray-400">Hasta:</span>
+              <span className="text-[11px] font-bold text-gray-500">Hasta:</span>
               <input
                 type="date"
                 value={customEndDate}
                 onChange={(e) => setCustomEndDate(e.target.value)}
-                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-eucalipto"
+                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
               />
             </div>
           )}
@@ -341,8 +339,8 @@ export function AdminAnalyticsSection({
           <div className="flex items-center gap-2">
             <button
               onClick={exportToCSV}
-              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
-              title="Descargar reporte formateado para Excel"
+              className="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+              title="Descargar reporte en formato Excel / CSV"
             >
               <Download size={14} />
               <span>Excel / CSV</span>
@@ -365,57 +363,56 @@ export function AdminAnalyticsSection({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Total Revenue Card */}
-        <div className="bg-gradient-to-br from-[#14231D] to-[#1E322A] text-cream p-5 rounded-2xl shadow-lg relative overflow-hidden">
-          <div className="absolute right-3 top-3 w-16 h-16 bg-white/5 rounded-full blur-xl pointer-events-none" />
-          <div className="flex items-center justify-between text-cream/70 text-xs font-bold uppercase tracking-wider">
+        <div className="bg-[#14231D] text-[#FAF8F5] p-5 rounded-2xl shadow-md border border-white/10 relative overflow-hidden">
+          <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-wider">
             <span>Facturación Total</span>
-            <DollarSign size={18} className="text-retama" />
+            <DollarSign size={18} className="text-[#D4AF37]" />
           </div>
           <div className="mt-3">
-            <span className="text-3xl font-black text-retama">S/ {totalRevenue.toFixed(2)}</span>
-            <p className="text-[11px] text-cream/70 mt-1 font-medium flex items-center gap-1">
-              <TrendingUp size={12} className="text-emerald-400" /> {validOrders.length} pedidos efectivos
+            <span className="text-3xl font-black text-[#D4AF37]">S/ {totalRevenue.toFixed(2)}</span>
+            <p className="text-[11px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+              <TrendingUp size={12} /> {validOrders.length} pedidos efectivos
             </p>
           </div>
         </div>
 
         {/* Average Ticket Size */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-gray-400 text-xs font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-gray-400 text-[11px] font-bold uppercase tracking-wider">
             <span>Ticket Promedio (AOV)</span>
-            <ShoppingBag size={18} className="text-eucalipto" />
+            <ShoppingBag size={18} className="text-[#14231D]" />
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-extrabold text-gray-900">S/ {averageTicket.toFixed(2)}</span>
-            <p className="text-[11px] text-gray-500 mt-1">Gasto medio por cliente en compra</p>
+            <span className="text-2xl font-black text-gray-900">S/ {averageTicket.toFixed(2)}</span>
+            <p className="text-[11px] text-gray-500 mt-1 font-medium">Gasto medio por orden ejecutada</p>
           </div>
         </div>
 
         {/* Completion Rate */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-gray-400 text-xs font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-gray-400 text-[11px] font-bold uppercase tracking-wider">
             <span>Efectividad de Venta</span>
-            <Percent size={18} className="text-blue-600" />
+            <Percent size={18} className="text-blue-700" />
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-extrabold text-gray-900">{completionRate.toFixed(1)}%</span>
-            <p className="text-[11px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+            <span className="text-2xl font-black text-gray-900">{completionRate.toFixed(1)}%</span>
+            <p className="text-[11px] text-emerald-700 mt-1 font-semibold flex items-center gap-1">
               <CheckCircle2 size={12} /> {validOrders.length} de {filteredOrders.length} pedidos entregados
             </p>
           </div>
         </div>
 
         {/* Top Product Star */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-gray-400 text-xs font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-gray-400 text-[11px] font-bold uppercase tracking-wider">
             <span>Plato Estrella</span>
-            <Award size={18} className="text-amber-500" />
+            <Award size={18} className="text-amber-600" />
           </div>
           <div className="mt-3">
-            <span className="text-lg font-bold text-gray-900 line-clamp-1">
+            <span className="text-base font-extrabold text-gray-900 line-clamp-1">
               {topProducts[0]?.name || "Sin ventas aún"}
             </span>
-            <p className="text-[11px] text-amber-700 font-semibold mt-1">
+            <p className="text-[11px] text-amber-800 font-semibold mt-1">
               {topProducts[0] ? `${topProducts[0].quantity} unidades vendidas (S/ ${topProducts[0].revenue.toFixed(2)})` : "Esperando pedidos"}
             </p>
           </div>
@@ -427,20 +424,20 @@ export function AdminAnalyticsSection({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Interactive Daily Sales Bar Chart (2 Cols) */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 relative">
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-4 relative">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                <TrendingUp size={18} className="text-eucalipto" />
+                <TrendingUp size={18} className="text-[#14231D]" />
                 Evolución de Ingresos por Día (S/)
               </h3>
-              <p className="text-xs text-gray-500">Facturación diaria acumulada con guías de nivel</p>
+              <p className="text-xs text-gray-500 font-medium">Facturación diaria acumulada con guías de nivel</p>
             </div>
 
             {/* Hover Tooltip display */}
             {hoveredBar && (
-              <div className="bg-[#14231D] text-cream px-3 py-1.5 rounded-xl text-xs shadow-lg animate-in fade-in">
-                <span className="font-bold text-retama">{hoveredBar.date}:</span> S/ {hoveredBar.value.toFixed(2)} ({hoveredBar.count} pedidos)
+              <div className="bg-[#14231D] text-[#FAF8F5] px-3 py-1.5 rounded-xl text-xs shadow-lg animate-in fade-in border border-white/10">
+                <span className="font-bold text-[#D4AF37]">{hoveredBar.date}:</span> S/ {hoveredBar.value.toFixed(2)} ({hoveredBar.count} pedidos)
               </div>
             )}
           </div>
@@ -453,8 +450,8 @@ export function AdminAnalyticsSection({
             <div className="pt-6 pb-2 relative">
               {/* Y Axis Guide Lines */}
               <div className="absolute inset-x-0 top-6 bottom-8 flex flex-col justify-between pointer-events-none opacity-20 z-0">
-                <div className="border-b border-gray-400 border-dashed w-full flex justify-end pr-2 text-[9px]">S/ {dailySalesData.maxVal.toFixed(0)}</div>
-                <div className="border-b border-gray-400 border-dashed w-full flex justify-end pr-2 text-[9px]">S/ {(dailySalesData.maxVal / 2).toFixed(0)}</div>
+                <div className="border-b border-gray-400 border-dashed w-full flex justify-end pr-2 text-[9px] font-bold">S/ {dailySalesData.maxVal.toFixed(0)}</div>
+                <div className="border-b border-gray-400 border-dashed w-full flex justify-end pr-2 text-[9px] font-bold">S/ {(dailySalesData.maxVal / 2).toFixed(0)}</div>
                 <div className="border-b border-gray-400 w-full" />
               </div>
 
@@ -470,15 +467,15 @@ export function AdminAnalyticsSection({
                       className="flex-1 h-full flex flex-col justify-end items-center gap-1 group cursor-pointer"
                     >
                       {/* Amount Label Above Bar */}
-                      <span className="text-[10px] font-extrabold text-eucalipto group-hover:scale-110 transition-transform">
+                      <span className="text-[10px] font-black text-[#14231D] group-hover:scale-110 transition-transform">
                         S/{dataObj.total.toFixed(0)}
                       </span>
 
-                      {/* Bar Wrapper with Explicit Max Height */}
-                      <div className="w-full flex-1 max-h-[170px] flex items-end bg-gray-100/50 rounded-t-xl p-0.5 border border-gray-100">
+                      {/* Bar Wrapper */}
+                      <div className="w-full flex-1 max-h-[170px] flex items-end bg-gray-100/60 rounded-t-xl p-0.5 border border-gray-200/60">
                         <div
                           style={{ height: `${heightPercent}%` }}
-                          className="w-full bg-gradient-to-t from-[#14231D] via-eucalipto to-emerald-500 hover:from-eucalipto-dark hover:to-emerald-400 rounded-t-lg transition-all shadow-md group-hover:brightness-110"
+                          className="w-full bg-gradient-to-t from-[#14231D] via-emerald-800 to-emerald-600 hover:from-emerald-900 hover:to-emerald-500 rounded-t-lg transition-all shadow-md group-hover:brightness-110"
                         />
                       </div>
 
@@ -494,21 +491,23 @@ export function AdminAnalyticsSection({
           )}
         </div>
 
-        {/* Channel Distribution Doughnut/Bar (1 Col) */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 flex flex-col justify-between">
+        {/* Channel Distribution (1 Col) */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-4 flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              <PieChartIcon size={18} className="text-blue-600" />
+              <PieChartIcon size={18} className="text-blue-700" />
               Canal de Venta Preferido
             </h3>
-            <p className="text-xs text-gray-500">Proporción Delivery vs Recojo en Local</p>
+            <p className="text-xs text-gray-500 font-medium">Proporción Delivery vs Recojo en Local</p>
 
             <div className="pt-6 space-y-5">
               {/* Delivery */}
               <div>
-                <div className="flex justify-between text-xs font-semibold mb-1.5">
-                  <span className="text-blue-700 flex items-center gap-1.5">🛵 Delivery a Domicilio</span>
-                  <span className="text-gray-900 font-bold">{deliveryPercentage}% ({deliveryCount})</span>
+                <div className="flex justify-between text-xs font-bold mb-1.5">
+                  <span className="text-blue-700 flex items-center gap-1.5">
+                    <Truck size={14} /> Delivery a Domicilio
+                  </span>
+                  <span className="text-gray-900">{deliveryPercentage}% ({deliveryCount})</span>
                 </div>
                 <div className="w-full bg-gray-100 h-3.5 rounded-full overflow-hidden p-0.5 border border-gray-200">
                   <div
@@ -520,9 +519,11 @@ export function AdminAnalyticsSection({
 
               {/* Pickup */}
               <div>
-                <div className="flex justify-between text-xs font-semibold mb-1.5">
-                  <span className="text-purple-700 flex items-center gap-1.5">🛍️ Recojo en Tienda</span>
-                  <span className="text-gray-900 font-bold">{100 - deliveryPercentage}% ({pickupCount})</span>
+                <div className="flex justify-between text-xs font-bold mb-1.5">
+                  <span className="text-purple-700 flex items-center gap-1.5">
+                    <Store size={14} /> Recojo en Tienda
+                  </span>
+                  <span className="text-gray-900">{100 - deliveryPercentage}% ({pickupCount})</span>
                 </div>
                 <div className="w-full bg-gray-100 h-3.5 rounded-full overflow-hidden p-0.5 border border-gray-200">
                   <div
@@ -534,10 +535,10 @@ export function AdminAnalyticsSection({
             </div>
           </div>
 
-          <div className="p-3.5 bg-amber-50/80 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2 mt-4">
-            <Info size={15} className="shrink-0 text-amber-600 mt-0.5" />
+          <div className="p-3.5 bg-blue-50/80 rounded-xl border border-blue-200 text-xs text-blue-900 flex items-start gap-2 mt-4 font-medium">
+            <Info size={15} className="shrink-0 text-blue-700 mt-0.5" />
             <span>
-              <strong>Recomendación:</strong> El {deliveryPercentage >= 50 ? "Delivery lidera las ventas. Revisa tus tiempos de despacho." : "Recojo predomina. Mantén óptima la zona de entrega en caja."}
+              <strong>Análisis de Canal:</strong> {deliveryPercentage >= 50 ? "El servicio de delivery registra la mayor demanda del período." : "El recojo directo en local predomina entre los clientes."}
             </span>
           </div>
         </div>
@@ -548,13 +549,13 @@ export function AdminAnalyticsSection({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Peak Hours Analysis */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-4">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               <Clock size={18} className="text-amber-600" />
               Mapa de Horas Pico de Pedidos (Cocina)
             </h3>
-            <p className="text-xs text-gray-500">Distribución de demanda por rango horario</p>
+            <p className="text-xs text-gray-500 font-medium">Distribución de demanda por rango horario</p>
           </div>
 
           <div className="space-y-3 pt-2">
@@ -562,14 +563,14 @@ export function AdminAnalyticsSection({
               const barPercent = Math.max(Math.round((slot.count / peakHoursData.maxSlotCount) * 100), 4);
               return (
                 <div key={slot.label} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
+                  <div className="flex justify-between text-xs font-bold">
                     <span className="text-gray-700">{slot.label}</span>
-                    <span className="text-gray-900 font-bold">{slot.count} pedidos (S/ {slot.revenue.toFixed(2)})</span>
+                    <span className="text-gray-900">{slot.count} pedidos (S/ {slot.revenue.toFixed(2)})</span>
                   </div>
-                  <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                  <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden border border-gray-200">
                     <div
                       style={{ width: `${barPercent}%` }}
-                      className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-amber-600 to-amber-500 h-full rounded-full transition-all duration-500"
                     />
                   </div>
                 </div>
@@ -579,21 +580,21 @@ export function AdminAnalyticsSection({
         </div>
 
         {/* Payment Methods Breakdown */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-4">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              <CreditCard size={18} className="text-emerald-600" />
+              <CreditCard size={18} className="text-emerald-700" />
               Métodos de Pago Utilizados
             </h3>
-            <p className="text-xs text-gray-500">Volumen cobrado por pasarela o efectivo</p>
+            <p className="text-xs text-gray-500 font-medium">Volumen cobrado por pasarela o efectivo</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             {paymentMethodsData.map((pm) => (
-              <div key={pm.label} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 space-y-1">
+              <div key={pm.label} className="p-4 rounded-xl border border-gray-200/80 bg-gray-50/50 space-y-1">
                 <span className="text-xs font-bold text-gray-700 block">{pm.label}</span>
-                <span className="text-lg font-extrabold text-eucalipto block">S/ {pm.revenue.toFixed(2)}</span>
-                <span className="text-[11px] text-gray-500 font-medium block">{pm.count} transacciones</span>
+                <span className="text-lg font-black text-[#14231D] block">S/ {pm.revenue.toFixed(2)}</span>
+                <span className="text-[11px] text-gray-500 font-semibold block">{pm.count} transacciones</span>
               </div>
             ))}
           </div>
@@ -602,14 +603,14 @@ export function AdminAnalyticsSection({
       </div>
 
       {/* Top 5 Products Table / Ranking */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              <Award size={18} className="text-amber-500" />
+              <Award size={18} className="text-[#D4AF37]" />
               Ranking: Top 5 Platos Más Vendidos & Facturación
             </h3>
-            <p className="text-xs text-gray-500">Basado en volumen de unidades e ingresos generados</p>
+            <p className="text-xs text-gray-500 font-medium">Basado en volumen de unidades e ingresos generados</p>
           </div>
         </div>
 
@@ -620,10 +621,10 @@ export function AdminAnalyticsSection({
         ) : (
           <div className="space-y-3">
             {topProducts.map((p, idx) => (
-              <div key={p.name} className="flex items-center justify-between p-3.5 rounded-xl bg-gray-50/70 border border-gray-100 hover:bg-gray-50 transition-colors">
+              <div key={p.name} className="flex items-center justify-between p-3.5 rounded-xl bg-gray-50/80 border border-gray-200/60 hover:bg-gray-100/80 transition-colors">
                 <div className="flex items-center gap-3">
                   <span className={`w-8 h-8 rounded-xl text-xs font-black flex items-center justify-center shadow-sm ${
-                    idx === 0 ? "bg-amber-400 text-black" :
+                    idx === 0 ? "bg-[#D4AF37] text-gray-900" :
                     idx === 1 ? "bg-gray-300 text-gray-800" :
                     idx === 2 ? "bg-amber-700/20 text-amber-900" :
                     "bg-gray-200 text-gray-600"
@@ -632,15 +633,15 @@ export function AdminAnalyticsSection({
                   </span>
                   <div>
                     <span className="text-sm font-bold text-gray-900 block">{p.name}</span>
-                    <span className="text-xs text-gray-500">{p.quantity} unidades despachadas</span>
+                    <span className="text-xs text-gray-500 font-medium">{p.quantity} unidades despachadas</span>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-sm font-extrabold text-eucalipto block">
+                  <span className="text-sm font-black text-[#14231D] block">
                     S/ {p.revenue.toFixed(2)}
                   </span>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold">Generado</span>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Facturado</span>
                 </div>
               </div>
             ))}
