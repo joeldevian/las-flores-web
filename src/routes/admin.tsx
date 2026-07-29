@@ -256,9 +256,9 @@ function AdminRoute() {
           {/* Logo & Title */}
           <div className="flex items-center gap-4">
             <img
-              src="/flor-retablo.png"
-              alt="Las Flores"
-              className="h-10 w-auto object-contain filter drop-shadow-[0_2px_6px_rgba(212,175,55,0.4)]"
+              src="/favicon.png"
+              alt="Las Flores Logo"
+              className="h-10 w-10 object-contain drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]"
             />
             <div className="h-7 w-px bg-white/15 hidden sm:block" />
             <div>
