@@ -105,7 +105,12 @@ function CashierDashboardRoute() {
   useEffect(() => {
     checkAuth();
 
-    // Supabase Realtime Listener with Sound Alert
+    // 1. Automatic 5-second Polling Fallback (Zero-Click Auto Refresh)
+    const pollInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    // 2. Supabase Realtime Listener with Sound Alert
     const channel = supabase
       .channel("cashier-realtime-orders")
       .on(
@@ -128,6 +133,7 @@ function CashierDashboardRoute() {
       .subscribe();
 
     return () => {
+      clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
   }, [soundEnabled]);
