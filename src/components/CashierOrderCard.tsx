@@ -86,7 +86,16 @@ export function CashierOrderCard({
     },
   };
 
-  const currentStatus = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.pendiente;
+  const normalizedStatus = (() => {
+    const raw = (order.status || "").toLowerCase().trim();
+    if (raw.includes("cocina") || raw.includes("preparac") || raw.includes("kitchen")) return "en_preparacion";
+    if (raw.includes("camino") || raw.includes("listo") || raw.includes("way") || raw.includes("pickup")) return "en_camino";
+    if (raw.includes("entregad") || raw.includes("complet") || raw.includes("delivered")) return "entregado";
+    if (raw.includes("cancel") || raw.includes("rechaz")) return "cancelado";
+    return "pendiente";
+  })();
+
+  const currentStatus = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.pendiente;
 
   return (
     <div

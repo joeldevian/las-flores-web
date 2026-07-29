@@ -157,6 +157,16 @@ function CashierDashboardRoute() {
     }
   };
 
+  const getNormalizedStatus = (status: string | null | undefined) => {
+    if (!status) return "pendiente";
+    const s = status.toLowerCase().trim();
+    if (s.includes("cocina") || s.includes("preparac") || s.includes("kitchen")) return "en_preparacion";
+    if (s.includes("camino") || s.includes("listo") || s.includes("way") || s.includes("pickup")) return "en_camino";
+    if (s.includes("entregad") || s.includes("complet") || s.includes("delivered")) return "entregado";
+    if (s.includes("cancel") || s.includes("rechaz")) return "cancelado";
+    return "pendiente";
+  };
+
   // Filtered orders list
   const filteredOrders = orders.filter((ord) => {
     const matchSearch =
@@ -164,15 +174,16 @@ function CashierDashboardRoute() {
       (ord.client_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (ord.client_phone || "").includes(searchQuery);
 
-    const matchStatus = statusFilter === "all" || ord.status === statusFilter;
+    const normStatus = getNormalizedStatus(ord.status);
+    const matchStatus = statusFilter === "all" || normStatus === statusFilter;
     return matchSearch && matchStatus;
   });
 
   // Counts by status
-  const pendingCount = orders.filter((o) => o.status === "pendiente").length;
-  const inKitchenCount = orders.filter((o) => o.status === "en_preparacion").length;
-  const onWayCount = orders.filter((o) => o.status === "en_camino").length;
-  const completedCount = orders.filter((o) => o.status === "entregado").length;
+  const pendingCount = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente").length;
+  const inKitchenCount = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion").length;
+  const onWayCount = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino").length;
+  const completedCount = orders.filter((o) => getNormalizedStatus(o.status) === "entregado").length;
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#14231D] pb-20 font-sans selection:bg-[#D4AF37] selection:text-[#14231D]">

@@ -342,6 +342,7 @@ export function CartSidebar() {
       await createOrder({
         order_number: orderNum,
         order_type: orderType,
+        status: "pendiente",
         client_name: delivery.name || "Cliente",
         client_email: delivery.email || "cliente@ejemplo.com",
         client_phone: delivery.phone || "",
