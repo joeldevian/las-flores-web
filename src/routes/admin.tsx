@@ -22,10 +22,12 @@ import {
   UserCheck,
   BarChart3,
   ShieldCheck,
+  Ticket,
 } from "lucide-react";
 
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
 import { AdminProductModal } from "../components/AdminProductModal";
+import { AdminCouponModal } from "../components/AdminCouponModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
 
 export const Route = createFileRoute("/admin")({
@@ -35,7 +37,7 @@ export const Route = createFileRoute("/admin")({
 function AdminRoute() {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"analytics" | "orders" | "reservations" | "menu">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "orders" | "reservations" | "menu" | "coupons">("analytics");
   const [refreshing, setRefreshing] = useState(false);
 
   // Data states
@@ -44,6 +46,7 @@ function AdminRoute() {
   const [orderItems, setOrderItems] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [coupons, setCoupons] = useState<any[]>([]);
 
   // Search & Filter states
   const [resSearch, setResSearch] = useState("");
@@ -62,6 +65,9 @@ function AdminRoute() {
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
+  const [selectedCoupon, setSelectedCoupon] = useState<any | null>(null);
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+
   useEffect(() => {
     checkAuth();
 
@@ -70,6 +76,7 @@ function AdminRoute() {
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => fetchData())
       .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => fetchData())
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => fetchData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "coupons" }, () => fetchData())
       .subscribe();
 
     return () => {
@@ -144,6 +151,13 @@ function AdminRoute() {
         .select("*")
         .order("sort_order", { ascending: true });
       if (catData) setCategories(catData);
+
+      // 6. Coupons
+      const { data: coupData } = await supabase
+        .from("coupons")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (coupData) setCoupons(coupData);
 
     } catch (err) {
       console.error("Error fetching admin data:", err);
@@ -458,6 +472,24 @@ function AdminRoute() {
                 {products.length}
               </span>
             </button>
+
+            {/* Cupones Tab */}
+            <button
+              onClick={() => setActiveTab("coupons")}
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wide transition-all whitespace-nowrap ${
+                activeTab === "coupons"
+                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
+                  : "text-[#14231D]/70 hover:text-[#14231D] hover:bg-gray-100/70"
+              }`}
+            >
+              <Ticket size={16} className={activeTab === "coupons" ? "text-[#D4AF37]" : ""} />
+              Cupones & Promociones
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
+                activeTab === "coupons" ? "bg-[#D4AF37] text-[#14231D]" : "bg-gray-100 text-gray-700"
+              }`}>
+                {coupons.length}
+              </span>
+            </button>
           </div>
 
           {activeTab === "menu" && (
@@ -470,6 +502,19 @@ function AdminRoute() {
             >
               <Plus size={15} />
               Nuevo Plato
+            </button>
+          )}
+
+          {activeTab === "coupons" && (
+            <button
+              onClick={() => {
+                setSelectedCoupon(null);
+                setIsCouponModalOpen(true);
+              }}
+              className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+            >
+              <Plus size={15} />
+              Crear Cupón
             </button>
           )}
 
@@ -812,6 +857,117 @@ function AdminRoute() {
             </div>
           )}
 
+          {/* ================= COUPONS TAB ================= */}
+          {activeTab === "coupons" && (
+            <div>
+              <div className="p-4 bg-gray-50/70 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                  <h3 className="font-serif font-bold text-sm text-gray-900 flex items-center gap-2">
+                    <Ticket size={16} className="text-[#14231D]" />
+                    Gestión de Cupones & Códigos Promocionales
+                  </h3>
+                  <p className="text-xs text-gray-500">Configuración de límites de uso, descuentos en % o S/ y restricciones</p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSelectedCoupon(null);
+                    setIsCouponModalOpen(true);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <Plus size={14} /> Crear Nuevo Cupón
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-gray-500 bg-gray-50 border-b">
+                    <tr>
+                      <th className="px-6 py-4">Código del Cupón</th>
+                      <th className="px-6 py-4">Descuento</th>
+                      <th className="px-6 py-4">Límite de Usos & Progreso</th>
+                      <th className="px-6 py-4">Modalidad Válida</th>
+                      <th className="px-6 py-4">Estado</th>
+                      <th className="px-6 py-4 text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {coupons.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                          No hay cupones creados aún. Haz clic en "Crear Nuevo Cupón" para comenzar (ej: FLORES).
+                        </td>
+                      </tr>
+                    ) : (
+                      coupons.map((c) => {
+                        const usedPercent = Math.min(Math.round(((c.used_count || 0) / (c.max_uses || 1)) * 100), 100);
+                        const isExpired = (c.used_count || 0) >= (c.max_uses || 1);
+
+                        return (
+                          <tr key={c.id} className="hover:bg-gray-50/80 transition-colors">
+                            <td className="px-6 py-4">
+                              <span className="font-mono font-black text-sm px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg tracking-wider">
+                                {c.code}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="font-serif font-extrabold text-sm text-emerald-800">
+                                {c.discount_type === "percent" ? `${c.discount_value}% OFF` : `S/ ${Number(c.discount_value).toFixed(2)} OFF`}
+                              </span>
+                              {c.min_order_total > 0 && (
+                                <p className="text-[10px] text-gray-500 mt-0.5">Min: S/ {c.min_order_total}</p>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-xs font-bold">
+                                  <span className={isExpired ? "text-red-700" : "text-gray-800"}>
+                                    {c.used_count || 0} / {c.max_uses} usos
+                                  </span>
+                                  <span className="text-gray-400 font-mono text-[11px]">{usedPercent}%</span>
+                                </div>
+                                <div className="w-48 bg-gray-100 h-2 rounded-full overflow-hidden border border-gray-200">
+                                  <div
+                                    style={{ width: `${usedPercent}%` }}
+                                    className={`h-full transition-all ${isExpired ? "bg-red-500" : "bg-emerald-600"}`}
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 font-semibold text-gray-700 capitalize">
+                              {c.order_type_restriction === "delivery" ? "Solo Delivery" : c.order_type_restriction === "pickup" ? "Solo Recojo" : "Todas las Modalidades"}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
+                                c.is_active && !isExpired
+                                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                  : "bg-red-50 text-red-800 border-red-300"
+                              }`}>
+                                {isExpired ? "Agotado (100 usos)" : c.is_active ? "Activo" : "Inactivo"}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <button
+                                onClick={() => {
+                                  setSelectedCoupon(c);
+                                  setIsCouponModalOpen(true);
+                                }}
+                                className="px-3.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold border border-gray-200 text-xs inline-flex items-center gap-1.5 transition-colors"
+                              >
+                                <Edit2 size={12} /> Editar
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
@@ -828,6 +984,13 @@ function AdminRoute() {
         onClose={() => setIsProductModalOpen(false)}
         product={selectedProduct}
         categories={categories}
+        onSave={fetchData}
+      />
+
+      <AdminCouponModal
+        isOpen={isCouponModalOpen}
+        onClose={() => setIsCouponModalOpen(false)}
+        coupon={selectedCoupon}
         onSave={fetchData}
       />
 

@@ -17,6 +17,8 @@ import {
   AlertTriangle,
   Clock,
   ClipboardList,
+  Ticket,
+  Tag,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import {
@@ -250,8 +252,76 @@ export function CartSidebar() {
         : DELIVERY_CONFIG.baseCost
       : 0;
 
+  // Coupon state
+  const [couponCodeInput, setCouponCodeInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
+
+  const handleApplyCoupon = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!couponCodeInput.trim()) return;
+
+    setValidatingCoupon(true);
+    setCouponError("");
+
+    const code = couponCodeInput.trim().toUpperCase().replace(/\s+/g, "");
+
+    try {
+      const { data: coupon, error } = await supabase
+        .from("coupons")
+        .select("*")
+        .eq("code", code)
+        .single();
+
+      if (error || !coupon) {
+        setCouponError(`El código de descuento "${code}" no es válido.`);
+        setAppliedCoupon(null);
+        return;
+      }
+
+      if (!coupon.is_active) {
+        setCouponError(`El cupón "${code}" se encuentra inactivo actualmente.`);
+        setAppliedCoupon(null);
+        return;
+      }
+
+      if ((coupon.used_count || 0) >= (coupon.max_uses || 100)) {
+        setCouponError(`¡El cupón "${code}" ya alcanzó su límite máximo de ${coupon.max_uses} usos!`);
+        setAppliedCoupon(null);
+        return;
+      }
+
+      if (coupon.order_type_restriction !== "all" && coupon.order_type_restriction !== orderType) {
+        setCouponError(`Este cupón solo es válido para pedidos de tipo ${coupon.order_type_restriction === "delivery" ? "Delivery a Domicilio" : "Recojo en Tienda"}.`);
+        setAppliedCoupon(null);
+        return;
+      }
+
+      if (coupon.min_order_total > 0 && totalPrice < coupon.min_order_total) {
+        setCouponError(`Este cupón requiere un consumo mínimo de S/ ${Number(coupon.min_order_total).toFixed(2)}.`);
+        setAppliedCoupon(null);
+        return;
+      }
+
+      setAppliedCoupon(coupon);
+      setCouponError("");
+    } catch (err) {
+      console.error("Error validating coupon:", err);
+      setCouponError("Error al comprobar el código de descuento.");
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const discountAmount = appliedCoupon
+    ? appliedCoupon.discount_type === "percent"
+      ? Math.round((totalPrice * (appliedCoupon.discount_value / 100)) * 100) / 100
+      : Math.min(appliedCoupon.discount_value, totalPrice)
+    : 0;
+
   const isTooFar = distanceKm > DELIVERY_CONFIG.maxRadiusKm;
-  const total = totalPrice + DELIVERY_FEE;
+  const total = Math.max(0, totalPrice - discountAmount + DELIVERY_FEE);
 
   const formatCard = (v: string) =>
     v
@@ -304,6 +374,19 @@ export function CartSidebar() {
           };
         }),
       });
+
+      // Increment coupon used_count in Supabase
+      if (appliedCoupon) {
+        try {
+          await supabase
+            .from("coupons")
+            .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
+            .eq("id", appliedCoupon.id);
+        } catch (coupErr) {
+          console.warn("Could not increment coupon used_count:", coupErr);
+        }
+      }
+
       setCreatedOrderNumber(orderNum);
       setStep("success");
     } catch (err) {
@@ -646,6 +729,59 @@ export function CartSidebar() {
                     })}
                   </div>
 
+                  {/* Coupon Input Box */}
+                  <div className="bg-amber-50/60 rounded-xl p-3.5 border border-amber-200/60 shadow-xs">
+                    <label className="block text-[11px] font-serif font-bold text-[#14231D] mb-1.5 flex items-center gap-1.5">
+                      <Ticket size={14} className="text-[#D4AF37]" /> ¿Tienes un código de descuento?
+                    </label>
+
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-emerald-300">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-black text-xs px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded">
+                            {appliedCoupon.code}
+                          </span>
+                          <span className="text-xs font-bold text-emerald-700">
+                            ({appliedCoupon.discount_type === "percent" ? `-${appliedCoupon.discount_value}%` : `-S/ ${appliedCoupon.discount_value}`})
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAppliedCoupon(null);
+                            setCouponCodeInput("");
+                          }}
+                          className="text-xs text-red-600 hover:text-red-800 font-bold underline"
+                        >
+                          Quitar
+                        </button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCodeInput}
+                          onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
+                          placeholder="Ej: FLORES"
+                          className="flex-1 font-mono uppercase font-extrabold text-xs bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                        />
+                        <button
+                          type="submit"
+                          disabled={validatingCoupon || !couponCodeInput.trim()}
+                          className="px-3 py-2 bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs rounded-lg shadow-xs transition-colors disabled:opacity-50 flex items-center gap-1"
+                        >
+                          {validatingCoupon ? "..." : "Aplicar"}
+                        </button>
+                      </form>
+                    )}
+
+                    {couponError && (
+                      <p className="text-[11px] font-semibold text-red-600 mt-1.5">
+                        {couponError}
+                      </p>
+                    )}
+                  </div>
+
                   <div className="bg-white rounded-xl p-4 border border-black/5 shadow-sm space-y-2 text-sm">
                     <div className="flex justify-between text-black/50 font-medium">
                       <span>
@@ -653,12 +789,23 @@ export function CartSidebar() {
                       </span>
                       <span>S/ {totalPrice.toFixed(2)}</span>
                     </div>
+
+                    {appliedCoupon && discountAmount > 0 && (
+                      <div className="flex justify-between text-emerald-700 font-bold">
+                        <span className="flex items-center gap-1">
+                          <Tag size={13} /> Descuento ({appliedCoupon.code})
+                        </span>
+                        <span>- S/ {discountAmount.toFixed(2)}</span>
+                      </div>
+                    )}
+
                     {orderType === "delivery" && (
                       <div className="flex justify-between text-black/50 font-medium">
                         <span>Costo de delivery</span>
                         <span>S/ {DELIVERY_FEE.toFixed(2)}</span>
                       </div>
                     )}
+
                     <div className="flex justify-between font-serif font-bold text-base pt-2 border-t border-black/5">
                       <span className="text-ink/80">Total</span>
                       <span className="text-eucalipto font-serif font-bold text-lg">S/ {total.toFixed(2)}</span>
