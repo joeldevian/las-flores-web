@@ -375,15 +375,27 @@ export function CartSidebar() {
         }),
       });
 
-      // Increment coupon used_count in Supabase
+      // Increment coupon used_count in Supabase & Log redemption record for BI Analytics
       if (appliedCoupon) {
         try {
           await supabase
             .from("coupons")
             .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
             .eq("id", appliedCoupon.id);
+
+          await supabase.from("coupon_redemptions").insert([
+            {
+              coupon_id: appliedCoupon.id,
+              coupon_code: appliedCoupon.code,
+              order_number: orderNum,
+              client_name: delivery.name || "Cliente",
+              client_email: delivery.email || "",
+              discount_amount: discountAmount,
+              order_total: total,
+            },
+          ]);
         } catch (coupErr) {
-          console.warn("Could not increment coupon used_count:", coupErr);
+          console.warn("Could not record coupon redemption:", coupErr);
         }
       }
 

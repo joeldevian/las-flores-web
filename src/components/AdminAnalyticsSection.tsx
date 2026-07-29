@@ -75,19 +75,21 @@ export function AdminAnalyticsSection({
     });
   }, [orders, timeframe, customStartDate, customEndDate]);
 
-  // Valid orders (not cancelled)
-  const validOrders = useMemo(() => {
-    return filteredOrders.filter((o) => o.status !== "cancelled");
+  // Total Revenue & Valid Orders
+  const { totalRevenue, validOrders, averageTicket } = useMemo(() => {
+    const valid = filteredOrders.filter((o) => o.status !== "cancelado");
+    const rev = valid.reduce((sum, o) => sum + Number(o.total || 0), 0);
+    const avg = valid.length > 0 ? rev / valid.length : 0;
+
+    return { totalRevenue: rev, validOrders: valid, averageTicket: avg };
   }, [filteredOrders]);
 
-  // KPI Calculations
-  const totalRevenue = useMemo(() => {
-    return validOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+  // Discounts & Promotions Metrics (BI Analytics)
+  const { totalDiscountGiven, ordersWithCouponCount } = useMemo(() => {
+    const totalDiscount = validOrders.reduce((sum, o) => sum + Number(o.discount_amount || 0), 0);
+    const couponOrders = validOrders.filter((o) => Number(o.discount_amount || 0) > 0 || Boolean(o.coupon_code)).length;
+    return { totalDiscountGiven: totalDiscount, ordersWithCouponCount: couponOrders };
   }, [validOrders]);
-
-  const averageTicket = useMemo(() => {
-    return validOrders.length > 0 ? totalRevenue / validOrders.length : 0;
-  }, [totalRevenue, validOrders]);
 
   const completionRate = useMemo(() => {
     if (filteredOrders.length === 0) return 100;
@@ -415,6 +417,25 @@ export function AdminAnalyticsSection({
             <p className="text-[11px] text-amber-800 font-semibold mt-1">
               {topProducts[0] ? `${topProducts[0].quantity} unidades (S/ ${topProducts[0].revenue.toFixed(2)})` : "Esperando pedidos"}
             </p>
+          </div>
+        </div>
+
+        {/* Total Discounts Given KPI Card */}
+        <div className="bg-amber-50/70 p-5 rounded-2xl border border-amber-200/80 shadow-sm hover:shadow-md transition-all sm:col-span-2 lg:col-span-4">
+          <div className="flex items-center justify-between text-amber-900 text-[11px] font-serif font-bold uppercase tracking-wider">
+            <span className="flex items-center gap-1.5">
+              <Percent size={16} className="text-amber-700" />
+              Impacto de Promociones & Descuentos Otorgados (BI)
+            </span>
+            <span className="text-amber-800 bg-white px-2.5 py-0.5 rounded-full border border-amber-300 font-sans font-bold">
+              {ordersWithCouponCount} pedidos con cupón
+            </span>
+          </div>
+          <div className="mt-3 flex items-baseline justify-between">
+            <div>
+              <span className="font-serif text-3xl font-black text-amber-900">S/ {totalDiscountGiven.toFixed(2)}</span>
+              <p className="text-xs text-amber-800 mt-0.5 font-medium">Inversión total otorgada en códigos promocionales y descuentos a clientes</p>
+            </div>
           </div>
         </div>
 
