@@ -22,6 +22,8 @@ import {
   UserCheck,
   BarChart3,
   ShieldCheck,
+  ChevronRight,
+  Sparkles,
 } from "lucide-react";
 
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
@@ -65,30 +67,12 @@ function AdminRoute() {
   useEffect(() => {
     checkAuth();
 
-    // Supabase Realtime Listener (Actualización en tiempo real sin recargar)
+    // Supabase Realtime Listener
     const channel = supabase
       .channel("admin-realtime-dashboard")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
-        () => {
-          fetchData();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "reservations" },
-        () => {
-          fetchData();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "products" },
-        () => {
-          fetchData();
-        }
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => fetchData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => fetchData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => fetchData())
       .subscribe();
 
     return () => {
@@ -143,7 +127,7 @@ function AdminRoute() {
         .order("created_at", { ascending: false });
       if (ordData) setOrders(ordData);
 
-      // 3. Order Items (for BI Analytics)
+      // 3. Order Items
       const { data: itemsData } = await supabase
         .from("order_items")
         .select("*, products(name, image_url)");
@@ -176,44 +160,29 @@ function AdminRoute() {
     window.location.href = "/restaurante";
   };
 
-  // Direct Supabase Handlers
+  // Status Handlers
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from("orders")
-        .update({ status: newStatus })
-        .eq("id", orderId);
-
+      const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
       if (error) throw error;
-
-      setOrders((prev) =>
-        prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-      );
-
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
       if (selectedOrder && selectedOrder.id === orderId) {
         setSelectedOrder((prev: any) => ({ ...prev, status: newStatus }));
       }
     } catch (err) {
-      console.error("Error updating order status:", err);
-      alert("No se pudo actualizar el estado del pedido.");
+      console.error(err);
+      alert("Error al actualizar estado del pedido.");
     }
   };
 
   const handleUpdateReservationStatus = async (resId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from("reservations")
-        .update({ status: newStatus })
-        .eq("id", resId);
-
+      const { error } = await supabase.from("reservations").update({ status: newStatus }).eq("id", resId);
       if (error) throw error;
-
-      setReservations((prev) =>
-        prev.map((r) => (r.id === resId ? { ...r, status: newStatus } : r))
-      );
+      setReservations((prev) => prev.map((r) => (r.id === resId ? { ...r, status: newStatus } : r)));
     } catch (err) {
-      console.error("Error updating reservation status:", err);
-      alert("No se pudo actualizar la reserva.");
+      console.error(err);
+      alert("Error al actualizar la reserva.");
     }
   };
 
@@ -223,19 +192,15 @@ function AdminRoute() {
         .from("products")
         .update({ is_available: !currentAvailable })
         .eq("id", productId);
-
       if (error) throw error;
-
-      setProducts((prev) =>
-        prev.map((p) => (p.id === productId ? { ...p, is_available: !currentAvailable } : p))
-      );
+      setProducts((prev) => prev.map((p) => (p.id === productId ? { ...p, is_available: !currentAvailable } : p)));
     } catch (err) {
-      console.error("Error toggling product:", err);
-      alert("No se pudo cambiar la disponibilidad del producto.");
+      console.error(err);
+      alert("Error al cambiar disponibilidad.");
     }
   };
 
-  // Metric Computations
+  // Metrics
   const totalSales = orders
     .filter((o) => o.status !== "cancelled")
     .reduce((sum, o) => sum + Number(o.total || 0), 0);
@@ -245,7 +210,6 @@ function AdminRoute() {
   ).length;
 
   const pendingReservationsCount = reservations.filter((r) => r.status === "pending").length;
-
   const availableProductsCount = products.filter((p) => p.is_available).length;
 
   // Filtered lists
@@ -274,184 +238,190 @@ function AdminRoute() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#14231D] flex items-center justify-center flex-col gap-4">
+      <div className="min-h-screen bg-[#0E1814] flex items-center justify-center flex-col gap-4 text-[#FAF8F5]">
         <Loader2 className="w-10 h-10 animate-spin text-[#D4AF37]" />
-        <p className="text-[#FAF8F5]/70 text-xs font-semibold tracking-widest uppercase">Cargando Panel Ejecutivo...</p>
+        <p className="font-serif text-sm font-bold tracking-widest uppercase text-[#D4AF37]/90">
+          Las Flores | Panel Ejecutivo
+        </p>
       </div>
     );
   }
 
-  if (!isAuthorized) {
-    return null;
-  }
+  if (!isAuthorized) return null;
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-gray-800 pb-16 font-sans">
+    <div className="min-h-screen bg-[#0E1814] text-[#FAF8F5] pb-20 font-sans selection:bg-[#D4AF37] selection:text-[#0E1814]">
       
-      {/* Corporate Dark Header */}
-      <header className="bg-[#14231D] text-[#FAF8F5] sticky top-0 z-30 shadow-lg border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      {/* Luxury Dark Header with Gold Accent Line */}
+      <header className="bg-[#14231D]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#D4AF37]/30 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           
-          {/* Brand Logo & Title */}
+          {/* Brand Identity */}
           <div className="flex items-center gap-4">
             <img
               src="/flor-retablo.png"
               alt="Las Flores"
-              className="h-10 w-auto object-contain drop-shadow"
+              className="h-11 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
             />
-            <div className="h-6 w-px bg-white/15 hidden sm:block" />
+            <div className="h-8 w-px bg-[#D4AF37]/30 hidden sm:block" />
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-[#FAF8F5] flex items-center gap-2">
+              <h1 className="font-serif text-xl font-bold tracking-wide text-[#FAF8F5] flex items-center gap-2.5">
                 Restaurante Las Flores
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono flex items-center gap-1.5 font-semibold">
+                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   REALTIME ACTIVO
                 </span>
               </h1>
-              <p className="text-[11px] text-[#FAF8F5]/60 font-medium">Panel de Administración y Control Gerencial</p>
+              <p className="text-[11px] text-[#D4AF37]/80 font-serif italic tracking-wide">
+                Tres Generaciones Cocinando Ayacucho — Panel Ejecutivo
+              </p>
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Tools */}
           <div className="flex items-center gap-3">
-            <div className="hidden lg:flex items-center gap-1.5 bg-white/10 text-cream/90 text-xs font-semibold px-3 py-1.5 rounded-xl border border-white/10">
-              <ShieldCheck size={14} className="text-[#D4AF37]" />
-              <span>Rol: Administrador</span>
-            </div>
-
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF8F5] transition-colors flex items-center gap-1.5 text-xs font-semibold"
+              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[#D4AF37]/30 text-[#FAF8F5] transition-all flex items-center gap-2 text-xs font-medium"
               title="Sincronizar datos"
             >
-              <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-              <span className="hidden sm:inline">Sincronizar</span>
+              <RefreshCw size={14} className={`text-[#D4AF37] ${refreshing ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">Actualizar</span>
             </button>
 
             <button
               onClick={() => { window.location.href = "/restaurante"; }}
-              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-[#FAF8F5] text-xs font-medium flex items-center gap-1.5 transition-all"
             >
-              <ArrowLeft size={14} />
-              <span className="hidden sm:inline">Ver Web</span>
+              <ArrowLeft size={14} className="text-[#D4AF37]" />
+              <span className="hidden sm:inline">Ver Sitio Web</span>
             </button>
 
             <button
               onClick={handleSignOut}
-              className="px-3 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-3.5 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 text-xs font-medium flex items-center gap-1.5 transition-all"
             >
               <LogOut size={14} />
-              <span className="hidden sm:inline">Salir</span>
+              <span className="hidden sm:inline">Cerrar Sesión</span>
             </button>
           </div>
 
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         
-        {/* KPI Metrics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        {/* Luxury Top KPI Cards (Ayacucho Dark / Gold Retablo Aesthetic) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
-          {/* Total Sales Card */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all border-t-4 border-t-emerald-600">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Facturación Acumulada</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                <DollarSign size={18} />
+          {/* Facturación Acumulada */}
+          <div className="bg-gradient-to-br from-[#182B24] to-[#14231D] p-5 rounded-2xl border border-[#D4AF37]/30 shadow-xl relative overflow-hidden group hover:border-[#D4AF37]/60 transition-all">
+            <div className="absolute right-0 top-0 w-24 h-24 bg-[#D4AF37]/5 rounded-full blur-2xl pointer-events-none group-hover:bg-[#D4AF37]/10 transition-all" />
+            <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-widest">
+              <span>Facturación Total</span>
+              <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center">
+                <DollarSign size={16} />
               </div>
             </div>
             <div className="mt-3">
-              <span className="text-2xl font-black text-gray-900">S/ {totalSales.toFixed(2)}</span>
-              <p className="text-[11px] text-emerald-700 mt-1 font-medium flex items-center gap-1">
+              <span className="font-serif text-3xl font-black text-[#D4AF37] tracking-tight">
+                S/ {totalSales.toFixed(2)}
+              </span>
+              <p className="text-[11px] text-emerald-400 mt-1 font-medium flex items-center gap-1">
                 <TrendingUp size={12} /> Ordenes confirmadas
               </p>
             </div>
           </div>
 
-          {/* Active Orders Card */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all border-t-4 border-t-blue-600">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Pedidos en Proceso</span>
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                <ShoppingBag size={18} />
+          {/* Pedidos en Proceso */}
+          <div className="bg-gradient-to-br from-[#182B24] to-[#14231D] p-5 rounded-2xl border border-white/10 shadow-xl hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-widest">
+              <span>Pedidos Activos</span>
+              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center">
+                <ShoppingBag size={16} />
               </div>
             </div>
             <div className="mt-3">
-              <span className="text-2xl font-black text-gray-900">{activeOrdersCount}</span>
-              <p className="text-[11px] text-blue-700 mt-1 font-medium flex items-center gap-1">
-                <Clock size={12} /> Despacho o entrega pendiente
+              <span className="font-serif text-3xl font-black text-[#FAF8F5]">
+                {activeOrdersCount}
+              </span>
+              <p className="text-[11px] text-blue-400 mt-1 font-medium flex items-center gap-1">
+                <Clock size={12} /> En cocina o despacho
               </p>
             </div>
           </div>
 
-          {/* Pending Reservations Card */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all border-t-4 border-t-amber-500">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Reservas Pendientes</span>
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                <Calendar size={18} />
+          {/* Reservas Pendientes */}
+          <div className="bg-gradient-to-br from-[#182B24] to-[#14231D] p-5 rounded-2xl border border-white/10 shadow-xl hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-widest">
+              <span>Reservas Pendientes</span>
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+                <Calendar size={16} />
               </div>
             </div>
             <div className="mt-3">
-              <span className="text-2xl font-black text-gray-900">{pendingReservationsCount}</span>
-              <p className="text-[11px] text-amber-700 mt-1 font-medium flex items-center gap-1">
-                <UserCheck size={12} /> Por confirmar horario
+              <span className="font-serif text-3xl font-black text-[#FAF8F5]">
+                {pendingReservationsCount}
+              </span>
+              <p className="text-[11px] text-amber-400 mt-1 font-medium flex items-center gap-1">
+                <UserCheck size={12} /> Requieren confirmación
               </p>
             </div>
           </div>
 
-          {/* Available Dishes Card */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-all border-t-4 border-t-purple-600">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Carta Activa</span>
-              <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
-                <UtensilsCrossed size={18} />
+          {/* Disponibilidad de Carta */}
+          <div className="bg-gradient-to-br from-[#182B24] to-[#14231D] p-5 rounded-2xl border border-white/10 shadow-xl hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-widest">
+              <span>Platos Activos</span>
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+                <UtensilsCrossed size={16} />
               </div>
             </div>
             <div className="mt-3">
-              <span className="text-2xl font-black text-gray-900">{availableProductsCount} / {products.length}</span>
-              <p className="text-[11px] text-purple-700 mt-1 font-medium flex items-center gap-1">
-                <CheckCircle2 size={12} /> Platos disponibles en carta
+              <span className="font-serif text-3xl font-black text-[#FAF8F5]">
+                {availableProductsCount} <span className="text-lg text-[#FAF8F5]/50 font-normal">/ {products.length}</span>
+              </span>
+              <p className="text-[11px] text-purple-300 mt-1 font-medium flex items-center gap-1">
+                <CheckCircle2 size={12} /> Disponibles en carta web
               </p>
             </div>
           </div>
 
         </div>
 
-        {/* Executive Tab Navigation Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6 bg-white p-2.5 rounded-2xl border border-gray-200 shadow-sm">
+        {/* Tab Navigation Menu */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-[#182B24]/90 backdrop-blur-md p-2 rounded-2xl border border-[#D4AF37]/30 shadow-xl">
           
           <div className="flex items-center gap-2 overflow-x-auto p-1">
             
-            {/* BI Tab - FIRST & DEFAULT */}
+            {/* BI Tab - FIRST */}
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wider uppercase transition-all whitespace-nowrap ${
                 activeTab === "analytics"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                  ? "bg-[#D4AF37] text-[#0E1814] shadow-lg font-black"
+                  : "text-[#FAF8F5]/70 hover:text-[#FAF8F5] hover:bg-white/5"
               }`}
             >
-              <BarChart3 size={16} className={activeTab === "analytics" ? "text-[#D4AF37]" : "text-gray-500"} />
-              Analítica & Business Intelligence
+              <BarChart3 size={16} />
+              Analítica & Inteligencia de Negocios
             </button>
 
             {/* Pedidos Tab */}
             <button
               onClick={() => setActiveTab("orders")}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wider uppercase transition-all whitespace-nowrap ${
                 activeTab === "orders"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                  ? "bg-[#D4AF37] text-[#0E1814] shadow-lg font-black"
+                  : "text-[#FAF8F5]/70 hover:text-[#FAF8F5] hover:bg-white/5"
               }`}
             >
-              <ShoppingBag size={16} className={activeTab === "orders" ? "text-[#D4AF37]" : "text-gray-500"} />
+              <ShoppingBag size={16} />
               Gestión de Pedidos
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-extrabold ${
-                activeTab === "orders" ? "bg-white/20 text-[#FAF8F5]" : "bg-gray-100 text-gray-700"
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-extrabold ${
+                activeTab === "orders" ? "bg-[#0E1814] text-[#D4AF37]" : "bg-white/10 text-[#FAF8F5]"
               }`}>
                 {orders.length}
               </span>
@@ -460,16 +430,16 @@ function AdminRoute() {
             {/* Reservas Tab */}
             <button
               onClick={() => setActiveTab("reservations")}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wider uppercase transition-all whitespace-nowrap ${
                 activeTab === "reservations"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                  ? "bg-[#D4AF37] text-[#0E1814] shadow-lg font-black"
+                  : "text-[#FAF8F5]/70 hover:text-[#FAF8F5] hover:bg-white/5"
               }`}
             >
-              <Calendar size={16} className={activeTab === "reservations" ? "text-[#D4AF37]" : "text-gray-500"} />
+              <Calendar size={16} />
               Control de Reservas
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-extrabold ${
-                activeTab === "reservations" ? "bg-white/20 text-[#FAF8F5]" : "bg-gray-100 text-gray-700"
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-extrabold ${
+                activeTab === "reservations" ? "bg-[#0E1814] text-[#D4AF37]" : "bg-white/10 text-[#FAF8F5]"
               }`}>
                 {reservations.length}
               </span>
@@ -478,16 +448,16 @@ function AdminRoute() {
             {/* Carta Tab */}
             <button
               onClick={() => setActiveTab("menu")}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wider uppercase transition-all whitespace-nowrap ${
                 activeTab === "menu"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                  ? "bg-[#D4AF37] text-[#0E1814] shadow-lg font-black"
+                  : "text-[#FAF8F5]/70 hover:text-[#FAF8F5] hover:bg-white/5"
               }`}
             >
-              <MenuIcon size={16} className={activeTab === "menu" ? "text-[#D4AF37]" : "text-gray-500"} />
+              <MenuIcon size={16} />
               Gestión de Carta
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-extrabold ${
-                activeTab === "menu" ? "bg-white/20 text-[#FAF8F5]" : "bg-gray-100 text-gray-700"
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-extrabold ${
+                activeTab === "menu" ? "bg-[#0E1814] text-[#D4AF37]" : "bg-white/10 text-[#FAF8F5]"
               }`}>
                 {products.length}
               </span>
@@ -500,7 +470,7 @@ function AdminRoute() {
                 setSelectedProduct(null);
                 setIsProductModalOpen(true);
               }}
-              className="px-4 py-2 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+              className="px-4 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#b8952c] text-[#0E1814] font-serif font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all uppercase tracking-wider"
             >
               <Plus size={15} />
               Nuevo Plato
@@ -509,10 +479,10 @@ function AdminRoute() {
 
         </div>
 
-        {/* Tab Content Panels */}
-        <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden">
+        {/* Panel Content Containers */}
+        <div className="bg-[#182B24]/90 backdrop-blur-md rounded-2xl border border-[#D4AF37]/30 shadow-2xl overflow-hidden">
           
-          {/* ================= BI ANALYTICS TAB (DEFAULT) ================= */}
+          {/* ================= ANALYTICS TAB ================= */}
           {activeTab === "analytics" && (
             <AdminAnalyticsSection
               orders={orders}
@@ -524,29 +494,28 @@ function AdminRoute() {
           {/* ================= RESERVATIONS TAB ================= */}
           {activeTab === "reservations" && (
             <div>
-              {/* Filter Toolbar */}
-              <div className="p-4 bg-gray-50/70 border-b border-gray-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="p-4 bg-white/5 border-b border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="relative w-full md:w-80">
                   <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     value={resSearch}
                     onChange={(e) => setResSearch(e.target.value)}
-                    placeholder="Buscar reserva por cliente o teléfono..."
-                    className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    placeholder="Buscar cliente o teléfono..."
+                    className="w-full text-xs bg-[#0E1814] border border-white/15 rounded-xl pl-9 pr-4 py-2.5 text-[#FAF8F5] focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
+                  <span className="text-xs font-serif font-bold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Estado:</span>
                   {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
                     <button
                       key={st}
                       onClick={() => setResStatusFilter(st)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all whitespace-nowrap ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all whitespace-nowrap ${
                         resStatusFilter === st
-                          ? "bg-[#14231D] text-white shadow-sm"
-                          : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-100"
+                          ? "bg-[#D4AF37] text-[#0E1814] font-bold"
+                          : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10"
                       }`}
                     >
                       {st === "all" ? "Todas" : st === "pending" ? "Pendientes" : st === "confirmed" ? "Confirmadas" : st === "completed" ? "Completadas" : "Canceladas"}
@@ -555,24 +524,23 @@ function AdminRoute() {
                 </div>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#D4AF37] bg-white/5 border-b border-white/10">
                     <tr>
-                      <th className="px-6 py-4 font-bold">Cliente</th>
-                      <th className="px-6 py-4 font-bold">Fecha y Hora</th>
-                      <th className="px-6 py-4 font-bold">Personas</th>
-                      <th className="px-6 py-4 font-bold">Servicio</th>
-                      <th className="px-6 py-4 font-bold">Estado de Reserva</th>
-                      <th className="px-6 py-4 font-bold text-right">Contacto</th>
+                      <th className="px-6 py-4">Cliente</th>
+                      <th className="px-6 py-4">Fecha y Hora</th>
+                      <th className="px-6 py-4">Personas</th>
+                      <th className="px-6 py-4">Servicio</th>
+                      <th className="px-6 py-4">Estado</th>
+                      <th className="px-6 py-4 text-right">Contacto</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-white/5 text-gray-200">
                     {filteredReservations.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
-                          No se encontraron reservas con los filtros aplicados.
+                          No hay reservas para mostrar.
                         </td>
                       </tr>
                     ) : (
@@ -582,36 +550,26 @@ function AdminRoute() {
                         const whatsappUrl = `https://wa.me/${fullPhone}?text=Hola%20${encodeURIComponent(res.client_name)},%20te%20contactamos%20de%20Restaurante%20Las%20Flores%20sobre%20tu%20reserva%20para%20el%20dia%20${encodeURIComponent(res.reservation_date)}.`;
 
                         return (
-                          <tr key={res.id} className="hover:bg-gray-50/80 transition-colors">
+                          <tr key={res.id} className="hover:bg-white/5 transition-colors">
                             <td className="px-6 py-4">
-                              <div className="font-bold text-gray-900">{res.client_name}</div>
-                              <div className="text-gray-500">{res.client_phone || "Sin teléfono"}</div>
-                              {res.client_email && <div className="text-gray-400">{res.client_email}</div>}
+                              <div className="font-bold text-[#FAF8F5]">{res.client_name}</div>
+                              <div className="text-gray-400">{res.client_phone || "Sin teléfono"}</div>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="font-bold text-gray-800">{res.reservation_date}</div>
-                              <div className="text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
-                                <Clock size={12} /> {res.reservation_time}
-                              </div>
+                              <div className="font-bold text-[#FAF8F5]">{res.reservation_date}</div>
+                              <div className="text-[#D4AF37] text-xs font-semibold">{res.reservation_time}</div>
                             </td>
-                            <td className="px-6 py-4">
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-lg font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                                {res.guest_count} {res.guest_count === 1 ? "persona" : "personas"}
-                              </span>
+                            <td className="px-6 py-4 font-bold text-gray-200">
+                              {res.guest_count} personas
                             </td>
-                            <td className="px-6 py-4 capitalize font-semibold text-gray-700">
+                            <td className="px-6 py-4 capitalize text-gray-300">
                               {res.service_type || "Almuerzo"}
                             </td>
                             <td className="px-6 py-4">
                               <select
                                 value={res.status || "pending"}
                                 onChange={(e) => handleUpdateReservationStatus(res.id, e.target.value)}
-                                className={`font-bold rounded-lg px-3 py-1.5 border shadow-sm focus:outline-none transition-colors ${
-                                  res.status === 'confirmed' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
-                                  res.status === 'pending' ? 'bg-amber-50 text-amber-800 border-amber-300' :
-                                  res.status === 'completed' ? 'bg-blue-50 text-blue-800 border-blue-300' :
-                                  'bg-red-50 text-red-800 border-red-300'
-                                }`}
+                                className="bg-[#0E1814] text-[#FAF8F5] border border-white/20 font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#D4AF37]"
                               >
                                 <option value="pending">Pendiente</option>
                                 <option value="confirmed">Confirmada</option>
@@ -625,7 +583,7 @@ function AdminRoute() {
                                   href={whatsappUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/20 transition-colors"
                                 >
                                   WhatsApp <ExternalLink size={12} />
                                 </a>
@@ -644,21 +602,20 @@ function AdminRoute() {
           {/* ================= ORDERS TAB ================= */}
           {activeTab === "orders" && (
             <div>
-              {/* Filter Toolbar */}
-              <div className="p-4 bg-gray-50/70 border-b border-gray-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="p-4 bg-white/5 border-b border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="relative w-full md:w-80">
                   <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     value={orderSearch}
                     onChange={(e) => setOrderSearch(e.target.value)}
-                    placeholder="Buscar pedido #, cliente o teléfono..."
-                    className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    placeholder="Buscar pedido #, cliente..."
+                    className="w-full text-xs bg-[#0E1814] border border-white/15 rounded-xl pl-9 pr-4 py-2.5 text-[#FAF8F5] focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
+                  <span className="text-xs font-serif font-bold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Estado:</span>
                   {[
                     { id: "all", label: "Todos" },
                     { id: "received", label: "Recibidos" },
@@ -670,10 +627,10 @@ function AdminRoute() {
                     <button
                       key={st.id}
                       onClick={() => setOrderStatusFilter(st.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                         orderStatusFilter === st.id
-                          ? "bg-[#14231D] text-white shadow-sm"
-                          : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-100"
+                          ? "bg-[#D4AF37] text-[#0E1814] font-bold"
+                          : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10"
                       }`}
                     >
                       {st.label}
@@ -682,62 +639,48 @@ function AdminRoute() {
                 </div>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#D4AF37] bg-white/5 border-b border-white/10">
                     <tr>
-                      <th className="px-6 py-4 font-bold">N° Orden</th>
-                      <th className="px-6 py-4 font-bold">Cliente</th>
-                      <th className="px-6 py-4 font-bold">Modalidad</th>
-                      <th className="px-6 py-4 font-bold">Total</th>
-                      <th className="px-6 py-4 font-bold">Estado del Pedido</th>
-                      <th className="px-6 py-4 font-bold text-right">Acciones</th>
+                      <th className="px-6 py-4">N° Orden</th>
+                      <th className="px-6 py-4">Cliente</th>
+                      <th className="px-6 py-4">Modalidad</th>
+                      <th className="px-6 py-4">Total</th>
+                      <th className="px-6 py-4">Estado</th>
+                      <th className="px-6 py-4 text-right">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-white/5 text-gray-200">
                     {filteredOrders.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
-                          No hay pedidos que coincidan con la búsqueda.
+                          No hay pedidos registrados.
                         </td>
                       </tr>
                     ) : (
                       filteredOrders.map((ord) => (
-                        <tr key={ord.id} className="hover:bg-gray-50/80 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="font-black text-gray-900 text-sm">#{ord.order_number}</div>
-                            <div className="text-gray-400">
-                              {new Date(ord.created_at).toLocaleDateString()} - {new Date(ord.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </div>
+                        <tr key={ord.id} className="hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4 font-serif font-bold text-[#D4AF37] text-sm">
+                            #{ord.order_number}
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-bold text-gray-900">{ord.client_name || "Anónimo"}</div>
-                            <div className="text-gray-500">{ord.client_phone || "Sin teléfono"}</div>
+                            <div className="font-bold text-[#FAF8F5]">{ord.client_name || "Anónimo"}</div>
+                            <div className="text-gray-400">{ord.client_phone}</div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 rounded-lg font-bold border ${
-                              ord.order_type === 'delivery'
-                                ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                : 'bg-purple-50 text-purple-700 border-purple-200'
-                            }`}>
-                              {ord.order_type === 'delivery' ? 'Delivery' : 'Recojo'}
+                            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-white/10 text-gray-200 border border-white/15">
+                              {ord.order_type === "delivery" ? "Delivery" : "Recojo"}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-black text-emerald-800 text-sm">
+                          <td className="px-6 py-4 font-serif font-bold text-[#D4AF37] text-sm">
                             S/ {Number(ord.total).toFixed(2)}
                           </td>
                           <td className="px-6 py-4">
                             <select
                               value={ord.status || "received"}
                               onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
-                              className={`font-bold rounded-lg px-3 py-1.5 border shadow-sm focus:outline-none transition-colors ${
-                                ord.status === 'received' ? 'bg-amber-50 text-amber-800 border-amber-300' :
-                                ord.status === 'preparing' ? 'bg-blue-50 text-blue-800 border-blue-300' :
-                                ord.status === 'on_the_way' ? 'bg-purple-50 text-purple-800 border-purple-300' :
-                                ord.status === 'delivered' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
-                                'bg-red-50 text-red-800 border-red-300'
-                              }`}
+                              className="bg-[#0E1814] text-[#FAF8F5] border border-white/20 font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#D4AF37]"
                             >
                               <option value="received">Recibido</option>
                               <option value="preparing">En Preparación</option>
@@ -752,9 +695,9 @@ function AdminRoute() {
                                 setSelectedOrder(ord);
                                 setIsOrderModalOpen(true);
                               }}
-                              className="px-3.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold inline-flex items-center gap-1.5 transition-colors border border-gray-200"
+                              className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[#FAF8F5] border border-white/15 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"
                             >
-                              <Eye size={14} /> Ver Detalle
+                              <Eye size={13} className="text-[#D4AF37]" /> Detalle
                             </button>
                           </td>
                         </tr>
@@ -769,8 +712,7 @@ function AdminRoute() {
           {/* ================= MENU TAB ================= */}
           {activeTab === "menu" && (
             <div>
-              {/* Filter Toolbar */}
-              <div className="p-4 bg-gray-50/70 border-b border-gray-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="p-4 bg-white/5 border-b border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="relative w-full md:w-80">
                   <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -778,18 +720,18 @@ function AdminRoute() {
                     value={menuSearch}
                     onChange={(e) => setMenuSearch(e.target.value)}
                     placeholder="Buscar plato por nombre..."
-                    className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    className="w-full text-xs bg-[#0E1814] border border-white/15 rounded-xl pl-9 pr-4 py-2.5 text-[#FAF8F5] focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
                 <div className="flex items-center gap-2 w-full md:w-auto">
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Categoría:</span>
+                  <span className="text-xs font-serif font-bold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Categoría:</span>
                   <select
                     value={menuCategoryFilter}
                     onChange={(e) => setMenuCategoryFilter(e.target.value)}
-                    className="text-xs font-bold bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    className="bg-[#0E1814] text-[#FAF8F5] border border-white/20 font-semibold rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#D4AF37]"
                   >
-                    <option value="all">Todas las categorías ({categories.length})</option>
+                    <option value="all">Todas ({categories.length})</option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -799,64 +741,58 @@ function AdminRoute() {
                 </div>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#D4AF37] bg-white/5 border-b border-white/10">
                     <tr>
-                      <th className="px-6 py-4 font-bold w-24">Imagen</th>
-                      <th className="px-6 py-4 font-bold">Producto</th>
-                      <th className="px-6 py-4 font-bold">Categoría</th>
-                      <th className="px-6 py-4 font-bold">Precio</th>
-                      <th className="px-6 py-4 font-bold">Disponibilidad</th>
-                      <th className="px-6 py-4 font-bold text-right">Acciones</th>
+                      <th className="px-6 py-4 w-20">Imagen</th>
+                      <th className="px-6 py-4">Producto</th>
+                      <th className="px-6 py-4">Categoría</th>
+                      <th className="px-6 py-4">Precio</th>
+                      <th className="px-6 py-4">Disponibilidad</th>
+                      <th className="px-6 py-4 text-right">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-white/5 text-gray-200">
                     {filteredProducts.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
-                          No se encontraron platos en la carta.
+                          No hay platos registrados.
                         </td>
                       </tr>
                     ) : (
                       filteredProducts.map((prod) => (
-                        <tr key={prod.id} className="hover:bg-gray-50/80 transition-colors">
+                        <tr key={prod.id} className="hover:bg-white/5 transition-colors">
                           <td className="px-6 py-4">
-                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm shrink-0">
+                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#0E1814] border border-white/15 shrink-0">
                               {prod.image_url ? (
                                 <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                  <UtensilsCrossed size={18} />
+                                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                  <UtensilsCrossed size={16} />
                                 </div>
                               )}
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-bold text-gray-900 text-sm">{prod.name}</div>
-                            {prod.description && (
-                              <p className="text-gray-500 line-clamp-1 max-w-xs">{prod.description}</p>
-                            )}
+                            <div className="font-serif font-bold text-[#FAF8F5] text-sm">{prod.name}</div>
+                            {prod.description && <p className="text-gray-400 text-xs line-clamp-1">{prod.description}</p>}
                           </td>
-                          <td className="px-6 py-4">
-                            <span className="px-2.5 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg">
-                              {prod.categories?.name || "Sin categoría"}
-                            </span>
+                          <td className="px-6 py-4 text-gray-300">
+                            {prod.categories?.name || "General"}
                           </td>
-                          <td className="px-6 py-4 font-black text-emerald-800 text-sm">
+                          <td className="px-6 py-4 font-serif font-bold text-[#D4AF37] text-sm">
                             S/ {Number(prod.price).toFixed(2)}
                           </td>
                           <td className="px-6 py-4">
                             <button
                               onClick={() => handleToggleProductAvailability(prod.id, prod.is_available)}
-                              className={`px-3 py-1 rounded-full font-bold flex items-center gap-1.5 transition-all ${
+                              className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${
                                 prod.is_available
-                                  ? "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300"
-                                  : "bg-red-50 text-red-800 hover:bg-red-100 border border-red-300"
+                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                  : "bg-red-500/10 text-red-400 border-red-500/30"
                               }`}
                             >
-                              <span className={`w-2 h-2 rounded-full ${prod.is_available ? "bg-emerald-600" : "bg-red-600"}`} />
                               {prod.is_available ? "Disponible" : "Agotado"}
                             </button>
                           </td>
@@ -866,9 +802,9 @@ function AdminRoute() {
                                 setSelectedProduct(prod);
                                 setIsProductModalOpen(true);
                               }}
-                              className="px-3.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold inline-flex items-center gap-1.5 transition-colors border border-gray-200"
+                              className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[#FAF8F5] border border-white/15 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"
                             >
-                              <Edit2 size={13} /> Editar
+                              <Edit2 size={12} className="text-[#D4AF37]" /> Editar
                             </button>
                           </td>
                         </tr>
