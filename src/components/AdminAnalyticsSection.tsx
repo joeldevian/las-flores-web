@@ -446,36 +446,44 @@ export function AdminAnalyticsSection({
           </div>
 
           {dailySalesData.entries.length === 0 ? (
-            <div className="h-56 flex items-center justify-center text-xs text-gray-400 border border-dashed rounded-xl">
-              No hay suficientes ventas en este rango de fechas.
+            <div className="h-64 flex items-center justify-center text-xs text-gray-400 border border-dashed rounded-xl">
+              No hay suficientes ventas registradas en este rango de fechas.
             </div>
           ) : (
             <div className="pt-6 pb-2 relative">
               {/* Y Axis Guide Lines */}
-              <div className="absolute inset-x-0 top-6 bottom-8 flex flex-col justify-between pointer-events-none opacity-20">
+              <div className="absolute inset-x-0 top-6 bottom-8 flex flex-col justify-between pointer-events-none opacity-20 z-0">
                 <div className="border-b border-gray-400 border-dashed w-full flex justify-end pr-2 text-[9px]">S/ {dailySalesData.maxVal.toFixed(0)}</div>
                 <div className="border-b border-gray-400 border-dashed w-full flex justify-end pr-2 text-[9px]">S/ {(dailySalesData.maxVal / 2).toFixed(0)}</div>
                 <div className="border-b border-gray-400 w-full" />
               </div>
 
-              <div className="h-56 flex items-end justify-between gap-3 border-b border-gray-200 pb-2 relative z-10">
+              {/* Bar Chart Container */}
+              <div className="h-60 flex items-end justify-between gap-3 border-b border-gray-200 pb-2 relative z-10 pt-4">
                 {dailySalesData.entries.map(([date, dataObj]) => {
-                  const heightPercent = Math.max(Math.round((dataObj.total / dailySalesData.maxVal) * 100), 10);
+                  const heightPercent = Math.max(Math.round((dataObj.total / dailySalesData.maxVal) * 100), 8);
                   return (
                     <div
                       key={date}
                       onMouseEnter={() => setHoveredBar({ date, value: dataObj.total, count: dataObj.count })}
                       onMouseLeave={() => setHoveredBar(null)}
-                      className="flex-1 flex flex-col items-center gap-1.5 group cursor-pointer"
+                      className="flex-1 h-full flex flex-col justify-end items-center gap-1 group cursor-pointer"
                     >
-                      <span className="text-[10px] font-extrabold text-eucalipto opacity-0 group-hover:opacity-100 transition-opacity">
+                      {/* Amount Label Above Bar */}
+                      <span className="text-[10px] font-extrabold text-eucalipto group-hover:scale-110 transition-transform">
                         S/{dataObj.total.toFixed(0)}
                       </span>
-                      <div
-                        style={{ height: `${heightPercent}%` }}
-                        className="w-full bg-gradient-to-t from-eucalipto to-emerald-600 hover:from-eucalipto-dark hover:to-emerald-700 rounded-t-xl transition-all shadow-sm group-hover:scale-y-105 transform origin-bottom"
-                      />
-                      <span className="text-[10px] text-gray-500 font-bold truncate w-full text-center">
+
+                      {/* Bar Wrapper with Explicit Max Height */}
+                      <div className="w-full flex-1 max-h-[170px] flex items-end bg-gray-100/50 rounded-t-xl p-0.5 border border-gray-100">
+                        <div
+                          style={{ height: `${heightPercent}%` }}
+                          className="w-full bg-gradient-to-t from-[#14231D] via-eucalipto to-emerald-500 hover:from-eucalipto-dark hover:to-emerald-400 rounded-t-lg transition-all shadow-md group-hover:brightness-110"
+                        />
+                      </div>
+
+                      {/* Date Label */}
+                      <span className="text-[10px] text-gray-600 font-bold truncate w-full text-center tracking-tight">
                         {date}
                       </span>
                     </div>
