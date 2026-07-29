@@ -192,6 +192,17 @@ export function CartSidebar() {
       window.removeEventListener("storage", handleStorage);
     };
   }, []);
+
+  useEffect(() => {
+    if (activeUser) {
+      setDelivery((d) => ({
+        ...d,
+        email: d.email || activeUser.email || "",
+        name: d.name || activeUser.user_metadata?.full_name || activeUser.email || "Cliente",
+        phone: d.phone || activeUser.user_metadata?.phone || activeUser.phone || "",
+      }));
+    }
+  }, [activeUser]);
   const [delivery, setDelivery] = useState<DeliveryForm>({
     name: "",
     phone: "",
@@ -850,7 +861,7 @@ export function CartSidebar() {
                 </div>
               )}
 
-              {!delivery.email ? (
+              {!activeUser && !delivery.email ? (
                 <div className="py-10 text-center px-6 bg-white rounded-xl border border-black/5 shadow-sm">
                   <div className="w-12 h-12 rounded-full bg-eucalipto/10 text-eucalipto flex items-center justify-center mx-auto mb-4">
                     <Lock size={22} />
