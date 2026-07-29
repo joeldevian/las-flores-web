@@ -77,8 +77,8 @@ function CashierDashboardRoute() {
     }
   };
 
-  const fetchData = async () => {
-    setRefreshing(true);
+  const fetchData = async (isSilent = false) => {
+    if (!isSilent) setRefreshing(true);
     try {
       // 1. Fetch Orders
       const { data: ordData, error: ordErr } = await supabase
@@ -86,7 +86,19 @@ function CashierDashboardRoute() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!ordErr && ordData) setOrders(ordData);
+      if (!ordErr && ordData) {
+        setOrders((prev) => {
+          // Detect if a new order arrived during polling
+          if (prev.length > 0 && ordData.length > prev.length) {
+            const newest = ordData[0];
+            if (soundEnabled) {
+              playOrderChime();
+            }
+            setNewOrderNotification(newest);
+          }
+          return ordData;
+        });
+      }
 
       // 2. Fetch Order Items
       const { data: itemsData } = await supabase
@@ -98,17 +110,17 @@ function CashierDashboardRoute() {
       console.error("Error fetching cashier data:", err);
     } finally {
       setLoading(false);
-      setRefreshing(false);
+      if (!isSilent) setRefreshing(false);
     }
   };
 
   useEffect(() => {
     checkAuth();
 
-    // 1. Automatic 5-second Polling Fallback (Zero-Click Auto Refresh)
+    // 1. Automatic 3-second Silent Background Auto-Polling
     const pollInterval = setInterval(() => {
-      fetchData();
-    }, 5000);
+      fetchData(true);
+    }, 3000);
 
     // 2. Supabase Realtime Listener with Sound Alert
     const channel = supabase
@@ -118,7 +130,6 @@ function CashierDashboardRoute() {
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
           console.log("🛎️ Evento Realtime en pedidos:", payload);
-          
           if (payload.eventType === "INSERT") {
             const newOrder = payload.new;
             if (soundEnabled) {
@@ -126,8 +137,7 @@ function CashierDashboardRoute() {
             }
             setNewOrderNotification(newOrder);
           }
-
-          fetchData();
+          fetchData(true);
         }
       )
       .subscribe();
