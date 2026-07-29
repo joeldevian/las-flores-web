@@ -18,15 +18,14 @@ import {
   TrendingUp,
   Clock,
   CheckCircle2,
-  XCircle,
   ExternalLink,
-  SlidersHorizontal,
-  ChevronRight,
   UserCheck,
+  BarChart3,
 } from "lucide-react";
 
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
 import { AdminProductModal } from "../components/AdminProductModal";
+import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRoute,
@@ -35,12 +34,13 @@ export const Route = createFileRoute("/admin")({
 function AdminRoute() {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"reservations" | "orders" | "menu">("reservations");
+  const [activeTab, setActiveTab] = useState<"reservations" | "orders" | "menu" | "analytics">("reservations");
   const [refreshing, setRefreshing] = useState(false);
 
   // Data states
   const [reservations, setReservations] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
 
@@ -112,7 +112,13 @@ function AdminRoute() {
         .order("created_at", { ascending: false });
       if (ordData) setOrders(ordData);
 
-      // 3. Products
+      // 3. Order Items (for BI Analytics)
+      const { data: itemsData } = await supabase
+        .from("order_items")
+        .select("*, products(name, image_url)");
+      if (itemsData) setOrderItems(itemsData);
+
+      // 4. Products
       const { data: prodData } = await supabase
         .from("products")
         .select("*, categories(name)")
@@ -120,7 +126,7 @@ function AdminRoute() {
         .order("sort_order", { ascending: true });
       if (prodData) setProducts(prodData);
 
-      // 4. Categories
+      // 5. Categories
       const { data: catData } = await supabase
         .from("categories")
         .select("*")
@@ -149,7 +155,6 @@ function AdminRoute() {
 
       if (error) throw error;
 
-      // Update local state instantly
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       );
@@ -262,9 +267,9 @@ function AdminRoute() {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-cream flex items-center gap-2">
-                Las Flores <span className="text-xs px-2 py-0.5 rounded bg-retama/20 text-retama border border-retama/30 font-mono">DASHBOARD</span>
+                Las Flores <span className="text-xs px-2 py-0.5 rounded bg-retama/20 text-retama border border-retama/30 font-mono">DASHBOARD & BI</span>
               </h1>
-              <p className="text-[11px] text-cream/60 tracking-wider">Centro de Operaciones y Control</p>
+              <p className="text-[11px] text-cream/60 tracking-wider">Centro de Operaciones y Control de Negocios</p>
             </div>
           </div>
 
@@ -424,6 +429,18 @@ function AdminRoute() {
               }`}>
                 {products.length}
               </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("analytics")}
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                activeTab === "analytics"
+                  ? "bg-[#14231D] text-cream shadow-md"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+              }`}
+            >
+              <BarChart3 size={18} className="text-retama" />
+              BI & Reportes
             </button>
           </div>
 
@@ -802,6 +819,15 @@ function AdminRoute() {
                 </table>
               </div>
             </div>
+          )}
+
+          {/* ================= BI ANALYTICS TAB ================= */}
+          {activeTab === "analytics" && (
+            <AdminAnalyticsSection
+              orders={orders}
+              orderItems={orderItems}
+              products={products}
+            />
           )}
 
         </div>
