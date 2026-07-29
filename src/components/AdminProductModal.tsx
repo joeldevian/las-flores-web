@@ -284,12 +284,22 @@ export function AdminProductModal({
               </div>
             </div>
 
-            {/* URL input fallback */}
+            {/* URL input fallback with Google Drive auto-converter */}
             <input
               type="text"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="O ingresa la URL: /imagenes-reales/RECOMENDACIONES-CHEF/puca.webp"
+              onChange={(e) => {
+                const inputVal = e.target.value;
+                if (inputVal.includes("drive.google.com")) {
+                  const match = inputVal.match(/\/d\/([a-zA-Z0-9_-]+)/) || inputVal.match(/id=([a-zA-Z0-9_-]+)/);
+                  if (match && match[1]) {
+                    setImageUrl(`https://drive.google.com/uc?export=view&id=${match[1]}`);
+                    return;
+                  }
+                }
+                setImageUrl(inputVal);
+              }}
+              placeholder="O ingresa una URL / enlace de Google Drive público..."
               className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
             />
           </div>
