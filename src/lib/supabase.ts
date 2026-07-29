@@ -67,6 +67,7 @@ export interface OrderPayload {
   order_number: string;
   user_id?: string;
   order_type: "delivery" | "pickup";
+  status?: string;
   client_name: string;
   client_email: string;
   client_phone: string;
@@ -225,6 +226,11 @@ export async function createOrder(payload: OrderPayload) {
     }
   } catch (e) {
     console.log("No se pudo obtener id de usuario:", e);
+  }
+
+  // Garantizar estado por defecto 'pendiente'
+  if (!orderData.status) {
+    orderData.status = "pendiente";
   }
 
   // Filtrar valores nulos o indefinidos
