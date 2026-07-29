@@ -63,6 +63,36 @@ function AdminRoute() {
 
   useEffect(() => {
     checkAuth();
+
+    // Supabase Realtime Listener (Actualización en tiempo real sin recargar)
+    const channel = supabase
+      .channel("admin-realtime-dashboard")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        () => {
+          fetchData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "reservations" },
+        () => {
+          fetchData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products" },
+        () => {
+          fetchData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const checkAuth = async () => {
@@ -267,7 +297,10 @@ function AdminRoute() {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-cream flex items-center gap-2">
-                Las Flores <span className="text-xs px-2 py-0.5 rounded bg-retama/20 text-retama border border-retama/30 font-mono">DASHBOARD & BI</span>
+                Las Flores <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  REALTIME ACTIVO
+                </span>
               </h1>
               <p className="text-[11px] text-cream/60 tracking-wider">Centro de Operaciones y Control de Negocios</p>
             </div>
