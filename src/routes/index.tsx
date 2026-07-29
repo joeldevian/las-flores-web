@@ -852,8 +852,8 @@ function Index() {
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <img
-              src="/imagenes-reales/EQUIPO/encantados-de-atenderlos-opt.webp"
-              alt="Personal de Las Flores encantados de atenderlos"
+              src="/imagenes-reales/PREMIOS/premios-las-flores.webp"
+              alt="Premios de Restaurante Las Flores"
               width={800}
               height={1200}
               loading="lazy"
