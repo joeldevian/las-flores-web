@@ -509,12 +509,12 @@ function CashierDashboardRoute() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    🔵 En Cocina
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    En Cocina
                   </span>
                   <UtensilsCrossed size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{inKitchenCount}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{inKitchenCount}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">En preparación</p>
               </button>
 
@@ -527,12 +527,12 @@ function CashierDashboardRoute() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    🛵 En Camino / Listo
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    En Camino / Listo
                   </span>
                   <Truck size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{onWayCount}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{onWayCount}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Delivery / Recojo</p>
               </button>
 
@@ -545,12 +545,12 @@ function CashierDashboardRoute() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    ✅ Entregados
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    Entregados
                   </span>
                   <CheckCircle2 size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{completedCount}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{completedCount}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Completados</p>
               </button>
 
@@ -558,17 +558,17 @@ function CashierDashboardRoute() {
                 onClick={() => setStatusFilter("all")}
                 className={`p-3.5 rounded-2xl border text-left transition-all col-span-2 sm:col-span-1 ${
                   statusFilter === "all"
-                    ? "bg-[#14231D] text-[#FAF8F5] border-[#14231D] shadow-md"
+                    ? "bg-[#5F8575] text-white border-[#5F8575] shadow-md font-extrabold"
                     : "bg-white text-gray-800 border-gray-200 hover:bg-gray-100/60"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    📋 Todos
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    Todos los Pedidos
                   </span>
                   <Filter size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{orders.length}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{orders.length}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Total de comandas</p>
               </button>
 
@@ -644,17 +644,17 @@ function CashierDashboardRoute() {
                 onClick={() => setReservationStatusFilter("today")}
                 className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
                   reservationStatusFilter === "today"
-                    ? "bg-emerald-700 text-white border-emerald-800 shadow-md ring-2 ring-emerald-500/40"
+                    ? "bg-[#5F8575] text-white border-[#5F8575] shadow-md ring-2 ring-[#5F8575]/40 font-extrabold"
                     : "bg-white text-gray-800 border-emerald-200 hover:bg-emerald-50/50"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-90 flex items-center gap-1">
-                    🌿 Reservas del Día
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-90 flex items-center gap-1">
+                    Reservas del Día
                   </span>
                   <Calendar size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{todayReservationsCount}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{todayReservationsCount}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Programadas para HOY</p>
               </button>
 
@@ -667,12 +667,12 @@ function CashierDashboardRoute() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    🟡 Pendientes
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    Pendientes
                   </span>
                   <Clock size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{pendingReservationsCount}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{pendingReservationsCount}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Por confirmar WhatsApp</p>
               </button>
 
@@ -685,12 +685,12 @@ function CashierDashboardRoute() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    ✅ Confirmadas
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    Confirmadas
                   </span>
                   <CheckCircle2 size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{confirmedReservationsCount}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{confirmedReservationsCount}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Listas para recibir</p>
               </button>
 
@@ -698,17 +698,17 @@ function CashierDashboardRoute() {
                 onClick={() => setReservationStatusFilter("all")}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   reservationStatusFilter === "all"
-                    ? "bg-[#14231D] text-[#FAF8F5] border-[#14231D] shadow-md"
+                    ? "bg-[#2A4237] text-[#FAF8F5] border-[#2A4237] shadow-md font-extrabold"
                     : "bg-white text-gray-800 border-gray-200 hover:bg-gray-100/60"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    📋 Todas / Historial
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                    Todas / Historial
                   </span>
                   <Filter size={16} />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{reservations.length}</span>
+                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{reservations.length}</span>
                 <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Total de reservas</p>
               </button>
 
@@ -769,33 +769,35 @@ function CashierDashboardRoute() {
               {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
               {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
                 <div className="flex items-center gap-2 pt-2.5 border-t border-gray-100 overflow-x-auto pb-0.5">
-                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                  <span className="text-[11px] font-sans font-bold text-gray-400 uppercase tracking-wider shrink-0">
                     Filtro Rápido de Calendario:
                   </span>
                   <button
                     onClick={() => setQuickDateRange("today")}
-                    className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
+                    className="px-3 py-1 bg-[#5F8575] hover:bg-[#4d7061] text-white font-bold text-xs rounded-lg transition-colors shrink-0"
                   >
-                    🌿 Hoy
+                    Hoy
                   </button>
                   <button
                     onClick={() => setQuickDateRange("week")}
-                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-lg transition-colors border border-gray-200 shrink-0"
                   >
-                    📅 Esta Semana
+                    Esta Semana
                   </button>
                   <button
                     onClick={() => setQuickDateRange("month")}
-                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-lg transition-colors border border-gray-200 shrink-0"
                   >
-                    📅 Este Mes
+                    Este Mes
                   </button>
-                  <button
-                    onClick={() => setQuickDateRange("all")}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
-                  >
-                    📋 Limpiar Fechas (Ver Histórico Completo)
-                  </button>
+                  {(resDateFrom || resDateTo) && (
+                    <button
+                      onClick={() => setQuickDateRange("all")}
+                      className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs rounded-lg transition-colors border border-red-200 shrink-0"
+                    >
+                      Limpiar Fechas
+                    </button>
+                  )}
                 </div>
               )}
 
