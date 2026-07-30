@@ -203,14 +203,14 @@ export function CartSidebar() {
       }));
     }
   }, [activeUser]);
-  const [delivery, setDelivery] = useState<DeliveryForm>({
-    name: "",
-    phone: "",
+  const [delivery, setDelivery] = useState<DeliveryForm>(() => ({
+    name: activeUser?.user_metadata?.full_name || activeUser?.email || "",
+    phone: activeUser?.user_metadata?.phone || activeUser?.phone || "",
     address: "",
     reference: "",
-    email: "",
+    email: activeUser?.email || "",
     notes: "",
-  });
+  }));
   const [payment, setPayment] = useState<PaymentForm>({
     cardNumber: "",
     cardName: "",
@@ -911,7 +911,9 @@ export function CartSidebar() {
                   {/* Banner de Usuario Google */}
                   <div className="flex items-center gap-2.5 p-3 rounded-xl text-xs font-medium border bg-eucalipto/10 border-eucalipto/20 text-eucalipto">
                     <CheckCircle size={16} />
-                    <span className="flex-1 truncate font-bold">{delivery.name} ({delivery.email})</span>
+                    <span className="flex-1 truncate font-bold">
+                      {delivery.name || activeUser?.user_metadata?.full_name || activeUser?.email} ({delivery.email || activeUser?.email})
+                    </span>
                     <button
                       type="button"
                       onClick={async () => {
