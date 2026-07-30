@@ -129,40 +129,35 @@ export const categories: Category[] = [
         description:
           "Extracto concentrado de trucha salmonada, limón y ají, con un equilibrio preciso entre acidez y frescura. ",
         price: "S/ 25.00",
-        image:
-          "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
       {
         name: "CEVICHE DE TRUCHA",
         description:
           "200 gr. de trucha salmonada cortados en trozo, marinada en jugo de tumbo y limón fresco, acompañado de cebolla morada, cilantro y ají limo.",
         price: "S/ 34.00",
-        image:
-          "https://images.unsplash.com/photo-1583953623787-ada99d338235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
       {
         name: "CHICHARRÓN DE TRUCHA",
         description:
           "Es crujiente por fuera, jugosa por dentro. Nuestra seleccionada trucha salmonada es cuidadosamente sazonada y acompañada con papas doradas y sarza criolla. ",
         price: "S/ 36.00",
-        image:
-          "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "LOMO SALTADO",
         description:
           "El ícono de nuestra cocina. El lomo saltado es ese encuentro perfecto entre historia y fuego, donde el wok abraza cortes jugosos de carne, ",
         price: "S/ 40.00",
-        image:
-          "https://images.unsplash.com/photo-1583953623787-ada99d338235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "MILANESA DE POLLO",
         description:
           "Jugosa milanesa de pollo empanizada con panko, frita al punto dorado perfecto y servida con nuestra salsa especial Las Flores, que realza su sabor con un toque casero y equilibrado.",
         price: "S/ 34.00",
-        image:
-          "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
     ],
   },
@@ -176,48 +171,42 @@ export const categories: Category[] = [
         description:
           "Plato insignia, acompañado con papas nativas doradas, qapchi, choclo salteado en especias, ensalada criolla y chips de papas.",
         price: "S/ 68.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "CUY LAS FLORES (DESHUESADO)",
         description:
           "Nuestra versión deshuesada del tradicional cuy frito conserva su sabor auténtico, con una textura más delicada y una experiencia práctica y elegante.",
         price: "S/ 42.00",
-        image:
-          "https://images.unsplash.com/photo-1559688665-040666a2f326?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "CHICHARRÓN HUAMANGUINO",
         description:
           "Trozos de carne de cerdo dorados en su propia manteca, acompañado de papas sancochadas, qapchi, chips de camote y ensalada criolla.",
         price: "S/ 36.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "MIXTO (CUY + CHICHARRÓN)",
         description:
           "Medio cuy frito y trozos de chicharrón, acompañado de mix de papas nativas ,qapchi, choclo salteado y ensalada criolla.",
         price: "S/ 52.00",
-        image:
-          "https://images.unsplash.com/photo-1559688665-040666a2f326?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "CHANCHO ASADO LAS FLORES",
         description:
           "Carne de cerdo macerado en distintas especies, acompañado de pastel de papa, crema de pimentón, chips de camote y ensalada hawaiana.",
         price: "S/ 36.00",
-        image:
-          "https://images.unsplash.com/photo-1571139318929-bb90d382dbd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "TRUCHA ANDINA",
         description:
           "Trucha deshuesada, empanizada con maíz molido u hojuelas de quinua, acompañado de arroz a la jardinera, chips de papas, ensalada mixta orgánica. ",
         price: "S/ 32.00",
-        image:
-          "https://images.unsplash.com/photo-1571139318929-bb90d382dbd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
     ],
   },
@@ -230,48 +219,42 @@ export const categories: Category[] = [
         description:
           "500 gramos del corte más suave de la res, cocido a la parrilla para lograr una experiencia jugosa, tierna. Se acompaña con guarnición a elección: Papas fritas francesas o papas salteadas en mantequilla, ensalada orgánica o sancochada.",
         price: "S/ 80.00",
-        image:
-          "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "SUPREMA DE POLLO",
         description:
           "Jugosa pechuga de pollo a la parrilla, servida con papas fritas doradas, ensalada fresca de la casa y cremas seleccionadas para realzar cada bocado.",
         price: "S/ 32.00",
-        image:
-          "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "POLLO EN SALSA DE CHAMPIÑONES FRESCOS",
         description:
           "Pechuga de pollo al grill, glaseada con una cremosa salsa blanca con champiñones salteados, servida con arroz blanco y ensalada hawaiana.",
         price: "S/ 32.00",
-        image:
-          "https://images.unsplash.com/photo-1583953623787-ada99d338235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "CHULETA DE CERDO",
         description:
           "350 gr. de carne de cerdo en salsa BBQ o chimichurri acompañado de papas nativas cocktail o papas fritas y ensalada orgánica con palta de nuestro fundo.",
         price: "S/ 34.00",
-        image:
-          "https://images.unsplash.com/photo-1583953623787-ada99d338235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "SETAS Y CHAMPIÑONES",
         description:
           "350 gr. de carne de cerdo en salsa BBQ o chimichurri acompañado de papas nativas cocktail o papas fritas y ensalada orgánica con palta de nuestro fundo.",
         price: "S/ 36.00",
-        image:
-          "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
       {
         name: "FILETE DE TRUCHA SALMONADA",
         description:
           "350 gr. de carne de cerdo en salsa BBQ o chimichurri acompañado de papas nativas cocktail o papas fritas y ensalada orgánica con palta de nuestro fundo.",
         price: "S/ 38.00",
-        image:
-          "https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
     ],
   },
@@ -284,16 +267,14 @@ export const categories: Category[] = [
         description:
           "Tiernos bocados de cuy, suavemente sazonados y empanizados al dorado perfecto, ofreciendo un sabor único en una presentación divertida.",
         price: "S/ 40.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "MILANESA DE POLLO INFANTIL",
         description:
           "150 gramos de jugosa milanesa de pollo empanizada con panko, frita al punto dorado perfecto.",
         price: "S/ 38.00",
-        image:
-          "https://images.unsplash.com/photo-1559688665-040666a2f326?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
     ],
   },
@@ -306,56 +287,49 @@ export const categories: Category[] = [
         description:
           "Clásico de nuestra cocina peruana, elaborado con gallina, fideos, papa y hierbas aromáticas que le dan un sabor casero, profundo y reconfortante.",
         price: "S/ 26.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "CALDO DE GALLINA ACEVICHADO",
         description:
           "Clásico de nuestra cocina peruana, elaborado con gallina, fideos, papa y hierbas aromáticas que le dan un sabor casero, profundo y reconfortante.",
         price: "S/ 32.00",
-        image:
-          "https://images.unsplash.com/photo-1559688665-040666a2f326?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "ADOBO HUAMANGUINO",
         description:
           "Plato tradicional de la cocina ayacuchana, preparado con carne de cerdo, ajíes y especias que le dan un sabor intenso y reconfortante, acompañado con pan chapla. (Consultar disponibilidad)",
         price: "S/ 30.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/puca-picante.webp",
       },
       {
         name: "MONDONGO AYACUCHANO",
         description:
           "Clásico de los andes peruanos, preparado con maíz pelado, mix de carnes y hierbas andinas en una cocción que concentra su sabor y carácter tradicional. Una sopa sustanciosa y reconfortante, muy ligada a nuestras costumbres. (Solo domingos y feriados)",
         price: "S/ 24.00",
-        image:
-          "https://images.unsplash.com/photo-1559688665-040666a2f326?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/puca-picante.webp",
       },
       {
         name: "CALDO DE PATA",
         description:
           "Caldo tradicional de sabor profundo, preparado a base de pata de res y especias, con una cocción lenta que concentra su carácter y textura. Reconocido por su aporte de colágeno. (Solo domingos)",
         price: "S/ 22.00",
-        image:
-          "https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "CALDO DE CABEZA",
         description:
           "Clásico de la cocina andina, elaborado con presas de cabeza, hierbas y especias en una cocción lenta que realza su sabor y consistencia. Una sopa de carácter intenso, muy ligada a jornadas tempranas y a la tradición popular. (Solo domingos)",
         price: "S/ 24.00",
-        image:
-          "https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
       {
         name: "CALDO DE CABEZA ESPECIAL",
         description:
           "Sopa tradicional de la cocina andina, elaborada con lengua, hierbas y especias en una cocción pausada que realza su textura y sabor. Muy valorada por quienes buscan una de las presas más sabrosas y nobles de nuestra cocina.   (Solo domingos)",
         price: "S/ 30.00",
-        image:
-          "https://images.unsplash.com/photo-1746716447103-e1618bbd0669?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
       },
     ],
   },
@@ -368,24 +342,21 @@ export const categories: Category[] = [
         description:
           "Dos clásicos en un solo plato: Fetuccini a la huancaína con pollo al grill y espagueti al pesto con filet mignon a la parrilla, en una combinación pensada para disfrutar lo mejor de ambas pastas.",
         price: "S/ 42.00",
-        image:
-          "https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
       {
         name: "ESPAGUETI AL PESTO",
         description:
           "Espagueti Angesi bañado en una cremosa salsa al pesto, elaborado con albahaca seleccionada, pistachos y aceite de oliva, logrando una combinación aromática, fresca y elegante. ",
         price: "S/ 28.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
       {
         name: "FETUCCINI A LA HUANCAÍNA",
         description:
           "Fetuccini Angesi cubierto con una cremosa salsa de huancaína, acompañado de lomo saltado al wok con cebolla y tomate, en una fusión intensa y generosa de sabores peruanos.",
         price: "S/ 28.00",
-        image:
-          "https://images.unsplash.com/photo-1571139318929-bb90d382dbd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/chicharron.webp",
       },
     ],
   },
