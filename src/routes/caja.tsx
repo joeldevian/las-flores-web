@@ -444,32 +444,29 @@ function CashierDashboardRoute() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         
-        {/* Main Mode Switcher: Pedidos vs Reservas */}
-        <div className="flex items-center gap-2 p-1.5 bg-gray-200/80 rounded-2xl max-w-md mx-auto sm:mx-0 shadow-inner border border-gray-300/60">
+        {/* View Mode Switcher Header Bar */}
+        <div className="bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-2 max-w-xl">
           <button
             onClick={() => setViewMode("orders")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
               viewMode === "orders"
-                ? "bg-[#5F8575] text-white shadow-md font-extrabold"
-                : "text-gray-700 hover:text-gray-900 hover:bg-white/50"
+                ? "bg-[#5F8575] text-white shadow-md font-extrabold ring-2 ring-[#5F8575]/30"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-bold"
             }`}
           >
-            <ShoppingBag size={15} />
+            <ShoppingBag size={15} className={viewMode === "orders" ? "text-[#D4AF37]" : "text-gray-500"} />
             <span>Comandas & Pedidos ({pendingCount} Pendientes)</span>
-            {pendingCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-            )}
           </button>
 
           <button
             onClick={() => setViewMode("reservations")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
               viewMode === "reservations"
-                ? "bg-[#2A4237] text-white shadow-md font-extrabold ring-2 ring-[#5F8575]/40"
-                : "text-gray-700 hover:text-gray-900 hover:bg-white/50"
+                ? "bg-[#5F8575] text-white shadow-md font-extrabold ring-2 ring-[#5F8575]/30"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-bold"
             }`}
           >
-            <Calendar size={15} className="text-[#D4AF37]" />
+            <Calendar size={15} className={viewMode === "reservations" ? "text-[#D4AF37]" : "text-gray-500"} />
             <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
           </button>
         </div>
@@ -484,92 +481,92 @@ function CashierDashboardRoute() {
               
               <button
                 onClick={() => setStatusFilter("pendiente")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   statusFilter === "pendiente"
-                    ? "bg-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40"
-                    : "bg-white text-gray-800 border-amber-200 hover:bg-amber-50/50"
+                    ? "bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 ring-4 ring-amber-400/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-amber-500/90 to-amber-600/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-serif font-bold uppercase tracking-wider opacity-80">
-                    🟡 Pendientes
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                    Pendientes
                   </span>
-                  <Clock size={16} />
+                  <Clock size={18} className="text-amber-200" />
                 </div>
-                <span className="font-serif text-2xl font-black block mt-1">{pendingCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Requieren atención</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{pendingCount}</span>
+                <p className="text-[10px] text-amber-100 mt-0.5 font-semibold">Requieren atención</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("en_preparacion")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   statusFilter === "en_preparacion"
-                    ? "bg-blue-600 text-white border-blue-700 shadow-md ring-2 ring-blue-500/40"
-                    : "bg-white text-gray-800 border-blue-200 hover:bg-blue-50/50"
+                    ? "bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 ring-4 ring-blue-500/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-blue-600/90 to-blue-700/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     En Cocina
                   </span>
-                  <UtensilsCrossed size={16} />
+                  <UtensilsCrossed size={18} className="text-blue-200" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{inKitchenCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">En preparación</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{inKitchenCount}</span>
+                <p className="text-[10px] text-blue-100 mt-0.5 font-semibold">En preparación</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("en_camino")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   statusFilter === "en_camino"
-                    ? "bg-purple-600 text-white border-purple-700 shadow-md ring-2 ring-purple-500/40"
-                    : "bg-white text-gray-800 border-purple-200 hover:bg-purple-50/50"
+                    ? "bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 ring-4 ring-purple-500/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-purple-600/90 to-purple-700/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     En Camino / Listo
                   </span>
-                  <Truck size={16} />
+                  <Truck size={18} className="text-purple-200" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{onWayCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Delivery / Recojo</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{onWayCount}</span>
+                <p className="text-[10px] text-purple-100 mt-0.5 font-semibold">Delivery / Recojo</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("entregado")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   statusFilter === "entregado"
-                    ? "bg-emerald-600 text-white border-emerald-700 shadow-md ring-2 ring-emerald-500/40"
-                    : "bg-white text-gray-800 border-emerald-200 hover:bg-emerald-50/50"
+                    ? "bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 ring-4 ring-emerald-500/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-emerald-600/90 to-emerald-700/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     Entregados
                   </span>
-                  <CheckCircle2 size={16} />
+                  <CheckCircle2 size={18} className="text-emerald-200" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{completedCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Completados</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{completedCount}</span>
+                <p className="text-[10px] text-emerald-100 mt-0.5 font-semibold">Completados</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("all")}
-                className={`p-3.5 rounded-2xl border text-left transition-all col-span-2 sm:col-span-1 ${
+                className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 text-white shadow-md ${
                   statusFilter === "all"
-                    ? "bg-[#5F8575] text-white border-[#5F8575] shadow-md font-extrabold"
-                    : "bg-white text-gray-800 border-gray-200 hover:bg-gray-100/60"
+                    ? "bg-gradient-to-br from-[#2D473C] via-[#243B31] to-[#1B2C24] ring-4 ring-[#5F8575]/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-[#2D473C]/90 to-[#243B31]/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     Todos los Pedidos
                   </span>
-                  <Filter size={16} />
+                  <Filter size={18} className="text-[#D4AF37]" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{orders.length}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Total de comandas</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1 text-[#D4AF37]">{orders.length}</span>
+                <p className="text-[10px] text-white/80 mt-0.5 font-semibold">Total de comandas</p>
               </button>
 
             </div>
@@ -637,79 +634,79 @@ function CashierDashboardRoute() {
         {/* ==================================================================== */}
         {viewMode === "reservations" && (
           <>
-            {/* Quick Filter Tabs for Reservations */}
+            {/* Quick Filter Tabs for Reservations - Rich Vibrant Gradients */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               
               <button
                 onClick={() => setReservationStatusFilter("today")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   reservationStatusFilter === "today"
-                    ? "bg-[#5F8575] text-white border-[#5F8575] shadow-md ring-2 ring-[#5F8575]/40 font-extrabold"
-                    : "bg-white text-gray-800 border-emerald-200 hover:bg-emerald-50/50"
+                    ? "bg-gradient-to-br from-[#5F8575] via-[#4d7061] to-[#3b574a] ring-4 ring-[#5F8575]/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-[#5F8575]/90 to-[#4d7061]/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-90 flex items-center gap-1">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     Reservas del Día
                   </span>
-                  <Calendar size={16} />
+                  <Calendar size={18} className="text-[#D4AF37]" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{todayReservationsCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Programadas para HOY</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1 text-[#D4AF37]">{todayReservationsCount}</span>
+                <p className="text-[10px] text-white/90 mt-0.5 font-semibold">Programadas para HOY</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("pendiente")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   reservationStatusFilter === "pendiente"
-                    ? "bg-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40"
-                    : "bg-white text-gray-800 border-amber-200 hover:bg-amber-50/50"
+                    ? "bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 ring-4 ring-amber-400/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-amber-500/90 to-amber-600/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     Pendientes
                   </span>
-                  <Clock size={16} />
+                  <Clock size={18} className="text-amber-200" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{pendingReservationsCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Por confirmar WhatsApp</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{pendingReservationsCount}</span>
+                <p className="text-[10px] text-amber-100 mt-0.5 font-semibold">Por confirmar WhatsApp</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("confirmada")}
-                className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
                   reservationStatusFilter === "confirmada"
-                    ? "bg-blue-600 text-white border-blue-700 shadow-md ring-2 ring-blue-500/40"
-                    : "bg-white text-gray-800 border-blue-200 hover:bg-blue-50/50"
+                    ? "bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 ring-4 ring-blue-500/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-blue-600/90 to-blue-700/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     Confirmadas
                   </span>
-                  <CheckCircle2 size={16} />
+                  <CheckCircle2 size={18} className="text-blue-200" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{confirmedReservationsCount}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Listas para recibir</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{confirmedReservationsCount}</span>
+                <p className="text-[10px] text-blue-100 mt-0.5 font-semibold">Listas para recibir</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("all")}
-                className={`p-3.5 rounded-2xl border text-left transition-all ${
+                className={`p-4 rounded-2xl text-left transition-all text-white shadow-md ${
                   reservationStatusFilter === "all"
-                    ? "bg-[#2A4237] text-[#FAF8F5] border-[#2A4237] shadow-md font-extrabold"
-                    : "bg-white text-gray-800 border-gray-200 hover:bg-gray-100/60"
+                    ? "bg-gradient-to-br from-[#2D473C] via-[#243B31] to-[#1B2C24] ring-4 ring-[#5F8575]/50 scale-[1.02]"
+                    : "bg-gradient-to-br from-[#2D473C]/90 to-[#243B31]/90 hover:brightness-110 opacity-90"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider opacity-80">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
                     Todas / Historial
                   </span>
-                  <Filter size={16} />
+                  <Filter size={18} className="text-[#D4AF37]" />
                 </div>
-                <span className="font-sans text-2xl font-black tracking-tight tabular-nums block mt-1">{reservations.length}</span>
-                <p className="text-[10px] opacity-90 mt-0.5 font-semibold">Total de reservas</p>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1 text-[#D4AF37]">{reservations.length}</span>
+                <p className="text-[10px] text-white/80 mt-0.5 font-semibold">Total de reservas</p>
               </button>
 
             </div>

@@ -100,24 +100,34 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
         isToday ? "border-emerald-500/60 ring-2 ring-emerald-500/20" : "border-gray-200"
       }`}
     >
-      {/* Header Verde Eucalipto para Reservas */}
-      <div className="bg-emerald-900 text-white p-4 flex items-center justify-between relative overflow-hidden">
+      {/* Header Banner con Colores Ricos y Vibrantes por Estado */}
+      <div
+        className={`p-4 text-white flex items-center justify-between relative overflow-hidden shadow-xs ${
+          isConfirmed
+            ? "bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900"
+            : isCompleted
+            ? "bg-gradient-to-r from-[#2D473C] via-[#243B31] to-[#1B2C24]"
+            : isCancelled
+            ? "bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900"
+            : "bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800"
+        }`}
+      >
         <div className="flex items-center gap-2.5 z-10">
-          <div className="w-9 h-9 rounded-xl bg-emerald-800/80 border border-emerald-700/50 flex items-center justify-center text-emerald-300 font-bold shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center text-white font-bold shrink-0">
             <Calendar size={18} />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-300 flex items-center gap-1">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-white/90 flex items-center gap-1.5 font-sans">
               {isToday ? (
-                <span className="bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black animate-pulse">
-                  üåø HOY
+                <span className="bg-[#D4AF37] text-[#2A4237] px-2 py-0.5 rounded-full font-black animate-pulse shadow-xs">
+                  HOY
                 </span>
               ) : (
                 "RESERVA"
               )}
               ‚Ä¢ {(reservation.service_type || "almuerzo").toUpperCase()}
             </span>
-            <h3 className="font-serif font-bold text-base text-white leading-tight">
+            <h3 className="font-sans font-bold text-base text-white leading-tight mt-0.5">
               {formatDate(reservation.reservation_date)} ‚Äî {reservation.reservation_time || "Hora sin fijar"}
             </h3>
           </div>
@@ -125,14 +135,14 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
 
         {/* Status Badge */}
         <span
-          className={`text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider z-10 border ${
+          className={`text-[11px] font-sans font-extrabold px-3 py-1 rounded-full uppercase tracking-wider z-10 border shadow-xs ${
             isConfirmed
-              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+              ? "bg-blue-500/30 text-blue-100 border-blue-400/50"
               : isCompleted
-              ? "bg-blue-500/20 text-blue-300 border-blue-500/40"
+              ? "bg-emerald-500/30 text-emerald-100 border-emerald-400/50"
               : isCancelled
-              ? "bg-red-500/20 text-red-300 border-red-500/40"
-              : "bg-amber-500/20 text-amber-300 border-amber-500/40"
+              ? "bg-red-500/30 text-red-200 border-red-400/50"
+              : "bg-amber-400/30 text-amber-100 border-amber-300/50"
           }`}
         >
           {isConfirmed
@@ -146,33 +156,33 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
       </div>
 
       {/* Details */}
-      <div className="p-4 space-y-3.5 flex-1">
+      <div className="p-4 space-y-3.5 flex-1 font-sans">
         {/* Client info */}
         <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-3">
           <div>
-            <h4 className="font-serif font-bold text-base text-gray-900 flex items-center gap-1.5">
-              <User size={15} className="text-emerald-700" />
+            <h4 className="font-sans font-extrabold text-base text-gray-900 flex items-center gap-1.5">
+              <User size={16} className="text-[#5F8575]" />
               {reservation.client_name || "Cliente Reserva"}
             </h4>
             {reservation.client_phone && (
-              <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5 font-medium">
+              <p className="text-xs text-gray-700 flex items-center gap-1 mt-1 font-semibold">
                 <Phone size={13} className="text-gray-400" />
                 {reservation.client_phone}
               </p>
             )}
             {reservation.client_email && (
-              <p className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+              <p className="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5 font-medium">
                 <Mail size={12} className="text-gray-400" />
                 {reservation.client_email}
               </p>
             )}
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 px-3 py-2 rounded-xl text-center shrink-0">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700 block">
+          <div className="bg-[#5F8575]/10 border border-[#5F8575]/20 text-[#2A4237] px-3 py-2 rounded-xl text-center shrink-0">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#5F8575] block">
               Personas
             </span>
-            <span className="font-serif text-lg font-black text-emerald-950 flex items-center justify-center gap-1">
+            <span className="font-sans text-lg font-black tracking-tight tabular-nums text-[#2A4237] flex items-center justify-center gap-1">
               <Users size={16} /> {reservation.guest_count || 1}
             </span>
           </div>
@@ -180,50 +190,50 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
 
         {/* Zone & Notes */}
         {(reservation.zone_id || reservation.notes) && (
-          <div className="space-y-1.5 text-xs bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+          <div className="space-y-1.5 text-xs bg-gray-50 p-2.5 rounded-xl border border-gray-200">
             {reservation.zone_id && (
-              <div className="flex items-center gap-1.5 text-gray-700 font-semibold">
-                <MapPin size={13} className="text-emerald-700" />
+              <div className="flex items-center gap-1.5 text-gray-800 font-bold">
+                <MapPin size={13} className="text-[#5F8575]" />
                 <span>Zona / Mesa: {reservation.zone_id}</span>
               </div>
             )}
             {reservation.notes && (
-              <p className="text-gray-500 italic">"{reservation.notes}"</p>
+              <p className="text-gray-600 italic">"{reservation.notes}"</p>
             )}
           </div>
         )}
       </div>
 
-      {/* Actions */}
-      <div className="p-4 bg-gray-50/80 border-t border-gray-100 space-y-2">
+      {/* Actions Bar - High Contrast & Vibrant Action Buttons */}
+      <div className="p-4 bg-gray-50/90 border-t border-gray-200 space-y-2 font-sans">
         {/* WhatsApp Actions Buttons */}
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleSendWhatsAppConfirmation}
-            className="w-full py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-98"
+            className="w-full py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 rounded-xl text-xs font-black transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
           >
-            <MessageCircle size={14} />
+            <MessageCircle size={15} />
             <span>Confirmar WhatsApp</span>
           </button>
 
           <button
             onClick={handleSendWhatsAppReminder}
-            className="w-full py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 rounded-xl text-xs font-bold transition-all border border-emerald-300 flex items-center justify-center gap-1.5"
+            className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
           >
-            <BellRing size={14} className="text-emerald-700" />
+            <BellRing size={15} />
             <span>Recordatorio Hoy</span>
           </button>
         </div>
 
-        {/* Status update buttons (send valid constraint values: confirmed, completed, cancelled) */}
+        {/* Status update buttons */}
         <div className="flex items-center justify-between gap-2 pt-1">
           {!isConfirmed && (
             <button
               onClick={() => handleUpdateStatus("confirmed")}
               disabled={updating}
-              className="flex-1 py-1.5 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1"
+              className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 active:scale-98"
             >
-              <CheckCircle2 size={13} /> Confirmar
+              <CheckCircle2 size={14} /> Confirmar
             </button>
           )}
 
@@ -231,9 +241,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             <button
               onClick={() => handleUpdateStatus("completed")}
               disabled={updating}
-              className="flex-1 py-1.5 bg-white hover:bg-blue-50 text-blue-800 border border-blue-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1"
+              className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 active:scale-98"
             >
-              <Utensils size={13} /> Cliente Lleg√≥
+              <Utensils size={14} /> Cliente Lleg√≥
             </button>
           )}
 
@@ -241,9 +251,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             <button
               onClick={() => handleUpdateStatus("cancelled")}
               disabled={updating}
-              className="py-1.5 px-3 bg-white hover:bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1"
+              className="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
             >
-              <XCircle size={13} /> Cancelar
+              <XCircle size={14} /> Cancelar
             </button>
           )}
         </div>
