@@ -577,6 +577,7 @@ function AdminRoute() {
               orders={orders}
               orderItems={orderItems}
               products={products}
+              reservations={reservations}
             />
           )}
 

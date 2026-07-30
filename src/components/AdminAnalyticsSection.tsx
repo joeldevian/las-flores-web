@@ -21,12 +21,14 @@ interface AdminAnalyticsSectionProps {
   orders: any[];
   orderItems: any[];
   products: any[];
+  reservations?: any[];
 }
 
 export function AdminAnalyticsSection({
   orders,
   orderItems,
   products,
+  reservations = [],
 }: AdminAnalyticsSectionProps) {
   const [timeframe, setTimeframe] = useState<"today" | "week" | "month" | "all" | "custom">("month");
   
@@ -108,6 +110,27 @@ export function AdminAnalyticsSection({
     if (validOrders.length === 0) return 0;
     return Math.round((deliveryCount / validOrders.length) * 100);
   }, [deliveryCount, validOrders]);
+
+  // Reservation BI Metrics
+  const reservationMetrics = useMemo(() => {
+    const totalRes = reservations.length;
+    const confirmedRes = reservations.filter((r) => {
+      const s = (r.status || "").toLowerCase();
+      return s === "confirmed" || s === "confirmada";
+    }).length;
+    const completedRes = reservations.filter((r) => {
+      const s = (r.status || "").toLowerCase();
+      return s === "completed" || s === "completada" || s === "asistio";
+    }).length;
+
+    const conversionRate = totalRes > 0 ? (completedRes / totalRes) * 100 : 0;
+    
+    // Service split
+    const lunchCount = reservations.filter((r) => (r.service_type || "almuerzo").toLowerCase().includes("almuerzo")).length;
+    const dinnerCount = reservations.filter((r) => (r.service_type || "").toLowerCase().includes("cena")).length;
+
+    return { totalRes, confirmedRes, completedRes, conversionRate, lunchCount, dinnerCount };
+  }, [reservations]);
 
   // Top Selling Products Calculation
   const topProducts = useMemo(() => {
