@@ -138,8 +138,14 @@ export function AdminCouponModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto font-sans flex items-start justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-auto max-h-[88vh] flex flex-col min-h-0 overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-3 sm:p-6 pt-6 sm:pt-10 pb-10 overflow-y-auto font-sans flex items-start justify-center cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col min-h-0 overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 cursor-default my-0"
+      >
         
         {/* Modal Header (Fijo Arriba) */}
         <div className="bg-[#2D473C] text-[#FAF8F5] p-4 sm:p-5 flex items-center justify-between border-b border-[#D4AF37]/30 shrink-0">

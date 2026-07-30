@@ -124,6 +124,7 @@ export function AdminProductModal({
   const [errorMsg, setErrorMsg] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -156,10 +157,15 @@ export function AdminProductModal({
       }
       setUploadSuccessMsg("");
       setErrorMsg("");
+
+      // Reset scroll position to top when modal opens
+      setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0;
+        }
+      }, 0);
     }
   }, [isOpen, product, categories]);
-
-  if (!isOpen) return null;
 
   // Zero-IT Staff Image Upload: Compress & Upload to Supabase Storage automatically
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,8 +246,6 @@ export function AdminProductModal({
       setDeleting(false);
     }
   };
-
-
 
   // Helper functions for Custom Sections builder
   const handleAddSection = () => {
@@ -367,11 +371,26 @@ export function AdminProductModal({
     }
   };
 
+  if (!isOpen) return null;
+
+  // Cierre por clic directo en el fondo oscuro exterior
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto font-sans flex items-start justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-auto max-h-[88vh] flex flex-col min-h-0 overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95">
+    <div
+      onClick={handleBackdropClick}
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-3 sm:p-5 pt-4 sm:pt-6 pb-16 overflow-y-auto font-sans flex items-start justify-center cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[82vh] flex flex-col min-h-0 overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 cursor-default my-0"
+      >
         
-        {/* Header (Fijo arriba) */}
+        {/* Header (Fijo en la parte superior) */}
         <div className="bg-[#2D473C] text-[#FAF8F5] p-4 sm:p-5 flex items-center justify-between border-b border-[#D4AF37]/30 shrink-0">
           <div className="flex items-center gap-2.5">
             <Utensils className="text-[#D4AF37]" size={20} />
@@ -388,9 +407,9 @@ export function AdminProductModal({
           </button>
         </div>
 
-        {/* Form Body (Scrollable Interno) */}
+        {/* Form Body (Scrollable Interno - Inicia siempre en el tope) */}
         <form onSubmit={handleSubmit} className="flex-1 min-h-0 flex flex-col overflow-hidden font-sans">
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 font-sans">
+          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 font-sans">
           
           {errorMsg && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl flex items-center gap-2">
