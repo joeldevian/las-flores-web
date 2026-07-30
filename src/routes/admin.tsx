@@ -304,14 +304,15 @@ function AdminRoute() {
     <div className="min-h-screen bg-[#FAF8F5] text-[#14231D] font-sans selection:bg-[#D4AF37] selection:text-[#14231D] flex flex-col md:flex-row">
       
       {/* ==================================================================== */}
-      {/* LEFT VERTICAL NAVIGATION SIDEBAR (Theme Verde Eucalipto #14231D)     */}
+      {/* LEFT VERTICAL NAVIGATION SIDEBAR (Eucalyptus Green #5F8575)          */}
       {/* ==================================================================== */}
-      <aside className="w-full md:w-64 lg:w-72 bg-[#14231D] text-[#FAF8F5] border-r border-[#D4AF37]/30 shrink-0 flex flex-col justify-between min-h-screen sticky top-0 z-40 shadow-xl">
+      <aside className="w-full md:w-64 lg:w-72 bg-[#5F8575] text-[#FAF8F5] border-r border-[#D4AF37]/40 shrink-0 flex flex-col justify-between md:h-screen md:sticky md:top-0 z-40 shadow-xl overflow-hidden">
         
-        <div className="p-5 space-y-6">
+        {/* Top Scrollable Navigation Container */}
+        <div className="p-5 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
           {/* Brand Logo & Name */}
-          <div className="flex items-center gap-3 border-b border-white/10 pb-5">
-            <div className="w-11 h-11 rounded-2xl bg-white p-1 flex items-center justify-center border-2 border-[#D4AF37] shadow-md shrink-0">
+          <div className="flex items-center gap-3 border-b border-white/20 pb-4">
+            <div className="w-10 h-10 rounded-2xl bg-white p-1 flex items-center justify-center border-2 border-[#D4AF37] shadow-md shrink-0">
               <img
                 src="/favicon.png"
                 alt="Las Flores Logo"
@@ -319,51 +320,51 @@ function AdminRoute() {
               />
             </div>
             <div className="min-w-0">
-              <h2 className="font-serif text-base font-bold tracking-tight text-[#FAF8F5] truncate">
+              <h2 className="font-serif text-base font-bold tracking-tight text-white truncate">
                 Restaurante Las Flores
               </h2>
-              <p className="text-[10px] text-[#D4AF37] font-serif italic tracking-wide truncate">
+              <p className="text-[10px] text-[#FAF8F5]/80 font-serif italic tracking-wide truncate">
                 Panel Ejecutivo BI & Gestión
               </p>
             </div>
           </div>
 
           {/* User Profile Chip */}
-          <div className="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#D4AF37] text-[#14231D] font-serif font-black flex items-center justify-center text-sm shrink-0 shadow-sm">
+          <div className="bg-black/15 border border-white/15 p-3 rounded-2xl flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#D4AF37] text-[#2A4237] font-serif font-black flex items-center justify-center text-sm shrink-0 shadow-sm">
               AD
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">
+              <span className="text-[10px] uppercase font-bold text-white/70 block tracking-wider">
                 Administrador
               </span>
               <span className="text-xs font-bold text-white truncate block">
                 Gerencia General
               </span>
             </div>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Realtime Activo" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-pulse shrink-0" title="Realtime Activo" />
           </div>
 
           {/* Vertical Navigation Items */}
-          <nav className="space-y-1.5 pt-2">
-            <span className="text-[10px] font-serif uppercase tracking-widest text-[#D4AF37]/80 font-bold px-3 block mb-2">
-              MENÚ DE NAVEGACIÓN
+          <nav className="space-y-1.5 pt-1">
+            <span className="text-[10px] font-serif uppercase tracking-widest text-[#FAF8F5]/80 font-bold px-2 block mb-1">
+              MENÚ PRINCIPAL
             </span>
 
             {/* Analítica BI */}
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "analytics"
-                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
+                  : "text-white/90 hover:text-white hover:bg-black/15"
               }`}
             >
               <div className="flex items-center gap-3">
-                <BarChart3 size={18} className={activeTab === "analytics" ? "text-[#14231D]" : "text-[#D4AF37]"} />
+                <BarChart3 size={17} className={activeTab === "analytics" ? "text-[#2A4237]" : "text-[#D4AF37]"} />
                 <span>Analítica & BI</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/10 font-sans font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/20 font-sans font-bold">
                 PRO
               </span>
             </button>
@@ -371,18 +372,18 @@ function AdminRoute() {
             {/* Control de Reservas */}
             <button
               onClick={() => setActiveTab("reservations")}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "reservations"
-                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
+                  : "text-white/90 hover:text-white hover:bg-black/15"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Calendar size={18} />
+                <Calendar size={17} />
                 <span>Control de Reservas</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "reservations" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
+                activeTab === "reservations" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
               }`}>
                 {reservations.length}
               </span>
@@ -391,18 +392,18 @@ function AdminRoute() {
             {/* Gestión de Pedidos */}
             <button
               onClick={() => setActiveTab("orders")}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "orders"
-                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
+                  : "text-white/90 hover:text-white hover:bg-black/15"
               }`}
             >
               <div className="flex items-center gap-3">
-                <ShoppingBag size={18} />
+                <ShoppingBag size={17} />
                 <span>Gestión de Pedidos</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "orders" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
+                activeTab === "orders" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
               }`}>
                 {orders.length}
               </span>
@@ -411,18 +412,18 @@ function AdminRoute() {
             {/* Gestión de Carta */}
             <button
               onClick={() => setActiveTab("menu")}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "menu"
-                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
+                  : "text-white/90 hover:text-white hover:bg-black/15"
               }`}
             >
               <div className="flex items-center gap-3">
-                <MenuIcon size={18} />
+                <MenuIcon size={17} />
                 <span>Gestión de Carta</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "menu" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
+                activeTab === "menu" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
               }`}>
                 {products.length}
               </span>
@@ -431,18 +432,18 @@ function AdminRoute() {
             {/* Cupones & Promos */}
             <button
               onClick={() => setActiveTab("coupons")}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "coupons"
-                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
+                  : "text-white/90 hover:text-white hover:bg-black/15"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Ticket size={18} />
+                <Ticket size={17} />
                 <span>Cupones & Ofertas</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "coupons" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
+                activeTab === "coupons" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
               }`}>
                 {coupons.length}
               </span>
@@ -451,11 +452,11 @@ function AdminRoute() {
           </nav>
         </div>
 
-        {/* Bottom Sidebar Action Quick Links */}
-        <div className="p-5 space-y-2 border-t border-white/10 bg-black/20">
+        {/* Bottom Sidebar Action Quick Links - ALWAYS PINNED & VISIBLE */}
+        <div className="p-4 space-y-2 border-t border-white/20 bg-black/25 shrink-0">
           <Link
             to="/caja"
-            className="w-full py-2.5 px-3.5 rounded-xl bg-[#D4AF37] hover:bg-[#c29f2e] text-[#14231D] text-xs font-bold font-serif flex items-center justify-center gap-2 transition-all shadow-md"
+            className="w-full py-2.5 px-3.5 rounded-xl bg-[#D4AF37] hover:bg-[#c29f2e] text-[#2A4237] text-xs font-bold font-serif flex items-center justify-center gap-2 transition-all shadow-md active:scale-98"
           >
             <span>🛎️ Panel Caja / Cocina</span>
           </Link>
@@ -464,7 +465,7 @@ function AdminRoute() {
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
+              className="py-2 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
               title="Sincronizar Supabase"
             >
               <RefreshCw size={13} className={`text-[#D4AF37] ${refreshing ? "animate-spin" : ""}`} />
@@ -473,7 +474,7 @@ function AdminRoute() {
 
             <button
               onClick={() => { window.location.href = "/restaurante"; }}
-              className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
+              className="py-2 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
             >
               <ArrowLeft size={13} className="text-[#D4AF37]" />
               <span>Ver Web</span>
@@ -482,7 +483,7 @@ function AdminRoute() {
 
           <button
             onClick={handleSignOut}
-            className="w-full py-2 px-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-2"
+            className="w-full py-2 px-3 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-200 border border-red-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-1"
           >
             <LogOut size={14} />
             <span>Cerrar Sesión</span>

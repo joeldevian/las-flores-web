@@ -385,23 +385,23 @@ function CashierDashboardRoute() {
         </div>
       )}
 
-      {/* Header Operator Bar */}
-      <header className="bg-[#14231D] text-[#FAF8F5] sticky top-0 z-40 border-b border-[#D4AF37]/30 shadow-md">
+      {/* Header Operator Bar - Eucalyptus Green Palette #5F8575 */}
+      <header className="bg-[#5F8575] text-[#FAF8F5] sticky top-0 z-40 border-b border-[#D4AF37]/40 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-[#D4AF37]/50 shadow-md shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-[#D4AF37] shadow-md shrink-0">
               <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain rounded-lg" />
             </div>
             <div>
-              <h1 className="font-serif text-lg font-bold tracking-tight text-[#FAF8F5] flex items-center gap-2">
+              <h1 className="font-serif text-lg font-bold tracking-tight text-white flex items-center gap-2">
                 Panel de Caja & Recepción
-                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-emerald-300/20 text-emerald-100 border border-emerald-300/40 font-semibold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
                   TIMBRE EN VIVO
                 </span>
               </h1>
-              <p className="text-[11px] text-[#D4AF37] font-serif italic">
+              <p className="text-[11px] text-[#FAF8F5]/90 font-serif italic">
                 Procesamiento Rápido de Comandas & Reservas — Restaurante Las Flores
               </p>
             </div>
@@ -419,18 +419,18 @@ function CashierDashboardRoute() {
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
                 soundEnabled
-                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
-                  : "bg-red-500/20 text-red-300 border-red-500/40 hover:bg-red-500/30"
+                  ? "bg-emerald-300/20 text-emerald-100 border-emerald-300/40 hover:bg-emerald-300/30"
+                  : "bg-red-500/20 text-red-200 border-red-500/40 hover:bg-red-500/30"
               }`}
               title="Activar / Silenciar Timbre"
             >
-              {soundEnabled ? <Volume2 size={14} className="text-emerald-400" /> : <BellOff size={14} className="text-red-400" />}
+              {soundEnabled ? <Volume2 size={14} className="text-emerald-300" /> : <BellOff size={14} className="text-red-300" />}
               <span className="hidden sm:inline">{soundEnabled ? "Alerta Sonora Activa" : "Alerta Silenciada"}</span>
             </button>
 
             <Link
               to="/admin"
-              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/15"
+              className="px-3.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/20"
             >
               <ShieldCheck size={14} className="text-[#D4AF37]" />
               <span className="hidden md:inline">Volver a Admin</span>
@@ -450,7 +450,7 @@ function CashierDashboardRoute() {
             onClick={() => setViewMode("orders")}
             className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
               viewMode === "orders"
-                ? "bg-[#14231D] text-[#FAF8F5] shadow-md"
+                ? "bg-[#5F8575] text-white shadow-md font-extrabold"
                 : "text-gray-700 hover:text-gray-900 hover:bg-white/50"
             }`}
           >
@@ -465,11 +465,11 @@ function CashierDashboardRoute() {
             onClick={() => setViewMode("reservations")}
             className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
               viewMode === "reservations"
-                ? "bg-emerald-800 text-white shadow-md ring-2 ring-emerald-500/40"
+                ? "bg-[#2A4237] text-white shadow-md font-extrabold ring-2 ring-[#5F8575]/40"
                 : "text-gray-700 hover:text-gray-900 hover:bg-white/50"
             }`}
           >
-            <Calendar size={15} className="text-emerald-400" />
+            <Calendar size={15} className="text-[#D4AF37]" />
             <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
           </button>
         </div>
