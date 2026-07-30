@@ -41,7 +41,7 @@ export const categories: Category[] = [
         description: "Puede elegir una bebida caliente, una fría, un sándwich y un acompañamiento.",
         price: "S/ 40.00",
         image:
-          "https://images.unsplash.com/photo-1564920090325-d7b8522250ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+          "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/qapchi.webp",
       },
     ],
   },
@@ -54,48 +54,42 @@ export const categories: Category[] = [
         description:
           "4 tipos de pan artesanal de masa madre, acompañado de mantequilla saborizada y mermelada de fresas y tomate. ",
         price: "S/ 16.00",
-        image:
-          "https://images.unsplash.com/photo-1584747295311-5d129b60411e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/qapchi.webp",
       },
       {
         name: "CALDO DE CUY",
         description:
           "Concentrado de cuy con alto valor protéico acompañado con perejil, cebolla china y orégano molido. ",
         price: "S/ 5.00",
-        image:
-          "https://images.unsplash.com/photo-1584747295311-5d129b60411e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/cuy-chactado.webp",
       },
       {
         name: "CALDO ACEVICHADO",
         description:
           "Renovamos nuestro caldo de cuy clásico para fusionarlo con un aliño de limón aromatizado, acompañado de una sarsa de la casa y papa nativa. ",
         price: "S/ 9.00",
-        image:
-          "https://images.unsplash.com/photo-1567030492990-950d9855154b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/cuy-chactado.webp",
       },
       {
         name: "QAPCHI HUAMANGUINO",
         description:
           "Queso aplastado, saborizado con cebolla china, muña, huacatay, leche y trozos de ají rocoto, acompañado con papas nativas sancochadas. ",
         price: "S/ 14.00",
-        image:
-          "https://images.unsplash.com/photo-1567030492990-950d9855154b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/qapchi.webp",
       },
       {
         name: "QAPCHI LAS FLORES",
         description:
           "Crema de queso y huacatay, creado en nuestras cocinas hace más de 30 años, acompañado de papas nativas doradas. ",
         price: "S/ 14.00",
-        image:
-          "https://images.unsplash.com/photo-1535400875775-0269e7a919af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/qapchi.webp",
       },
       {
         name: "TRIPITAS DE CUY",
         description:
           "Icónico plato a base de tripitas crocantes, acompañado con papas   cocktail salteadas en mantequilla artesanal y especias, qapchi, mote y ensalada criolla. (consultar stock) ",
         price: "S/ 32.00",
-        image:
-          "https://images.unsplash.com/photo-1746716447103-e1618bbd0669?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/cuy-chactado.webp",
       },
     ],
   },
@@ -108,24 +102,21 @@ export const categories: Category[] = [
         description:
           "Plato tradicional de la cocina ayacuchana, preparado con gallina, ajíes y cebolla que le dan un sabor intenso y equilibrado, servido con camote. Una receta que viene de tres generaciones atrás y que hoy preservamos en Las Flores como parte de nuestra identidad. ",
         price: "S/ 42.00",
-        image:
-          "https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/chicharron.webp",
       },
       {
         name: "CHORIZO AYACUCHANO ",
         description:
           "Plato elaborado a base de carne molida de chancho y res, en una cama de lechuga acompañado de papa blanca sancochada porción de choclo y ensalada regional. ",
         price: "S/ 28.00",
-        image:
-          "https://images.unsplash.com/photo-1613626630502-182579c0432c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/chicharron.webp",
       },
       {
         name: "PUCA PICANTE ",
         description:
           "Guiso de papa vieja en salsa de ají panca con maní tostado, trozos de carne de cerdo y especias, servido con arroz blanco, ensalada regional y una presa de chicharrón huamanguino. ",
         price: "S/ 28.00",
-        image:
-          "https://images.unsplash.com/photo-1571139318929-bb90d382dbd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+        image: "/gastronomia/puca-picante.webp",
       },
     ],
   },
