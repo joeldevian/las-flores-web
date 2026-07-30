@@ -94,20 +94,51 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
     }
   };
 
+  // Configuración de Colores Semánticos Pastel por Estado
+  const theme = isConfirmed
+    ? {
+        cardBorder: "border-blue-200/80 hover:border-blue-400/80 shadow-2xs hover:shadow-md",
+        headerBg: "bg-blue-100/90 border-b border-blue-200 text-blue-950",
+        iconBox: "bg-blue-200/80 text-blue-900 border border-blue-300/80",
+        badge: "bg-blue-200 text-blue-950 border border-blue-400/80",
+        typeText: "text-blue-800",
+      }
+    : isCompleted
+    ? {
+        cardBorder: "border-emerald-200/80 hover:border-emerald-400/80 shadow-2xs hover:shadow-md",
+        headerBg: "bg-emerald-100/90 border-b border-emerald-200 text-emerald-950",
+        iconBox: "bg-emerald-200/80 text-emerald-900 border border-emerald-300/80",
+        badge: "bg-emerald-200 text-emerald-950 border border-emerald-400/80",
+        typeText: "text-emerald-800",
+      }
+    : isCancelled
+    ? {
+        cardBorder: "border-red-200/70 opacity-80 shadow-2xs",
+        headerBg: "bg-red-100/90 border-b border-red-200 text-red-950",
+        iconBox: "bg-red-200/80 text-red-900 border border-red-300/80",
+        badge: "bg-red-200 text-red-950 border border-red-400/80",
+        typeText: "text-red-800",
+      }
+    : {
+        cardBorder: "border-amber-200/80 hover:border-amber-400/80 shadow-2xs hover:shadow-md",
+        headerBg: "bg-amber-100/90 border-b border-amber-200 text-amber-950",
+        iconBox: "bg-amber-200/80 text-amber-900 border border-amber-300/80",
+        badge: "bg-amber-200 text-amber-950 border border-amber-400/80",
+        typeText: "text-amber-800",
+      };
+
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 shadow-2xs hover:shadow-md flex flex-col justify-between ${
-        isToday ? "border-[#5F8575] ring-2 ring-[#5F8575]/20" : "border-gray-200/80"
-      }`}
+      className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col justify-between font-sans ${theme.cardBorder}`}
     >
-      {/* Header Banner Ejecutivo Unificado (Deep Eucalyptus Charcoal) */}
-      <div className="bg-[#2D473C] text-white p-4 flex items-center justify-between relative overflow-hidden border-b border-[#D4AF37]/30">
+      {/* Header Banner Semántico Pastel por Estado */}
+      <div className={`p-4 flex items-center justify-between relative overflow-hidden ${theme.headerBg}`}>
         <div className="flex items-center gap-2.5 z-10">
-          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-[#D4AF37] font-bold shrink-0">
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold shrink-0 ${theme.iconBox}`}>
             <Calendar size={18} />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 flex items-center gap-1.5 font-sans">
+            <span className={`text-[10px] uppercase font-sans font-extrabold tracking-wider flex items-center gap-1.5 ${theme.typeText}`}>
               {isToday ? (
                 <span className="bg-[#D4AF37] text-[#2A4237] px-2 py-0.5 rounded-full font-black animate-pulse shadow-2xs">
                   HOY
@@ -117,24 +148,14 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
               )}
               • {(reservation.service_type || "almuerzo").toUpperCase()}
             </span>
-            <h3 className="font-sans font-bold text-base text-white leading-tight mt-0.5">
+            <h3 className="font-sans font-black text-base text-gray-900 leading-tight mt-0.5">
               {formatDate(reservation.reservation_date)} — {reservation.reservation_time || "Hora sin fijar"}
             </h3>
           </div>
         </div>
 
-        {/* Status Badge Refinado */}
-        <span
-          className={`text-[11px] font-sans font-bold px-3 py-1 rounded-full uppercase tracking-wider z-10 border ${
-            isConfirmed
-              ? "bg-blue-500/20 text-blue-300 border-blue-400/40"
-              : isCompleted
-              ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/40"
-              : isCancelled
-              ? "bg-red-500/20 text-red-300 border-red-400/40"
-              : "bg-[#D4AF37]/20 text-[#D4AF37] border-[#D4AF37]/40"
-          }`}
-        >
+        {/* Status Badge Refinado Semántico */}
+        <span className={`text-[10px] font-sans font-black px-3 py-1 rounded-full uppercase tracking-wider z-10 ${theme.badge}`}>
           {isConfirmed
             ? "Confirmada"
             : isCompleted
@@ -200,15 +221,15 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleSendWhatsAppConfirmation}
-            className="w-full py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5"
+            className="w-full py-2 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 rounded-xl text-xs font-black transition-all shadow-2xs flex items-center justify-center gap-1.5 active:scale-98"
           >
-            <MessageCircle size={14} className="text-emerald-700" />
+            <MessageCircle size={15} />
             <span>Confirmar WhatsApp</span>
           </button>
 
           <button
             onClick={handleSendWhatsAppReminder}
-            className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5"
+            className="w-full py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5 active:scale-98"
           >
             <BellRing size={14} className="text-amber-700" />
             <span>Recordatorio Hoy</span>
@@ -221,7 +242,7 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
             <button
               onClick={() => handleUpdateStatus("confirmed")}
               disabled={updating}
-              className="flex-1 py-1.5 bg-[#5F8575] hover:bg-[#4d7061] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1"
+              className="flex-1 py-1.5 bg-[#5F8575] hover:bg-[#4d7061] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-98"
             >
               <CheckCircle2 size={13} /> Confirmar
             </button>
@@ -231,7 +252,7 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
             <button
               onClick={() => handleUpdateStatus("completed")}
               disabled={updating}
-              className="flex-1 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1"
+              className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-98"
             >
               <Utensils size={13} /> Cliente Llegó
             </button>
