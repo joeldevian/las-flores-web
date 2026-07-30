@@ -368,18 +368,19 @@ export function AdminProductModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-5 overflow-hidden font-sans">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95">
         
-        {/* Header */}
-        <div className="bg-[#14231D] text-[#FAF8F5] p-5 flex items-center justify-between border-b border-[#D4AF37]/30">
+        {/* Header (Fijo arriba) */}
+        <div className="bg-[#2D473C] text-[#FAF8F5] p-4 sm:p-5 flex items-center justify-between border-b border-[#D4AF37]/30 shrink-0">
           <div className="flex items-center gap-2.5">
             <Utensils className="text-[#D4AF37]" size={20} />
-            <h2 className="font-serif text-lg font-bold">
+            <h2 className="font-sans font-extrabold text-base sm:text-lg text-white">
               {product ? "Editar / Actualizar Plato" : "Nuevo Lanzamiento o Promoción"}
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-1.5 rounded-full hover:bg-white/10 text-gray-300 hover:text-white transition-colors"
           >
@@ -387,8 +388,9 @@ export function AdminProductModal({
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Form Body (Scrollable Interno) */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 font-sans flex flex-col justify-between">
+          <div className="space-y-4">
           
           {errorMsg && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl flex items-center gap-2">
@@ -733,8 +735,10 @@ export function AdminProductModal({
             </div>
           )}
 
-          {/* Modal Actions */}
-          <div className="pt-4 flex items-center justify-between border-t border-gray-100 mt-6">
+          </div>
+
+          {/* Modal Actions (Fijo abajo con Sticky) */}
+          <div className="sticky bottom-0 bg-white pt-4 pb-1 border-t border-gray-100 flex items-center justify-between z-10 shrink-0 mt-6 font-sans">
             
             {/* Soft Disable Toggle button instead of hard delete */}
             {product ? (
