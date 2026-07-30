@@ -115,15 +115,19 @@ function CartaPage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-12"
           >
             {active.dishes.map((dish, i) => {
-              const isBreakfast = activeId === "desayuno";
+              const isCustomizable =
+                dish.is_customizable === true ||
+                dish.name.toLowerCase().includes("desayuno ayacuchano") ||
+                dish.name.toLowerCase().includes("arma tu ronda");
+
               return (
                 <div
                   key={i}
                   onClick={() => {
-                    if (isBreakfast) setSelectedBreakfastDish(dish);
+                    if (isCustomizable) setSelectedBreakfastDish(dish);
                   }}
                   className={`bg-white rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group border-b-4 border-transparent hover:border-retama ${
-                    isBreakfast ? "cursor-pointer" : ""
+                    isCustomizable ? "cursor-pointer" : ""
                   }`}
                 >
                   {dish.image ? (
@@ -157,7 +161,7 @@ function CartaPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (isBreakfast) {
+                        if (isCustomizable) {
                           setSelectedBreakfastDish(dish);
                         } else {
                           const priceNum = parseFloat(dish.price.replace("S/ ", ""));
@@ -169,10 +173,9 @@ function CartaPage() {
                           });
                         }
                       }}
-                      className="w-full py-3 md:py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm font-bold tracking-wide border-2 border-transparent hover:border-eucalipto/30"
-                      style={{ background: "var(--color-cream)", color: "var(--color-eucalipto)" }}
+                      className="w-full py-2 bg-ink text-cream hover:bg-retablo text-xs uppercase tracking-[0.15em] font-semibold transition-colors rounded-sm"
                     >
-                      {isBreakfast ? "+ Personalizar y Agregar" : "+ Agregar"}
+                      {isCustomizable ? "Personalizar y Agregar" : "Agregar al Carrito"}
                     </button>
                   </div>
                 </div>

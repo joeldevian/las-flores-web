@@ -21,6 +21,7 @@ export interface Dish {
   description: string;
   price: string;
   image?: string;
+  is_customizable?: boolean;
 }
 
 export interface Category {
@@ -521,10 +522,14 @@ interface DishCardProps {
 function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
   const { addItem } = useCart();
   const priceNum = parseFloat(dish.price.replace("S/ ", ""));
-  const isBreakfast = categoryId === "desayuno";
+
+  const isCustomizable =
+    dish.is_customizable === true ||
+    dish.name.toLowerCase().includes("desayuno ayacuchano") ||
+    dish.name.toLowerCase().includes("arma tu ronda");
 
   const handleAdd = () => {
-    if (isBreakfast && onSelectBreakfast) {
+    if (isCustomizable && onSelectBreakfast) {
       onSelectBreakfast(dish);
     } else {
       addItem({
@@ -538,9 +543,9 @@ function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
 
   return (
     <div
-      onClick={isBreakfast ? handleAdd : undefined}
+      onClick={isCustomizable ? handleAdd : undefined}
       className={`bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-cream/50 ${
-        isBreakfast ? "cursor-pointer" : ""
+        isCustomizable ? "cursor-pointer" : ""
       }`}
     >
       {dish.image ? (
@@ -580,7 +585,7 @@ function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
           className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border border-eucalipto/30 text-eucalipto font-bold text-sm bg-eucalipto/5 hover:bg-eucalipto hover:text-white shadow-xs hover:shadow-sm active:scale-[0.99]"
         >
           <Plus size={15} strokeWidth={2.5} />
-          {isBreakfast ? "Personalizar y Agregar" : "Agregar"}
+          {isCustomizable ? "Personalizar y Agregar" : "Agregar"}
         </button>
       </div>
     </div>

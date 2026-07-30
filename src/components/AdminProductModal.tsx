@@ -26,6 +26,7 @@ export function AdminProductModal({
   const [categoryId, setCategoryId] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isAvailable, setIsAvailable] = useState(true);
+  const [isCustomizable, setIsCustomizable] = useState(false);
   
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -44,6 +45,7 @@ export function AdminProductModal({
         setCategoryId(product.category_id || (categories[0]?.id || ""));
         setImageUrl(product.image_url || "");
         setIsAvailable(product.is_available ?? true);
+        setIsCustomizable(product.is_customizable ?? (product.name?.toLowerCase().includes("desayuno ayacuchano") || false));
       } else {
         setName("");
         setDescription("");
@@ -51,6 +53,7 @@ export function AdminProductModal({
         setCategoryId(categories[0]?.id || "");
         setImageUrl("");
         setIsAvailable(true);
+        setIsCustomizable(false);
       }
       setUploadSuccessMsg("");
       setErrorMsg("");
@@ -149,6 +152,7 @@ export function AdminProductModal({
         category_id: categoryId,
         image_url: imageUrl.trim() || null,
         is_available: isAvailable,
+        is_customizable: isCustomizable,
       };
 
       if (product) {
@@ -385,6 +389,32 @@ export function AdminProductModal({
               <div
                 className={`w-4 h-4 rounded-full bg-white transition-transform ${
                   isAvailable ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Customization Toggle */}
+          <div className="flex items-center justify-between p-3.5 bg-amber-50/70 border border-amber-200/80 rounded-xl">
+            <div>
+              <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                <Sparkles size={14} className="text-amber-600" /> ¿Es un plato personalizable? (Arma tu plato / Ronda)
+              </span>
+              <span className="text-[11px] text-amber-800/80 block mt-0.5">
+                Permite al cliente seleccionar opciones (Bebidas, Acompañamientos, etc.) antes de agregar.
+              </span>
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => setIsCustomizable(!isCustomizable)}
+              className={`w-12 h-6 rounded-full p-1 transition-colors shrink-0 ${
+                isCustomizable ? "bg-amber-600" : "bg-gray-300"
+              }`}
+            >
+              <div
+                className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                  isCustomizable ? "translate-x-6" : "translate-x-0"
                 }`}
               />
             </button>
