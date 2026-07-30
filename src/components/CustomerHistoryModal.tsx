@@ -238,7 +238,7 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
       {/* Modal flotante central */}
       <div className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200">
         {/* Header del Modal */}
-        <div className="p-5 md:p-6 bg-white border-b border-black/5 flex items-center justify-between shadow-xs">
+        <div className="p-5 md:p-6 bg-white border-b border-black/5 flex items-center justify-between shadow-xs shrink-0">
           <div className="flex items-center gap-3.5">
             {avatarUrl ? (
               <img
@@ -271,14 +271,14 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
         </div>
 
         {/* Pestañas de Historial y Perfil */}
-        <div className="flex border-b border-black/5 bg-white/50 px-3 pt-3 gap-1.5 overflow-x-auto">
+        <div className="flex border-b border-black/10 bg-[#F4EFE2] px-3 pt-2.5 gap-1.5 overflow-x-auto shrink-0 z-10 shadow-xs">
           <button
             type="button"
             onClick={() => setActiveTab("orders")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-[11px] font-extrabold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
               activeTab === "orders"
                 ? "border-eucalipto text-eucalipto bg-white shadow-xs"
-                : "border-transparent text-black/50 hover:text-black/80"
+                : "border-transparent text-black/60 hover:text-black hover:bg-white/50"
             }`}
           >
             <ShoppingBag size={14} />
@@ -288,10 +288,10 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           <button
             type="button"
             onClick={() => setActiveTab("reservations")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-[11px] font-extrabold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
               activeTab === "reservations"
                 ? "border-eucalipto text-eucalipto bg-white shadow-xs"
-                : "border-transparent text-black/50 hover:text-black/80"
+                : "border-transparent text-black/60 hover:text-black hover:bg-white/50"
             }`}
           >
             <Calendar size={14} />
@@ -301,10 +301,10 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           <button
             type="button"
             onClick={() => setActiveTab("profile")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-[11px] font-extrabold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
               activeTab === "profile"
                 ? "border-eucalipto text-eucalipto bg-white shadow-xs"
-                : "border-transparent text-black/50 hover:text-black/80"
+                : "border-transparent text-black/60 hover:text-black hover:bg-white/50"
             }`}
           >
             <UserIcon size={14} />
