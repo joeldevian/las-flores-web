@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Clock, Phone, MapPin, Truck, Store, CheckCircle2, ChevronRight, Eye, AlertCircle, Utensils, MessageSquare } from "lucide-react";
+import { Clock, Phone, MapPin, Truck, Store, CheckCircle2, ChevronRight, Eye, AlertCircle, Utensils, MessageSquare, ExternalLink } from "lucide-react";
+import { openWhatsAppDispatch, generateDeliveryGoogleMapsUrl } from "../utils/whatsappDispatch";
 
 interface CashierOrderCardProps {
   order: any;
@@ -152,11 +153,23 @@ export function CashierOrderCard({
             </div>
           )}
 
-          {order.order_type === "delivery" && order.address && (
-            <p className="text-[11px] text-gray-500 flex items-start gap-1 line-clamp-1">
-              <MapPin size={12} className="shrink-0 mt-0.5 text-gray-400" />
-              <span>{order.address} {order.reference ? `(${order.reference})` : ""}</span>
-            </p>
+          {order.order_type === "delivery" && (order.address || order.latitude) && (
+            <div className="flex items-center justify-between gap-1 text-[11px] text-gray-700 bg-white/90 p-2 rounded-xl border border-black/5 shadow-2xs mt-1">
+              <div className="flex items-start gap-1 min-w-0 pr-2">
+                <MapPin size={13} className="shrink-0 mt-0.5 text-emerald-700" />
+                <span className="truncate font-semibold">{order.address || "Ubicación Georeferenciada"} {order.reference ? `(${order.reference})` : ""}</span>
+              </div>
+              <a
+                href={generateDeliveryGoogleMapsUrl(order.latitude, order.longitude, order.address)}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg font-bold text-[10px] flex items-center gap-1 transition-colors"
+                title="Abrir ubicación en Google Maps GPS"
+              >
+                <span>GPS</span>
+                <ExternalLink size={10} />
+              </a>
+            </div>
           )}
         </div>
 
@@ -214,6 +227,17 @@ export function CashierOrderCard({
           >
             <Eye size={16} />
           </button>
+
+          {order.order_type === "delivery" && (
+            <button
+              onClick={() => openWhatsAppDispatch(order, items)}
+              className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-colors"
+              title="Enviar Comanda Completa con GPS a WhatsApp Motorizado"
+            >
+              <MessageSquare size={15} />
+              <span>Motorizado</span>
+            </button>
+          )}
 
           {currentStatus.nextAction && (
             <button

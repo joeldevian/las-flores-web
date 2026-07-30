@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, MapPin, Phone, User, ShoppingBag, Clock, FileText, ExternalLink } from "lucide-react";
+import { X, Loader2, MapPin, Phone, User, ShoppingBag, Clock, FileText, ExternalLink, MessageSquare } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { openWhatsAppDispatch, generateDeliveryGoogleMapsUrl } from "../utils/whatsappDispatch";
 
 interface AdminOrderDetailModalProps {
   isOpen: boolean;
@@ -240,7 +241,19 @@ export function AdminOrderDetailModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end">
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
+          {order.order_type === "delivery" ? (
+            <button
+              onClick={() => openWhatsAppDispatch(order, items)}
+              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-colors"
+            >
+              <MessageSquare size={16} />
+              <span>Enviar a Motorizado (WhatsApp)</span>
+            </button>
+          ) : (
+            <div />
+          )}
+
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold transition-colors"
