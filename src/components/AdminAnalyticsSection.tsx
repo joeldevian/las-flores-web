@@ -384,28 +384,32 @@ export function AdminAnalyticsSection({
         </div>
       </div>
 
-      {/* BI Executive KPI Cards Grid */}
+      {/* BI Executive KPI Cards Grid - Clean Harmonized Palette */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Total Revenue Card */}
-        <div className="bg-[#5F8575] text-[#FAF8F5] p-5 rounded-2xl shadow-md border border-[#D4AF37]/40 relative overflow-hidden">
-          <div className="flex items-center justify-between text-[#FAF8F5]/80 text-[11px] font-sans font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Facturación Total</span>
-            <DollarSign size={18} className="text-[#D4AF37]" />
+            <div className="w-8 h-8 rounded-lg bg-[#5F8575]/10 text-[#5F8575] flex items-center justify-center">
+              <DollarSign size={18} />
+            </div>
           </div>
           <div className="mt-3">
-            <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#D4AF37]">S/ {totalRevenue.toFixed(2)}</span>
-            <p className="text-[11px] text-emerald-200 mt-1 font-semibold flex items-center gap-1">
+            <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#2A4237]">S/ {totalRevenue.toFixed(2)}</span>
+            <p className="text-[11px] text-emerald-700 mt-1 font-semibold flex items-center gap-1">
               <TrendingUp size={12} /> {validOrders.length} pedidos efectivos
             </p>
           </div>
         </div>
 
         {/* Average Ticket Size */}
-        <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Ticket Promedio (AOV)</span>
-            <ShoppingBag size={18} className="text-[#5F8575]" />
+            <div className="w-8 h-8 rounded-lg bg-[#5F8575]/10 text-[#5F8575] flex items-center justify-center">
+              <ShoppingBag size={18} />
+            </div>
           </div>
           <div className="mt-3">
             <span className="font-sans text-2xl font-black tracking-tight tabular-nums text-[#2A4237]">S/ {averageTicket.toFixed(2)}</span>
@@ -414,10 +418,12 @@ export function AdminAnalyticsSection({
         </div>
 
         {/* Completion Rate */}
-        <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Efectividad de Venta</span>
-            <Percent size={18} className="text-blue-700" />
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+              <Percent size={18} />
+            </div>
           </div>
           <div className="mt-3">
             <span className="font-sans text-2xl font-black tracking-tight tabular-nums text-[#2A4237]">{completionRate.toFixed(1)}%</span>
@@ -428,10 +434,12 @@ export function AdminAnalyticsSection({
         </div>
 
         {/* Top Product Star */}
-        <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Plato Estrella</span>
-            <Award size={18} className="text-amber-600" />
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+              <Award size={18} />
+            </div>
           </div>
           <div className="mt-3">
             <span className="font-serif text-base font-extrabold text-[#2A4237] line-clamp-1">
@@ -444,20 +452,20 @@ export function AdminAnalyticsSection({
         </div>
 
         {/* Total Discounts Given KPI Card */}
-        <div className="bg-amber-50/70 p-5 rounded-2xl border border-amber-200/80 shadow-sm hover:shadow-md transition-all sm:col-span-2 lg:col-span-4">
-          <div className="flex items-center justify-between text-amber-900 text-[11px] font-sans font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all sm:col-span-2 lg:col-span-4">
+          <div className="flex items-center justify-between text-gray-700 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span className="flex items-center gap-1.5">
-              <Percent size={16} className="text-amber-700" />
+              <Percent size={16} className="text-[#5F8575]" />
               Impacto de Promociones & Descuentos Otorgados (BI)
             </span>
-            <span className="text-amber-800 bg-white px-2.5 py-0.5 rounded-full border border-amber-300 font-sans font-bold">
+            <span className="text-[#2A4237] bg-gray-100 px-2.5 py-0.5 rounded-full border border-gray-200 font-sans font-bold">
               {ordersWithCouponCount} pedidos con cupón
             </span>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
             <div>
-              <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-amber-900">S/ {totalDiscountGiven.toFixed(2)}</span>
-              <p className="text-xs text-amber-800 mt-0.5 font-medium">Inversión total otorgada en códigos promocionales y descuentos a clientes</p>
+              <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#2A4237]">S/ {totalDiscountGiven.toFixed(2)}</span>
+              <p className="text-xs text-gray-500 mt-0.5 font-medium">Inversión total otorgada en códigos promocionales y descuentos a clientes</p>
             </div>
           </div>
         </div>

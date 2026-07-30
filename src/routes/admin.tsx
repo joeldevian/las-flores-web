@@ -330,8 +330,8 @@ function AdminRoute() {
           </div>
 
           {/* User Profile Chip */}
-          <div className="bg-black/15 border border-white/15 p-3 rounded-2xl flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#D4AF37] text-[#2A4237] font-serif font-black flex items-center justify-center text-sm shrink-0 shadow-sm">
+          <div className="bg-white/10 border border-white/15 p-3 rounded-2xl flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
               AD
             </div>
             <div className="min-w-0 flex-1">
@@ -342,29 +342,29 @@ function AdminRoute() {
                 Gerencia General
               </span>
             </div>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-pulse shrink-0" title="Realtime Activo" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Realtime Activo" />
           </div>
 
           {/* Vertical Navigation Items */}
           <nav className="space-y-1.5 pt-1">
-            <span className="text-[10px] font-serif uppercase tracking-widest text-[#FAF8F5]/80 font-bold px-2 block mb-1">
+            <span className="text-[10px] font-sans uppercase tracking-widest text-white/60 font-bold px-2 block mb-1">
               MENÚ PRINCIPAL
             </span>
 
             {/* Analítica BI */}
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-sans transition-all ${
                 activeTab === "analytics"
-                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
-                  : "text-white/90 hover:text-white hover:bg-black/15"
+                  ? "bg-white/20 text-white font-extrabold border-l-4 border-[#D4AF37] shadow-sm backdrop-blur-xs"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <div className="flex items-center gap-3">
-                <BarChart3 size={17} className={activeTab === "analytics" ? "text-[#2A4237]" : "text-[#D4AF37]"} />
+                <BarChart3 size={17} className={activeTab === "analytics" ? "text-[#D4AF37]" : "text-white/70"} />
                 <span>Analítica & BI</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/20 font-sans font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] font-sans font-bold border border-[#D4AF37]/40">
                 PRO
               </span>
             </button>
@@ -372,18 +372,18 @@ function AdminRoute() {
             {/* Control de Reservas */}
             <button
               onClick={() => setActiveTab("reservations")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-sans transition-all ${
                 activeTab === "reservations"
-                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
-                  : "text-white/90 hover:text-white hover:bg-black/15"
+                  ? "bg-white/20 text-white font-extrabold border-l-4 border-[#D4AF37] shadow-sm backdrop-blur-xs"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Calendar size={17} />
+                <Calendar size={17} className={activeTab === "reservations" ? "text-[#D4AF37]" : "text-white/70"} />
                 <span>Control de Reservas</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "reservations" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
+                activeTab === "reservations" ? "bg-[#D4AF37] text-[#2A4237]" : "bg-black/20 text-white"
               }`}>
                 {reservations.length}
               </span>
@@ -392,18 +392,18 @@ function AdminRoute() {
             {/* Gestión de Pedidos */}
             <button
               onClick={() => setActiveTab("orders")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-sans transition-all ${
                 activeTab === "orders"
-                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
-                  : "text-white/90 hover:text-white hover:bg-black/15"
+                  ? "bg-white/20 text-white font-extrabold border-l-4 border-[#D4AF37] shadow-sm backdrop-blur-xs"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <div className="flex items-center gap-3">
-                <ShoppingBag size={17} />
+                <ShoppingBag size={17} className={activeTab === "orders" ? "text-[#D4AF37]" : "text-white/70"} />
                 <span>Gestión de Pedidos</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "orders" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
+                activeTab === "orders" ? "bg-[#D4AF37] text-[#2A4237]" : "bg-black/20 text-white"
               }`}>
                 {orders.length}
               </span>
@@ -412,18 +412,18 @@ function AdminRoute() {
             {/* Gestión de Carta */}
             <button
               onClick={() => setActiveTab("menu")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-sans transition-all ${
                 activeTab === "menu"
-                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
-                  : "text-white/90 hover:text-white hover:bg-black/15"
+                  ? "bg-white/20 text-white font-extrabold border-l-4 border-[#D4AF37] shadow-sm backdrop-blur-xs"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <div className="flex items-center gap-3">
-                <MenuIcon size={17} />
+                <MenuIcon size={17} className={activeTab === "menu" ? "text-[#D4AF37]" : "text-white/70"} />
                 <span>Gestión de Carta</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "menu" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
+                activeTab === "menu" ? "bg-[#D4AF37] text-[#2A4237]" : "bg-black/20 text-white"
               }`}>
                 {products.length}
               </span>
@@ -432,18 +432,18 @@ function AdminRoute() {
             {/* Cupones & Promos */}
             <button
               onClick={() => setActiveTab("coupons")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-serif transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-sans transition-all ${
                 activeTab === "coupons"
-                  ? "bg-[#D4AF37] text-[#2A4237] shadow-lg font-black"
-                  : "text-white/90 hover:text-white hover:bg-black/15"
+                  ? "bg-white/20 text-white font-extrabold border-l-4 border-[#D4AF37] shadow-sm backdrop-blur-xs"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Ticket size={17} />
+                <Ticket size={17} className={activeTab === "coupons" ? "text-[#D4AF37]" : "text-white/70"} />
                 <span>Cupones & Ofertas</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "coupons" ? "bg-[#2A4237] text-[#FAF8F5]" : "bg-black/20 text-white"
+                activeTab === "coupons" ? "bg-[#D4AF37] text-[#2A4237]" : "bg-black/20 text-white"
               }`}>
                 {coupons.length}
               </span>
@@ -453,12 +453,12 @@ function AdminRoute() {
         </div>
 
         {/* Bottom Sidebar Action Quick Links - ALWAYS PINNED & VISIBLE */}
-        <div className="p-4 space-y-2 border-t border-white/20 bg-black/25 shrink-0">
+        <div className="p-4 space-y-2 border-t border-white/15 bg-black/20 shrink-0">
           <Link
             to="/caja"
-            className="w-full py-2.5 px-3.5 rounded-xl bg-[#D4AF37] hover:bg-[#c29f2e] text-[#2A4237] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98"
+            className="w-full py-2.5 px-3.5 rounded-xl bg-white hover:bg-white/90 text-[#2A4237] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
           >
-            <UtensilsCrossed size={15} />
+            <UtensilsCrossed size={15} className="text-[#5F8575]" />
             <span>Panel Caja / Cocina</span>
           </Link>
 
@@ -466,7 +466,7 @@ function AdminRoute() {
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="py-2 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
+              className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/10"
               title="Sincronizar Supabase"
             >
               <RefreshCw size={13} className={`text-[#D4AF37] ${refreshing ? "animate-spin" : ""}`} />
@@ -475,7 +475,7 @@ function AdminRoute() {
 
             <button
               onClick={() => { window.location.href = "/restaurante"; }}
-              className="py-2 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
+              className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/10"
             >
               <ArrowLeft size={13} className="text-[#D4AF37]" />
               <span>Ver Web</span>
@@ -499,7 +499,7 @@ function AdminRoute() {
       <div className="flex-1 flex flex-col min-w-0 pb-20">
         
         {/* Top Header Bar */}
-        <header className="bg-white border-b border-[#5F8575]/20 px-6 py-4 sticky top-0 z-30 shadow-xs flex items-center justify-between">
+        <header className="bg-white border-b border-gray-200/80 px-6 py-4 sticky top-0 z-30 shadow-2xs flex items-center justify-between">
           <div>
             <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-gray-400 block">
               Panel Administrativo • Restaurante Las Flores
@@ -546,27 +546,29 @@ function AdminRoute() {
         {/* Main Content Body */}
         <main className="p-6 md:p-8 space-y-8 max-w-7xl">
           
-          {/* Executive KPI Metric Cards */}
+          {/* Executive KPI Metric Cards - Harmonized Clean Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             
             {/* Facturación Acumulada */}
-            <div className="bg-[#5F8575] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/40 shadow-md relative overflow-hidden">
-              <div className="flex items-center justify-between text-[#FAF8F5]/80 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Facturación Total</span>
-                <DollarSign size={18} className="text-[#D4AF37]" />
+                <div className="w-8 h-8 rounded-lg bg-[#5F8575]/10 text-[#5F8575] flex items-center justify-center">
+                  <DollarSign size={18} />
+                </div>
               </div>
               <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#D4AF37]">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#2A4237]">
                   S/ {totalSales.toFixed(2)}
                 </span>
-                <p className="text-[11px] text-emerald-200 mt-1 font-medium flex items-center gap-1">
+                <p className="text-[11px] text-emerald-700 mt-1 font-semibold flex items-center gap-1">
                   <TrendingUp size={12} /> Órdenes confirmadas
                 </p>
               </div>
             </div>
 
             {/* Pedidos en Proceso */}
-            <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Pedidos Activos</span>
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
@@ -584,7 +586,7 @@ function AdminRoute() {
             </div>
 
             {/* Reservas Pendientes */}
-            <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Reservas Pendientes</span>
                 <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
@@ -602,16 +604,18 @@ function AdminRoute() {
             </div>
 
             {/* Platos Disponibles */}
-            <div className="bg-[#5F8575] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/40 shadow-md relative overflow-hidden">
-              <div className="flex items-center justify-between text-white/80 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-gray-500 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Carta Activa</span>
-                <UtensilsCrossed size={18} className="text-[#D4AF37]" />
+                <div className="w-8 h-8 rounded-lg bg-[#5F8575]/10 text-[#5F8575] flex items-center justify-center">
+                  <UtensilsCrossed size={18} />
+                </div>
               </div>
               <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#D4AF37]">
-                  {availableProductsCount} <span className="text-base text-white/70 font-normal">/ {products.length}</span>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#2A4237]">
+                  {availableProductsCount} <span className="text-base text-gray-400 font-normal">/ {products.length}</span>
                 </span>
-                <p className="text-[11px] text-emerald-200 mt-1 font-semibold flex items-center gap-1">
+                <p className="text-[11px] text-emerald-700 mt-1 font-semibold flex items-center gap-1">
                   <CheckCircle2 size={12} /> Platos disponibles en carta
                 </p>
               </div>
