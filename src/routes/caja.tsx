@@ -476,97 +476,137 @@ function CashierDashboardRoute() {
         {/* ==================================================================== */}
         {viewMode === "orders" && (
           <>
-            {/* Quick Filter Status Tabs for Orders */}
+            {/* Quick Filter Status Tabs for Orders - Luxury Hospitality Palette */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               
               <button
                 onClick={() => setStatusFilter("pendiente")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "pendiente"
-                    ? "bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 ring-4 ring-amber-400/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-amber-500/90 to-amber-600/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    statusFilter === "pendiente" ? "text-[#D4AF37]" : "text-amber-700"
+                  }`}>
                     Pendientes
                   </span>
-                  <Clock size={18} className="text-amber-200" />
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 border border-amber-500/30 text-[10px] font-bold">
+                    Acción
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{pendingCount}</span>
-                <p className="text-[10px] text-amber-100 mt-0.5 font-semibold">Requieren atención</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  statusFilter === "pendiente" ? "text-white" : "text-[#2A4237]"
+                }`}>{pendingCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  statusFilter === "pendiente" ? "text-white/80" : "text-gray-500"
+                }`}>Requieren atención</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("en_preparacion")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "en_preparacion"
-                    ? "bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 ring-4 ring-blue-500/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-blue-600/90 to-blue-700/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    statusFilter === "en_preparacion" ? "text-[#D4AF37]" : "text-blue-700"
+                  }`}>
                     En Cocina
                   </span>
-                  <UtensilsCrossed size={18} className="text-blue-200" />
+                  <span className="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-700 border border-blue-500/30 text-[10px] font-bold">
+                    Cocina
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{inKitchenCount}</span>
-                <p className="text-[10px] text-blue-100 mt-0.5 font-semibold">En preparación</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  statusFilter === "en_preparacion" ? "text-white" : "text-[#2A4237]"
+                }`}>{inKitchenCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  statusFilter === "en_preparacion" ? "text-white/80" : "text-gray-500"
+                }`}>En preparación</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("en_camino")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "en_camino"
-                    ? "bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 ring-4 ring-purple-500/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-purple-600/90 to-purple-700/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    statusFilter === "en_camino" ? "text-[#D4AF37]" : "text-purple-700"
+                  }`}>
                     En Camino / Listo
                   </span>
-                  <Truck size={18} className="text-purple-200" />
+                  <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-700 border border-purple-500/30 text-[10px] font-bold">
+                    Despacho
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{onWayCount}</span>
-                <p className="text-[10px] text-purple-100 mt-0.5 font-semibold">Delivery / Recojo</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  statusFilter === "en_camino" ? "text-white" : "text-[#2A4237]"
+                }`}>{onWayCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  statusFilter === "en_camino" ? "text-white/80" : "text-gray-500"
+                }`}>Delivery / Recojo</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("entregado")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "entregado"
-                    ? "bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 ring-4 ring-emerald-500/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-emerald-600/90 to-emerald-700/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    statusFilter === "entregado" ? "text-[#D4AF37]" : "text-emerald-700"
+                  }`}>
                     Entregados
                   </span>
-                  <CheckCircle2 size={18} className="text-emerald-200" />
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 text-[10px] font-bold">
+                    Listo
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{completedCount}</span>
-                <p className="text-[10px] text-emerald-100 mt-0.5 font-semibold">Completados</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  statusFilter === "entregado" ? "text-white" : "text-[#2A4237]"
+                }`}>{completedCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  statusFilter === "entregado" ? "text-white/80" : "text-gray-500"
+                }`}>Completados</p>
               </button>
 
               <button
                 onClick={() => setStatusFilter("all")}
-                className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 font-sans ${
                   statusFilter === "all"
-                    ? "bg-gradient-to-br from-[#2D473C] via-[#243B31] to-[#1B2C24] ring-4 ring-[#5F8575]/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-[#2D473C]/90 to-[#243B31]/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    statusFilter === "all" ? "text-[#D4AF37]" : "text-[#5F8575]"
+                  }`}>
                     Todos los Pedidos
                   </span>
-                  <Filter size={18} className="text-[#D4AF37]" />
+                  <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200 text-[10px] font-bold">
+                    Total
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1 text-[#D4AF37]">{orders.length}</span>
-                <p className="text-[10px] text-white/80 mt-0.5 font-semibold">Total de comandas</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  statusFilter === "all" ? "text-[#D4AF37]" : "text-[#2A4237]"
+                }`}>{orders.length}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  statusFilter === "all" ? "text-white/80" : "text-gray-500"
+                }`}>Total de comandas</p>
               </button>
 
             </div>
@@ -634,79 +674,111 @@ function CashierDashboardRoute() {
         {/* ==================================================================== */}
         {viewMode === "reservations" && (
           <>
-            {/* Quick Filter Tabs for Reservations - Rich Vibrant Gradients */}
+            {/* Quick Filter Tabs for Reservations - Luxury Hospitality Palette */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               
               <button
                 onClick={() => setReservationStatusFilter("today")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "today"
-                    ? "bg-gradient-to-br from-[#5F8575] via-[#4d7061] to-[#3b574a] ring-4 ring-[#5F8575]/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-[#5F8575]/90 to-[#4d7061]/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    reservationStatusFilter === "today" ? "text-[#D4AF37]" : "text-[#5F8575]"
+                  }`}>
                     Reservas del Día
                   </span>
-                  <Calendar size={18} className="text-[#D4AF37]" />
+                  <span className="px-2 py-0.5 rounded-full bg-[#5F8575]/15 text-[#5F8575] border border-[#5F8575]/30 text-[10px] font-bold">
+                    Hoy
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1 text-[#D4AF37]">{todayReservationsCount}</span>
-                <p className="text-[10px] text-white/90 mt-0.5 font-semibold">Programadas para HOY</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  reservationStatusFilter === "today" ? "text-[#D4AF37]" : "text-[#2A4237]"
+                }`}>{todayReservationsCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  reservationStatusFilter === "today" ? "text-white/80" : "text-gray-500"
+                }`}>Programadas para HOY</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("pendiente")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "pendiente"
-                    ? "bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 ring-4 ring-amber-400/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-amber-500/90 to-amber-600/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    reservationStatusFilter === "pendiente" ? "text-[#D4AF37]" : "text-amber-700"
+                  }`}>
                     Pendientes
                   </span>
-                  <Clock size={18} className="text-amber-200" />
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 border border-amber-500/30 text-[10px] font-bold">
+                    Por Confirmar
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{pendingReservationsCount}</span>
-                <p className="text-[10px] text-amber-100 mt-0.5 font-semibold">Por confirmar WhatsApp</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  reservationStatusFilter === "pendiente" ? "text-white" : "text-[#2A4237]"
+                }`}>{pendingReservationsCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  reservationStatusFilter === "pendiente" ? "text-white/80" : "text-gray-500"
+                }`}>Por confirmar WhatsApp</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("confirmada")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "confirmada"
-                    ? "bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 ring-4 ring-blue-500/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-blue-600/90 to-blue-700/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    reservationStatusFilter === "confirmada" ? "text-[#D4AF37]" : "text-blue-700"
+                  }`}>
                     Confirmadas
                   </span>
-                  <CheckCircle2 size={18} className="text-blue-200" />
+                  <span className="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-700 border border-blue-500/30 text-[10px] font-bold">
+                    Confirmado
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1">{confirmedReservationsCount}</span>
-                <p className="text-[10px] text-blue-100 mt-0.5 font-semibold">Listas para recibir</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  reservationStatusFilter === "confirmada" ? "text-white" : "text-[#2A4237]"
+                }`}>{confirmedReservationsCount}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  reservationStatusFilter === "confirmada" ? "text-white/80" : "text-gray-500"
+                }`}>Listas para recibir</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("all")}
-                className={`p-4 rounded-2xl text-left transition-all text-white shadow-md ${
+                className={`p-4 rounded-2xl text-left transition-all font-sans ${
                   reservationStatusFilter === "all"
-                    ? "bg-gradient-to-br from-[#2D473C] via-[#243B31] to-[#1B2C24] ring-4 ring-[#5F8575]/50 scale-[1.02]"
-                    : "bg-gradient-to-br from-[#2D473C]/90 to-[#243B31]/90 hover:brightness-110 opacity-90"
+                    ? "bg-[#2D473C] text-white border-2 border-[#D4AF37] shadow-md font-extrabold"
+                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] hover:border-[#5F8575]/40 shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-white/90">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    reservationStatusFilter === "all" ? "text-[#D4AF37]" : "text-[#5F8575]"
+                  }`}>
                     Todas / Historial
                   </span>
-                  <Filter size={18} className="text-[#D4AF37]" />
+                  <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200 text-[10px] font-bold">
+                    Total
+                  </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-1 text-[#D4AF37]">{reservations.length}</span>
-                <p className="text-[10px] text-white/80 mt-0.5 font-semibold">Total de reservas</p>
+                <span className={`font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 ${
+                  reservationStatusFilter === "all" ? "text-[#D4AF37]" : "text-[#2A4237]"
+                }`}>{reservations.length}</span>
+                <p className={`text-[10px] mt-0.5 font-medium ${
+                  reservationStatusFilter === "all" ? "text-white/80" : "text-gray-500"
+                }`}>Total de reservas</p>
               </button>
 
             </div>

@@ -96,30 +96,20 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
 
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between ${
-        isToday ? "border-emerald-500/60 ring-2 ring-emerald-500/20" : "border-gray-200"
+      className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 shadow-2xs hover:shadow-md flex flex-col justify-between ${
+        isToday ? "border-[#5F8575] ring-2 ring-[#5F8575]/20" : "border-gray-200/80"
       }`}
     >
-      {/* Header Banner con Colores Ricos y Vibrantes por Estado */}
-      <div
-        className={`p-4 text-white flex items-center justify-between relative overflow-hidden shadow-xs ${
-          isConfirmed
-            ? "bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900"
-            : isCompleted
-            ? "bg-gradient-to-r from-[#2D473C] via-[#243B31] to-[#1B2C24]"
-            : isCancelled
-            ? "bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900"
-            : "bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800"
-        }`}
-      >
+      {/* Header Banner Ejecutivo Unificado (Deep Eucalyptus Charcoal) */}
+      <div className="bg-[#2D473C] text-white p-4 flex items-center justify-between relative overflow-hidden border-b border-[#D4AF37]/30">
         <div className="flex items-center gap-2.5 z-10">
-          <div className="w-9 h-9 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center text-white font-bold shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-[#D4AF37] font-bold shrink-0">
             <Calendar size={18} />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-white/90 flex items-center gap-1.5 font-sans">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 flex items-center gap-1.5 font-sans">
               {isToday ? (
-                <span className="bg-[#D4AF37] text-[#2A4237] px-2 py-0.5 rounded-full font-black animate-pulse shadow-xs">
+                <span className="bg-[#D4AF37] text-[#2A4237] px-2 py-0.5 rounded-full font-black animate-pulse shadow-2xs">
                   HOY
                 </span>
               ) : (
@@ -133,16 +123,16 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
           </div>
         </div>
 
-        {/* Status Badge */}
+        {/* Status Badge Refinado */}
         <span
-          className={`text-[11px] font-sans font-extrabold px-3 py-1 rounded-full uppercase tracking-wider z-10 border shadow-xs ${
+          className={`text-[11px] font-sans font-bold px-3 py-1 rounded-full uppercase tracking-wider z-10 border ${
             isConfirmed
-              ? "bg-blue-500/30 text-blue-100 border-blue-400/50"
+              ? "bg-blue-500/20 text-blue-300 border-blue-400/40"
               : isCompleted
-              ? "bg-emerald-500/30 text-emerald-100 border-emerald-400/50"
+              ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/40"
               : isCancelled
-              ? "bg-red-500/30 text-red-200 border-red-400/50"
-              : "bg-amber-400/30 text-amber-100 border-amber-300/50"
+              ? "bg-red-500/20 text-red-300 border-red-400/40"
+              : "bg-[#D4AF37]/20 text-[#D4AF37] border-[#D4AF37]/40"
           }`}
         >
           {isConfirmed
@@ -204,23 +194,23 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
         )}
       </div>
 
-      {/* Actions Bar - High Contrast & Vibrant Action Buttons */}
-      <div className="p-4 bg-gray-50/90 border-t border-gray-200 space-y-2 font-sans">
+      {/* Actions Bar - Clean Executive Actions */}
+      <div className="p-4 bg-gray-50/70 border-t border-gray-100 space-y-2 font-sans">
         {/* WhatsApp Actions Buttons */}
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleSendWhatsAppConfirmation}
-            className="w-full py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 rounded-xl text-xs font-black transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
+            className="w-full py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5"
           >
-            <MessageCircle size={15} />
+            <MessageCircle size={14} className="text-emerald-700" />
             <span>Confirmar WhatsApp</span>
           </button>
 
           <button
             onClick={handleSendWhatsAppReminder}
-            className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
+            className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5"
           >
-            <BellRing size={15} />
+            <BellRing size={14} className="text-amber-700" />
             <span>Recordatorio Hoy</span>
           </button>
         </div>
@@ -231,9 +221,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             <button
               onClick={() => handleUpdateStatus("confirmed")}
               disabled={updating}
-              className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 active:scale-98"
+              className="flex-1 py-1.5 bg-[#5F8575] hover:bg-[#4d7061] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1"
             >
-              <CheckCircle2 size={14} /> Confirmar
+              <CheckCircle2 size={13} /> Confirmar
             </button>
           )}
 
@@ -241,9 +231,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             <button
               onClick={() => handleUpdateStatus("completed")}
               disabled={updating}
-              className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 active:scale-98"
+              className="flex-1 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1"
             >
-              <Utensils size={14} /> Cliente Lleg√≥
+              <Utensils size={13} /> Cliente Lleg√≥
             </button>
           )}
 
@@ -251,9 +241,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             <button
               onClick={() => handleUpdateStatus("cancelled")}
               disabled={updating}
-              className="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
+              className="py-1.5 px-3 bg-white hover:bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
             >
-              <XCircle size={14} /> Cancelar
+              <XCircle size={13} /> Cancelar
             </button>
           )}
         </div>
