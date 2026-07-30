@@ -206,32 +206,42 @@ export function AdminProductModal({
     }
   };
 
-  // Delete product logic
-  const handleDeleteProduct = async () => {
+  // Soft Disable Product Logic (preserves historical BI sales analytics)
+  const handleToggleDisableProduct = async () => {
     if (!product) return;
-    const confirmDelete = window.confirm(`¿Estás seguro de eliminar permanentemente "${product.name}"?`);
-    if (!confirmDelete) return;
+    const newStatus = !isAvailable;
+    const actionText = newStatus ? "reactivar" : "desactivar (ocultar de carta)";
+    const confirmAction = window.confirm(
+      `¿Estás seguro de ${actionText} el plato "${product.name}"?\n\n` +
+      (newStatus
+        ? "El plato volverá a estar disponible para pedidos en la carta pública."
+        : "El plato se ocultará de la carta pública pero se conservará intacto todo su historial de ventas para BI y análisis.")
+    );
+    if (!confirmAction) return;
 
     setDeleting(true);
     setErrorMsg("");
 
     try {
-      const { error } = await supabase.from("products").delete().eq("id", product.id);
+      const { error } = await supabase
+        .from("products")
+        .update({ is_available: newStatus })
+        .eq("id", product.id);
+
       if (error) throw error;
 
-      if (onDelete) {
-        await onDelete(product.id);
-      } else {
-        await onSave();
-      }
+      setIsAvailable(newStatus);
+      await onSave();
       onClose();
     } catch (err: any) {
-      console.error("Error deleting product:", err);
-      setErrorMsg(err.message || "No se pudo eliminar el producto.");
+      console.error("Error toggling product status:", err);
+      setErrorMsg(err.message || "No se pudo cambiar el estado del plato.");
     } finally {
       setDeleting(false);
     }
   };
+
+
 
   // Helper functions for Custom Sections builder
   const handleAddSection = () => {
@@ -726,16 +736,21 @@ export function AdminProductModal({
           {/* Modal Actions */}
           <div className="pt-4 flex items-center justify-between border-t border-gray-100 mt-6">
             
-            {/* Delete button */}
+            {/* Soft Disable Toggle button instead of hard delete */}
             {product ? (
               <button
                 type="button"
-                onClick={handleDeleteProduct}
+                onClick={handleToggleDisableProduct}
                 disabled={deleting}
-                className="px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50 border ${
+                  isAvailable
+                    ? "bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300"
+                    : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-300"
+                }`}
+                title="Deshabilita el plato de la carta sin borrar su historial para reportes de BI"
               >
                 {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                Eliminar Plato
+                <span>{isAvailable ? "Desactivar (Ocultar)" : "Reactivar en Carta"}</span>
               </button>
             ) : <div />}
 
@@ -751,7 +766,7 @@ export function AdminProductModal({
               <button
                 type="submit"
                 disabled={saving || uploading}
-                className="px-6 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] text-xs font-bold shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-[#2D473C] hover:bg-[#243B31] text-[#FAF8F5] text-xs font-bold shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
               >
                 {saving ? <Loader2 size={14} className="animate-spin text-[#D4AF37]" /> : null}
                 {product ? "Guardar Cambios" : "Publicar en Carta"}
