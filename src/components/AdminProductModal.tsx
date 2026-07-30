@@ -368,8 +368,8 @@ export function AdminProductModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-5 overflow-hidden font-sans">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto font-sans flex items-start justify-center">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-auto max-h-[88vh] flex flex-col min-h-0 overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95">
         
         {/* Header (Fijo arriba) */}
         <div className="bg-[#2D473C] text-[#FAF8F5] p-4 sm:p-5 flex items-center justify-between border-b border-[#D4AF37]/30 shrink-0">
@@ -389,8 +389,8 @@ export function AdminProductModal({
         </div>
 
         {/* Form Body (Scrollable Interno) */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 font-sans flex flex-col justify-between">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 min-h-0 flex flex-col overflow-hidden font-sans">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 font-sans">
           
           {errorMsg && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl flex items-center gap-2">
@@ -737,8 +737,8 @@ export function AdminProductModal({
 
           </div>
 
-          {/* Modal Actions (Fijo abajo con Sticky) */}
-          <div className="sticky bottom-0 bg-white pt-4 pb-1 border-t border-gray-100 flex items-center justify-between z-10 shrink-0 mt-6 font-sans">
+          {/* Modal Actions (Fijo Abajo fuera del Scroll) */}
+          <div className="p-4 sm:p-5 border-t border-gray-100 bg-white flex items-center justify-between shrink-0 font-sans">
             
             {/* Soft Disable Toggle button instead of hard delete */}
             {product ? (
