@@ -498,12 +498,12 @@ function AdminRoute() {
       <div className="flex-1 flex flex-col min-w-0 pb-20">
         
         {/* Top Header Bar */}
-        <header className="bg-white border-b border-[#14231D]/10 px-6 py-4 sticky top-0 z-30 shadow-xs flex items-center justify-between">
+        <header className="bg-white border-b border-[#5F8575]/20 px-6 py-4 sticky top-0 z-30 shadow-xs flex items-center justify-between">
           <div>
             <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-gray-400 block">
               Panel Administrativo • Restaurante Las Flores
             </span>
-            <h1 className="font-serif text-xl font-bold text-[#14231D] flex items-center gap-2">
+            <h1 className="font-serif text-xl font-bold text-[#2A4237] flex items-center gap-2">
               {activeTab === "analytics" && "Analítica & Inteligencia de Negocios (BI)"}
               {activeTab === "reservations" && "Control de Reservas de Mesas"}
               {activeTab === "orders" && "Gestión de Pedidos & Comandas"}
@@ -520,7 +520,7 @@ function AdminRoute() {
                   setSelectedProduct(null);
                   setIsProductModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                className="px-4 py-2.5 rounded-xl bg-[#5F8575] hover:bg-[#4d7061] text-[#FAF8F5] font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
               >
                 <Plus size={15} />
                 Nuevo Plato
@@ -533,7 +533,7 @@ function AdminRoute() {
                   setSelectedCoupon(null);
                   setIsCouponModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                className="px-4 py-2.5 rounded-xl bg-[#5F8575] hover:bg-[#4d7061] text-[#FAF8F5] font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
               >
                 <Plus size={15} />
                 Crear Cupón
@@ -549,8 +549,8 @@ function AdminRoute() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             
             {/* Facturación Acumulada */}
-            <div className="bg-[#14231D] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
-              <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-wider">
+            <div className="bg-[#5F8575] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/40 shadow-md relative overflow-hidden">
+              <div className="flex items-center justify-between text-[#FAF8F5]/80 text-[11px] font-bold uppercase tracking-wider">
                 <span>Facturación Total</span>
                 <DollarSign size={18} className="text-[#D4AF37]" />
               </div>
@@ -558,14 +558,14 @@ function AdminRoute() {
                 <span className="font-serif text-3xl font-black text-[#D4AF37]">
                   S/ {totalSales.toFixed(2)}
                 </span>
-                <p className="text-[11px] text-emerald-400 mt-1 font-medium flex items-center gap-1">
+                <p className="text-[11px] text-emerald-200 mt-1 font-medium flex items-center gap-1">
                   <TrendingUp size={12} /> Órdenes confirmadas
                 </p>
               </div>
             </div>
 
             {/* Pedidos en Proceso */}
-            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
               <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
                 <span>Pedidos Activos</span>
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
@@ -573,7 +573,7 @@ function AdminRoute() {
                 </div>
               </div>
               <div className="mt-3">
-                <span className="font-serif text-3xl font-black text-[#14231D]">
+                <span className="font-serif text-3xl font-black text-[#2A4237]">
                   {activeOrdersCount}
                 </span>
                 <p className="text-[11px] text-blue-700 mt-1 font-semibold flex items-center gap-1">
@@ -583,7 +583,7 @@ function AdminRoute() {
             </div>
 
             {/* Reservas Pendientes */}
-            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white p-5 rounded-2xl border border-[#5F8575]/20 shadow-sm hover:shadow-md transition-all">
               <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
                 <span>Reservas Pendientes</span>
                 <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
@@ -591,7 +591,7 @@ function AdminRoute() {
                 </div>
               </div>
               <div className="mt-3">
-                <span className="font-serif text-3xl font-black text-[#14231D]">
+                <span className="font-serif text-3xl font-black text-[#2A4237]">
                   {pendingReservationsCount}
                 </span>
                 <p className="text-[11px] text-amber-700 mt-1 font-semibold flex items-center gap-1">
@@ -601,16 +601,16 @@ function AdminRoute() {
             </div>
 
             {/* Platos Disponibles */}
-            <div className="bg-[#14231D] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
-              <div className="flex items-center justify-between text-white/70 text-[11px] font-bold uppercase tracking-wider">
+            <div className="bg-[#5F8575] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/40 shadow-md relative overflow-hidden">
+              <div className="flex items-center justify-between text-white/80 text-[11px] font-bold uppercase tracking-wider">
                 <span>Carta Activa</span>
                 <UtensilsCrossed size={18} className="text-[#D4AF37]" />
               </div>
               <div className="mt-3">
                 <span className="font-serif text-3xl font-black text-[#D4AF37]">
-                  {availableProductsCount} <span className="text-base text-gray-400 font-normal">/ {products.length}</span>
+                  {availableProductsCount} <span className="text-base text-white/70 font-normal">/ {products.length}</span>
                 </span>
-                <p className="text-[11px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+                <p className="text-[11px] text-emerald-200 mt-1 font-semibold flex items-center gap-1">
                   <CheckCircle2 size={12} /> Platos disponibles en carta
                 </p>
               </div>
