@@ -301,285 +301,334 @@ function AdminRoute() {
   if (!isAuthorized) return null;
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#14231D] pb-20 font-sans selection:bg-[#D4AF37] selection:text-[#14231D]">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#14231D] font-sans selection:bg-[#D4AF37] selection:text-[#14231D] flex flex-col md:flex-row">
       
-      {/* Brand Header - Eucalipto Dark Header */}
-      <header className="bg-[#14231D] text-[#FAF8F5] sticky top-0 z-40 border-b border-[#D4AF37]/30 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          
-          {/* Logo & Title */}
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-[#D4AF37]/50 shadow-md shrink-0">
+      {/* ==================================================================== */}
+      {/* LEFT VERTICAL NAVIGATION SIDEBAR (Theme Verde Eucalipto #14231D)     */}
+      {/* ==================================================================== */}
+      <aside className="w-full md:w-64 lg:w-72 bg-[#14231D] text-[#FAF8F5] border-r border-[#D4AF37]/30 shrink-0 flex flex-col justify-between min-h-screen sticky top-0 z-40 shadow-xl">
+        
+        <div className="p-5 space-y-6">
+          {/* Brand Logo & Name */}
+          <div className="flex items-center gap-3 border-b border-white/10 pb-5">
+            <div className="w-11 h-11 rounded-2xl bg-white p-1 flex items-center justify-center border-2 border-[#D4AF37] shadow-md shrink-0">
               <img
                 src="/favicon.png"
                 alt="Las Flores Logo"
-                className="w-full h-full object-contain rounded-lg"
+                className="w-full h-full object-contain rounded-xl"
               />
             </div>
-            <div className="h-7 w-px bg-white/15 hidden sm:block" />
-            <div>
-              <h1 className="font-serif text-lg font-bold tracking-tight text-[#FAF8F5] flex items-center gap-2.5">
+            <div className="min-w-0">
+              <h2 className="font-serif text-base font-bold tracking-tight text-[#FAF8F5] truncate">
                 Restaurante Las Flores
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  REALTIME ACTIVO
-                </span>
-              </h1>
-              <p className="text-[11px] text-[#D4AF37] font-serif italic tracking-wide">
-                Tres Generaciones Cocinando Ayacucho — Panel Ejecutivo
+              </h2>
+              <p className="text-[10px] text-[#D4AF37] font-serif italic tracking-wide truncate">
+                Panel Ejecutivo BI & Gestión
               </p>
             </div>
           </div>
 
-          {/* Action Tools */}
-          <div className="flex items-center gap-3">
-            <Link
-              to="/caja"
-              className="px-3.5 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#c29f2e] text-[#14231D] text-xs font-bold font-serif flex items-center gap-1.5 transition-all shadow-md"
-              title="Abrir Panel Operativo de Caja y Cocina"
-            >
-              <span>🛎️ Panel Caja / Cocina</span>
-            </Link>
-
-            <button
-              onClick={fetchData}
-              disabled={refreshing}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF8F5] transition-all flex items-center gap-1.5 text-xs font-semibold"
-              title="Sincronizar datos"
-            >
-              <RefreshCw size={14} className={`text-[#D4AF37] ${refreshing ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Sincronizar</span>
-            </button>
-
-            <button
-              onClick={() => { window.location.href = "/restaurante"; }}
-              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition-all"
-            >
-              <ArrowLeft size={14} className="text-[#D4AF37]" />
-              <span className="hidden sm:inline">Ver Sitio Web</span>
-            </button>
-
-            <button
-              onClick={handleSignOut}
-              className="px-3 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all"
-            >
-              <LogOut size={14} />
-              <span className="hidden sm:inline">Salir</span>
-            </button>
-          </div>
-
-        </div>
-      </header>
-
-      {/* Main Container on Warm Cream Paper Canvas */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        
-        {/* KPI Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          
-          {/* Facturación Acumulada - Eucalipto Accent */}
-          <div className="bg-[#14231D] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
-            <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-wider">
-              <span>Facturación Total</span>
-              <DollarSign size={18} className="text-[#D4AF37]" />
+          {/* User Profile Chip */}
+          <div className="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#D4AF37] text-[#14231D] font-serif font-black flex items-center justify-center text-sm shrink-0 shadow-sm">
+              AD
             </div>
-            <div className="mt-3">
-              <span className="font-serif text-3xl font-black text-[#D4AF37]">
-                S/ {totalSales.toFixed(2)}
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">
+                Administrador
               </span>
-              <p className="text-[11px] text-emerald-400 mt-1 font-medium flex items-center gap-1">
-                <TrendingUp size={12} /> Ordenes confirmadas
-              </p>
-            </div>
-          </div>
-
-          {/* Pedidos en Proceso */}
-          <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
-              <span>Pedidos Activos</span>
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                <ShoppingBag size={18} />
-              </div>
-            </div>
-            <div className="mt-3">
-              <span className="font-serif text-3xl font-black text-[#14231D]">
-                {activeOrdersCount}
+              <span className="text-xs font-bold text-white truncate block">
+                Gerencia General
               </span>
-              <p className="text-[11px] text-blue-700 mt-1 font-semibold flex items-center gap-1">
-                <Clock size={12} /> En cocina o despacho
-              </p>
             </div>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Realtime Activo" />
           </div>
 
-          {/* Reservas Pendientes */}
-          <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
-              <span>Reservas Pendientes</span>
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                <Calendar size={18} />
-              </div>
-            </div>
-            <div className="mt-3">
-              <span className="font-serif text-3xl font-black text-[#14231D]">
-                {pendingReservationsCount}
-              </span>
-              <p className="text-[11px] text-amber-700 mt-1 font-semibold flex items-center gap-1">
-                <UserCheck size={12} /> Por confirmar horario
-              </p>
-            </div>
-          </div>
+          {/* Vertical Navigation Items */}
+          <nav className="space-y-1.5 pt-2">
+            <span className="text-[10px] font-serif uppercase tracking-widest text-[#D4AF37]/80 font-bold px-3 block mb-2">
+              MENÚ DE NAVEGACIÓN
+            </span>
 
-          {/* Platos Disponibles */}
-          <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
-              <span>Carta Activa</span>
-              <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
-                <UtensilsCrossed size={18} />
-              </div>
-            </div>
-            <div className="mt-3">
-              <span className="font-serif text-3xl font-black text-[#14231D]">
-                {availableProductsCount} <span className="text-base text-gray-400 font-normal">/ {products.length}</span>
-              </span>
-              <p className="text-[11px] text-purple-700 mt-1 font-semibold flex items-center gap-1">
-                <CheckCircle2 size={12} /> Platos disponibles en carta
-              </p>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Executive Tab Navigation Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-2.5 rounded-2xl border border-[#14231D]/10 shadow-sm">
-          
-          <div className="flex items-center gap-2 overflow-x-auto p-1">
-            
-            {/* BI Tab - FIRST */}
+            {/* Analítica BI */}
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wide transition-all whitespace-nowrap ${
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "analytics"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-[#14231D]/70 hover:text-[#14231D] hover:bg-gray-100/70"
+                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
               }`}
             >
-              <BarChart3 size={16} className={activeTab === "analytics" ? "text-[#D4AF37]" : "text-[#14231D]"} />
-              Analítica & Inteligencia de Negocios
-            </button>
-
-            {/* Pedidos Tab */}
-            <button
-              onClick={() => setActiveTab("orders")}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wide transition-all whitespace-nowrap ${
-                activeTab === "orders"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-[#14231D]/70 hover:text-[#14231D] hover:bg-gray-100/70"
-              }`}
-            >
-              <ShoppingBag size={16} />
-              Gestión de Pedidos
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "orders" ? "bg-[#D4AF37] text-[#14231D]" : "bg-gray-100 text-gray-700"
-              }`}>
-                {orders.length}
+              <div className="flex items-center gap-3">
+                <BarChart3 size={18} className={activeTab === "analytics" ? "text-[#14231D]" : "text-[#D4AF37]"} />
+                <span>Analítica & BI</span>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/10 font-sans font-bold">
+                PRO
               </span>
             </button>
 
-            {/* Reservas Tab */}
+            {/* Control de Reservas */}
             <button
               onClick={() => setActiveTab("reservations")}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wide transition-all whitespace-nowrap ${
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "reservations"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-[#14231D]/70 hover:text-[#14231D] hover:bg-gray-100/70"
+                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
               }`}
             >
-              <Calendar size={16} />
-              Control de Reservas
+              <div className="flex items-center gap-3">
+                <Calendar size={18} />
+                <span>Control de Reservas</span>
+              </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "reservations" ? "bg-[#D4AF37] text-[#14231D]" : "bg-gray-100 text-gray-700"
+                activeTab === "reservations" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
               }`}>
                 {reservations.length}
               </span>
             </button>
 
-            {/* Carta Tab */}
+            {/* Gestión de Pedidos */}
             <button
-              onClick={() => setActiveTab("menu")}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wide transition-all whitespace-nowrap ${
-                activeTab === "menu"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-[#14231D]/70 hover:text-[#14231D] hover:bg-gray-100/70"
+              onClick={() => setActiveTab("orders")}
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+                activeTab === "orders"
+                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
               }`}
             >
-              <MenuIcon size={16} />
-              Gestión de Carta
+              <div className="flex items-center gap-3">
+                <ShoppingBag size={18} />
+                <span>Gestión de Pedidos</span>
+              </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "menu" ? "bg-[#D4AF37] text-[#14231D]" : "bg-gray-100 text-gray-700"
+                activeTab === "orders" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
+              }`}>
+                {orders.length}
+              </span>
+            </button>
+
+            {/* Gestión de Carta */}
+            <button
+              onClick={() => setActiveTab("menu")}
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
+                activeTab === "menu"
+                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <MenuIcon size={18} />
+                <span>Gestión de Carta</span>
+              </div>
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
+                activeTab === "menu" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
               }`}>
                 {products.length}
               </span>
             </button>
 
-            {/* Cupones Tab */}
+            {/* Cupones & Promos */}
             <button
               onClick={() => setActiveTab("coupons")}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-xl text-xs font-bold font-serif tracking-wide transition-all whitespace-nowrap ${
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold font-serif transition-all ${
                 activeTab === "coupons"
-                  ? "bg-[#14231D] text-[#FAF8F5] shadow-md border border-[#14231D]"
-                  : "text-[#14231D]/70 hover:text-[#14231D] hover:bg-gray-100/70"
+                  ? "bg-[#D4AF37] text-[#14231D] shadow-lg font-black"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
               }`}
             >
-              <Ticket size={16} className={activeTab === "coupons" ? "text-[#D4AF37]" : ""} />
-              Cupones & Promociones
+              <div className="flex items-center gap-3">
+                <Ticket size={18} />
+                <span>Cupones & Ofertas</span>
+              </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
-                activeTab === "coupons" ? "bg-[#D4AF37] text-[#14231D]" : "bg-gray-100 text-gray-700"
+                activeTab === "coupons" ? "bg-[#14231D] text-[#FAF8F5]" : "bg-white/10 text-gray-300"
               }`}>
                 {coupons.length}
               </span>
             </button>
-          </div>
 
-          {activeTab === "menu" && (
-            <button
-              onClick={() => {
-                setSelectedProduct(null);
-                setIsProductModalOpen(true);
-              }}
-              className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
-            >
-              <Plus size={15} />
-              Nuevo Plato
-            </button>
-          )}
-
-          {activeTab === "coupons" && (
-            <button
-              onClick={() => {
-                setSelectedCoupon(null);
-                setIsCouponModalOpen(true);
-              }}
-              className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
-            >
-              <Plus size={15} />
-              Crear Cupón
-            </button>
-          )}
-
+          </nav>
         </div>
 
-        {/* Panel Main Display */}
-        <div className="bg-white rounded-2xl border border-[#14231D]/10 shadow-sm overflow-hidden">
+        {/* Bottom Sidebar Action Quick Links */}
+        <div className="p-5 space-y-2 border-t border-white/10 bg-black/20">
+          <Link
+            to="/caja"
+            className="w-full py-2.5 px-3.5 rounded-xl bg-[#D4AF37] hover:bg-[#c29f2e] text-[#14231D] text-xs font-bold font-serif flex items-center justify-center gap-2 transition-all shadow-md"
+          >
+            <span>🛎️ Panel Caja / Cocina</span>
+          </Link>
+
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              onClick={fetchData}
+              disabled={refreshing}
+              className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
+              title="Sincronizar Supabase"
+            >
+              <RefreshCw size={13} className={`text-[#D4AF37] ${refreshing ? "animate-spin" : ""}`} />
+              <span>Sincronizar</span>
+            </button>
+
+            <button
+              onClick={() => { window.location.href = "/restaurante"; }}
+              className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
+            >
+              <ArrowLeft size={13} className="text-[#D4AF37]" />
+              <span>Ver Web</span>
+            </button>
+          </div>
+
+          <button
+            onClick={handleSignOut}
+            className="w-full py-2 px-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-2"
+          >
+            <LogOut size={14} />
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+
+      </aside>
+
+      {/* ==================================================================== */}
+      {/* RIGHT MAIN CONTENT CANVAS AREA                                        */}
+      {/* ==================================================================== */}
+      <div className="flex-1 flex flex-col min-w-0 pb-20">
+        
+        {/* Top Header Bar */}
+        <header className="bg-white border-b border-[#14231D]/10 px-6 py-4 sticky top-0 z-30 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-gray-400 block">
+              Panel Administrativo • Restaurante Las Flores
+            </span>
+            <h1 className="font-serif text-xl font-bold text-[#14231D] flex items-center gap-2">
+              {activeTab === "analytics" && "Analítica & Inteligencia de Negocios (BI)"}
+              {activeTab === "reservations" && "Control de Reservas de Mesas"}
+              {activeTab === "orders" && "Gestión de Pedidos & Comandas"}
+              {activeTab === "menu" && "Gestión de Carta & Platos"}
+              {activeTab === "coupons" && "Cupones & Promociones"}
+            </h1>
+          </div>
+
+          {/* Quick Header Action Buttons */}
+          <div className="flex items-center gap-3">
+            {activeTab === "menu" && (
+              <button
+                onClick={() => {
+                  setSelectedProduct(null);
+                  setIsProductModalOpen(true);
+                }}
+                className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+              >
+                <Plus size={15} />
+                Nuevo Plato
+              </button>
+            )}
+
+            {activeTab === "coupons" && (
+              <button
+                onClick={() => {
+                  setSelectedCoupon(null);
+                  setIsCouponModalOpen(true);
+                }}
+                className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#FAF8F5] font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+              >
+                <Plus size={15} />
+                Crear Cupón
+              </button>
+            )}
+          </div>
+        </header>
+
+        {/* Main Content Body */}
+        <main className="p-6 md:p-8 space-y-8 max-w-7xl">
           
-          {/* ================= ANALYTICS TAB ================= */}
-          {activeTab === "analytics" && (
-            <AdminAnalyticsSection
-              orders={orders}
-              orderItems={orderItems}
-              products={products}
-              reservations={reservations}
-            />
-          )}
+          {/* Executive KPI Metric Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            
+            {/* Facturación Acumulada */}
+            <div className="bg-[#14231D] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
+              <div className="flex items-center justify-between text-[#FAF8F5]/70 text-[11px] font-bold uppercase tracking-wider">
+                <span>Facturación Total</span>
+                <DollarSign size={18} className="text-[#D4AF37]" />
+              </div>
+              <div className="mt-3">
+                <span className="font-serif text-3xl font-black text-[#D4AF37]">
+                  S/ {totalSales.toFixed(2)}
+                </span>
+                <p className="text-[11px] text-emerald-400 mt-1 font-medium flex items-center gap-1">
+                  <TrendingUp size={12} /> Órdenes confirmadas
+                </p>
+              </div>
+            </div>
+
+            {/* Pedidos en Proceso */}
+            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
+                <span>Pedidos Activos</span>
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+                  <ShoppingBag size={18} />
+                </div>
+              </div>
+              <div className="mt-3">
+                <span className="font-serif text-3xl font-black text-[#14231D]">
+                  {activeOrdersCount}
+                </span>
+                <p className="text-[11px] text-blue-700 mt-1 font-semibold flex items-center gap-1">
+                  <Clock size={12} /> En cocina o despacho
+                </p>
+              </div>
+            </div>
+
+            {/* Reservas Pendientes */}
+            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/10 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-gray-500 text-[11px] font-bold uppercase tracking-wider">
+                <span>Reservas Pendientes</span>
+                <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+                  <Calendar size={18} />
+                </div>
+              </div>
+              <div className="mt-3">
+                <span className="font-serif text-3xl font-black text-[#14231D]">
+                  {pendingReservationsCount}
+                </span>
+                <p className="text-[11px] text-amber-700 mt-1 font-semibold flex items-center gap-1">
+                  <UserCheck size={12} /> Por confirmar horario
+                </p>
+              </div>
+            </div>
+
+            {/* Platos Disponibles */}
+            <div className="bg-[#14231D] text-[#FAF8F5] p-5 rounded-2xl border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
+              <div className="flex items-center justify-between text-white/70 text-[11px] font-bold uppercase tracking-wider">
+                <span>Carta Activa</span>
+                <UtensilsCrossed size={18} className="text-[#D4AF37]" />
+              </div>
+              <div className="mt-3">
+                <span className="font-serif text-3xl font-black text-[#D4AF37]">
+                  {availableProductsCount} <span className="text-base text-gray-400 font-normal">/ {products.length}</span>
+                </span>
+                <p className="text-[11px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+                  <CheckCircle2 size={12} /> Platos disponibles en carta
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Panel Tab Content Display */}
+          <div className="bg-white rounded-2xl border border-[#14231D]/10 shadow-sm overflow-hidden">
+            
+            {/* ================= ANALYTICS TAB ================= */}
+            {activeTab === "analytics" && (
+              <AdminAnalyticsSection
+                orders={orders}
+                orderItems={orderItems}
+                products={products}
+                reservations={reservations}
+              />
+            )}
 
           {/* ================= RESERVATIONS TAB ================= */}
           {activeTab === "reservations" && (
@@ -1081,6 +1130,7 @@ function AdminRoute() {
 
         </div>
       </main>
+    </div>
 
       {/* Modals */}
       <AdminOrderDetailModal
