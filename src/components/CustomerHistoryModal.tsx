@@ -237,79 +237,82 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
 
       {/* Modal flotante central */}
       <div className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200">
-        {/* Header del Modal */}
-        <div className="p-5 md:p-6 bg-white border-b border-black/5 flex items-center justify-between shadow-xs shrink-0">
-          <div className="flex items-center gap-3.5">
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={fullName}
-                className="w-12 h-12 rounded-full object-cover border-2 border-eucalipto/20 shadow-xs"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-eucalipto text-cream flex items-center justify-center text-lg font-serif font-bold shadow-xs">
-                {firstName.charAt(0).toUpperCase()}
+        {/* Header & Navbar Pinned Bar */}
+        <div className="bg-white shrink-0 border-b border-black/10 shadow-xs z-20">
+          {/* User Info Bar */}
+          <div className="p-4 md:p-5 flex items-center justify-between border-b border-black/5">
+            <div className="flex items-center gap-3">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={fullName}
+                  className="w-11 h-11 rounded-full object-cover border-2 border-eucalipto/20 shadow-xs"
+                />
+              ) : (
+                <div className="w-11 h-11 rounded-full bg-eucalipto text-cream flex items-center justify-center text-base font-serif font-bold shadow-xs">
+                  {firstName.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <span className="text-[10px] uppercase tracking-widest font-bold text-eucalipto block">
+                  Cliente Preferencial
+                </span>
+                <h3 className="font-serif font-bold text-lg text-ink leading-tight">
+                  ¡Hola, {firstName}!
+                </h3>
+                <p className="text-[11px] text-black/50 truncate max-w-[200px]">{user.email}</p>
               </div>
-            )}
-            <div>
-              <span className="text-[10px] uppercase tracking-widest font-bold text-eucalipto block mb-0.5">
-                Cliente Preferencial
-              </span>
-              <h3 className="font-serif font-bold text-xl text-ink leading-none mb-1">
-                ¡Hola, {firstName}!
-              </h3>
-              <p className="text-xs text-black/50 truncate max-w-[220px]">{user.email}</p>
             </div>
+
+            <button
+              onClick={handleCloseOrAccept}
+              className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all shrink-0"
+            >
+              <X size={18} />
+            </button>
           </div>
 
-          <button
-            onClick={handleCloseOrAccept}
-            className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all"
-          >
-            <X size={18} />
-          </button>
-        </div>
+          {/* Navigation Bar Fixed Tabs */}
+          <div className="grid grid-cols-3 gap-1 p-1.5 bg-gray-100/90 m-3 rounded-2xl border border-black/5">
+            <button
+              type="button"
+              onClick={() => setActiveTab("orders")}
+              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
+                activeTab === "orders"
+                  ? "bg-white text-eucalipto shadow-sm border border-black/5"
+                  : "text-black/60 hover:text-black hover:bg-white/50"
+              }`}
+            >
+              <ShoppingBag size={14} />
+              <span className="truncate">Pedidos ({orders.length})</span>
+            </button>
 
-        {/* Pestañas de Historial y Perfil */}
-        <div className="flex border-b border-black/10 bg-[#F4EFE2] px-3 pt-2.5 gap-1.5 overflow-x-auto shrink-0 z-10 shadow-xs">
-          <button
-            type="button"
-            onClick={() => setActiveTab("orders")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-[11px] font-extrabold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
-              activeTab === "orders"
-                ? "border-eucalipto text-eucalipto bg-white shadow-xs"
-                : "border-transparent text-black/60 hover:text-black hover:bg-white/50"
-            }`}
-          >
-            <ShoppingBag size={14} />
-            <span>Pedidos ({orders.length})</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("reservations")}
+              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
+                activeTab === "reservations"
+                  ? "bg-white text-eucalipto shadow-sm border border-black/5"
+                  : "text-black/60 hover:text-black hover:bg-white/50"
+              }`}
+            >
+              <Calendar size={14} />
+              <span className="truncate">Reservas ({reservations.length})</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("reservations")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-[11px] font-extrabold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
-              activeTab === "reservations"
-                ? "border-eucalipto text-eucalipto bg-white shadow-xs"
-                : "border-transparent text-black/60 hover:text-black hover:bg-white/50"
-            }`}
-          >
-            <Calendar size={14} />
-            <span>Reservas ({reservations.length})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("profile")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-[11px] font-extrabold uppercase tracking-wider rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
-              activeTab === "profile"
-                ? "border-eucalipto text-eucalipto bg-white shadow-xs"
-                : "border-transparent text-black/60 hover:text-black hover:bg-white/50"
-            }`}
-          >
-            <UserIcon size={14} />
-            <span>Mi Perfil</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("profile")}
+              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
+                activeTab === "profile"
+                  ? "bg-white text-eucalipto shadow-sm border border-black/5"
+                  : "text-black/60 hover:text-black hover:bg-white/50"
+              }`}
+            >
+              <UserIcon size={14} />
+              <span className="truncate">Mi Perfil</span>
+            </button>
+          </div>
         </div>
 
         {/* Contenido de Historial */}
