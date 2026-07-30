@@ -51,6 +51,41 @@ function AdminRoute() {
   // Search & Filter states
   const [resSearch, setResSearch] = useState("");
   const [resStatusFilter, setResStatusFilter] = useState("all");
+  const [resDateFrom, setResDateFrom] = useState<string>("");
+  const [resDateTo, setResDateTo] = useState<string>("");
+
+  const setQuickDateRange = (type: "today" | "week" | "month" | "all") => {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+
+    if (type === "today") {
+      setResDateFrom(todayStr);
+      setResDateTo(todayStr);
+    } else if (type === "week") {
+      const day = today.getDay();
+      const diffToMonday = today.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(today.setDate(diffToMonday));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      setResDateFrom(monday.toISOString().split("T")[0]);
+      setResDateTo(sunday.toISOString().split("T")[0]);
+    } else if (type === "month") {
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      const fMonth = String(month + 1).padStart(2, "0");
+      const lDay = String(lastDay.getDate()).padStart(2, "0");
+
+      setResDateFrom(`${year}-${fMonth}-01`);
+      setResDateTo(`${year}-${fMonth}-${lDay}`);
+    } else if (type === "all") {
+      setResDateFrom("");
+      setResDateTo("");
+    }
+  };
 
   const [orderSearch, setOrderSearch] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
@@ -229,7 +264,12 @@ function AdminRoute() {
       (res.client_name || "").toLowerCase().includes(resSearch.toLowerCase()) ||
       (res.client_phone || "").includes(resSearch);
     const matchStatus = resStatusFilter === "all" || res.status === resStatusFilter;
-    return matchSearch && matchStatus;
+
+    const matchDateRange =
+      (!resDateFrom || res.reservation_date >= resDateFrom) &&
+      (!resDateTo || res.reservation_date <= resDateTo);
+
+    return matchSearch && matchStatus && matchDateRange;
   });
 
   const filteredOrders = orders.filter((ord) => {
@@ -543,33 +583,91 @@ function AdminRoute() {
           {/* ================= RESERVATIONS TAB ================= */}
           {activeTab === "reservations" && (
             <div>
-              <div className="p-4 bg-gray-50/70 border-b border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="relative w-full md:w-80">
-                  <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    value={resSearch}
-                    onChange={(e) => setResSearch(e.target.value)}
-                    placeholder="Buscar cliente o teléfono..."
-                    className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
-                  />
+              <div className="p-4 bg-gray-50/70 border-b border-gray-100 space-y-3">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+                  {/* Search bar */}
+                  <div className="relative w-full lg:w-80">
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={resSearch}
+                      onChange={(e) => setResSearch(e.target.value)}
+                      placeholder="Buscar cliente o teléfono..."
+                      className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    />
+                  </div>
+
+                  {/* Date Range Inputs */}
+                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                      <input
+                        type="date"
+                        value={resDateFrom}
+                        onChange={(e) => setResDateFrom(e.target.value)}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                      <input
+                        type="date"
+                        value={resDateTo}
+                        onChange={(e) => setResDateTo(e.target.value)}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Status buttons */}
+                  <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto">
+                    <span className="text-xs font-serif font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                    {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
+                      <button
+                        key={st}
+                        onClick={() => setResStatusFilter(st)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all whitespace-nowrap ${
+                          resStatusFilter === st
+                            ? "bg-[#14231D] text-white shadow-sm"
+                            : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {st === "all" ? "Todas" : st === "pending" ? "Pendientes" : st === "confirmed" ? "Confirmadas" : st === "completed" ? "Completadas" : "Canceladas"}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
-                  <span className="text-xs font-serif font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado:</span>
-                  {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => setResStatusFilter(st)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all whitespace-nowrap ${
-                        resStatusFilter === st
-                          ? "bg-[#14231D] text-white shadow-sm"
-                          : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      {st === "all" ? "Todas" : st === "pending" ? "Pendientes" : st === "confirmed" ? "Confirmadas" : st === "completed" ? "Completadas" : "Canceladas"}
-                    </button>
-                  ))}
+                {/* Quick Date Range Shortcuts */}
+                <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60 overflow-x-auto">
+                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                    Filtro Rápido de Fecha:
+                  </span>
+                  <button
+                    onClick={() => setQuickDateRange("today")}
+                    className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
+                  >
+                    🌿 Hoy
+                  </button>
+                  <button
+                    onClick={() => setQuickDateRange("week")}
+                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                  >
+                    📅 Esta Semana
+                  </button>
+                  <button
+                    onClick={() => setQuickDateRange("month")}
+                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                  >
+                    📅 Este Mes
+                  </button>
+                  <button
+                    onClick={() => setQuickDateRange("all")}
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
+                  >
+                    📋 Limpiar Fechas (Ver Histórico)
+                  </button>
                 </div>
               </div>
 

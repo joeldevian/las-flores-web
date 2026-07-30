@@ -47,6 +47,42 @@ function CashierDashboardRoute() {
   // Reservations state
   const [reservations, setReservations] = useState<any[]>([]);
   const [reservationStatusFilter, setReservationStatusFilter] = useState<string>("today");
+  const [resDateFrom, setResDateFrom] = useState<string>("");
+  const [resDateTo, setResDateTo] = useState<string>("");
+
+  const setQuickDateRange = (type: "today" | "week" | "month" | "all") => {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+
+    if (type === "today") {
+      setResDateFrom(todayStr);
+      setResDateTo(todayStr);
+    } else if (type === "week") {
+      const day = today.getDay();
+      const diffToMonday = today.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(today.setDate(diffToMonday));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      setResDateFrom(monday.toISOString().split("T")[0]);
+      setResDateTo(sunday.toISOString().split("T")[0]);
+    } else if (type === "month") {
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      // Simple YYYY-MM-DD formatting to avoid timezone offset shifts
+      const fMonth = String(month + 1).padStart(2, "0");
+      const lDay = String(lastDay.getDate()).padStart(2, "0");
+
+      setResDateFrom(`${year}-${fMonth}-01`);
+      setResDateTo(`${year}-${fMonth}-${lDay}`);
+    } else if (type === "all") {
+      setResDateFrom("");
+      setResDateTo("");
+    }
+  };
 
   const [searchQuery, setSearchQuery] = useState("");
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -253,18 +289,24 @@ function CashierDashboardRoute() {
       (res.client_phone || "").includes(searchQuery) ||
       (res.reservation_date || "").includes(searchQuery);
 
-    const resStatus = (res.status || "pendiente").toLowerCase();
+    const resStatus = (res.status || "pending").toLowerCase().trim();
     
     let matchStatus = true;
     if (reservationStatusFilter === "today") {
       matchStatus = res.reservation_date === todayStr;
     } else if (reservationStatusFilter === "pendiente") {
-      matchStatus = resStatus === "pendiente";
+      matchStatus = resStatus === "pending" || resStatus === "pendiente";
     } else if (reservationStatusFilter === "confirmada") {
-      matchStatus = resStatus === "confirmada";
+      matchStatus = resStatus === "confirmed" || resStatus === "confirmada";
+    } else if (reservationStatusFilter === "completed") {
+      matchStatus = resStatus === "completed" || resStatus === "completada" || resStatus === "asistio";
     }
 
-    return matchSearch && matchStatus;
+    const matchDateRange =
+      (!resDateFrom || res.reservation_date >= resDateFrom) &&
+      (!resDateTo || res.reservation_date <= resDateTo);
+
+    return matchSearch && matchStatus && matchDateRange;
   });
 
   // Counts by status (Orders)
@@ -275,8 +317,14 @@ function CashierDashboardRoute() {
 
   // Counts by status (Reservations)
   const todayReservationsCount = reservations.filter((r) => r.reservation_date === todayStr).length;
-  const pendingReservationsCount = reservations.filter((r) => (r.status || "pendiente").toLowerCase() === "pendiente").length;
-  const confirmedReservationsCount = reservations.filter((r) => (r.status || "").toLowerCase() === "confirmada").length;
+  const pendingReservationsCount = reservations.filter((r) => {
+    const s = (r.status || "pending").toLowerCase();
+    return s === "pending" || s === "pendiente";
+  }).length;
+  const confirmedReservationsCount = reservations.filter((r) => {
+    const s = (r.status || "").toLowerCase();
+    return s === "confirmed" || s === "confirmada";
+  }).length;
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#14231D] pb-20 font-sans selection:bg-[#D4AF37] selection:text-[#14231D]">
@@ -663,28 +711,84 @@ function CashierDashboardRoute() {
 
             </div>
 
-            {/* Search Bar & Manual Refresh */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm">
+            {/* Search Bar, Date Range & Quick Date Shortcuts */}
+            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-3">
               
-              <div className="relative w-full sm:w-96">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar por cliente, fecha (YYYY-MM-DD) o teléfono..."
-                  className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-700"
-                />
-              </div>
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-3">
+                {/* Search input */}
+                <div className="relative w-full lg:w-80">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar cliente o teléfono..."
+                    className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                  />
+                </div>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                {/* Date Range Inputs (Desde - Hasta) */}
+                <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                  <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                    <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                    <input
+                      type="date"
+                      value={resDateFrom}
+                      onChange={(e) => setResDateFrom(e.target.value)}
+                      className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                    <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                    <input
+                      type="date"
+                      value={resDateTo}
+                      onChange={(e) => setResDateTo(e.target.value)}
+                      className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Refresh Button */}
                 <button
                   onClick={fetchData}
                   disabled={refreshing}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
                 >
                   <RefreshCw size={14} className={refreshing ? "animate-spin text-emerald-700" : ""} />
-                  <span>Actualizar Reservas</span>
+                  <span>Actualizar</span>
+                </button>
+              </div>
+
+              {/* Quick Date Range Shortcuts */}
+              <div className="flex items-center gap-2 pt-2.5 border-t border-gray-100 overflow-x-auto pb-0.5">
+                <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                  Filtro Rápido:
+                </span>
+                <button
+                  onClick={() => setQuickDateRange("today")}
+                  className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
+                >
+                  🌿 Hoy
+                </button>
+                <button
+                  onClick={() => setQuickDateRange("week")}
+                  className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                >
+                  📅 Esta Semana
+                </button>
+                <button
+                  onClick={() => setQuickDateRange("month")}
+                  className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                >
+                  📅 Este Mes
+                </button>
+                <button
+                  onClick={() => setQuickDateRange("all")}
+                  className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
+                >
+                  📋 Limpiar Fechas (Ver Histórico)
                 </button>
               </div>
 
