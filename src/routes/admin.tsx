@@ -597,28 +597,30 @@ function AdminRoute() {
                     />
                   </div>
 
-                  {/* Date Range Inputs */}
-                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
-                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
-                      <input
-                        type="date"
-                        value={resDateFrom}
-                        onChange={(e) => setResDateFrom(e.target.value)}
-                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                      />
-                    </div>
+                  {/* Date Range Inputs - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
+                  {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
+                    <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                      <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                        <input
+                          type="date"
+                          value={resDateFrom}
+                          onChange={(e) => setResDateFrom(e.target.value)}
+                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                        />
+                      </div>
 
-                    <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
-                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
-                      <input
-                        type="date"
-                        value={resDateTo}
-                        onChange={(e) => setResDateTo(e.target.value)}
-                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                      />
+                      <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                        <input
+                          type="date"
+                          value={resDateTo}
+                          onChange={(e) => setResDateTo(e.target.value)}
+                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Status buttons */}
                   <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto">
@@ -639,36 +641,38 @@ function AdminRoute() {
                   </div>
                 </div>
 
-                {/* Quick Date Range Shortcuts */}
-                <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60 overflow-x-auto">
-                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                    Filtro Rápido de Fecha:
-                  </span>
-                  <button
-                    onClick={() => setQuickDateRange("today")}
-                    className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
-                  >
-                    🌿 Hoy
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("week")}
-                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
-                  >
-                    📅 Esta Semana
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("month")}
-                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
-                  >
-                    📅 Este Mes
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("all")}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
-                  >
-                    📋 Limpiar Fechas (Ver Histórico)
-                  </button>
-                </div>
+                {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
+                {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
+                  <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60 overflow-x-auto">
+                    <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                      Filtro Rápido de Calendario:
+                    </span>
+                    <button
+                      onClick={() => setQuickDateRange("today")}
+                      className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
+                    >
+                      🌿 Hoy
+                    </button>
+                    <button
+                      onClick={() => setQuickDateRange("week")}
+                      className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                    >
+                      📅 Esta Semana
+                    </button>
+                    <button
+                      onClick={() => setQuickDateRange("month")}
+                      className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                    >
+                      📅 Este Mes
+                    </button>
+                    <button
+                      onClick={() => setQuickDateRange("all")}
+                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
+                    >
+                      📋 Limpiar Fechas (Ver Histórico Completo)
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="overflow-x-auto">

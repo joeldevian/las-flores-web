@@ -711,7 +711,7 @@ function CashierDashboardRoute() {
 
             </div>
 
-            {/* Search Bar, Date Range & Quick Date Shortcuts */}
+            {/* Search Bar & Optional Date Range Panel */}
             <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-3">
               
               <div className="flex flex-col lg:flex-row items-center justify-between gap-3">
@@ -727,28 +727,30 @@ function CashierDashboardRoute() {
                   />
                 </div>
 
-                {/* Date Range Inputs (Desde - Hasta) */}
-                <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                  <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                    <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
-                    <input
-                      type="date"
-                      value={resDateFrom}
-                      onChange={(e) => setResDateFrom(e.target.value)}
-                      className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                    />
-                  </div>
+                {/* Date Range Inputs (Desde - Hasta) - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
+                {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
+                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                      <input
+                        type="date"
+                        value={resDateFrom}
+                        onChange={(e) => setResDateFrom(e.target.value)}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
 
-                  <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                    <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
-                    <input
-                      type="date"
-                      value={resDateTo}
-                      onChange={(e) => setResDateTo(e.target.value)}
-                      className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                    />
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                      <input
+                        type="date"
+                        value={resDateTo}
+                        onChange={(e) => setResDateTo(e.target.value)}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Refresh Button */}
                 <button
@@ -761,36 +763,38 @@ function CashierDashboardRoute() {
                 </button>
               </div>
 
-              {/* Quick Date Range Shortcuts */}
-              <div className="flex items-center gap-2 pt-2.5 border-t border-gray-100 overflow-x-auto pb-0.5">
-                <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                  Filtro Rápido:
-                </span>
-                <button
-                  onClick={() => setQuickDateRange("today")}
-                  className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
-                >
-                  🌿 Hoy
-                </button>
-                <button
-                  onClick={() => setQuickDateRange("week")}
-                  className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
-                >
-                  📅 Esta Semana
-                </button>
-                <button
-                  onClick={() => setQuickDateRange("month")}
-                  className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
-                >
-                  📅 Este Mes
-                </button>
-                <button
-                  onClick={() => setQuickDateRange("all")}
-                  className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
-                >
-                  📋 Limpiar Fechas (Ver Histórico)
-                </button>
-              </div>
+              {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
+              {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
+                <div className="flex items-center gap-2 pt-2.5 border-t border-gray-100 overflow-x-auto pb-0.5">
+                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                    Filtro Rápido de Calendario:
+                  </span>
+                  <button
+                    onClick={() => setQuickDateRange("today")}
+                    className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
+                  >
+                    🌿 Hoy
+                  </button>
+                  <button
+                    onClick={() => setQuickDateRange("week")}
+                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                  >
+                    📅 Esta Semana
+                  </button>
+                  <button
+                    onClick={() => setQuickDateRange("month")}
+                    className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                  >
+                    📅 Este Mes
+                  </button>
+                  <button
+                    onClick={() => setQuickDateRange("all")}
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
+                  >
+                    📋 Limpiar Fechas (Ver Histórico Completo)
+                  </button>
+                </div>
+              )}
 
             </div>
 
