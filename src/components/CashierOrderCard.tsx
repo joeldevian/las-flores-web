@@ -228,16 +228,20 @@ export function CashierOrderCard({
             <Eye size={16} />
           </button>
 
-          {order.order_type === "delivery" && normalizedStatus === "en_preparacion" && (
-            <button
-              onClick={() => openWhatsAppDispatch(order, items)}
-              className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-colors animate-pulse"
-              title="Enviar Comanda Completa con GPS a WhatsApp Motorizado"
-            >
-              <MessageSquare size={15} />
-              <span>Pedir Motorizado</span>
-            </button>
-          )}
+          {order.order_type === "delivery" &&
+            normalizedStatus === "en_preparacion" &&
+            order.status !== "pendiente" &&
+            order.status !== "entregado" &&
+            order.status !== "cancelado" && (
+              <button
+                onClick={() => openWhatsAppDispatch(order, items)}
+                className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-colors animate-pulse"
+                title="Enviar Comanda Completa con GPS a WhatsApp Motorizado"
+              >
+                <MessageSquare size={15} />
+                <span>Pedir Motorizado</span>
+              </button>
+            )}
 
           {currentStatus.nextAction && (
             <button
