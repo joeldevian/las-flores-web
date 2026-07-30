@@ -43,43 +43,43 @@ export function CashierOrderCard({
     }
   };
 
-  // Status configuration
+  // Status configuration - Luxury Hospitality Muted Tone Palette
   const statusConfig = {
     pendiente: {
-      border: "border-amber-400 bg-amber-50/40",
-      badge: "bg-amber-100 text-amber-900 border-amber-300",
+      border: "border-gray-200/80 bg-white",
+      badge: "bg-amber-50 text-amber-800 border-amber-300",
       label: "Pendiente de Confirmación",
       nextAction: "en_preparacion",
       btnLabel: "Aceptar y Enviar a Cocina",
-      btnClass: "bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/20",
+      btnClass: "bg-[#5F8575] hover:bg-[#4d7061] text-white shadow-2xs font-bold",
     },
     en_preparacion: {
-      border: "border-blue-400 bg-blue-50/40",
-      badge: "bg-blue-100 text-blue-900 border-blue-300",
+      border: "border-gray-200/80 bg-white",
+      badge: "bg-blue-50 text-blue-800 border-blue-300",
       label: "En Cocina / Preparación",
       nextAction: "en_camino",
       btnLabel: order.order_type === "delivery" ? "Marcar En Camino" : "Marcar Listo para Recojo",
-      btnClass: "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20",
+      btnClass: "bg-[#2D473C] hover:bg-[#243B31] text-white shadow-2xs font-bold",
     },
     en_camino: {
-      border: "border-purple-400 bg-purple-50/40",
-      badge: "bg-purple-100 text-purple-900 border-purple-300",
+      border: "border-gray-200/80 bg-white",
+      badge: "bg-purple-50 text-purple-800 border-purple-300",
       label: order.order_type === "delivery" ? "En Camino (Delivery)" : "Listo en Barra / Recojo",
       nextAction: "entregado",
       btnLabel: "Marcar Entregado",
-      btnClass: "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20",
+      btnClass: "bg-purple-700 hover:bg-purple-800 text-white shadow-2xs font-bold",
     },
     entregado: {
-      border: "border-emerald-300 bg-white opacity-85",
-      badge: "bg-emerald-100 text-emerald-900 border-emerald-300",
+      border: "border-gray-200/80 bg-white opacity-85",
+      badge: "bg-emerald-50 text-emerald-800 border-emerald-300",
       label: "Entregado y Completado",
       nextAction: null,
       btnLabel: null,
       btnClass: "",
     },
     cancelado: {
-      border: "border-red-200 bg-gray-50 opacity-60",
-      badge: "bg-red-100 text-red-800 border-red-200",
+      border: "border-gray-200/60 bg-gray-50/60 opacity-60",
+      badge: "bg-red-50 text-red-800 border-red-200",
       label: "Cancelado",
       nextAction: null,
       btnLabel: null,
@@ -100,21 +100,21 @@ export function CashierOrderCard({
 
   return (
     <div
-      className={`rounded-2xl border-2 p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between ${currentStatus.border}`}
+      className={`rounded-2xl border p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between font-sans ${currentStatus.border}`}
     >
       {/* Header Info */}
       <div>
-        <div className="flex items-center justify-between gap-2 border-b border-black/5 pb-3">
+        <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-3">
           <div className="flex items-center gap-2">
-            <span className="font-mono font-black text-base text-[#14231D]">
+            <span className="font-sans font-black text-base text-[#2A4237] tracking-tight tabular-nums">
               #{order.order_number || order.id?.slice(0, 8)}
             </span>
-            <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${currentStatus.badge}`}>
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${currentStatus.badge}`}>
               {currentStatus.label}
             </span>
           </div>
 
-          <div className="flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-white px-2.5 py-1 rounded-lg border border-gray-200">
+          <div className="flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
             <Clock size={12} className={elapsedMinutes > 20 ? "text-red-600 animate-pulse" : "text-gray-400"} />
             <span className={elapsedMinutes > 20 ? "text-red-700 font-extrabold" : ""}>
               Hace {elapsedMinutes} min
@@ -123,16 +123,16 @@ export function CashierOrderCard({
         </div>
 
         {/* Customer & Modality */}
-        <div className="py-3 space-y-1.5 border-b border-black/5 text-xs">
+        <div className="py-3 space-y-1.5 border-b border-gray-100 text-xs">
           <div className="flex items-center justify-between">
-            <span className="font-serif font-bold text-sm text-[#14231D]">
+            <span className="font-sans font-extrabold text-sm text-gray-900">
               {order.client_name || "Cliente General"}
             </span>
 
             <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 ${
               order.order_type === "delivery"
-                ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
-                : "bg-[#D4AF37]/20 text-[#14231D] border border-[#D4AF37]/40"
+                ? "bg-[#5F8575]/10 text-[#2A4237] border border-[#5F8575]/30"
+                : "bg-[#D4AF37]/15 text-[#2A4237] border border-[#D4AF37]/30"
             }`}>
               {order.order_type === "delivery" ? <Truck size={11} /> : <Store size={11} />}
               {order.order_type === "delivery" ? "Delivery" : "Recojo en Tienda"}
@@ -141,12 +141,12 @@ export function CashierOrderCard({
 
           {order.client_phone && (
             <div className="flex items-center gap-2 text-gray-600">
-              <Phone size={12} className="text-emerald-700" />
+              <Phone size={12} className="text-[#5F8575]" />
               <a
                 href={`https://wa.me/51${order.client_phone.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
-                className="hover:underline font-semibold text-emerald-800"
+                className="hover:underline font-semibold text-[#2A4237]"
               >
                 {order.client_phone} (WhatsApp)
               </a>
@@ -154,9 +154,9 @@ export function CashierOrderCard({
           )}
 
           {order.order_type === "delivery" && (order.address || order.latitude) && (
-            <div className="flex items-center justify-between gap-1 text-[11px] text-gray-700 bg-white/90 p-2 rounded-xl border border-black/5 shadow-2xs mt-1">
+            <div className="flex items-center justify-between gap-1 text-[11px] text-gray-700 bg-gray-50/80 p-2 rounded-xl border border-gray-200 shadow-2xs mt-1">
               <div className="flex items-start gap-1 min-w-0 pr-2">
-                <MapPin size={13} className="shrink-0 mt-0.5 text-emerald-700" />
+                <MapPin size={13} className="shrink-0 mt-0.5 text-[#5F8575]" />
                 <span className="truncate font-semibold">{order.address || "Ubicación Georeferenciada"} {order.reference ? `(${order.reference})` : ""}</span>
               </div>
               <a
@@ -175,7 +175,7 @@ export function CashierOrderCard({
 
         {/* Items List Summary */}
         <div className="py-3 space-y-2">
-          <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-gray-500 block">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-gray-500 block">
             Comanda ({items.length} ítems):
           </span>
           <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
@@ -183,12 +183,12 @@ export function CashierOrderCard({
               <p className="text-xs italic text-gray-400">Sin detalles de platos</p>
             ) : (
               items.map((item, idx) => (
-                <div key={idx} className="flex items-start justify-between text-xs bg-white/70 p-2 rounded-lg border border-black/5">
+                <div key={idx} className="flex items-start justify-between text-xs bg-gray-50 p-2 rounded-lg border border-gray-200/70">
                   <div className="pr-2">
                     <span className="font-bold text-gray-900">{item.quantity}x</span>{" "}
                     <span className="font-semibold text-gray-800">{item.product_name}</span>
                   </div>
-                  <span className="font-bold text-emerald-900 shrink-0">
+                  <span className="font-sans font-black tracking-tight tabular-nums text-[#2A4237] shrink-0">
                     S/ {Number(item.subtotal || item.unit_price * item.quantity).toFixed(2)}
                   </span>
                 </div>
@@ -199,13 +199,13 @@ export function CashierOrderCard({
       </div>
 
       {/* Footer & Fast 1-Click Action */}
-      <div className="pt-3 border-t border-black/10 space-y-3">
+      <div className="pt-3 border-t border-gray-100 space-y-3">
         
         {/* Total & Payment Method */}
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-gray-400 block">Total a Cobrar</span>
-            <span className="font-serif text-lg font-black text-[#14231D]">
+            <span className="font-sans text-lg font-black tracking-tight tabular-nums text-[#2A4237]">
               S/ {Number(order.total || 0).toFixed(2)}
             </span>
           </div>
@@ -222,7 +222,7 @@ export function CashierOrderCard({
         <div className="flex items-center gap-2">
           <button
             onClick={() => onViewDetail(order)}
-            className="p-2.5 rounded-xl bg-white hover:bg-gray-100 border border-gray-300 text-gray-700 transition-colors shadow-xs"
+            className="p-2.5 rounded-xl bg-white hover:bg-gray-100 border border-gray-300 text-gray-700 transition-colors shadow-2xs"
             title="Ver Detalle de Comanda / Imprimir Ticket"
           >
             <Eye size={16} />
@@ -235,7 +235,7 @@ export function CashierOrderCard({
             order.status !== "cancelado" && (
               <button
                 onClick={() => openWhatsAppDispatch(order, items)}
-                className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-colors animate-pulse"
+                className="p-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 font-sans font-extrabold text-xs flex items-center gap-1.5 shadow-2xs transition-colors"
                 title="Enviar Comanda Completa con GPS a WhatsApp Motorizado"
               >
                 <MessageSquare size={15} />
@@ -247,7 +247,7 @@ export function CashierOrderCard({
             <button
               onClick={() => handleNextStatus(currentStatus.nextAction!)}
               disabled={updating}
-              className={`flex-1 py-2.5 px-3 rounded-xl font-serif font-bold text-xs shadow-md flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 ${currentStatus.btnClass}`}
+              className={`flex-1 py-2.5 px-3 rounded-xl font-sans font-bold text-xs shadow-2xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 ${currentStatus.btnClass}`}
             >
               <span>{updating ? "Actualizando..." : currentStatus.btnLabel}</span>
               <ChevronRight size={14} />
