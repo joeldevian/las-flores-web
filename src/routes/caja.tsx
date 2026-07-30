@@ -455,7 +455,10 @@ function CashierDashboardRoute() {
             }`}
           >
             <ShoppingBag size={15} />
-            <span>Comandas & Pedidos ({orders.length})</span>
+            <span>Comandas & Pedidos ({pendingCount} Pendientes)</span>
+            {pendingCount > 0 && (
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            )}
           </button>
 
           <button
