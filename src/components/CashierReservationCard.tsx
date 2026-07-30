@@ -26,7 +26,10 @@ export function CashierReservationCard({
 }: CashierReservationCardProps) {
   const [updating, setUpdating] = useState(false);
 
-  const status = (reservation.status || "pendiente").toLowerCase();
+  const normStatus = (reservation.status || "pending").toLowerCase().trim();
+  const isConfirmed = normStatus === "confirmed" || normStatus === "confirmada";
+  const isCompleted = normStatus === "completed" || normStatus === "completada" || normStatus === "asistio";
+  const isCancelled = normStatus === "cancelled" || normStatus === "cancelada";
 
   // Formatear Fecha (YYYY-MM-DD -> DD/MM/YYYY)
   const formatDate = (dateStr: string) => {
@@ -123,20 +126,20 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
         {/* Status Badge */}
         <span
           className={`text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider z-10 border ${
-            status === "confirmada"
+            isConfirmed
               ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-              : status === "completada" || status === "asistio"
+              : isCompleted
               ? "bg-blue-500/20 text-blue-300 border-blue-500/40"
-              : status === "cancelada"
+              : isCancelled
               ? "bg-red-500/20 text-red-300 border-red-500/40"
               : "bg-amber-500/20 text-amber-300 border-amber-500/40"
           }`}
         >
-          {status === "confirmada"
+          {isConfirmed
             ? "Confirmada"
-            : status === "completada" || status === "asistio"
+            : isCompleted
             ? "Cliente Lleg√≥"
-            : status === "cancelada"
+            : isCancelled
             ? "Cancelada"
             : "Pendiente"}
         </span>
@@ -212,11 +215,11 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
           </button>
         </div>
 
-        {/* Status update buttons */}
+        {/* Status update buttons (send valid constraint values: confirmed, completed, cancelled) */}
         <div className="flex items-center justify-between gap-2 pt-1">
-          {status !== "confirmada" && (
+          {!isConfirmed && (
             <button
-              onClick={() => handleUpdateStatus("confirmada")}
+              onClick={() => handleUpdateStatus("confirmed")}
               disabled={updating}
               className="flex-1 py-1.5 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1"
             >
@@ -224,9 +227,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             </button>
           )}
 
-          {status !== "asistio" && (
+          {!isCompleted && (
             <button
-              onClick={() => handleUpdateStatus("asistio")}
+              onClick={() => handleUpdateStatus("completed")}
               disabled={updating}
               className="flex-1 py-1.5 bg-white hover:bg-blue-50 text-blue-800 border border-blue-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1"
             >
@@ -234,9 +237,9 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
             </button>
           )}
 
-          {status !== "cancelada" && (
+          {!isCancelled && (
             <button
-              onClick={() => handleUpdateStatus("cancelada")}
+              onClick={() => handleUpdateStatus("cancelled")}
               disabled={updating}
               className="py-1.5 px-3 bg-white hover:bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1"
             >
