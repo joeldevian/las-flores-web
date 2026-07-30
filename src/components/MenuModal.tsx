@@ -22,6 +22,7 @@ export interface Dish {
   price: string;
   image?: string;
   is_customizable?: boolean;
+  custom_options?: any[];
 }
 
 export interface Category {

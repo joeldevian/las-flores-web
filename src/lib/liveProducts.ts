@@ -94,6 +94,7 @@ export async function getLiveCategories(): Promise<Category[]> {
         price: `S/ ${Number(prod.price || 0).toFixed(2)}`,
         image: prod.image_url || undefined,
         is_customizable: prod.is_customizable ?? (prod.name.toLowerCase().includes("desayuno ayacuchano") || false),
+        custom_options: prod.custom_options || undefined,
       };
 
       if (!liveDishesByCat.has(catSlug)) {

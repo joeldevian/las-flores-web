@@ -1,7 +1,95 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Loader2, Utensils, DollarSign, FileText, Image as ImageIcon, Tag, Upload, Trash2, CheckCircle2, RefreshCw, Sparkles, AlertCircle } from "lucide-react";
+import { X, Loader2, Utensils, DollarSign, FileText, Image as ImageIcon, Tag, Upload, Trash2, CheckCircle2, RefreshCw, Sparkles, AlertCircle, Plus, Wand2, Layers } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { compressImageToWebP } from "../lib/webp-compressor";
+
+export interface CustomOption {
+  id: string;
+  name: string;
+  desc?: string;
+}
+
+export interface CustomSection {
+  id: string;
+  title: string;
+  required: boolean;
+  options: CustomOption[];
+}
+
+const PRESET_DESAYUNO: CustomSection[] = [
+  {
+    id: "sec_1",
+    title: "1. Bebida fría",
+    required: true,
+    options: [
+      { id: "opt_1", name: "Jugo de plátano", desc: "Refrescante y cremoso de fruta natural" },
+      { id: "opt_2", name: "Jugo de mango", desc: "Dulce y tropical recién preparado" },
+      { id: "opt_3", name: "Jugo de frutos rojos", desc: "Mezcla antioxidante y llena de sabor" },
+      { id: "opt_4", name: "Jugo de naranja", desc: "100% natural exprimidito al momento" },
+      { id: "opt_5", name: "Jugo de piña", desc: "Digestivo y refrescante de piña selecta" },
+    ],
+  },
+  {
+    id: "sec_2",
+    title: "2. Bebida caliente",
+    required: true,
+    options: [
+      { id: "opt_6", name: "Taza de café", desc: "Café pasado artesanal de grano andino" },
+      { id: "opt_7", name: "Chocolate ayacuchano", desc: "Tradicional cacao especiado hervido a fuego lento" },
+      { id: "opt_8", name: "Infusión", desc: "Hierbas aromáticas naturales (Manzanilla, Anís o Muña)" },
+    ],
+  },
+  {
+    id: "sec_3",
+    title: "3. Sándwich",
+    required: true,
+    options: [
+      { id: "opt_9", name: "Pan con Butifarra", desc: "Jugoso jamón del país acompañado de cebolla encurtida" },
+      { id: "opt_10", name: "Pan con Chicharrón", desc: "Chicharrón tierno y crocante acompañado de camote frito" },
+    ],
+  },
+  {
+    id: "sec_4",
+    title: "4. Acompañamiento",
+    required: true,
+    options: [
+      { id: "opt_11", name: "Humita", desc: "Auténtica humita dulce o salada hecha en casa" },
+      { id: "opt_12", name: "Huevos revueltos", desc: "Huevos de corral frescos preparados al gusto" },
+      { id: "opt_13", name: "Ensalada de palta", desc: "Láminas de palta hass fresca con limón y sal" },
+      { id: "opt_14", name: "Ensalada de frutas", desc: "Variedad de frutas de estación picadas" },
+    ],
+  },
+];
+
+const PRESET_RONDA: CustomSection[] = [
+  {
+    id: "sec_r1",
+    title: "1. Entrada / Qapchi",
+    required: true,
+    options: [
+      { id: "ro_1", name: "Qapchi Huamanguino con Papa Nativa", desc: "Crema de queso tradicional" },
+      { id: "ro_2", name: "Causa Ayacuchana de Trucha", desc: "Causa crocante con ají amarillo" },
+    ],
+  },
+  {
+    id: "sec_r2",
+    title: "2. Plato Principal",
+    required: true,
+    options: [
+      { id: "ro_3", name: "Chicharrón de Cerdo Crocante", desc: "Porción generosa de chicharrón" },
+      { id: "ro_4", name: "Cuy Chactado Ayacuchano", desc: "Cuy dorado tradicional" },
+    ],
+  },
+  {
+    id: "sec_r3",
+    title: "3. Acompañamiento",
+    required: true,
+    options: [
+      { id: "ro_5", name: "Mote Andino con Queso", desc: "Mote tierno salteado" },
+      { id: "ro_6", name: "Papas Nativas Salteadas", desc: "Mix de papas nativas doradas" },
+    ],
+  },
+];
 
 interface AdminProductModalProps {
   isOpen: boolean;
@@ -27,6 +115,7 @@ export function AdminProductModal({
   const [imageUrl, setImageUrl] = useState("");
   const [isAvailable, setIsAvailable] = useState(true);
   const [isCustomizable, setIsCustomizable] = useState(false);
+  const [customSections, setCustomSections] = useState<CustomSection[]>([]);
   
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -45,7 +134,16 @@ export function AdminProductModal({
         setCategoryId(product.category_id || (categories[0]?.id || ""));
         setImageUrl(product.image_url || "");
         setIsAvailable(product.is_available ?? true);
-        setIsCustomizable(product.is_customizable ?? (product.name?.toLowerCase().includes("desayuno ayacuchano") || false));
+        const customizableVal = product.is_customizable ?? (product.name?.toLowerCase().includes("desayuno ayacuchano") || false);
+        setIsCustomizable(customizableVal);
+        
+        if (product.custom_options && Array.isArray(product.custom_options) && product.custom_options.length > 0) {
+          setCustomSections(product.custom_options);
+        } else if (product.name?.toLowerCase().includes("desayuno ayacuchano")) {
+          setCustomSections(PRESET_DESAYUNO);
+        } else {
+          setCustomSections([]);
+        }
       } else {
         setName("");
         setDescription("");
@@ -54,6 +152,7 @@ export function AdminProductModal({
         setImageUrl("");
         setIsAvailable(true);
         setIsCustomizable(false);
+        setCustomSections([]);
       }
       setUploadSuccessMsg("");
       setErrorMsg("");
@@ -134,6 +233,81 @@ export function AdminProductModal({
     }
   };
 
+  // Helper functions for Custom Sections builder
+  const handleAddSection = () => {
+    const newSec: CustomSection = {
+      id: `sec_${Date.now()}`,
+      title: `${customSections.length + 1}. Nombre de la sección`,
+      required: true,
+      options: [
+        { id: `opt_${Date.now()}_1`, name: "Opción 1", desc: "Descripción breve" },
+      ],
+    };
+    setCustomSections([...customSections, newSec]);
+  };
+
+  const handleRemoveSection = (secId: string) => {
+    setCustomSections(customSections.filter((s) => s.id !== secId));
+  };
+
+  const handleUpdateSectionTitle = (secId: string, title: string) => {
+    setCustomSections(
+      customSections.map((s) => (s.id === secId ? { ...s, title } : s))
+    );
+  };
+
+  const handleAddOption = (secId: string) => {
+    setCustomSections(
+      customSections.map((s) => {
+        if (s.id === secId) {
+          return {
+            ...s,
+            options: [
+              ...s.options,
+              { id: `opt_${Date.now()}`, name: "Nueva Opción", desc: "" },
+            ],
+          };
+        }
+        return s;
+      })
+    );
+  };
+
+  const handleRemoveOption = (secId: string, optId: string) => {
+    setCustomSections(
+      customSections.map((s) => {
+        if (s.id === secId) {
+          return {
+            ...s,
+            options: s.options.filter((o) => o.id !== optId),
+          };
+        }
+        return s;
+      })
+    );
+  };
+
+  const handleUpdateOption = (
+    secId: string,
+    optId: string,
+    field: "name" | "desc",
+    val: string
+  ) => {
+    setCustomSections(
+      customSections.map((s) => {
+        if (s.id === secId) {
+          return {
+            ...s,
+            options: s.options.map((o) =>
+              o.id === optId ? { ...o, [field]: val } : o
+            ),
+          };
+        }
+        return s;
+      })
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !price || !categoryId) {
@@ -153,6 +327,7 @@ export function AdminProductModal({
         image_url: imageUrl.trim() || null,
         is_available: isAvailable,
         is_customizable: isCustomizable,
+        custom_options: isCustomizable ? customSections : null,
       };
 
       if (product) {
@@ -419,6 +594,134 @@ export function AdminProductModal({
               />
             </button>
           </div>
+
+          {/* Customization Options Builder */}
+          {isCustomizable && (
+            <div className="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/60 pb-3">
+                <div className="flex items-center gap-2">
+                  <Layers className="text-amber-700" size={18} />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-amber-950">
+                    Constructor de Secciones y Opciones
+                  </h4>
+                </div>
+
+                {/* Preset Loaders */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCustomSections(PRESET_DESAYUNO)}
+                    className="px-2.5 py-1 text-[11px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg border border-amber-300 transition-colors flex items-center gap-1"
+                  >
+                    <Wand2 size={12} /> Cargar Plantilla Desayuno
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCustomSections(PRESET_RONDA)}
+                    className="px-2.5 py-1 text-[11px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg border border-amber-300 transition-colors flex items-center gap-1"
+                  >
+                    <Wand2 size={12} /> Cargar Plantilla Ronda
+                  </button>
+                </div>
+              </div>
+
+              {/* Sections List */}
+              <div className="space-y-4">
+                {customSections.length === 0 ? (
+                  <div className="p-6 text-center bg-white/80 rounded-xl border border-dashed border-amber-300 text-amber-900">
+                    <p className="text-xs font-medium mb-2">No has agregado secciones para este plato personalizable.</p>
+                    <p className="text-[11px] text-amber-700 mb-3">Puedes cargar una plantilla rápida arriba o hacer clic abajo para crear tu primera sección.</p>
+                    <button
+                      type="button"
+                      onClick={handleAddSection}
+                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                    >
+                      + Crear Primera Sección
+                    </button>
+                  </div>
+                ) : (
+                  customSections.map((sec, secIdx) => (
+                    <div
+                      key={sec.id}
+                      className="p-3.5 bg-white rounded-xl border border-amber-200 shadow-xs space-y-3"
+                    >
+                      {/* Section Header */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-900 text-xs font-bold flex items-center justify-center shrink-0">
+                            {secIdx + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={sec.title}
+                            onChange={(e) => handleUpdateSectionTitle(sec.id, e.target.value)}
+                            placeholder="Nombre de sección (ej. 1. Elegir Bebida Fría)"
+                            className="flex-1 font-bold text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSection(sec.id)}
+                          className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                          title="Eliminar Sección"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+
+                      {/* Options in Section */}
+                      <div className="pl-8 space-y-2 border-l-2 border-amber-100">
+                        {sec.options.map((opt) => (
+                          <div key={opt.id} className="flex items-center gap-2 bg-gray-50/80 p-2 rounded-lg border border-gray-100">
+                            <input
+                              type="text"
+                              value={opt.name}
+                              onChange={(e) => handleUpdateOption(sec.id, opt.id, "name", e.target.value)}
+                              placeholder="Nombre opción (ej. Jugo de mango)"
+                              className="flex-1 text-xs font-semibold bg-white border border-gray-200 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            />
+                            <input
+                              type="text"
+                              value={opt.desc || ""}
+                              onChange={(e) => handleUpdateOption(sec.id, opt.id, "desc", e.target.value)}
+                              placeholder="Detalle (opcional)"
+                              className="flex-1 text-xs text-gray-600 bg-white border border-gray-200 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveOption(sec.id, opt.id)}
+                              className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() => handleAddOption(sec.id)}
+                          className="text-xs font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 pt-1"
+                        >
+                          <Plus size={13} /> Agregar otra opción a esta sección
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+
+                {customSections.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleAddSection}
+                    className="w-full py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border border-amber-300"
+                  >
+                    <Plus size={15} /> Agregar Nueva Sección al Plato
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Modal Actions */}
           <div className="pt-4 flex items-center justify-between border-t border-gray-100 mt-6">

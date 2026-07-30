@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, GlassWater, Coffee, Sandwich, Utensils, Check, ShoppingBag, Sparkles } from "lucide-react";
+import { X, GlassWater, Check, ShoppingBag, Sparkles, Utensils } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import type { Dish } from "./MenuModal";
 
@@ -28,12 +28,12 @@ const SANDWICHES = [
   {
     id: "butifarra",
     name: "Pan con Butifarra",
-    desc: "Jugoso jamón del país acompañado de cebolla encurtida y pan crujiente, una combinación tradicional llena de sabor.",
+    desc: "Jugoso jamón del país acompañado de cebolla encurtida y pan crujiente.",
   },
   {
     id: "chicharron",
     name: "Pan con Chicharrón",
-    desc: "Chicharrón tierno y crocante acompañado de camote frito y cebolla encurtida, logrando un equilibrio perfecto entre lo dulce y lo salado.",
+    desc: "Chicharrón tierno y crocante acompañado de camote frito y cebolla encurtida.",
   },
 ];
 
@@ -44,13 +44,16 @@ const ACOMPANAMIENTOS = [
   { id: "frutas", name: "Ensalada de frutas", desc: "Variedad de frutas de estación picadas" },
 ];
 
+const DEFAULT_SECTIONS = [
+  { id: "sec_1", title: "1. Bebida fría", options: BEBIDAS_FRIAS },
+  { id: "sec_2", title: "2. Bebida caliente", options: BEBIDAS_CALIENTES },
+  { id: "sec_3", title: "3. Sándwich", options: SANDWICHES },
+  { id: "sec_4", title: "4. Acompañamiento", options: ACOMPANAMIENTOS },
+];
+
 export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCustomizationModalProps) {
   const { addItem, setIsOpen: setSidebarOpen } = useCart();
-
-  const [bebidaFria, setBebidaFria] = useState<string>("");
-  const [bebidaCaliente, setBebidaCaliente] = useState<string>("");
-  const [sandwich, setSandwich] = useState<string>("");
-  const [acompanamiento, setAcompanamiento] = useState<string>("");
+  const [selections, setSelections] = useState<Record<string, string>>({});
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -60,10 +63,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
   // Reiniciar selecciones al abrir el modal
   useEffect(() => {
     if (open) {
-      setBebidaFria("");
-      setBebidaCaliente("");
-      setSandwich("");
-      setAcompanamiento("");
+      setSelections({});
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -75,26 +75,41 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
 
   if (!open || !dish || !isMounted) return null;
 
+  const sectionsList =
+    dish.custom_options && Array.isArray(dish.custom_options) && dish.custom_options.length > 0
+      ? dish.custom_options
+      : DEFAULT_SECTIONS;
+
   const priceNum = parseFloat(dish.price.replace("S/ ", ""));
-  const selectedCount = [bebidaFria, bebidaCaliente, sandwich, acompanamiento].filter(Boolean).length;
-  const isComplete = selectedCount === 4;
+  const selectedCount = sectionsList.filter((s) => !!selections[s.id || s.title]).length;
+  const isComplete = selectedCount >= sectionsList.length;
+
+  const handleSelectOption = (sectionId: string, optionName: string) => {
+    setSelections((prev) => ({
+      ...prev,
+      [sectionId]: optionName,
+    }));
+  };
 
   const handleConfirm = () => {
     if (!isComplete) return;
 
-    const itemUniqueId = `desayuno-${dish.name.replace(/\s+/g, "-")}-${Date.now()}`;
+    const itemUniqueId = `custom-${dish.name.replace(/\s+/g, "-")}-${Date.now()}`;
+
+    // Construir detalles legibles de personalización para el carrito
+    const formattedCustomizations: Record<string, string> = {};
+    sectionsList.forEach((s) => {
+      const key = s.title.replace(/^\d+\.\s*/, "");
+      const val = selections[s.id || s.title];
+      if (val) formattedCustomizations[key] = val;
+    });
 
     addItem({
       id: itemUniqueId,
       name: dish.name,
       price: priceNum,
       image: dish.image,
-      customizations: {
-        bebidaFria,
-        bebidaCaliente,
-        sandwich,
-        acompanamiento,
-      },
+      customizations: formattedCustomizations,
     });
 
     onClose();
@@ -136,14 +151,14 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
             <X size={20} />
           </button>
 
-          {/* Información del Desayuno */}
+          {/* Información del Plato */}
           <div className="absolute bottom-4 left-5 right-5 z-10 text-white">
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-[10px] uppercase tracking-[0.22em] font-bold px-3 py-1 rounded-full bg-retablo text-white shadow-xs flex items-center gap-1">
-                <Sparkles size={11} /> Arma tu Desayuno
+                <Sparkles size={11} /> Personaliza tu pedido
               </span>
               <span className="text-[10px] uppercase tracking-[0.15em] font-bold px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-cream">
-                {selectedCount}/4 Seleccionados
+                {selectedCount}/{sectionsList.length} Seleccionados
               </span>
             </div>
             <div className="flex justify-between items-end gap-3">
@@ -157,311 +172,99 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
           </div>
         </div>
 
-        {/* Cuerpo Scrolleable con Opciones */}
+        {/* Cuerpo Scrolleable con Secciones Dinámicas */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 custom-scrollbar">
-          
-          {/* 1. Bebida fría */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-black/5">
-            <div className="flex items-center justify-between mb-4 border-b border-black/5 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-eucalipto/10 text-eucalipto flex items-center justify-center">
-                  <GlassWater size={18} />
+          {sectionsList.map((section, idx) => {
+            const secKey = section.id || section.title;
+            const currentSelected = selections[secKey];
+            const isSecComplete = !!currentSelected;
+
+            return (
+              <div key={secKey} className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-black/5">
+                <div className="flex items-center justify-between mb-4 border-b border-black/5 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-eucalipto/10 text-eucalipto flex items-center justify-center font-serif font-bold text-sm">
+                      {idx + 1}
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-base text-ink">{section.title}</h3>
+                      <p className="text-[11px] text-black/50 font-medium">Selección obligatoria • 1 opción</p>
+                    </div>
+                  </div>
+                  {isSecComplete ? (
+                    <span className="text-[11px] font-bold text-eucalipto bg-eucalipto/10 px-2.5 py-1 rounded-full flex items-center gap-1">
+                      <Check size={13} /> Listo
+                    </span>
+                  ) : (
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                      Requerido
+                    </span>
+                  )}
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-ink">1. Bebida fría</h3>
-                  <p className="text-[11px] text-black/50 font-medium">Selección obligatoria • 1 opción</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {section.options.map((item) => {
+                    const isSelected = currentSelected === item.name;
+                    return (
+                      <div
+                        key={item.id || item.name}
+                        onClick={() => handleSelectOption(secKey, item.name)}
+                        className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
+                          isSelected
+                            ? "bg-eucalipto/10 border-eucalipto text-ink shadow-xs"
+                            : "bg-black/2 border-transparent hover:border-black/10 hover:bg-black/4"
+                        }`}
+                      >
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                            isSelected ? "border-eucalipto bg-eucalipto text-white" : "border-black/30 bg-white"
+                          }`}
+                        >
+                          {isSelected && <Check size={12} strokeWidth={3} />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <span className="block text-xs font-serif font-bold text-ink leading-tight">
+                            {item.name}
+                          </span>
+                          {item.desc && (
+                            <span className="block text-[10px] text-black/50 truncate font-medium">
+                              {item.desc}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-              {bebidaFria ? (
-                <span className="text-[11px] font-bold text-eucalipto bg-eucalipto/10 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <Check size={13} /> Listo
-                </span>
-              ) : (
-                <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                  Requerido
-                </span>
-              )}
-            </div>
+            );
+          })}
 
+          {/* Resumen de Selecciones */}
+          <div className="bg-[#FAF6EE] rounded-2xl p-4 sm:p-5 border border-black/5">
+            <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-black/60 mb-3 flex items-center gap-1.5">
+              <Utensils size={14} /> Resumen de tus selecciones
+            </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {BEBIDAS_FRIAS.map((item) => {
-                const isSelected = bebidaFria === item.name;
+              {sectionsList.map((sec) => {
+                const secKey = sec.id || sec.title;
+                const val = selections[secKey];
+                const cleanTitle = sec.title.replace(/^\d+\.\s*/, "");
+
                 return (
                   <div
-                    key={item.id}
-                    onClick={() => setBebidaFria(item.name)}
-                    className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
-                      isSelected
-                        ? "bg-eucalipto/10 border-eucalipto text-ink shadow-xs"
-                        : "bg-black/2 border-transparent hover:border-black/10 hover:bg-black/4"
+                    key={secKey}
+                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs ${
+                      val ? "bg-white border-eucalipto/30 text-ink" : "bg-white/40 border-black/5 text-ink/40"
                     }`}
                   >
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                        isSelected ? "border-eucalipto bg-eucalipto text-white" : "border-black/30 bg-white"
-                      }`}
-                    >
-                      {isSelected && <Check size={12} strokeWidth={3} />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-xs font-serif font-bold text-ink leading-tight">
-                        {item.name}
-                      </span>
-                      <span className="block text-[10px] text-black/50 truncate font-medium">
-                        {item.desc}
-                      </span>
-                    </div>
+                    <span className="font-bold truncate max-w-[40%]">{cleanTitle}:</span>
+                    <span className={`truncate max-w-[55%] font-medium ${val ? "text-eucalipto font-bold" : "italic text-black/30"}`}>
+                      {val || "— Pendiente —"}
+                    </span>
                   </div>
                 );
               })}
-            </div>
-          </div>
-
-          {/* 2. Bebida caliente */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-black/5">
-            <div className="flex items-center justify-between mb-4 border-b border-black/5 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-eucalipto/10 text-eucalipto flex items-center justify-center">
-                  <Coffee size={18} />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-ink">2. Bebida caliente</h3>
-                  <p className="text-[11px] text-black/50 font-medium">Selección obligatoria • 1 opción</p>
-                </div>
-              </div>
-              {bebidaCaliente ? (
-                <span className="text-[11px] font-bold text-eucalipto bg-eucalipto/10 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <Check size={13} /> Listo
-                </span>
-              ) : (
-                <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                  Requerido
-                </span>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {BEBIDAS_CALIENTES.map((item) => {
-                const isSelected = bebidaCaliente === item.name;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => setBebidaCaliente(item.name)}
-                    className={`flex items-start gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
-                      isSelected
-                        ? "bg-eucalipto/10 border-eucalipto text-ink shadow-xs"
-                        : "bg-black/2 border-transparent hover:border-black/10 hover:bg-black/4"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
-                        isSelected ? "border-eucalipto bg-eucalipto text-white" : "border-black/30 bg-white"
-                      }`}
-                    >
-                      {isSelected && <Check size={12} strokeWidth={3} />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-xs font-serif font-bold text-ink leading-tight">
-                        {item.name}
-                      </span>
-                      <span className="block text-[10px] text-black/50 leading-snug mt-0.5 font-medium">
-                        {item.desc}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 3. Sándwich */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-black/5">
-            <div className="flex items-center justify-between mb-4 border-b border-black/5 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-eucalipto/10 text-eucalipto flex items-center justify-center">
-                  <Sandwich size={18} />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-ink">3. Sándwich</h3>
-                  <p className="text-[11px] text-black/50 font-medium">Selección obligatoria • 1 opción</p>
-                </div>
-              </div>
-              {sandwich ? (
-                <span className="text-[11px] font-bold text-eucalipto bg-eucalipto/10 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <Check size={13} /> Listo
-                </span>
-              ) : (
-                <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                  Requerido
-                </span>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 gap-3">
-              {SANDWICHES.map((item) => {
-                const isSelected = sandwich === item.name;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => setSandwich(item.name)}
-                    className={`flex items-start gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
-                      isSelected
-                        ? "bg-eucalipto/10 border-eucalipto text-ink shadow-xs"
-                        : "bg-black/2 border-transparent hover:border-black/10 hover:bg-black/4"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
-                        isSelected ? "border-eucalipto bg-eucalipto text-white" : "border-black/30 bg-white"
-                      }`}
-                    >
-                      {isSelected && <Check size={12} strokeWidth={3} />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-sm font-serif font-bold text-ink leading-tight mb-1">
-                        {item.name}
-                      </span>
-                      <span className="block text-xs text-black/60 leading-relaxed font-medium">
-                        {item.desc}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 4. Acompañamiento */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-black/5">
-            <div className="flex items-center justify-between mb-4 border-b border-black/5 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-eucalipto/10 text-eucalipto flex items-center justify-center">
-                  <Utensils size={18} />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-ink">4. Acompañamiento</h3>
-                  <p className="text-[11px] text-black/50 font-medium">Selección obligatoria • 1 opción</p>
-                </div>
-              </div>
-              {acompanamiento ? (
-                <span className="text-[11px] font-bold text-eucalipto bg-eucalipto/10 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <Check size={13} /> Listo
-                </span>
-              ) : (
-                <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                  Requerido
-                </span>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {ACOMPANAMIENTOS.map((item) => {
-                const isSelected = acompanamiento === item.name;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => setAcompanamiento(item.name)}
-                    className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
-                      isSelected
-                        ? "bg-eucalipto/10 border-eucalipto text-ink shadow-xs"
-                        : "bg-black/2 border-transparent hover:border-black/10 hover:bg-black/4"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                        isSelected ? "border-eucalipto bg-eucalipto text-white" : "border-black/30 bg-white"
-                      }`}
-                    >
-                      {isSelected && <Check size={12} strokeWidth={3} />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-xs font-serif font-bold text-ink leading-tight">
-                        {item.name}
-                      </span>
-                      <span className="block text-[10px] text-black/50 truncate font-medium">
-                        {item.desc}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Caja de Resumen idéntica al diseño solicitado */}
-          <div className="bg-[#ECE5D8]/80 border border-[#DCD3C1] rounded-3xl p-5 shadow-xs">
-            <div className="flex items-center gap-2 mb-3.5 text-[11px] font-serif font-bold tracking-[0.2em] uppercase text-ink/85">
-              <ShoppingBag size={15} className="text-eucalipto" />
-              <span>Resumen de tu Desayuno</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* B. Fría */}
-              <div
-                className={`flex items-center justify-between px-4 py-3 rounded-2xl border transition-all duration-300 ${
-                  bebidaFria
-                    ? "bg-white border-eucalipto/40 shadow-xs text-ink"
-                    : "bg-white/60 border-black/5 text-ink/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-serif font-bold text-xs text-ink/90 flex-shrink-0">B. Fría:</span>
-                  <span className={`text-xs truncate ${bebidaFria ? "font-medium text-ink" : "italic text-black/35"}`}>
-                    {bebidaFria || "— No elegida —"}
-                  </span>
-                </div>
-                {bebidaFria && <Check size={14} className="text-eucalipto flex-shrink-0 ml-1" />}
-              </div>
-
-              {/* B. Caliente */}
-              <div
-                className={`flex items-center justify-between px-4 py-3 rounded-2xl border transition-all duration-300 ${
-                  bebidaCaliente
-                    ? "bg-white border-eucalipto/40 shadow-xs text-ink"
-                    : "bg-white/60 border-black/5 text-ink/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-serif font-bold text-xs text-ink/90 flex-shrink-0">B. Caliente:</span>
-                  <span className={`text-xs truncate ${bebidaCaliente ? "font-medium text-ink" : "italic text-black/35"}`}>
-                    {bebidaCaliente || "— No elegida —"}
-                  </span>
-                </div>
-                {bebidaCaliente && <Check size={14} className="text-eucalipto flex-shrink-0 ml-1" />}
-              </div>
-
-              {/* Sándwich */}
-              <div
-                className={`flex items-center justify-between px-4 py-3 rounded-2xl border transition-all duration-300 ${
-                  sandwich
-                    ? "bg-white border-eucalipto/40 shadow-xs text-ink"
-                    : "bg-white/60 border-black/5 text-ink/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-serif font-bold text-xs text-ink/90 flex-shrink-0">Sándwich:</span>
-                  <span className={`text-xs truncate ${sandwich ? "font-medium text-ink" : "italic text-black/35"}`}>
-                    {sandwich || "— No elegido —"}
-                  </span>
-                </div>
-                {sandwich && <Check size={14} className="text-eucalipto flex-shrink-0 ml-1" />}
-              </div>
-
-              {/* Acompañante */}
-              <div
-                className={`flex items-center justify-between px-4 py-3 rounded-2xl border transition-all duration-300 ${
-                  acompanamiento
-                    ? "bg-white border-eucalipto/40 shadow-xs text-ink"
-                    : "bg-white/60 border-black/5 text-ink/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-serif font-bold text-xs text-ink/90 flex-shrink-0">Acompañante:</span>
-                  <span className={`text-xs truncate ${acompanamiento ? "font-medium text-ink" : "italic text-black/35"}`}>
-                    {acompanamiento || "— No elegido —"}
-                  </span>
-                </div>
-                {acompanamiento && <Check size={14} className="text-eucalipto flex-shrink-0 ml-1" />}
-              </div>
             </div>
           </div>
         </div>
@@ -485,7 +288,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
             }`}
           >
             <ShoppingBag size={18} />
-            {isComplete ? "Confirmar y Agregar al Carrito" : `Elige tus opciones (${selectedCount}/4)`}
+            {isComplete ? "Confirmar y Agregar al Carrito" : `Elige tus opciones (${selectedCount}/${sectionsList.length})`}
           </button>
         </div>
       </div>
