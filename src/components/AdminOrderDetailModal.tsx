@@ -112,26 +112,10 @@ export function AdminOrderDetailModal({
         <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
           
           {/* Status Controls */}
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex items-center justify-between gap-4">
             <div>
               <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-1">Estado Actual</span>
               {getStatusBadge(order.status)}
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-medium text-gray-500">Cambiar estado:</span>
-              <select
-                disabled={updating}
-                value={order.status}
-                onChange={(e) => handleStatusUpdate(e.target.value)}
-                className="text-xs font-semibold bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-eucalipto"
-              >
-                <option value="received">Recibido</option>
-                <option value="preparing">En Preparación</option>
-                <option value="on_the_way">En Camino</option>
-                <option value="delivered">Entregado</option>
-                <option value="cancelled">Cancelado</option>
-              </select>
             </div>
           </div>
 
@@ -163,11 +147,25 @@ export function AdminOrderDetailModal({
             </div>
 
             <div className="p-4 rounded-xl border border-gray-100 bg-white shadow-sm space-y-2">
-              <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                <MapPin size={14} className="text-eucalipto" /> Dirección / Entrega
+              <div className="flex items-center justify-between gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                <span className="flex items-center gap-2"><MapPin size={14} className="text-eucalipto" /> Dirección / Entrega</span>
+                {order.order_type === 'delivery' && (order.address || order.delivery_address || order.latitude) && (
+                  <a
+                    href={generateDeliveryGoogleMapsUrl(order.latitude, order.longitude, order.address || order.delivery_address)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded flex items-center gap-1"
+                  >
+                    <span>GPS Mapa</span>
+                    <ExternalLink size={10} />
+                  </a>
+                )}
               </div>
-              <p className="font-medium text-gray-800 text-sm">
-                {order.order_type === 'delivery' ? (order.delivery_address || "Sin dirección") : "Recojo en local - Jr. Dos de Mayo 208"}
+              <p className="font-semibold text-gray-900 text-sm">
+                {order.order_type === 'delivery' 
+                  ? (order.address || order.delivery_address || "Sin dirección especificada") 
+                  : "Recojo en local - Jr. Dos de Mayo 208"}
+                {order.reference ? ` (${order.reference})` : ""}
               </p>
               {order.notes && (
                 <div className="text-xs text-amber-800 bg-amber-50/80 p-2 rounded border border-amber-100 flex items-start gap-1.5 mt-2">
