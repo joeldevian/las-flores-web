@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus, X, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { BreakfastCustomizationModal } from "./BreakfastCustomizationModal";
+import { useLiveMenuCategories } from "../lib/liveProducts";
 
 /* ─── Paleta de Lujo (Eucalipto & Crema) ─── */
 const R = {
@@ -592,7 +593,8 @@ interface MenuModalProps {
 }
 
 export function MenuModal({ open, onClose }: MenuModalProps) {
-  const [activeId, setActiveId] = useState("chef");
+  const { categories: liveCategories } = useLiveMenuCategories();
+  const [activeId, setActiveId] = useState("desayuno");
   const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
   const { totalItems, setIsOpen: setSidebarOpen } = useCart();
 
@@ -609,7 +611,8 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
 
   if (!open) return null;
 
-  const active = categories.find((c) => c.id === activeId) || categories[0];
+  const currentCategories = liveCategories.length > 0 ? liveCategories : categories;
+  const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-cream overflow-hidden animate-in fade-in zoom-in-[0.98] duration-300">
@@ -668,7 +671,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
           style={{ background: R.crema }}
         >
           <div className="flex flex-row md:flex-col p-3 md:p-4 gap-1 w-max min-w-full md:w-auto">
-            {categories.map((cat) => {
+            {currentCategories.map((cat) => {
               const isActive = activeId === cat.id;
               return (
                 <button

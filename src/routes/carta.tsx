@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { categories, Dish } from "@/components/MenuModal";
+import { categories as staticCategories, Dish } from "@/components/MenuModal";
 import { BreakfastCustomizationModal } from "@/components/BreakfastCustomizationModal";
 import { SiteFooter } from "@/components/site-footer";
 import { useCart } from "@/context/CartContext";
+import { useLiveMenuCategories } from "@/lib/liveProducts";
 
 export const Route = createFileRoute("/carta")({
   head: () => ({
@@ -21,9 +22,12 @@ export const Route = createFileRoute("/carta")({
 
 function CartaPage() {
   const { addItem } = useCart();
-  const [activeId, setActiveId] = useState("chef");
+  const { categories: liveCategories } = useLiveMenuCategories();
+  const [activeId, setActiveId] = useState("desayuno");
   const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
-  const active = categories.find((c) => c.id === activeId)!;
+
+  const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
+  const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
 
   return (
     <div className="min-h-screen bg-cream text-ink font-sans flex flex-col">
@@ -73,7 +77,7 @@ function CartaPage() {
         {/* Vertical Category Sidebar (Desktop) / Horizontal Tabs (Mobile) */}
         <aside className="w-full md:w-72 bg-cream border-b md:border-b-0 md:border-r border-ink/10 flex-shrink-0 md:sticky md:top-24 md:h-[calc(100vh-100px)] overflow-x-auto md:overflow-y-auto z-20 scrollbar-none">
           <div className="flex flex-row md:flex-col py-0 md:py-8 w-max min-w-full md:w-auto">
-            {categories.map((cat) => (
+            {currentCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => {
