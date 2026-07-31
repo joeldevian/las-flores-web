@@ -336,8 +336,11 @@ function CashierDashboardRoute() {
     const matchStatus = statusFilter === "all" || normStatus === statusFilter;
 
     const ordDateStr = ord.created_at ? getLocalYYYYMMDD(new Date(ord.created_at)) : "";
-    const matchDate = (!orderDateFrom || ordDateStr >= orderDateFrom) &&
-                      (!orderDateTo || ordDateStr <= orderDateTo);
+    let matchDate = true;
+    if (statusFilter === "entregado" || statusFilter === "all") {
+      matchDate = (!orderDateFrom || ordDateStr >= orderDateFrom) &&
+                  (!orderDateTo || ordDateStr <= orderDateTo);
+    }
 
     return matchSearch && matchStatus && matchDate;
   });
@@ -695,26 +698,28 @@ function CashierDashboardRoute() {
                   </div>
                   
                   {/* Date Range Inputs */}
-                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
-                      <input
-                        type="date"
-                        value={orderDateFrom}
-                        onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                      />
+                  {(statusFilter === "entregado" || statusFilter === "all") && (
+                    <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                        <input
+                          type="date"
+                          value={orderDateFrom}
+                          onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
+                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                        <input
+                          type="date"
+                          value={orderDateTo}
+                          onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
+                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                        />
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
-                      <input
-                        type="date"
-                        value={orderDateTo}
-                        onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
@@ -730,35 +735,37 @@ function CashierDashboardRoute() {
               </div>
 
               {/* Quick Date Range Shortcuts */}
-              <div className="px-4 pb-2 pt-1 flex items-center gap-2 overflow-x-auto">
-                <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                  Filtro Rápido de Fecha:
-                </span>
-                <button
-                  onClick={() => setQuickOrderDateRange("today")}
-                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
-                >
-                  Hoy
-                </button>
-                <button
-                  onClick={() => setQuickOrderDateRange("week")}
-                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
-                >
-                  Esta Semana
-                </button>
-                <button
-                  onClick={() => setQuickOrderDateRange("month")}
-                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
-                >
-                  Este Mes
-                </button>
-                <button
-                  onClick={() => setQuickOrderDateRange("all")}
-                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
-                >
-                  Limpiar Fechas (Ver Histórico Completo)
-                </button>
-              </div>
+              {(statusFilter === "entregado" || statusFilter === "all") && (
+                <div className="px-4 pb-2 pt-1 flex items-center gap-2 overflow-x-auto">
+                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                    Filtro Rápido de Fecha:
+                  </span>
+                  <button
+                    onClick={() => setQuickOrderDateRange("today")}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
+                  >
+                    Hoy
+                  </button>
+                  <button
+                    onClick={() => setQuickOrderDateRange("week")}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                  >
+                    Esta Semana
+                  </button>
+                  <button
+                    onClick={() => setQuickOrderDateRange("month")}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                  >
+                    Este Mes
+                  </button>
+                  <button
+                    onClick={() => setQuickOrderDateRange("all")}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
+                  >
+                    Limpiar Fechas (Ver Histórico Completo)
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Orders Cards Grid */}
