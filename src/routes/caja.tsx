@@ -669,6 +669,7 @@ function CashierDashboardRoute() {
                   }`}>
                     Total
                   </span>
+                </div>
                 <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
                   {orders.length}
                 </span>
