@@ -171,10 +171,7 @@ export async function signOut() {
  * Guardar una nueva reserva en Supabase
  */
 export async function createReservation(payload: ReservationPayload) {
-  const reservationData = {
-    ...payload,
-    status: payload.status || "pending",
-  };
+  const reservationData = { ...payload };
 
   // Asociar el id del usuario autenticado si existe en la sesión
   try {
@@ -187,12 +184,17 @@ export async function createReservation(payload: ReservationPayload) {
   }
 
   // Filtrar valores nulos o indefinidos
-  const payloadToInsert: Record<string, any> = {};
+  const payloadToInsert: Record<string, any> = {
+    status: payload.status || "pending",
+  };
   for (const [key, value] of Object.entries(reservationData)) {
     if (value !== undefined && value !== null && value !== "") {
       payloadToInsert[key] = value;
     }
   }
+
+  // Garantizar 100% que status sea 'pending' para que no use el default 'confirmed' de Postgres
+  payloadToInsert.status = payload.status || "pending";
 
   const { data, error } = await supabase
     .from("reservations")
