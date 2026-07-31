@@ -12,11 +12,15 @@ interface ReservationModalProps {
 
 const SERVICES = [
   {
+    id: "desayuno",
+    name: "Desayuno",
+    times: ["09:00", "09:30", "10:00", "10:30", "11:00"],
+  },
+  {
     id: "almuerzo",
     name: "Almuerzo",
-    times: ["12:30", "13:00", "13:30", "14:00", "14:30", "15:00"],
+    times: ["11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"],
   },
-  { id: "cena", name: "Cena", times: ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30"] },
 ];
 
 const COUNTRY_CODES = [
@@ -296,7 +300,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
       await createReservation({
         guest_count: parseInt(form.guests) || 1,
         reservation_date: form.date,
-        service_type: (form.service as "almuerzo" | "cena") || "almuerzo",
+        service_type: (form.service as "desayuno" | "almuerzo") || "almuerzo",
         reservation_time: form.time,
         table_number: tableId,
         client_name: form.name || "Usuario Google",
@@ -317,7 +321,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
       await createReservation({
         guest_count: parseInt(form.guests) || 1,
         reservation_date: form.date,
-        service_type: (form.service as "almuerzo" | "cena") || "almuerzo",
+        service_type: (form.service as "desayuno" | "almuerzo") || "almuerzo",
         reservation_time: form.time,
         table_number: "Aleatoria",
         client_name: form.name || "Usuario Google",
@@ -657,7 +661,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       onClick={() => setForm((f) => ({ ...f, service: "", time: "" }))}
                       className="text-xs font-bold uppercase tracking-widest text-eucalipto mb-4 hover:opacity-70 flex items-center justify-center gap-2"
                     >
-                      &larr; Cambiar a {form.service === "almuerzo" ? "Cena" : "Almuerzo"}
+                      &larr; Cambiar a {form.service === "almuerzo" ? "Desayuno" : "Almuerzo"}
                     </button>
 
                     <div className="grid grid-cols-2 gap-3 overflow-y-auto pr-1">

@@ -157,10 +157,10 @@ export function AdminAnalyticsSection({
     const conversionRate = totalRes > 0 ? (completedRes / totalRes) * 100 : 0;
     
     // Service split
+    const breakfastCount = reservations.filter((r) => (r.service_type || "").toLowerCase().includes("desayuno")).length;
     const lunchCount = reservations.filter((r) => (r.service_type || "almuerzo").toLowerCase().includes("almuerzo")).length;
-    const dinnerCount = reservations.filter((r) => (r.service_type || "").toLowerCase().includes("cena")).length;
 
-    return { totalRes, confirmedRes, completedRes, conversionRate, lunchCount, dinnerCount };
+    return { totalRes, confirmedRes, completedRes, conversionRate, breakfastCount, lunchCount };
   }, [reservations]);
 
   // Top Selling Products Calculation
@@ -226,7 +226,7 @@ export function AdminAnalyticsSection({
       { label: "08:00 - 11:00 (Mañana)", count: 0, revenue: 0 },
       { label: "11:00 - 14:00 (Almuerzo)", count: 0, revenue: 0 },
       { label: "14:00 - 17:00 (Tarde)", count: 0, revenue: 0 },
-      { label: "17:00 - 20:00 (Cena)", count: 0, revenue: 0 },
+      { label: "17:00 - 20:00 (Tarde)", count: 0, revenue: 0 },
       { label: "20:00 - 23:00 (Noche)", count: 0, revenue: 0 },
     ];
 
