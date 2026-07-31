@@ -49,8 +49,10 @@ function CashierDashboardRoute() {
   const [reservationStatusFilter, setReservationStatusFilter] = useState<string>("today");
   const [resDateFrom, setResDateFrom] = useState<string>("");
   const [resDateTo, setResDateTo] = useState<string>("");
+  const [activeDateFilter, setActiveDateFilter] = useState<"today" | "week" | "month" | "all" | "custom">("all");
 
   const setQuickDateRange = (type: "today" | "week" | "month" | "all") => {
+    setActiveDateFilter(type);
     const today = new Date();
     const todayStr = today.toISOString().split("T")[0];
 
@@ -166,6 +168,20 @@ function CashierDashboardRoute() {
         .order("created_at", { ascending: false });
 
       if (!resErr && resData) {
+        // Auto-cancel past unfulfilled reservations
+        const todayStr = new Date().toISOString().split("T")[0];
+        const pastUnfulfilled = resData.filter(res => 
+          (res.status === "pending" || res.status === "confirmed") && 
+          res.reservation_date && res.reservation_date < todayStr
+        );
+
+        if (pastUnfulfilled.length > 0) {
+          pastUnfulfilled.forEach(res => {
+            supabase.from("reservations").update({ status: "cancelled" }).eq("id", res.id).then();
+            res.status = "cancelled"; // Actualización optimista local
+          });
+        }
+
         setReservations((prev) => {
           if (prev.length > 0 && resData.length > prev.length) {
             const newest = resData[0];
@@ -804,7 +820,7 @@ function CashierDashboardRoute() {
                       <input
                         type="date"
                         value={resDateFrom}
-                        onChange={(e) => setResDateFrom(e.target.value)}
+                        onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
                         className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
                       />
                     </div>
@@ -814,7 +830,7 @@ function CashierDashboardRoute() {
                       <input
                         type="date"
                         value={resDateTo}
-                        onChange={(e) => setResDateTo(e.target.value)}
+                        onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
                         className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
                       />
                     </div>
@@ -840,26 +856,26 @@ function CashierDashboardRoute() {
                   </span>
                   <button
                     onClick={() => setQuickDateRange("today")}
-                    className="px-3 py-1 bg-[#5F8575] hover:bg-[#4d7061] text-white font-bold text-xs rounded-lg transition-colors shrink-0"
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
                   >
                     Hoy
                   </button>
                   <button
                     onClick={() => setQuickDateRange("week")}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-lg transition-colors border border-gray-200 shrink-0"
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
                   >
                     Esta Semana
                   </button>
                   <button
                     onClick={() => setQuickDateRange("month")}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-lg transition-colors border border-gray-200 shrink-0"
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
                   >
                     Este Mes
                   </button>
                   {(resDateFrom || resDateTo) && (
                     <button
                       onClick={() => setQuickDateRange("all")}
-                      className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs rounded-lg transition-colors border border-red-200 shrink-0"
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "all" ? "bg-red-500 text-white border-red-600" : "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"}`}
                     >
                       Limpiar Fechas
                     </button>
