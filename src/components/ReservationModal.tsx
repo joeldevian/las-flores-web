@@ -893,7 +893,11 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
 
             {/* ── PASO 6: MESA (CROQUIS) ── */}
             {step === 6 && (
-              <SeatSelector onSelectTable={handleTableSelect} onSkip={handleRandomTable} />
+              <SeatSelector
+                onSelectTable={handleTableSelect}
+                onSkip={handleRandomTable}
+                guestCount={parseInt(form.guests) || parseInt(form.customGuests) || 2}
+              />
             )}
 
             {/* ── PASO 7: CONFIRMACIÓN ── */}
