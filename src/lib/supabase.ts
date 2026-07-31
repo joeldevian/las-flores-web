@@ -172,8 +172,8 @@ export async function signOut() {
  */
 export async function createReservation(payload: ReservationPayload) {
   const reservationData = {
-    status: "pending",
     ...payload,
+    status: payload.status || "pending",
   };
 
   // Asociar el id del usuario autenticado si existe en la sesión
