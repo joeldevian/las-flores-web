@@ -94,6 +94,40 @@ function CashierDashboardRoute() {
   };
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [orderDateFrom, setOrderDateFrom] = useState<string>("");
+  const [orderDateTo, setOrderDateTo] = useState<string>("");
+  const [activeOrderDateFilter, setActiveOrderDateFilter] = useState<"today" | "week" | "month" | "all" | "custom">("today");
+
+  const setQuickOrderDateRange = (type: "today" | "week" | "month" | "all") => {
+    setActiveOrderDateFilter(type);
+    const today = new Date();
+    const todayStr = getLocalYYYYMMDD(today);
+
+    if (type === "today") {
+      setOrderDateFrom(todayStr);
+      setOrderDateTo(todayStr);
+    } else if (type === "week") {
+      const day = today.getDay();
+      const diffToMonday = today.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(today.setDate(diffToMonday));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      setOrderDateFrom(getLocalYYYYMMDD(monday));
+      setOrderDateTo(getLocalYYYYMMDD(sunday));
+    } else if (type === "month") {
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const fMonth = String(month + 1).padStart(2, "0");
+      const lDay = String(lastDay.getDate()).padStart(2, "0");
+      setOrderDateFrom(`${year}-${fMonth}-01`);
+      setOrderDateTo(`${year}-${fMonth}-${lDay}`);
+    } else if (type === "all") {
+      setOrderDateFrom("");
+      setOrderDateTo("");
+    }
+  };
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -300,7 +334,12 @@ function CashierDashboardRoute() {
 
     const normStatus = getNormalizedStatus(ord.status);
     const matchStatus = statusFilter === "all" || normStatus === statusFilter;
-    return matchSearch && matchStatus;
+
+    const ordDateStr = ord.created_at ? getLocalYYYYMMDD(new Date(ord.created_at)) : "";
+    const matchDate = (!orderDateFrom || ordDateStr >= orderDateFrom) &&
+                      (!orderDateTo || ordDateStr <= orderDateTo);
+
+    return matchSearch && matchStatus && matchDate;
   });
 
   // Filtered reservations list
@@ -630,7 +669,6 @@ function CashierDashboardRoute() {
                   }`}>
                     Total
                   </span>
-                </div>
                 <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
                   {orders.length}
                 </span>
@@ -639,31 +677,87 @@ function CashierDashboardRoute() {
 
             </div>
 
-            {/* Search Bar & Manual Refresh */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm">
-              
-              <div className="relative w-full sm:w-96">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar por # de orden, cliente o teléfono..."
-                  className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
-                />
+            {/* Filter controls wrapper */}
+            <div className="flex flex-col gap-3">
+              {/* Search Bar & Manual Refresh */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm">
+                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                  <div className="relative w-full md:w-80">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar por # de orden, cliente o teléfono..."
+                      className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    />
+                  </div>
+                  
+                  {/* Date Range Inputs */}
+                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                      <input
+                        type="date"
+                        value={orderDateFrom}
+                        onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                      <input
+                        type="date"
+                        value={orderDateTo}
+                        onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                  <button
+                    onClick={() => fetchData()}
+                    disabled={refreshing}
+                    className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+                    Actualizar Tabla
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+              {/* Quick Date Range Shortcuts */}
+              <div className="px-4 pb-2 pt-1 flex items-center gap-2 overflow-x-auto">
+                <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                  Filtro Rápido de Fecha:
+                </span>
                 <button
-                  onClick={() => fetchData()}
-                  disabled={refreshing}
-                  className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
+                  onClick={() => setQuickOrderDateRange("today")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
                 >
-                  <RefreshCw size={14} className={refreshing ? "animate-spin text-emerald-700" : ""} />
-                  <span>Actualizar Tabla</span>
+                  Hoy
+                </button>
+                <button
+                  onClick={() => setQuickOrderDateRange("week")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                >
+                  Esta Semana
+                </button>
+                <button
+                  onClick={() => setQuickOrderDateRange("month")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                >
+                  Este Mes
+                </button>
+                <button
+                  onClick={() => setQuickOrderDateRange("all")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
+                >
+                  Limpiar Fechas (Ver Histórico Completo)
                 </button>
               </div>
-
             </div>
 
             {/* Orders Cards Grid */}
