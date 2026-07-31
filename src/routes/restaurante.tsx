@@ -218,12 +218,6 @@ function ChefAccordionSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(1);
   const [isMobile, setIsMobile] = useState(false);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const activeRef = useRef(activeIndex);
-  const scrollFrame = useRef<number | null>(null);
-
-  useEffect(() => {
-    activeRef.current = activeIndex;
-  }, [activeIndex]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -242,45 +236,29 @@ function ChefAccordionSection() {
   useEffect(() => {
     if (!isMobile) return;
 
-    const updateActiveOnScroll = () => {
-      if (scrollFrame.current !== null) return;
-      scrollFrame.current = requestAnimationFrame(() => {
-        scrollFrame.current = null;
-        const targetY = window.innerHeight * 0.45;
-        let closestIndex = activeRef.current ?? 1;
-        let closestDistance = Number.POSITIVE_INFINITY;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length === 0) return;
 
-        itemRefs.current.forEach((node) => {
-          if (!node) return;
-          const rect = node.getBoundingClientRect();
-          const center = rect.top + rect.height / 2;
-          const distance = Math.abs(center - targetY);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            const index = Number(node.getAttribute("data-plate-index"));
-            if (!Number.isNaN(index)) {
-              closestIndex = index;
-            }
-          }
-        });
+        const bestEntry = visible.reduce((best, current) =>
+          current.intersectionRatio > best.intersectionRatio ? current : best
+        );
 
-        if (closestIndex !== activeRef.current) {
-          setActiveIndex(closestIndex);
+        const index = Number(bestEntry.target.getAttribute("data-plate-index"));
+        if (!Number.isNaN(index)) {
+          setActiveIndex(index);
         }
-      });
-    };
-
-    updateActiveOnScroll();
-    window.addEventListener("scroll", updateActiveOnScroll, { passive: true });
-    window.addEventListener("resize", updateActiveOnScroll);
-
-    return () => {
-      window.removeEventListener("scroll", updateActiveOnScroll);
-      window.removeEventListener("resize", updateActiveOnScroll);
-      if (scrollFrame.current !== null) {
-        cancelAnimationFrame(scrollFrame.current);
+      },
+      {
+        root: null,
+        rootMargin: "-45% 0px -45% 0px",
+        threshold: 0.5,
       }
-    };
+    );
+
+    itemRefs.current.forEach((node) => node && observer.observe(node));
+    return () => observer.disconnect();
   }, [isMobile]);
 
   return (
