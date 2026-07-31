@@ -98,6 +98,11 @@ export function CashierOrderCard({
 
   const currentStatus = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.pendiente;
 
+  const isCompleted = normalizedStatus === "entregado" || normalizedStatus === "cancelado";
+  const timeDisplay = isCompleted 
+    ? `${order.created_at ? new Date(order.created_at).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }) : ''}`
+    : `Hace ${elapsedMinutes} min`;
+
   return (
     <div
       className={`rounded-2xl border p-4 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between font-sans ${currentStatus.border}`}
@@ -115,9 +120,9 @@ export function CashierOrderCard({
           </div>
 
           <div className="flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
-            <Clock size={12} className={elapsedMinutes > 20 ? "text-red-600 animate-pulse" : "text-gray-400"} />
-            <span className={elapsedMinutes > 20 ? "text-red-700 font-extrabold" : ""}>
-              Hace {elapsedMinutes} min
+            <Clock size={12} className={(!isCompleted && elapsedMinutes > 20) ? "text-red-600 animate-pulse" : "text-gray-400"} />
+            <span className={(!isCompleted && elapsedMinutes > 20) ? "text-red-700 font-extrabold" : ""}>
+              {timeDisplay}
             </span>
           </div>
         </div>
