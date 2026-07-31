@@ -218,45 +218,70 @@ function ChefAccordionSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(1);
   const [isMobile, setIsMobile] = useState(false);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const activeRef = useRef(activeIndex);
+  const scrollFrame = useRef<number | null>(null);
+
+  useEffect(() => {
+    activeRef.current = activeIndex;
+  }, [activeIndex]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const updateIsMobile = () => setIsMobile(mediaQuery.matches);
+    const updateIsMobile = () => {
+      const mobile = mediaQuery.matches;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setActiveIndex(1);
+      }
+    };
     updateIsMobile();
     mediaQuery.addEventListener("change", updateIsMobile);
     return () => mediaQuery.removeEventListener("change", updateIsMobile);
   }, []);
 
   useEffect(() => {
-    if (!isMobile) {
-      setActiveIndex(1);
-      return;
-    }
+    if (!isMobile) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
-        if (visibleEntries.length === 0) return;
+    const updateActiveOnScroll = () => {
+      if (scrollFrame.current !== null) return;
+      scrollFrame.current = requestAnimationFrame(() => {
+        scrollFrame.current = null;
+        const targetY = window.innerHeight * 0.45;
+        let closestIndex = activeRef.current ?? 1;
+        let closestDistance = Number.POSITIVE_INFINITY;
 
-        const bestEntry = visibleEntries.reduce((best, current) =>
-          current.intersectionRatio > best.intersectionRatio ? current : best
-        );
+        itemRefs.current.forEach((node) => {
+          if (!node) return;
+          const rect = node.getBoundingClientRect();
+          const center = rect.top + rect.height / 2;
+          const distance = Math.abs(center - targetY);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            const index = Number(node.getAttribute("data-plate-index"));
+            if (!Number.isNaN(index)) {
+              closestIndex = index;
+            }
+          }
+        });
 
-        const index = Number(bestEntry.target.getAttribute("data-plate-index"));
-        if (!Number.isNaN(index)) {
-          setActiveIndex(index);
+        if (closestIndex !== activeRef.current) {
+          setActiveIndex(closestIndex);
         }
-      },
-      {
-        root: null,
-        rootMargin: "-45% 0px -45% 0px",
-        threshold: 0.5,
-      }
-    );
+      });
+    };
 
-    itemRefs.current.forEach((node) => node && observer.observe(node));
-    return () => observer.disconnect();
-  }, [isMobile, activeIndex]);
+    updateActiveOnScroll();
+    window.addEventListener("scroll", updateActiveOnScroll, { passive: true });
+    window.addEventListener("resize", updateActiveOnScroll);
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveOnScroll);
+      window.removeEventListener("resize", updateActiveOnScroll);
+      if (scrollFrame.current !== null) {
+        cancelAnimationFrame(scrollFrame.current);
+      }
+    };
+  }, [isMobile]);
 
   return (
     <section className="bg-eucalipto/5 py-16 md:py-20 px-6">
@@ -279,8 +304,6 @@ function ChefAccordionSection() {
                 ref={(el) => (itemRefs.current[index] = el)}
                 data-plate-index={index}
                 type="button"
-                onMouseEnter={() => setActiveIndex(index)}
-                onFocus={() => setActiveIndex(index)}
                 onClick={() => setActiveIndex(index)}
                 className={`group relative overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white text-left shadow-md transition-all duration-500 ease-out ${isActive ? "md:flex-[2.2]" : "md:flex-[0.9]"} ${isActive ? "min-h-[280px]" : "min-h-[120px]"}`}
               >

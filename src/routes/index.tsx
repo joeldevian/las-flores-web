@@ -444,44 +444,69 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
   const [activeId, setActiveId] = useState<number>(lugares[0].id);
   const [isMobile, setIsMobile] = useState(false);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const activeRef = useRef(activeId);
+  const scrollFrame = useRef<number | null>(null);
+
+  useEffect(() => {
+    activeRef.current = activeId;
+  }, [activeId]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const updateIsMobile = () => setIsMobile(mediaQuery.matches);
+    const updateIsMobile = () => {
+      const mobile = mediaQuery.matches;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setActiveId(lugares[0].id);
+      }
+    };
     updateIsMobile();
     mediaQuery.addEventListener("change", updateIsMobile);
     return () => mediaQuery.removeEventListener("change", updateIsMobile);
   }, []);
 
   useEffect(() => {
-    if (!isMobile) {
-      setActiveId(lugares[0].id);
-      return;
-    }
+    if (!isMobile) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
-        if (visibleEntries.length === 0) return;
+    const updateActiveOnScroll = () => {
+      if (scrollFrame.current !== null) return;
+      scrollFrame.current = requestAnimationFrame(() => {
+        scrollFrame.current = null;
+        const targetY = window.innerHeight * 0.45;
+        let closestId = activeRef.current;
+        let closestDistance = Number.POSITIVE_INFINITY;
 
-        const bestEntry = visibleEntries.reduce((best, current) =>
-          current.intersectionRatio > best.intersectionRatio ? current : best
-        );
+        itemRefs.current.forEach((node) => {
+          if (!node) return;
+          const rect = node.getBoundingClientRect();
+          const center = rect.top + rect.height / 2;
+          const distance = Math.abs(center - targetY);
+          if (distance < closestDistance) {
+            const id = Number(node.getAttribute("data-lugar-id"));
+            if (!Number.isNaN(id)) {
+              closestDistance = distance;
+              closestId = id;
+            }
+          }
+        });
 
-        const id = Number(bestEntry.target.getAttribute("data-lugar-id"));
-        if (!Number.isNaN(id)) {
-          setActiveId(id);
+        if (closestId !== activeRef.current) {
+          setActiveId(closestId);
         }
-      },
-      {
-        root: null,
-        rootMargin: "-50% 0px -50% 0px",
-        threshold: 0.5,
-      }
-    );
+      });
+    };
 
-    itemRefs.current.forEach((node) => node && observer.observe(node));
-    return () => observer.disconnect();
+    updateActiveOnScroll();
+    window.addEventListener("scroll", updateActiveOnScroll, { passive: true });
+    window.addEventListener("resize", updateActiveOnScroll);
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveOnScroll);
+      window.removeEventListener("resize", updateActiveOnScroll);
+      if (scrollFrame.current !== null) {
+        cancelAnimationFrame(scrollFrame.current);
+      }
+    };
   }, [isMobile]);
 
   return (
