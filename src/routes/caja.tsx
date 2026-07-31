@@ -28,6 +28,13 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
+const getLocalYYYYMMDD = (d = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export const Route = createFileRoute("/caja")({
   component: CashierDashboardRoute,
 });
@@ -54,7 +61,7 @@ function CashierDashboardRoute() {
   const setQuickDateRange = (type: "today" | "week" | "month" | "all") => {
     setActiveDateFilter(type);
     const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
+    const todayStr = getLocalYYYYMMDD(today);
 
     if (type === "today") {
       setResDateFrom(todayStr);
@@ -66,8 +73,8 @@ function CashierDashboardRoute() {
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
 
-      setResDateFrom(monday.toISOString().split("T")[0]);
-      setResDateTo(sunday.toISOString().split("T")[0]);
+      setResDateFrom(getLocalYYYYMMDD(monday));
+      setResDateTo(getLocalYYYYMMDD(sunday));
     } else if (type === "month") {
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -169,7 +176,7 @@ function CashierDashboardRoute() {
 
       if (!resErr && resData) {
         // Auto-cancel past unfulfilled reservations
-        const todayStr = new Date().toISOString().split("T")[0];
+        const todayStr = getLocalYYYYMMDD(new Date());
         const pastUnfulfilled = resData.filter(res => 
           (res.status === "pending" || res.status === "confirmed") && 
           res.reservation_date && res.reservation_date < todayStr
@@ -297,7 +304,7 @@ function CashierDashboardRoute() {
   });
 
   // Filtered reservations list
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = getLocalYYYYMMDD(new Date());
 
   const filteredReservations = reservations.filter((res) => {
     const matchSearch =
@@ -917,7 +924,7 @@ function CashierDashboardRoute() {
                   if (dateStr !== "Sin fecha") {
                     const [yyyy, mm, dd] = dateStr.split('-');
                     const dateObj = new Date(Number(yyyy), Number(mm)-1, Number(dd));
-                    const isToday = dateStr === new Date().toISOString().split("T")[0];
+                    const isToday = dateStr === getLocalYYYYMMDD(new Date());
                     dateLabel = isToday 
                       ? "HOY - " + dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
                       : dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
