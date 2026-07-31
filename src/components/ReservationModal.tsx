@@ -220,6 +220,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         table_number: tableId,
         client_name: form.name || "Usuario Google",
         client_email: form.email || "usuario@gmail.com",
+        status: "pending",
       });
       setStep(6);
     } catch (e) {
@@ -239,6 +240,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
         table_number: "Aleatoria",
         client_name: form.name || "Usuario Google",
         client_email: form.email || "usuario@gmail.com",
+        status: "pending",
       });
       setStep(6);
     } catch (e) {

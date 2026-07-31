@@ -171,7 +171,10 @@ export async function signOut() {
  * Guardar una nueva reserva en Supabase
  */
 export async function createReservation(payload: ReservationPayload) {
-  const reservationData = { ...payload };
+  const reservationData = {
+    status: "pending",
+    ...payload,
+  };
 
   // Asociar el id del usuario autenticado si existe en la sesión
   try {
