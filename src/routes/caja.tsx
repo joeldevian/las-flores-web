@@ -882,14 +882,48 @@ function CashierDashboardRoute() {
                 <p className="text-xs text-gray-500 mt-1">Selecciona otro filtro de reserva o realiza una búsqueda diferente.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filteredReservations.map((reservation) => (
-                  <CashierReservationCard
-                    key={reservation.id}
-                    reservation={reservation}
-                    onStatusChange={handleUpdateReservationStatus}
-                  />
-                ))}
+              <div className="space-y-10">
+                {Object.entries(
+                  filteredReservations.reduce((acc, res) => {
+                    const date = res.reservation_date || "Sin fecha";
+                    if (!acc[date]) acc[date] = [];
+                    acc[date].push(res);
+                    return acc;
+                  }, {} as Record<string, typeof filteredReservations>)
+                )
+                .sort(([dateA], [dateB]) => {
+                  if (dateA === "Sin fecha") return 1;
+                  if (dateB === "Sin fecha") return -1;
+                  return new Date(dateA).getTime() - new Date(dateB).getTime();
+                })
+                .map(([dateStr, items]) => {
+                  let dateLabel = dateStr;
+                  if (dateStr !== "Sin fecha") {
+                    const [yyyy, mm, dd] = dateStr.split('-');
+                    const dateObj = new Date(Number(yyyy), Number(mm)-1, Number(dd));
+                    const isToday = dateStr === new Date().toISOString().split("T")[0];
+                    dateLabel = isToday 
+                      ? "HOY - " + dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
+                      : dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
+                  }
+                  return (
+                    <div key={dateStr} className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <h3 className="font-serif font-black text-xl text-emerald-950 uppercase tracking-widest">{dateLabel}</h3>
+                        <div className="h-px bg-emerald-200/50 flex-1"></div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {items.map((reservation) => (
+                          <CashierReservationCard
+                            key={reservation.id}
+                            reservation={reservation}
+                            onStatusChange={handleUpdateReservationStatus}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>
