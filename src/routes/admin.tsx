@@ -98,6 +98,43 @@ function AdminRoute() {
 
   const [orderSearch, setOrderSearch] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
+  const [orderDateFrom, setOrderDateFrom] = useState<string>("");
+  const [orderDateTo, setOrderDateTo] = useState<string>("");
+  const [activeOrderDateFilter, setActiveOrderDateFilter] = useState<"today" | "week" | "month" | "all" | "custom">("all");
+
+  const setQuickOrderDateRange = (type: "today" | "week" | "month" | "all") => {
+    setActiveOrderDateFilter(type);
+    const today = new Date();
+    const todayStr = getLocalYYYYMMDD(today);
+
+    if (type === "today") {
+      setOrderDateFrom(todayStr);
+      setOrderDateTo(todayStr);
+    } else if (type === "week") {
+      const day = today.getDay();
+      const diffToMonday = today.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(today.setDate(diffToMonday));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      setOrderDateFrom(getLocalYYYYMMDD(monday));
+      setOrderDateTo(getLocalYYYYMMDD(sunday));
+    } else if (type === "month") {
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      const fMonth = String(month + 1).padStart(2, "0");
+      const lDay = String(lastDay.getDate()).padStart(2, "0");
+
+      setOrderDateFrom(`${year}-${fMonth}-01`);
+      setOrderDateTo(`${year}-${fMonth}-${lDay}`);
+    } else if (type === "all") {
+      setOrderDateFrom("");
+      setOrderDateTo("");
+    }
+  };
 
   const [menuSearch, setMenuSearch] = useState("");
   const [menuCategoryFilter, setMenuCategoryFilter] = useState("all");
@@ -287,7 +324,14 @@ function AdminRoute() {
       (ord.client_name || "").toLowerCase().includes(orderSearch.toLowerCase()) ||
       (ord.client_phone || "").includes(orderSearch);
     const matchStatus = orderStatusFilter === "all" || ord.status === orderStatusFilter;
-    return matchSearch && matchStatus;
+
+    // Filter by order date (using created_at or explicitly storing an order_date would be ideal, falling back to created_at)
+    const ordDate = ord.created_at ? getLocalYYYYMMDD(new Date(ord.created_at)) : "";
+    const matchDateRange =
+      (!orderDateFrom || ordDate >= orderDateFrom) &&
+      (!orderDateTo || ordDate <= orderDateTo);
+
+    return matchSearch && matchStatus && matchDateRange;
   });
 
   const filteredProducts = products.filter((prod) => {
@@ -821,40 +865,95 @@ function AdminRoute() {
           {activeTab === "orders" && (
             <div>
               <div className="p-4 bg-gray-50/70 border-b border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="relative w-full md:w-80">
-                  <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    value={orderSearch}
-                    onChange={(e) => setOrderSearch(e.target.value)}
-                    placeholder="Buscar pedido #, cliente..."
-                    className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
-                  />
+                <div className="flex flex-col gap-4 w-full md:w-auto">
+                  <div className="relative w-full md:w-80">
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={orderSearch}
+                      onChange={(e) => setOrderSearch(e.target.value)}
+                      placeholder="Buscar pedido #, cliente..."
+                      className="w-full text-xs bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
+                      <input
+                        type="date"
+                        value={orderDateFrom}
+                        onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
+                      <input
+                        type="date"
+                        value={orderDateTo}
+                        onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
+                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
-                  <span className="text-xs font-serif font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado:</span>
-                  {[
-                    { id: "all", label: "Todos" },
-                    { id: "received", label: "Recibidos" },
-                    { id: "preparing", label: "En Preparación" },
-                    { id: "on_the_way", label: "En Camino" },
-                    { id: "delivered", label: "Entregados" },
-                    { id: "cancelled", label: "Cancelados" },
-                  ].map((st) => (
-                    <button
-                      key={st.id}
-                      onClick={() => setOrderStatusFilter(st.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                        orderStatusFilter === st.id
-                          ? "bg-[#14231D] text-white shadow-sm"
-                          : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      {st.label}
-                    </button>
-                  ))}
+                <div className="flex flex-col gap-4 w-full md:w-auto items-start md:items-end">
+                  <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
+                    <span className="text-xs font-serif font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                    {[
+                      { id: "all", label: "Todos" },
+                      { id: "received", label: "Recibidos" },
+                      { id: "preparing", label: "En Preparación" },
+                      { id: "on_the_way", label: "En Camino" },
+                      { id: "delivered", label: "Entregados" },
+                      { id: "cancelled", label: "Cancelados" },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        onClick={() => setOrderStatusFilter(st.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                          orderStatusFilter === st.id
+                            ? "bg-[#14231D] text-white shadow-sm"
+                            : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+              </div>
+
+              {/* Quick Date Range Shortcuts */}
+              <div className="px-4 pb-4 pt-3 bg-gray-50/70 border-b border-gray-100 flex items-center gap-2 overflow-x-auto">
+                <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
+                  Filtro Rápido de Calendario:
+                </span>
+                <button
+                  onClick={() => setQuickOrderDateRange("today")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
+                >
+                  Hoy
+                </button>
+                <button
+                  onClick={() => setQuickOrderDateRange("week")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                >
+                  Esta Semana
+                </button>
+                <button
+                  onClick={() => setQuickOrderDateRange("month")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                >
+                  Este Mes
+                </button>
+                <button
+                  onClick={() => setQuickOrderDateRange("all")}
+                  className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
+                >
+                  Limpiar Fechas (Ver Histórico Completo)
+                </button>
               </div>
 
               <div className="overflow-x-auto">
