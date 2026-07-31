@@ -617,7 +617,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
   useEffect(() => {
     if (totalItems > prevTotalItems.current && totalItems > 0) {
       setIsBouncing(true);
-      const timer = setTimeout(() => setIsBouncing(false), 300);
+      const timer = setTimeout(() => setIsBouncing(false), 400);
       return () => clearTimeout(timer);
     }
     prevTotalItems.current = totalItems;
@@ -667,13 +667,17 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
             onClick={() => {
               setSidebarOpen(true);
             }}
-            className={`relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-cream ${isBouncing ? "animate-bounce" : ""}`}
+            className={`relative transition-all duration-300 flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-cream ${
+              isBouncing ? "scale-[1.03] ring-4 ring-eucalipto/30 shadow-lg bg-[#2A4433]" : ""
+            }`}
           >
-            <ShoppingCart size={18} strokeWidth={2.5} />
+            <ShoppingCart size={18} strokeWidth={2.5} className={`transition-transform duration-300 ${isBouncing ? "-rotate-12 scale-110" : ""}`} />
             <span className="hidden md:inline">Ver Pedido</span>
             {totalItems > 0 && (
               <span
-                className="absolute -top-2 -right-2 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm bg-[#8B261D]"
+                className={`absolute -top-2 -right-2 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm bg-[#8B261D] transition-all duration-300 ${
+                  isBouncing ? "scale-[1.35] rotate-12" : "scale-100"
+                }`}
               >
                 {totalItems}
               </span>
