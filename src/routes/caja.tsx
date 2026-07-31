@@ -226,7 +226,7 @@ function CashierDashboardRoute() {
 
         setReservations((prev) => {
           if (prev.length > 0 && resData.length > prev.length) {
-            const newest = resData[0];
+            const newest = [...resData].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())[0];
             if (soundEnabled) {
               playOrderChime();
             }
@@ -451,8 +451,8 @@ function CashierDashboardRoute() {
           }}
           className="fixed top-20 right-4 z-50 bg-[#14231D] text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-[#1B2E27] transition-all"
         >
-          <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce">
-            🌿
+          <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce overflow-hidden p-1.5">
+            <img src="/LOGO.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert" />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -1049,21 +1049,26 @@ function CashierDashboardRoute() {
             ) : (
               <div className="space-y-10">
                 {Object.entries(
-                  filteredReservations.reduce((acc, res) => {
-                    const date = res.reservation_date || "Sin fecha";
-                    if (!acc[date]) acc[date] = [];
-                    acc[date].push(res);
-                    return acc;
-                  }, {} as Record<string, typeof filteredReservations>)
+                  reservationStatusFilter === "pendiente"
+                    ? { "ORDEN_LLEGADA": [...filteredReservations].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()) }
+                    : filteredReservations.reduce((acc, res) => {
+                        const date = res.reservation_date || "Sin fecha";
+                        if (!acc[date]) acc[date] = [];
+                        acc[date].push(res);
+                        return acc;
+                      }, {} as Record<string, typeof filteredReservations>)
                 )
                 .sort(([dateA], [dateB]) => {
+                  if (reservationStatusFilter === "pendiente") return 0;
                   if (dateA === "Sin fecha") return 1;
                   if (dateB === "Sin fecha") return -1;
                   return new Date(dateA).getTime() - new Date(dateB).getTime();
                 })
                 .map(([dateStr, items]) => {
                   let dateLabel = dateStr;
-                  if (dateStr !== "Sin fecha") {
+                  if (dateStr === "ORDEN_LLEGADA") {
+                    dateLabel = "Por orden de ingreso";
+                  } else if (dateStr !== "Sin fecha") {
                     const [yyyy, mm, dd] = dateStr.split('-');
                     const dateObj = new Date(Number(yyyy), Number(mm)-1, Number(dd));
                     const isToday = dateStr === getLocalYYYYMMDD(new Date());
