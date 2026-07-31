@@ -77,6 +77,31 @@ export function AdminAnalyticsSection({
     });
   }, [orders, timeframe, customStartDate, customEndDate]);
 
+  const dateRangeString = useMemo(() => {
+    const now = new Date();
+    const formatDate = (d: Date) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    
+    if (timeframe === "today") {
+      return `(solo hoy, ${formatDate(now)})`;
+    }
+    if (timeframe === "week") {
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return `(del ${formatDate(sevenDaysAgo)} al ${formatDate(now)})`;
+    }
+    if (timeframe === "month") {
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      return `(del ${formatDate(firstDay)} al ${formatDate(lastDay)})`;
+    }
+    if (timeframe === "custom") {
+      if (!customStartDate && !customEndDate) return "";
+      const startStr = customStartDate ? formatDate(new Date(customStartDate + "T00:00:00")) : "inicio";
+      const endStr = customEndDate ? formatDate(new Date(customEndDate + "T23:59:59")) : "fin";
+      return `(del ${startStr} al ${endStr})`;
+    }
+    return "(Histórico completo)";
+  }, [timeframe, customStartDate, customEndDate]);
+
   // Total Revenue & Valid Orders
   const { totalRevenue, validOrders, averageTicket } = useMemo(() => {
     const valid = filteredOrders.filter((o) => o.status !== "cancelado");
@@ -311,7 +336,7 @@ export function AdminAnalyticsSection({
             </span>
           </h2>
           <p className="text-xs text-gray-600 mt-0.5 font-sans">
-            Analizando {validOrders.length} pedidos efectivos por un monto total de <strong>S/ {totalRevenue.toFixed(2)}</strong>
+            Analizando {validOrders.length} pedidos efectivos por un monto total de <strong>S/ {totalRevenue.toFixed(2)}</strong> <span className="font-medium text-emerald-800">{dateRangeString}</span>
           </p>
         </div>
 
