@@ -908,9 +908,9 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                   </div>
                 </div>
 
-                <h3 className="font-serif text-3xl font-bold text-ink mb-2">¡Reserva Confirmada!</h3>
+                <h3 className="font-serif text-3xl font-bold text-ink mb-2">¡Solicitud de Reserva Recibida!</h3>
                 <p className="text-sm font-medium text-ink/70">
-                  Hola {form.name.split(" ")[0]}, te hemos enviado los detalles a {form.email}.
+                  Hola {form.name.split(" ")[0]}, tu reserva fue registrada en estado <strong className="text-eucalipto font-bold">Pendiente de Confirmación</strong>.
                 </p>
 
                 <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 text-sm text-left w-full mt-8 shadow-sm border border-ink/10">

@@ -199,20 +199,16 @@ Si deseas realizar alg√∫n ajuste en tu reserva, no dudes en escribirnos por aqu√
           </div>
         </div>
 
-        {/* Zone & Notes */}
-        {(reservation.zone_id || reservation.notes) && (
-          <div className="space-y-1.5 text-xs bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-            {reservation.zone_id && (
-              <div className="flex items-center gap-1.5 text-gray-800 font-bold">
-                <MapPin size={13} className="text-[#5F8575]" />
-                <span>Zona / Mesa: {reservation.zone_id}</span>
-              </div>
-            )}
-            {reservation.notes && (
-              <p className="text-gray-600 italic">"{reservation.notes}"</p>
-            )}
+        {/* Zone & Table */}
+        <div className="space-y-1.5 text-xs bg-amber-50/80 p-2.5 rounded-xl border border-amber-200/80">
+          <div className="flex items-center gap-1.5 text-amber-950 font-bold">
+            <MapPin size={14} className="text-[#5F8575]" />
+            <span>Mesa / Sector: <strong className="text-gray-900 font-extrabold">{reservation.table_number || reservation.zone_id || "Aleatoria (Sin fijar)"}</strong></span>
           </div>
-        )}
+          {reservation.notes && (
+            <p className="text-gray-600 italic">"{reservation.notes}"</p>
+          )}
+        </div>
       </div>
 
       {/* Actions Bar - Clean Executive Actions */}
