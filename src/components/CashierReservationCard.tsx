@@ -212,59 +212,83 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
       </div>
 
       {/* Actions Bar - Clean Executive Actions */}
-      <div className="p-4 bg-gray-50/70 border-t border-gray-100 space-y-2 font-sans">
-        {/* WhatsApp Actions Buttons */}
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={handleSendWhatsAppConfirmation}
-            className="w-full py-2 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 rounded-xl text-xs font-black transition-all shadow-2xs flex items-center justify-center gap-1.5 active:scale-98"
-          >
-            <MessageCircle size={15} />
-            <span>Confirmar WhatsApp</span>
-          </button>
-
-          <button
-            onClick={handleSendWhatsAppReminder}
-            className="w-full py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5 active:scale-98"
-          >
-            <BellRing size={14} className="text-amber-700" />
-            <span>Recordatorio Hoy</span>
-          </button>
-        </div>
-
-        {/* Status update buttons */}
-        <div className="flex items-center justify-between gap-2 pt-1">
+      {(!isCompleted && !isCancelled) ? (
+        <div className="p-4 bg-gray-50/70 border-t border-gray-100 space-y-2 font-sans">
+          {/* ── Pendiente: Confirmar / WhatsApp Confirmación ── */}
           {!isConfirmed && (
-            <button
-              onClick={() => handleUpdateStatus("confirmed")}
-              disabled={updating}
-              className="flex-1 py-1.5 bg-[#5F8575] hover:bg-[#4d7061] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-98"
-            >
-              <CheckCircle2 size={13} /> Confirmar
-            </button>
+            <>
+              <div className="grid grid-cols-1 gap-2 mb-2">
+                <button
+                  onClick={handleSendWhatsAppConfirmation}
+                  className="w-full py-2 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 rounded-xl text-xs font-black transition-all shadow-2xs flex items-center justify-center gap-1.5 active:scale-98"
+                >
+                  <MessageCircle size={15} />
+                  <span>Confirmar WhatsApp</span>
+                </button>
+              </div>
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <button
+                  onClick={() => handleUpdateStatus("confirmed")}
+                  disabled={updating}
+                  className="flex-1 py-1.5 bg-[#5F8575] hover:bg-[#4d7061] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-98"
+                >
+                  <CheckCircle2 size={13} /> Confirmar
+                </button>
+                <button
+                  onClick={() => handleUpdateStatus("cancelled")}
+                  disabled={updating}
+                  className="py-1.5 px-3 bg-white hover:bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
+                >
+                  <XCircle size={13} /> Cancelar
+                </button>
+              </div>
+            </>
           )}
 
-          {!isCompleted && (
-            <button
-              onClick={() => handleUpdateStatus("completed")}
-              disabled={updating}
-              className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-98"
-            >
-              <Utensils size={13} /> Cliente Llegó
-            </button>
-          )}
-
-          {!isCancelled && (
-            <button
-              onClick={() => handleUpdateStatus("cancelled")}
-              disabled={updating}
-              className="py-1.5 px-3 bg-white hover:bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
-            >
-              <XCircle size={13} /> Cancelar
-            </button>
+          {/* ── Confirmada: Recordatorio / Cliente Llegó ── */}
+          {isConfirmed && (
+            <>
+              <div className="grid grid-cols-1 gap-2 mb-2">
+                <button
+                  onClick={handleSendWhatsAppReminder}
+                  className="w-full py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5 active:scale-98"
+                >
+                  <BellRing size={14} className="text-amber-700" />
+                  <span>Recordatorio Hoy</span>
+                </button>
+              </div>
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <button
+                  onClick={() => handleUpdateStatus("completed")}
+                  disabled={updating}
+                  className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-98"
+                >
+                  <Utensils size={13} /> Cliente Llegó
+                </button>
+                <button
+                  onClick={() => handleUpdateStatus("cancelled")}
+                  disabled={updating}
+                  className="py-1.5 px-3 bg-white hover:bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
+                >
+                  <XCircle size={13} /> Cancelar
+                </button>
+              </div>
+            </>
           )}
         </div>
-      </div>
+      ) : (
+        <div className="p-3 bg-gray-50/70 border-t border-gray-100 font-sans text-center">
+           {isCompleted ? (
+              <span className="text-xs font-bold text-blue-700 flex items-center justify-center gap-1">
+                <Utensils size={14} /> Cliente en local
+              </span>
+           ) : (
+              <span className="text-xs font-bold text-red-600 flex items-center justify-center gap-1">
+                <XCircle size={14} /> Reserva cancelada
+              </span>
+           )}
+        </div>
+      )}
     </div>
   );
 }
