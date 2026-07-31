@@ -6,7 +6,7 @@ const platoPucaImg = "/gastronomia/puca-picante.webp"; // placeholder
 const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { ReservationModal } from "@/components/ReservationModal";
@@ -216,6 +216,44 @@ function GenerationsSection() {
 
 function ChefAccordionSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const updateIsMobile = () => setIsMobile(mediaQuery.matches);
+    updateIsMobile();
+    mediaQuery.addEventListener("change", updateIsMobile);
+    return () => mediaQuery.removeEventListener("change", updateIsMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+        if (visibleEntries.length === 0) return;
+
+        const bestEntry = visibleEntries.reduce((best, current) =>
+          current.intersectionRatio > best.intersectionRatio ? current : best
+        );
+
+        const index = Number(bestEntry.target.getAttribute("data-plate-index"));
+        if (!Number.isNaN(index)) {
+          setActiveIndex(index);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-35% 0px -35% 0px",
+        threshold: [0.25, 0.5, 0.75],
+      }
+    );
+
+    itemRefs.current.forEach((node) => node && observer.observe(node));
+    return () => observer.disconnect();
+  }, [isMobile]);
 
   return (
     <section className="bg-eucalipto/5 py-16 md:py-20 px-6">
@@ -231,10 +269,12 @@ function ChefAccordionSection() {
 
         <div className="mt-6 flex flex-col gap-3 md:flex-row md:h-[400px]">
           {chefRecommendations.map((plate, index) => {
-            const isActive = activeIndex === index;
+            const isActive = !isMobile || activeIndex === index;
             return (
               <button
                 key={plate.name}
+                ref={(el) => (itemRefs.current[index] = el)}
+                data-plate-index={index}
                 type="button"
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
