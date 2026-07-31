@@ -718,25 +718,25 @@ function AdminRoute() {
                       onClick={() => setQuickDateRange("today")}
                       className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
                     >
-                      🌿 Hoy
+                      Hoy
                     </button>
                     <button
                       onClick={() => setQuickDateRange("week")}
                       className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
                     >
-                      📅 Esta Semana
+                      Esta Semana
                     </button>
                     <button
                       onClick={() => setQuickDateRange("month")}
                       className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
                     >
-                      📅 Este Mes
+                      Este Mes
                     </button>
                     <button
                       onClick={() => setQuickDateRange("all")}
                       className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
                     >
-                      📋 Limpiar Fechas (Ver Histórico Completo)
+                      Limpiar Fechas (Ver Histórico Completo)
                     </button>
                   </div>
                 )}
