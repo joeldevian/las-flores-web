@@ -231,44 +231,37 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-end sm:justify-start sm:pt-2 p-4 md:p-0 animate-in fade-in duration-300">
       {/* Fondo oscuro con blur */}
       <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm" onClick={handleCloseOrAccept} />
 
       {/* Modal flotante central */}
-      <div className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200">
+      <div className="relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-ink rounded-[24px] sm:rounded-[32px] rounded-b-none sm:rounded-b-[32px] shadow-2xl overflow-hidden border border-black/10 flex flex-col h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 shrink-0">
         {/* Header & Navbar Pinned Bar */}
         <div className="bg-white shrink-0 border-b border-black/10 shadow-xs z-20">
-          {/* User Info Bar */}
-          <div className="p-4 md:p-5 flex items-center justify-between border-b border-black/5">
-            <div className="flex items-center gap-3">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={fullName}
-                  className="w-11 h-11 rounded-full object-cover border-2 border-eucalipto/20 shadow-xs"
-                />
-              ) : (
-                <div className="w-11 h-11 rounded-full bg-eucalipto text-cream flex items-center justify-center text-base font-serif font-bold shadow-xs">
-                  {firstName.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div>
-                <span className="text-[10px] uppercase tracking-widest font-bold text-eucalipto block">
-                  Cliente Preferencial
-                </span>
-                <h3 className="font-serif font-bold text-lg text-ink leading-tight">
-                  ¡Hola, {firstName}!
-                </h3>
-                <p className="text-[11px] text-black/50 truncate max-w-[200px]">{user.email}</p>
-              </div>
+          {/* Header estilo Chicha */}
+          <div className="px-5 py-3.5 flex items-center justify-between border-b border-black/5">
+            <div className="w-8 flex items-center gap-1.5 text-ink/70">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <span className="text-[11px] font-bold">ES</span>
             </div>
+            
+            <img
+              src="/images.png"
+              alt="Logo Las Flores"
+              className="h-9 object-contain drop-shadow-sm scale-[1.25] origin-center"
+            />
 
             <button
-              onClick={handleCloseOrAccept}
-              className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all shrink-0"
+              onClick={handleSignOut}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-ink/70 hover:bg-black/5 transition-colors"
+              title="Cerrar sesión"
             >
-              <X size={18} />
+              <LogOut size={18} strokeWidth={1.5} />
             </button>
           </div>
 
@@ -578,44 +571,50 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           )}
         </div>
 
-        {/* Footer con opción de cerrar sesión y acción dinámicas (Aceptar / Guardar Cambios) */}
-        <div className="p-4 bg-white border-t border-black/5 flex items-center justify-between">
+        {/* Footer dinámico */}
+        <div className="p-4 md:px-5 bg-white border-t border-black/5 flex items-center justify-between">
           <button
             type="button"
-            onClick={handleSignOut}
-            className="flex items-center gap-2 py-2.5 px-4 rounded-xl border border-red-200 text-red-700 bg-red-50/50 hover:bg-red-100/70 text-xs font-bold uppercase tracking-wider transition-all shadow-xs"
+            onClick={handleCloseOrAccept}
+            className="flex items-center gap-2.5 text-ink hover:text-eucalipto transition-colors font-bold text-sm"
           >
-            <LogOut size={14} />
-            <span>Cerrar sesión</span>
+            <div className="w-8 h-8 rounded-full border border-ink/20 flex items-center justify-center shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </div>
+            Volver a reservas
           </button>
 
-          {hasChanges ? (
-            <button
-              type="button"
-              onClick={() => handleSaveProfile()}
-              disabled={savingProfile}
-              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50"
-            >
-              {savingProfile ? (
-                <>
-                  <RefreshCw size={14} className="animate-spin" />
-                  <span>Guardando...</span>
-                </>
-              ) : (
-                <>
-                  <Check size={14} />
-                  <span>Guardar Cambios</span>
-                </>
-              )}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={onClose}
-              className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs"
-            >
-              Aceptar
-            </button>
+          {activeTab === "profile" && (
+            hasChanges ? (
+              <button
+                type="button"
+                onClick={() => handleSaveProfile()}
+                disabled={savingProfile}
+                className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs flex items-center gap-2 disabled:opacity-50 ml-auto"
+              >
+                {savingProfile ? (
+                  <>
+                    <RefreshCw size={14} className="animate-spin" />
+                    <span>Guardando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check size={14} />
+                    <span>Guardar</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onClose}
+                className="py-2.5 px-5 rounded-xl bg-eucalipto text-cream text-xs font-bold uppercase tracking-wider hover:bg-eucalipto/90 transition-all shadow-xs ml-auto"
+              >
+                Aceptar
+              </button>
+            )
           )}
         </div>
       </div>
