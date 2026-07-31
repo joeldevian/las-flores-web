@@ -393,7 +393,11 @@ function CashierDashboardRoute() {
   const pendingCount = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente").length;
   const inKitchenCount = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion").length;
   const onWayCount = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino").length;
-  const completedCount = orders.filter((o) => getNormalizedStatus(o.status) === "entregado").length;
+  const completedCount = orders.filter((o) => {
+    if (getNormalizedStatus(o.status) !== "entregado") return false;
+    const ordDateStr = o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) : "";
+    return ordDateStr === todayStr;
+  }).length;
 
   // Counts by status (Reservations)
   const todayReservationsCount = reservations.filter((r) => r.reservation_date === todayStr).length;
