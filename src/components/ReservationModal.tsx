@@ -244,11 +244,18 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
   // Handlers de navegación
   const handleGuestsNext = () => setStep(2);
   const handleDateNext = () => setStep(3);
-  const handleTimeNext = () => {
+  const handleTimeNext = async () => {
     if (form.email) {
-      setStep(5); // Ya tiene sesión → ir directo a perfil
+      // Consultar la sesión activa directamente para evitar estado desactualizado
+      const { data: { session } } = await supabase.auth.getSession();
+      const hasPhone = !!(session?.user?.user_metadata?.phone);
+      if (hasPhone) {
+        setStep(6); // Ya logueado y tiene teléfono → ir directo a selección de mesa
+      } else {
+        setStep(5); // Ya logueado pero le falta teléfono → completar perfil
+      }
     } else {
-      setStep(4); // Necesita login
+      setStep(4); // No logueado → pedir login
     }
   };
 
