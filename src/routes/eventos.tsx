@@ -144,36 +144,32 @@ function EventosPage() {
 
       {/* Servicios de Eventos */}
       <section className="py-24 md:py-32 px-6 max-w-7xl mx-auto space-y-32">
-        {/* Bodas y Recepciones */}
+        {/* Familiares */}
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
           <div className="flex-1">
             <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
               <img
-                src="/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp"
-                alt="Bodas y Recepciones"
+                src="/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp"
+                alt="Almuerzos Especiales"
                 className="w-full h-full object-cover"
               />
             </div>
           </div>
           <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Bodas y Recepciones</h2>
+            <h2 className="font-serif text-4xl md:text-5xl mb-6">Celebraciones Familiares</h2>
             <p className="text-lg text-ink/70 leading-[1.7] mb-8">
-              Haga de su día especial un momento inolvidable. Ofrecemos ambientes íntimos y
-              majestuosos, un servicio impecable y propuestas gastronómicas diseñadas a medida para
-              usted y sus invitados, fusionando la alta cocina con los sabores tradicionales.
+              Desde cumpleaños hasta aniversarios, Las Flores es el hogar perfecto para celebrar la
+              vida con sus seres queridos. Disfrute de nuestra propuesta tradicional de compartir en
+              el centro de la mesa, rodeado de un ambiente cálido y acogedor.
             </p>
             <ul className="space-y-4 text-ink/80 font-medium">
               <li className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 bg-pantiwaita rounded-full"></span>
-                Menú de degustación personalizado
+                Platos diseñados para compartir
               </li>
               <li className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 bg-pantiwaita rounded-full"></span>
-                Salones privados exclusivos
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-pantiwaita rounded-full"></span>
-                Atención preferencial
+                Espacios modulares según la cantidad de invitados
               </li>
             </ul>
           </div>
@@ -214,32 +210,36 @@ function EventosPage() {
           </div>
         </div>
 
-        {/* Familiares */}
+        {/* Bodas y Recepciones */}
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
           <div className="flex-1">
             <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
               <img
-                src="/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp"
-                alt="Almuerzos Especiales"
+                src="/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp"
+                alt="Bodas y Recepciones"
                 className="w-full h-full object-cover"
               />
             </div>
           </div>
           <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Celebraciones Familiares</h2>
+            <h2 className="font-serif text-4xl md:text-5xl mb-6">Bodas y Recepciones</h2>
             <p className="text-lg text-ink/70 leading-[1.7] mb-8">
-              Desde cumpleaños hasta aniversarios, Las Flores es el hogar perfecto para celebrar la
-              vida con sus seres queridos. Disfrute de nuestra propuesta tradicional de compartir en
-              el centro de la mesa, rodeado de un ambiente cálido y acogedor.
+              Haga de su día especial un momento inolvidable. Ofrecemos ambientes íntimos y
+              majestuosos, un servicio impecable y propuestas gastronómicas diseñadas a medida para
+              usted y sus invitados, fusionando la alta cocina con los sabores tradicionales.
             </p>
             <ul className="space-y-4 text-ink/80 font-medium">
               <li className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 bg-pantiwaita rounded-full"></span>
-                Platos diseñados para compartir
+                Menú de degustación personalizado
               </li>
               <li className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 bg-pantiwaita rounded-full"></span>
-                Espacios modulares según la cantidad de invitados
+                Salones privados exclusivos
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 bg-pantiwaita rounded-full"></span>
+                Atención preferencial
               </li>
             </ul>
           </div>

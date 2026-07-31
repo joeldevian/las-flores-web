@@ -622,7 +622,7 @@ function CashierDashboardRoute() {
 
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                 <button
-                  onClick={fetchData}
+                  onClick={() => fetchData()}
                   disabled={refreshing}
                   className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
                 >
@@ -813,7 +813,7 @@ function CashierDashboardRoute() {
 
                 {/* Refresh Button */}
                 <button
-                  onClick={fetchData}
+                  onClick={() => fetchData()}
                   disabled={refreshing}
                   className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
                 >

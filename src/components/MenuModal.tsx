@@ -16,13 +16,26 @@ const R = {
   textoBoton: "#FBF5E6",
 };
 
+export interface DishOption {
+  id: string;
+  name: string;
+  desc?: string;
+  price?: string | number;
+}
+
+export interface DishCustomizationSection {
+  id: string;
+  title: string;
+  options: DishOption[];
+}
+
 export interface Dish {
   name: string;
   description: string;
   price: string;
   image?: string;
   is_customizable?: boolean;
-  custom_options?: any[];
+  custom_options?: DishCustomizationSection[];
 }
 
 export interface Category {
@@ -170,8 +183,19 @@ export const categories: Category[] = [
         name: "CUY LAS FLORES",
         description:
           "Plato insignia, acompañado con papas nativas doradas, qapchi, choclo salteado en especias, ensalada criolla y chips de papas.",
-        price: "S/ 68.00",
+        price: "S/ 38.00",
         image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
+        is_customizable: true,
+        custom_options: [
+          {
+            id: "precio_cuy_las_flores",
+            title: "Elige el tamaño",
+            options: [
+              { id: "medio", name: "Medio cuy", price: "S/ 38.00", desc: "Porción media ideal para compartir." },
+              { id: "entero", name: "Entero", price: "S/ 68.00", desc: "Porción completa para disfrutar." },
+            ],
+          },
+        ],
       },
       {
         name: "CUY LAS FLORES (DESHUESADO)",
@@ -179,6 +203,17 @@ export const categories: Category[] = [
           "Nuestra versión deshuesada del tradicional cuy frito conserva su sabor auténtico, con una textura más delicada y una experiencia práctica y elegante.",
         price: "S/ 42.00",
         image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
+        is_customizable: true,
+        custom_options: [
+          {
+            id: "precio_cuy_las_flores_deshuesado",
+            title: "Elige el tamaño",
+            options: [
+              { id: "medio", name: "Medio cuy", price: "S/ 42.00", desc: "Porción media deshuesada." },
+              { id: "entero", name: "Entero", price: "S/ 72.00", desc: "Porción completa deshuesada." },
+            ],
+          },
+        ],
       },
       {
         name: "CHICHARRÓN HUAMANGUINO",
@@ -193,6 +228,17 @@ export const categories: Category[] = [
           "Medio cuy frito y trozos de chicharrón, acompañado de mix de papas nativas ,qapchi, choclo salteado y ensalada criolla.",
         price: "S/ 52.00",
         image: "https://twbhugvklizzpjbpdosj.supabase.co/storage/v1/object/public/products/platos/cuy-chactado.webp",
+        is_customizable: true,
+        custom_options: [
+          {
+            id: "precio_mixto",
+            title: "Elige la variedad",
+            options: [
+              { id: "medio", name: "Medio cuy", price: "S/ 52.00", desc: "Medio cuy mixto con chicharrón." },
+              { id: "deshuesado", name: "Deshuesado", price: "S/ 58.00", desc: "Opción deshuesada del mixto." },
+            ],
+          },
+        ],
       },
       {
         name: "CHANCHO ASADO LAS FLORES",

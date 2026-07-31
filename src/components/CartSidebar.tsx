@@ -453,101 +453,72 @@ export function CartSidebar() {
   if (!isMounted || !portalRef.current || !isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[110] flex flex-col items-center justify-end sm:justify-start sm:pt-2 animate-in fade-in duration-300">
       {/* Fondo oscuro con blur */}
       <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm cursor-pointer" onClick={handleClose} />
 
       {/* Modal flotante central */}
       <div
-        className="relative z-10 w-full max-w-lg bg-[#FBF5E6] text-ink rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200"
+        className="relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-ink rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 shrink-0"
       >
-        {/* ══ CABECERA — Elegante, Fina y Consistente ══ */}
-        <div className="p-4 md:p-5 bg-white border-b border-black/5 flex items-center justify-between shadow-xs flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <img
-              src="/favicon.png"
-              alt="Las Flores"
-              className="w-9 h-9 rounded-full object-cover border shadow-xs bg-white p-0.5 border-eucalipto/20"
-            />
-            <span className="font-serif text-lg font-bold tracking-wide text-eucalipto">
-              {step === "cart" && "Tu Pedido"}
-              {step === "delivery" && "Datos de Entrega"}
-              {step === "payment" && "Método de Pago"}
-              {step === "success" && "Pedido Confirmado"}
-            </span>
+        {/* ── HEADER FIJO (estilo Chicha) ── */}
+        <div className="flex items-center justify-between px-5 py-3.5 bg-[#f8f4e6] border-b border-ink/8 z-10 shrink-0">
+
+          {/* Izquierda: Selector de idioma */}
+          <div className="w-12 flex items-center gap-1 text-ink/70">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span className="text-[10px] font-bold">ES</span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative hidden sm:block">
-              <ShoppingBag size={20} className="text-eucalipto" strokeWidth={2} />
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-2 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs bg-[#8B261D] text-white">
-                  {totalItems}
-                </span>
-              )}
-            </div>
+          {/* Centro: Logo */}
+          <img
+            src="/images.png"
+            alt="Logo Las Flores"
+            className="h-9 object-contain drop-shadow-sm scale-[1.25] origin-center"
+          />
 
-            <button
-              type="button"
-              onClick={handleClose}
-              className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-black/70 flex items-center justify-center transition-all cursor-pointer"
-            >
-              <X size={18} />
-            </button>
+          {/* Derecha: Perfil o persona */}
+          <div className="w-12 flex justify-end">
+            {activeUser ? (
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(true)}
+                className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                aria-label="Mi perfil e historial"
+              >
+                {activeUser.user_metadata?.avatar_url ? (
+                  <img
+                    src={activeUser.user_metadata.avatar_url}
+                    alt="Foto de perfil"
+                    className="w-7 h-7 rounded-full object-cover border border-eucalipto/30 shadow-sm"
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-black/5 text-ink flex items-center justify-center text-xs font-serif font-bold border border-black/10">
+                    {(activeUser.user_metadata?.full_name || activeUser.email || "C")
+                      .charAt(0)
+                      .toUpperCase()}
+                  </div>
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={async () => { try { await signInWithGoogle(); } catch (e) { console.error(e); } }}
+                className="flex items-center justify-center text-ink/50 hover:text-eucalipto transition-colors"
+                aria-label="Iniciar sesión"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
-
-        {/* ══ BANNER DE USUARIO Y NAVEGACIÓN DE HISTORIAL ══ */}
-        {activeUser ? (
-          <div className="bg-eucalipto/10 border-b border-eucalipto/15 px-5 py-2.5 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              {activeUser.user_metadata?.avatar_url ? (
-                <img
-                  src={activeUser.user_metadata.avatar_url}
-                  alt=""
-                  className="w-5 h-5 rounded-full object-cover border border-eucalipto/30"
-                />
-              ) : (
-                <div className="w-5 h-5 rounded-full bg-eucalipto text-cream flex items-center justify-center text-[10px] font-serif font-bold">
-                  {(activeUser.user_metadata?.full_name || activeUser.email || "C")
-                    .charAt(0)
-                    .toUpperCase()}
-                </div>
-              )}
-              <span className="font-bold text-eucalipto truncate max-w-[170px]">
-                Hola, {(activeUser.user_metadata?.full_name || activeUser.email || "Cliente").split(" ")[0]}
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsHistoryOpen(true)}
-              className="text-[11px] font-bold text-eucalipto hover:text-ink transition-colors flex items-center gap-1 bg-white/80 px-2.5 py-1 rounded-full border border-eucalipto/20 shadow-2xs"
-            >
-              <Clock size={12} />
-              <span>Mis Pedidos & Reservas</span>
-              <ClipboardList size={12} />
-            </button>
-          </div>
-        ) : (
-          <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-2 flex items-center justify-between text-[11px]">
-            <span className="text-black/70 font-medium">¿Tienes cuenta con Google?</span>
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  await signInWithGoogle();
-                } catch (e) {
-                  console.error(e);
-                }
-              }}
-              className="font-bold text-eucalipto hover:underline"
-            >
-              Ingresar para ver historial
-            </button>
-          </div>
-        )}
 
         {/* ══ BARRA DE PASOS ══ */}
         {step !== "success" && (
@@ -806,7 +777,7 @@ export function CartSidebar() {
                     )}
                   </div>
 
-                  <div className="bg-white rounded-xl p-4 border border-black/5 shadow-sm space-y-2 text-sm">
+                  <div className="mt-4 bg-white rounded-xl p-4 border border-black/5 shadow-sm space-y-2 text-sm">
                     <div className="flex justify-between text-black/50 font-medium">
                       <span>
                         Subtotal ({totalItems} {totalItems === 1 ? "plato" : "platos"})
@@ -1357,6 +1328,17 @@ export function CartSidebar() {
           )}
         </div>
       </div>
+
+      {/* ── BOTÓN CERRAR FLOTANTE (fuera del modal, abajo centrado) ── */}
+      <button
+        onClick={handleClose}
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 sm:w-[50px] sm:h-[50px] rounded-full bg-eucalipto text-cream flex items-center justify-center shadow-xl hover:bg-[#1e3329] hover:scale-105 active:scale-95 transition-all z-[112]"
+        aria-label="Cerrar"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
 
       <CustomerHistoryModal
         open={isHistoryOpen}
