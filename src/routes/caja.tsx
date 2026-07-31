@@ -128,6 +128,7 @@ function CashierDashboardRoute() {
       setOrderDateTo("");
     }
   };
+  const [historicalStatusFilter, setHistoricalStatusFilter] = useState<string>("all");
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -333,11 +334,25 @@ function CashierDashboardRoute() {
       (ord.client_phone || "").includes(searchQuery);
 
     const normStatus = getNormalizedStatus(ord.status);
-    const matchStatus = statusFilter === "all" || normStatus === statusFilter;
+    let matchStatus = false;
+    
+    if (statusFilter === "all") {
+      if (historicalStatusFilter === "all") {
+        matchStatus = true;
+      } else {
+        matchStatus = normStatus === historicalStatusFilter;
+      }
+    } else {
+      matchStatus = normStatus === statusFilter;
+    }
 
     const ordDateStr = ord.created_at ? getLocalYYYYMMDD(new Date(ord.created_at)) : "";
     let matchDate = true;
-    if (statusFilter === "entregado" || statusFilter === "all") {
+    
+    if (statusFilter === "entregado") {
+      const todayStr = getLocalYYYYMMDD(new Date());
+      matchDate = ordDateStr === todayStr;
+    } else if (statusFilter === "all") {
       matchDate = (!orderDateFrom || ordDateStr >= orderDateFrom) &&
                   (!orderDateTo || ordDateStr <= orderDateTo);
     }
@@ -697,9 +712,24 @@ function CashierDashboardRoute() {
                     />
                   </div>
                   
-                  {/* Date Range Inputs */}
-                  {(statusFilter === "entregado" || statusFilter === "all") && (
+                  {/* Date Range & Status Inputs */}
+                  {statusFilter === "all" && (
                     <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Estado:</span>
+                        <select
+                          value={historicalStatusFilter}
+                          onChange={(e) => setHistoricalStatusFilter(e.target.value)}
+                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none cursor-pointer"
+                        >
+                          <option value="all">Todos</option>
+                          <option value="pendiente">Pendientes</option>
+                          <option value="en_preparacion">En Preparación</option>
+                          <option value="en_camino">En Camino / Listo</option>
+                          <option value="entregado">Entregados</option>
+                          <option value="cancelado">Cancelados</option>
+                        </select>
+                      </div>
                       <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
                         <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
                         <input
@@ -735,7 +765,7 @@ function CashierDashboardRoute() {
               </div>
 
               {/* Quick Date Range Shortcuts */}
-              {(statusFilter === "entregado" || statusFilter === "all") && (
+              {statusFilter === "all" && (
                 <div className="px-4 pb-2 pt-1 flex items-center gap-2 overflow-x-auto">
                   <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
                     Filtro Rápido de Fecha:
