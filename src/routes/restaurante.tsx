@@ -82,39 +82,55 @@ const generationStories: GenerationStory[] = [
 
 const chefRecommendations = [
   {
-    name: "Puca Picante Ancestral",
+    name: "Puca Picante",
     price: "S/ 65",
     description:
-      "Remolacha fermentada, maní tostado y jugoso chicharrón crocante hecho en leña de molle.",
+      "Guiso de papa vieja en salsa de ají panca con maní tostado, trozos de carne de cerdo y especias, servido con arroz blanco, ensalada regional y una presa de chicharrón huamanguino.",
     image: "/imagenes-reales/RECOMENDACIONES-CHEF/puca.webp",
-    alt: "Puca Picante Ancestral",
+    alt: "Puca Picante",
   },
   {
-    name: "Cuy Chactado de la Casa",
+    name: "Cuy las Flores",
     price: "S/ 85",
     description:
-      "El orgullo de Las Flores. Confitado con hierbas aromáticas y servido bajo la piedra caliente con papas doradas.",
+      "Plato insignia, acompañado con papas nativas doradas, qapchi, choclo salteado en especias, ensalada criolla y chips de papas.",
     image: "/imagenes-reales/RECOMENDACIONES-CHEF/cuy-chactado.webp",
-    alt: "Cuy Chactado de la Casa",
+    alt: "Cuy las Flores",
   },
   {
-    name: "Chicharrón Tradicional",
+    name: "Chicharrón Huamanguino",
     price: "S/ 70",
     description:
-      "Panceta de cerdo dorada lentamente en su propia manteca hasta lograr la crocancia perfecta, con mote y sarsa.",
+      "Trozos de carne de cerdo dorados en su propia manteca, acompañado de papas sancochadas, qapchi, chips de camote y ensalada criolla.",
     image: "/imagenes-reales/RECOMENDACIONES-CHEF/chicharon.webp",
-    alt: "Chicharrón Tradicional",
+    alt: "Chicharrón Huamanguino",
   },
 ];
 
-function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
+function GenerationFlipCard({
+  generation,
+  isActive,
+  onSelect,
+}: {
+  generation: GenerationStory;
+  isActive: boolean;
+  onSelect: () => void;
+}) {
   return (
     <article className="group h-full [perspective:1400px]">
       <div
         tabIndex={0}
+        role="button"
+        onClick={onSelect}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onSelect();
+          }
+        }}
         className="relative h-[380px] md:h-[420px] w-full overflow-hidden rounded-[2rem] bg-transparent text-left cursor-pointer focus:outline-none"
       >
-        <div className="relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus:[transform:rotateY(180deg)] shadow-xl">
+        <div className={`relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] md:group-hover:[transform:rotateY(180deg)] md:group-focus:[transform:rotateY(180deg)] ${isActive ? "[transform:rotateY(180deg)] md:[transform:none]" : ""} shadow-xl`}>
           {/* Front Face */}
           <div
             className="absolute inset-0 h-full w-full rounded-[2rem] overflow-hidden bg-ink"
@@ -169,6 +185,8 @@ function GenerationFlipCard({ generation }: { generation: GenerationStory }) {
 }
 
 function GenerationsSection() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
+
   return (
     <section id="historia" className="bg-cream py-16 md:py-20 px-6">
       <div className="max-w-7xl mx-auto">
@@ -182,8 +200,13 @@ function GenerationsSection() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8">
-          {generationStories.map((generation) => (
-            <GenerationFlipCard key={generation.name} generation={generation} />
+          {generationStories.map((generation, index) => (
+            <GenerationFlipCard
+              key={generation.name}
+              generation={generation}
+              isActive={activeIndex === index}
+              onSelect={() => setActiveIndex((prev) => (prev === index ? null : index))}
+            />
           ))}
         </div>
       </div>

@@ -80,7 +80,6 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
       ? dish.custom_options
       : DEFAULT_SECTIONS;
 
-  const priceNum = parseFloat(dish.price.replace("S/ ", ""));
   const selectedCount = sectionsList.filter((s) => !!selections[s.id || s.title]).length;
   const isComplete = selectedCount >= sectionsList.length;
 
@@ -91,12 +90,30 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
     }));
   };
 
+  const resolveSelectedPrice = () => {
+    let priceString = dish.price;
+
+    sectionsList.forEach((section) => {
+      const selectedOptionName = selections[section.id || section.title];
+      if (!selectedOptionName) return;
+
+      const matched = section.options.find(
+        (option: any) => option.name === selectedOptionName || option.id === selectedOptionName,
+      );
+
+      if (matched?.price) {
+        priceString = typeof matched.price === "number" ? `S/ ${matched.price.toFixed(2)}` : matched.price;
+      }
+    });
+
+    return parseFloat(priceString.toString().replace("S/ ", ""));
+  };
+
   const handleConfirm = () => {
     if (!isComplete) return;
 
     const itemUniqueId = `custom-${dish.name.replace(/\s+/g, "-")}-${Date.now()}`;
 
-    // Construir detalles legibles de personalización para el carrito
     const formattedCustomizations: Record<string, string> = {};
     sectionsList.forEach((s) => {
       const key = s.title.replace(/^\d+\.\s*/, "");
@@ -107,7 +124,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
     addItem({
       id: itemUniqueId,
       name: dish.name,
-      price: priceNum,
+      price: resolveSelectedPrice(),
       image: dish.image,
       customizations: formattedCustomizations,
     });
@@ -166,7 +183,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
                 {dish.name}
               </h2>
               <span className="font-serif font-bold text-xl sm:text-2xl text-cream flex-shrink-0 bg-white/15 px-3.5 py-1 rounded-2xl backdrop-blur-md border border-white/20 shadow-xs">
-                {dish.price}
+                S/ {resolveSelectedPrice().toFixed(2)}
               </span>
             </div>
           </div>
@@ -275,7 +292,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
             <span className="text-[11px] font-serif tracking-[0.15em] font-bold text-black/45 uppercase block">
               Precio Total
             </span>
-            <span className="font-serif font-bold text-2xl md:text-3xl text-eucalipto">{dish.price}</span>
+            <span className="font-serif font-bold text-2xl md:text-3xl text-eucalipto">S/ {resolveSelectedPrice().toFixed(2)}</span>
           </div>
 
           <button
