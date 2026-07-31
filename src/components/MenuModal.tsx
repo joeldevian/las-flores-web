@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Plus, X, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { BreakfastCustomizationModal } from "./BreakfastCustomizationModal";
@@ -611,6 +611,17 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
   const [activeId, setActiveId] = useState("desayuno");
   const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
   const { totalItems, setIsOpen: setSidebarOpen } = useCart();
+  const [isBouncing, setIsBouncing] = useState(false);
+  const prevTotalItems = useRef(totalItems);
+
+  useEffect(() => {
+    if (totalItems > prevTotalItems.current && totalItems > 0) {
+      setIsBouncing(true);
+      const timer = setTimeout(() => setIsBouncing(false), 300);
+      return () => clearTimeout(timer);
+    }
+    prevTotalItems.current = totalItems;
+  }, [totalItems]);
 
   useEffect(() => {
     if (open) {
@@ -656,7 +667,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
             onClick={() => {
               setSidebarOpen(true);
             }}
-            className="relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-cream"
+            className={`relative transition-all flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-cream ${isBouncing ? "animate-bounce" : ""}`}
           >
             <ShoppingCart size={18} strokeWidth={2.5} />
             <span className="hidden md:inline">Ver Pedido</span>
