@@ -359,14 +359,21 @@ function CashierDashboardRoute() {
 
       {/* Realtime Floating Banner Toast for Reservations (Tono Verde Eucalipto) */}
       {newReservationNotification && (
-        <div className="fixed top-20 right-4 z-50 bg-[#14231D] text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md">
+        <div
+          onClick={() => {
+            setViewMode("reservations");
+            setReservationStatusFilter("pendiente");
+            setNewReservationNotification(null);
+          }}
+          className="fixed top-20 right-4 z-50 bg-[#14231D] text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-[#1B2E27] transition-all"
+        >
           <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce">
             🌿
           </div>
 
           <div className="flex-1 min-w-0">
             <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-emerald-300 block">
-              ¡NUEVA RESERVA RECIBIDA!
+              ¡NUEVA RESERVA RECIBIDA (VER PENDIENTES)!
             </span>
             <h4 className="font-serif font-bold text-base text-white">
               {newReservationNotification.client_name || "Cliente Reserva"}
@@ -377,7 +384,10 @@ function CashierDashboardRoute() {
           </div>
 
           <button
-            onClick={() => setNewReservationNotification(null)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setNewReservationNotification(null);
+            }}
             className="p-1 text-gray-400 hover:text-white rounded-full hover:bg-white/10"
           >
             <X size={18} />
