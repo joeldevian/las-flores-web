@@ -754,7 +754,10 @@ function CashierDashboardRoute() {
               </button>
 
               <button
-                onClick={() => setReservationStatusFilter("confirmada")}
+                onClick={() => {
+                  setReservationStatusFilter("confirmada");
+                  if (!resDateFrom && !resDateTo) setQuickDateRange("month");
+                }}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "confirmada"
                     ? "bg-blue-100/90 text-blue-950 border-2 border-blue-500 shadow-md font-extrabold scale-[1.02]"
@@ -778,7 +781,10 @@ function CashierDashboardRoute() {
               </button>
 
               <button
-                onClick={() => setReservationStatusFilter("all")}
+                onClick={() => {
+                  setReservationStatusFilter("all");
+                  if (!resDateFrom && !resDateTo) setQuickDateRange("month");
+                }}
                 className={`p-4 rounded-2xl text-left transition-all font-sans ${
                   reservationStatusFilter === "all"
                     ? "bg-slate-100 text-slate-950 border-2 border-slate-500 shadow-md font-extrabold scale-[1.02]"

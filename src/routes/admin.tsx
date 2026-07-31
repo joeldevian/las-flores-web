@@ -30,6 +30,13 @@ import { AdminProductModal } from "../components/AdminProductModal";
 import { AdminCouponModal } from "../components/AdminCouponModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
 
+const getLocalYYYYMMDD = (d = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export const Route = createFileRoute("/admin")({
   component: AdminRoute,
 });
@@ -53,10 +60,12 @@ function AdminRoute() {
   const [resStatusFilter, setResStatusFilter] = useState("all");
   const [resDateFrom, setResDateFrom] = useState<string>("");
   const [resDateTo, setResDateTo] = useState<string>("");
+  const [activeDateFilter, setActiveDateFilter] = useState<"today" | "week" | "month" | "all" | "custom">("all");
 
   const setQuickDateRange = (type: "today" | "week" | "month" | "all") => {
+    setActiveDateFilter(type);
     const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
+    const todayStr = getLocalYYYYMMDD(today);
 
     if (type === "today") {
       setResDateFrom(todayStr);
@@ -68,8 +77,8 @@ function AdminRoute() {
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
 
-      setResDateFrom(monday.toISOString().split("T")[0]);
-      setResDateTo(sunday.toISOString().split("T")[0]);
+      setResDateFrom(getLocalYYYYMMDD(monday));
+      setResDateTo(getLocalYYYYMMDD(sunday));
     } else if (type === "month") {
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -663,7 +672,7 @@ function AdminRoute() {
                         <input
                           type="date"
                           value={resDateFrom}
-                          onChange={(e) => setResDateFrom(e.target.value)}
+                          onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
                           className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
                         />
                       </div>
@@ -673,7 +682,7 @@ function AdminRoute() {
                         <input
                           type="date"
                           value={resDateTo}
-                          onChange={(e) => setResDateTo(e.target.value)}
+                          onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
                           className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
                         />
                       </div>
@@ -707,25 +716,25 @@ function AdminRoute() {
                     </span>
                     <button
                       onClick={() => setQuickDateRange("today")}
-                      className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-xs rounded-lg transition-colors border border-emerald-300 shrink-0"
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
                     >
                       🌿 Hoy
                     </button>
                     <button
                       onClick={() => setQuickDateRange("week")}
-                      className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
                     >
                       📅 Esta Semana
                     </button>
                     <button
                       onClick={() => setQuickDateRange("month")}
-                      className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs rounded-lg transition-colors border border-emerald-200 shrink-0"
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
                     >
                       📅 Este Mes
                     </button>
                     <button
                       onClick={() => setQuickDateRange("all")}
-                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-lg transition-colors border border-gray-300 shrink-0"
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
                     >
                       📋 Limpiar Fechas (Ver Histórico Completo)
                     </button>
