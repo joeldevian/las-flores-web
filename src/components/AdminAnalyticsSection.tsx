@@ -355,7 +355,6 @@ export function AdminAnalyticsSection({
               { id: "week", label: "7 Días" },
               { id: "month", label: "Este Mes" },
               { id: "all", label: "Histórico" },
-              { id: "custom", label: "Personalizado" },
             ].map((tf) => (
               <button
                 key={tf.id}
