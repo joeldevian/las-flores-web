@@ -535,9 +535,12 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
             <img
               src={lugar.imagen}
               alt={lugar.nombre}
-              loading="lazy"
+              loading={isMobile && isExpanded ? "eager" : "lazy"}
+              fetchPriority={isMobile && isExpanded ? "high" : "low"}
               decoding="async"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+              width={1600}
+              height={900}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 will-change-transform"
             />
             {/* Gradiente más oscuro abajo para que lea el texto */}
             <div

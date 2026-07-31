@@ -310,12 +310,15 @@ function ChefAccordionSection() {
                 <img
                   src={plate.image}
                   alt={plate.alt}
-                  loading="lazy"
+                  loading={isMobile && isActive ? "eager" : "lazy"}
+                  fetchPriority={isMobile && isActive ? "high" : "low"}
                   decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  width={1000}
+                  height={800}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 will-change-transform"
                 />
                 <div
-                  className={`absolute inset-0 transition-all duration-700 ${isActive ? "bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" : "bg-gradient-to-t from-ink/70 via-ink/20 to-transparent"}`}
+                  className={`absolute inset-0 transition-all duration-500 ${isActive ? "bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" : "bg-gradient-to-t from-ink/70 via-ink/20 to-transparent"}`}
                 />
                 <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 text-cream">
                   <div
