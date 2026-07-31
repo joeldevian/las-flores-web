@@ -228,7 +228,10 @@ function ChefAccordionSection() {
   }, []);
 
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile) {
+      setActiveIndex(1);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -246,14 +249,14 @@ function ChefAccordionSection() {
       },
       {
         root: null,
-        rootMargin: "-35% 0px -35% 0px",
-        threshold: [0.25, 0.5, 0.75],
+        rootMargin: "-45% 0px -45% 0px",
+        threshold: 0.5,
       }
     );
 
     itemRefs.current.forEach((node) => node && observer.observe(node));
     return () => observer.disconnect();
-  }, [isMobile]);
+  }, [isMobile, activeIndex]);
 
   return (
     <section className="bg-eucalipto/5 py-16 md:py-20 px-6">
@@ -278,8 +281,8 @@ function ChefAccordionSection() {
                 type="button"
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
-                onClick={() => setActiveIndex((prev) => (prev === index ? null : index))}
-                className={`group relative overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white text-left shadow-md transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "md:flex-[2.2]" : "md:flex-[0.9]"} ${isActive ? "min-h-[280px]" : "min-h-[120px]"}`}
+                onClick={() => setActiveIndex(index)}
+                className={`group relative overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white text-left shadow-md transition-all duration-500 ease-out ${isActive ? "md:flex-[2.2]" : "md:flex-[0.9]"} ${isActive ? "min-h-[280px]" : "min-h-[120px]"}`}
               >
                 <img
                   src={plate.image}

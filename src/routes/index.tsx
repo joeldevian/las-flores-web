@@ -230,33 +230,6 @@ const lugares: Lugar[] = [
   },
 ];
 
-const platos = [
-  {
-    id: 1,
-    img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Puca-Picante.webp",
-    nombre: "Puca Picante",
-    desc: "Presente en festividades y picanterías, la puca picante es un emblemático guiso de intenso color rojo elaborado a base de papa, maní tostado, betarraga y chicharrón de cerdo. Degustarlo brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
-  },
-  {
-    id: 2,
-    img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Mondongo%20Ayacuchano.webp",
-    nombre: "Mondongo Ayacuchano",
-    desc: "Presente tradicionalmente en las mañanas de los domingos, el mondongo ayacuchano es un contundente y reparador caldo de maíz mote, carnes, panza y hierbabuena. Degustar esta clásica tradición dominical brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
-  },
-  {
-    id: 3,
-    img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Cuy-Frito-Ayacuchano.webp",
-    nombre: "Cuy Frito Ayacuchano",
-    desc: "Presente en las celebraciones y picanterías tradicionales, el cuy frito ayacuchano es un plato crujiente y emblemático elaborado con el cuy, un animal andino cuyo consumo se remonta a la época prehispánica. Degustarlo brinda una excelente oportunidad para disfrutar de esta herencia milenaria, recordando siempre que nuestros platos en la carta son variados.",
-  },
-  {
-    id: 4,
-    img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Chorizo-Ayacuchano.webp",
-    nombre: "Chorizo Ayacuchano",
-    desc: "Presente en las tradicionales picanterías y festividades de la región, especialmente durante Semana Santa, el chorizo ayacuchano es un emblemático plato a base de carne de cerdo finamente picada y macerada en ají panca que se sirve sin embutir. Degustar este sabroso manjar tradicional brinda una excelente oportunidad para disfrutar de la auténtica y única riqueza gastronómica local.",
-  },
-];
-
 // ─── COMPONENTES ──────────────────────────────────────────────────────────────
 
 function Modal({
@@ -481,7 +454,10 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
   }, []);
 
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile) {
+      setActiveId(lugares[0].id);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -499,8 +475,8 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
       },
       {
         root: null,
-        rootMargin: "-35% 0px -35% 0px",
-        threshold: [0.25, 0.5, 0.75],
+        rootMargin: "-50% 0px -50% 0px",
+        threshold: 0.5,
       }
     );
 
@@ -523,8 +499,11 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
             ref={(el) => (itemRefs.current[i] = el)}
             data-lugar-id={lugar.id}
             onMouseEnter={() => setHovered(lugar.id)}
-            onClick={() => onSelect(lugar)}
-            className={`relative rounded-3xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] cursor-pointer shadow-sm group ${
+            onClick={() => {
+              setActiveId(lugar.id);
+              onSelect(lugar);
+            }}
+            className={`relative rounded-3xl overflow-hidden transition-all duration-500 ease-out cursor-pointer shadow-sm group ${
               isExpanded ? "flex-[4] md:flex-[5]" : "flex-[1]"
             }`}
           >
@@ -537,7 +516,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
             />
             {/* Gradiente más oscuro abajo para que lea el texto */}
             <div
-              className={`absolute inset-0 transition-opacity duration-700 ${isExpanded ? "bg-gradient-to-t from-ink via-ink/20 to-transparent" : "bg-ink/60 hover:bg-ink/40"}`}
+              className={`absolute inset-0 transition-opacity duration-500 ${isExpanded ? "bg-gradient-to-t from-ink via-ink/20 to-transparent" : "bg-ink/60 hover:bg-ink/40"}`}
             />
 
             {/* Número Romano */}
@@ -598,107 +577,6 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
         );
       })}
     </div>
-  );
-}
-
-function PlatosSection() {
-  const [activeId, setActiveId] = useState<number>(platos[0].id);
-  const [isMobile, setIsMobile] = useState(false);
-  const itemRefs = useRef<(HTMLElement | null)[]>([]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const updateIsMobile = () => setIsMobile(mediaQuery.matches);
-    updateIsMobile();
-    mediaQuery.addEventListener("change", updateIsMobile);
-    return () => mediaQuery.removeEventListener("change", updateIsMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting);
-        if (visible.length === 0) return;
-
-        const bestEntry = visible.reduce((best, current) =>
-          current.intersectionRatio > best.intersectionRatio ? current : best
-        );
-
-        const id = Number(bestEntry.target.getAttribute("data-plato-id"));
-        if (!Number.isNaN(id)) {
-          setActiveId(id);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "-35% 0px -35% 0px",
-        threshold: [0.25, 0.5, 0.75],
-      }
-    );
-
-    itemRefs.current.forEach((node) => node && observer.observe(node));
-    return () => observer.disconnect();
-  }, [isMobile]);
-
-  return (
-    <section className="py-12 md:py-16 px-6 bg-ink text-cream selection:bg-retama/30">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 max-w-3xl">
-          <span className="text-retama font-medium uppercase tracking-[0.3em] text-[10px] mb-4 block">
-            Platos Típicos
-          </span>
-          <h2 className="font-serif text-3xl md:text-5xl leading-[1.1] text-balance">
-            La despensa de la sierra en cinco sabores
-          </h2>
-          <p className="mt-4 text-base text-cream/70 leading-[1.6] max-w-2xl">
-            Recetas que definen la identidad ayacuchana. El fruto del fogón y las festividades que
-            atraviesan generaciones.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {platos.map((p, i) => {
-            const isActive = !isMobile || activeId === p.id;
-            return (
-              <article
-                key={p.id}
-                ref={(el) => (itemRefs.current[i] = el)}
-                data-plato-id={p.id}
-                className={`flex flex-col transition-all duration-700 ${
-                  isActive ? "shadow-xl scale-[1.01]" : "shadow-sm opacity-90"
-                }`}
-              >
-                <div className={`dish-card-hover aspect-[5/4] bg-ink/40 rounded-lg overflow-hidden ${isActive ? "ring-1 ring-cream/20" : ""}`}>
-                  <img
-                    src={p.img}
-                    alt={p.nombre}
-                    width={1000}
-                    height={800}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="dish-card-overlay">
-                    <span className="text-retama font-bold text-[10px] uppercase tracking-[0.25em] mb-1">
-                      Plato Tradicional
-                    </span>
-                    <h4 className="font-serif text-lg font-bold text-cream mb-1">{p.nombre}</h4>
-                    <p
-                      className={`text-xs text-cream/80 leading-relaxed transition-all duration-500 ${
-                        isActive ? "max-h-40 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
-                      }`}
-                    >
-                      {p.desc}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -911,7 +789,68 @@ function Index() {
         </div>
       </section>
 
-      <PlatosSection />
+      {/* PLATOS TÍPICOS */}
+      <section className="py-12 md:py-16 px-6 bg-ink text-cream selection:bg-retama/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8 max-w-3xl">
+            <span className="text-retama font-medium uppercase tracking-[0.3em] text-[10px] mb-4 block">
+              Platos Típicos
+            </span>
+            <h2 className="font-serif text-3xl md:text-5xl leading-[1.1] text-balance">
+              La despensa de la sierra en cinco sabores
+            </h2>
+            <p className="mt-4 text-base text-cream/70 leading-[1.6] max-w-2xl">
+              Recetas que definen la identidad ayacuchana. El fruto del fogón y las festividades que
+              atraviesan generaciones.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Puca-Picante.webp",
+                nombre: "Puca Picante",
+                desc: "Presente en festividades y picanterías, la puca picante es un emblemático guiso de intenso color rojo elaborado a base de papa, maní tostado, betarraga y chicharrón de cerdo. Degustarlo brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
+              },
+              {
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Mondongo%20Ayacuchano.webp",
+                nombre: "Mondongo Ayacuchano",
+                desc: "Presente tradicionalmente en las mañanas de los domingos, el mondongo ayacuchano es un contundente y reparador caldo de maíz mote, carnes, panza y hierbabuena. Degustar esta clásica tradición dominical brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
+              },
+              {
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Cuy-Frito-Ayacuchano.webp",
+                nombre: "Cuy Frito Ayacuchano",
+                desc: "Presente en las celebraciones y picanterías tradicionales, el cuy frito ayacuchano es un plato crujiente y emblemático elaborado con el cuy, un animal andino cuyo consumo se remonta a la época prehispánica. Degustarlo brinda una excelente oportunidad para disfrutar de esta herencia milenaria, recordando siempre que nuestros platos en la carta son variados.",
+              },
+              {
+                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Chorizo-Ayacuchano.webp",
+                nombre: "Chorizo Ayacuchano",
+                desc: "Presente en las tradicionales picanterías y festividades de la región, especialmente durante Semana Santa, el chorizo ayacuchano es un emblemático plato a base de carne de cerdo finamente picada y macerada en ají panca que se sirve sin embutir. Degustar este sabroso manjar tradicional brinda una excelente oportunidad para disfrutar de la auténtica y única riqueza gastronómica local.",
+              },
+            ].map((p) => (
+              <article key={p.nombre} className="flex flex-col group">
+                <div className="dish-card-hover aspect-[5/4] bg-ink/40 rounded-lg">
+                  <img
+                    src={p.img}
+                    alt={p.nombre}
+                    width={1000}
+                    height={800}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="dish-card-overlay">
+                    <span className="text-retama font-bold text-[10px] uppercase tracking-[0.25em] mb-1">
+                      Plato Tradicional
+                    </span>
+                    <h4 className="font-serif text-lg font-bold text-cream mb-1">{p.nombre}</h4>
+                    <p className="text-xs text-cream/80 leading-relaxed">{p.desc}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* PREMIOS */}
       <section className="py-24 md:py-32 px-6">
