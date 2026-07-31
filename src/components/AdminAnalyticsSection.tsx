@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -24,6 +24,13 @@ interface AdminAnalyticsSectionProps {
   reservations?: any[];
 }
 
+const getLocalYYYYMMDD = (d = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export function AdminAnalyticsSection({
   orders,
   orderItems,
@@ -36,71 +43,70 @@ export function AdminAnalyticsSection({
   const [customStartDate, setCustomStartDate] = useState<string>("");
   const [customEndDate, setCustomEndDate] = useState<string>("");
 
+  useEffect(() => {
+    handleTimeframeChange("month");
+  }, []);
+
+  const handleTimeframeChange = (type: "today" | "week" | "month" | "all" | "custom") => {
+    setTimeframe(type);
+    if (type === "custom") return;
+
+    const t = new Date();
+    const tStr = getLocalYYYYMMDD(t);
+
+    if (type === "today") {
+      setCustomStartDate(tStr);
+      setCustomEndDate(tStr);
+    } else if (type === "week") {
+      const day = t.getDay();
+      const diffToMonday = t.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(t.setDate(diffToMonday));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      setCustomStartDate(getLocalYYYYMMDD(monday));
+      setCustomEndDate(getLocalYYYYMMDD(sunday));
+    } else if (type === "month") {
+      const y = t.getFullYear();
+      const m = t.getMonth();
+      const fd = new Date(y, m, 1);
+      const ld = new Date(y, m + 1, 0);
+      const fm = String(m + 1).padStart(2, "0");
+      const ldy = String(ld.getDate()).padStart(2, "0");
+      setCustomStartDate(`${y}-${fm}-01`);
+      setCustomEndDate(`${y}-${fm}-${ldy}`);
+    } else if (type === "all") {
+      setCustomStartDate("");
+      setCustomEndDate("");
+    }
+  };
+
   // Hover state for chart tooltip
   const [hoveredBar, setHoveredBar] = useState<{ date: string; value: number; count: number } | null>(null);
 
   // Filter orders by timeframe or custom range
   const filteredOrders = useMemo(() => {
-    const now = new Date();
     return orders.filter((order) => {
       if (!order.created_at) return true;
-      const orderDate = new Date(order.created_at);
-
-      if (timeframe === "today") {
-        return (
-          orderDate.getDate() === now.getDate() &&
-          orderDate.getMonth() === now.getMonth() &&
-          orderDate.getFullYear() === now.getFullYear()
-        );
-      }
-
-      if (timeframe === "week") {
-        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return orderDate >= sevenDaysAgo;
-      }
-
-      if (timeframe === "month") {
-        return (
-          orderDate.getMonth() === now.getMonth() &&
-          orderDate.getFullYear() === now.getFullYear()
-        );
-      }
-
-      if (timeframe === "custom") {
-        if (!customStartDate && !customEndDate) return true;
-        const start = customStartDate ? new Date(customStartDate + "T00:00:00") : new Date(0);
-        const end = customEndDate ? new Date(customEndDate + "T23:59:59") : new Date(8640000000000000);
-        return orderDate >= start && orderDate <= end;
-      }
-
-      return true; // 'all'
+      const orderDateStr = getLocalYYYYMMDD(new Date(order.created_at));
+      
+      const matchDate = (!customStartDate || orderDateStr >= customStartDate) &&
+                        (!customEndDate || orderDateStr <= customEndDate);
+      return matchDate;
     });
-  }, [orders, timeframe, customStartDate, customEndDate]);
+  }, [orders, customStartDate, customEndDate]);
 
   const dateRangeString = useMemo(() => {
-    const now = new Date();
-    const formatDate = (d: Date) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    const formatDate = (ds: string) => {
+      if (!ds) return "";
+      const [y, m, d] = ds.split("-");
+      return `${d}/${m}/${y}`;
+    };
     
-    if (timeframe === "today") {
-      return `(solo hoy, ${formatDate(now)})`;
-    }
-    if (timeframe === "week") {
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return `(del ${formatDate(sevenDaysAgo)} al ${formatDate(now)})`;
-    }
-    if (timeframe === "month") {
-      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      return `(del ${formatDate(firstDay)} al ${formatDate(lastDay)})`;
-    }
-    if (timeframe === "custom") {
-      if (!customStartDate && !customEndDate) return "";
-      const startStr = customStartDate ? formatDate(new Date(customStartDate + "T00:00:00")) : "inicio";
-      const endStr = customEndDate ? formatDate(new Date(customEndDate + "T23:59:59")) : "fin";
-      return `(del ${startStr} al ${endStr})`;
-    }
-    return "(Histórico completo)";
-  }, [timeframe, customStartDate, customEndDate]);
+    if (!customStartDate && !customEndDate) return "(Histórico completo)";
+    const startStr = customStartDate ? formatDate(customStartDate) : "inicio";
+    const endStr = customEndDate ? formatDate(customEndDate) : "fin";
+    return `(del ${startStr} al ${endStr})`;
+  }, [customStartDate, customEndDate]);
 
   // Total Revenue & Valid Orders
   const { totalRevenue, validOrders, averageTicket } = useMemo(() => {
@@ -353,7 +359,7 @@ export function AdminAnalyticsSection({
             ].map((tf) => (
               <button
                 key={tf.id}
-                onClick={() => setTimeframe(tf.id as any)}
+                onClick={() => handleTimeframeChange(tf.id as any)}
                 className={`px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                   timeframe === tf.id
                     ? "bg-[#5F8575] text-white font-bold shadow-sm"
@@ -366,24 +372,22 @@ export function AdminAnalyticsSection({
           </div>
 
           {/* Custom Date Pickers */}
-          {timeframe === "custom" && (
-            <div className="flex items-center gap-2 bg-white border border-gray-200 p-1.5 rounded-xl shadow-sm animate-in fade-in">
-              <span className="text-[11px] font-bold text-gray-600 pl-1 font-serif">Desde:</span>
-              <input
-                type="date"
-                value={customStartDate}
-                onChange={(e) => setCustomStartDate(e.target.value)}
-                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#5F8575]"
-              />
-              <span className="text-[11px] font-bold text-gray-600 font-serif">Hasta:</span>
-              <input
-                type="date"
-                value={customEndDate}
-                onChange={(e) => setCustomEndDate(e.target.value)}
-                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#5F8575]"
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-2 bg-white border border-gray-200 p-1.5 rounded-xl shadow-sm">
+            <span className="text-[11px] font-bold text-gray-600 pl-1 font-serif">Desde:</span>
+            <input
+              type="date"
+              value={customStartDate}
+              onChange={(e) => { setCustomStartDate(e.target.value); setTimeframe("custom"); }}
+              className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#5F8575]"
+            />
+            <span className="text-[11px] font-bold text-gray-600 font-serif">Hasta:</span>
+            <input
+              type="date"
+              value={customEndDate}
+              onChange={(e) => { setCustomEndDate(e.target.value); setTimeframe("custom"); }}
+              className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#5F8575]"
+            />
+          </div>
 
           {/* Export Actions */}
           <div className="flex items-center gap-2">
