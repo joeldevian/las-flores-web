@@ -203,7 +203,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {section.options.map((item) => {
+                  {section.options.map((item: any) => {
                     const isSelected = currentSelected === item.name;
                     return (
                       <div

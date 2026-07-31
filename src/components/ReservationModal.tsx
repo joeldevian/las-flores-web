@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { SeatSelector } from "./SeatSelector";
-import { signInWithGoogle, createReservation, updateUserProfile, supabase } from "../lib/supabase";
+import { signInWithGoogle, signOut, createReservation, updateUserProfile, supabase } from "../lib/supabase";
 import { CustomerHistoryModal } from "./CustomerHistoryModal";
 import type { User } from "@supabase/supabase-js";
 import { Clock, Calendar } from "lucide-react";
