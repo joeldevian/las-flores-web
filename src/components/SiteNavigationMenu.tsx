@@ -32,14 +32,14 @@ export function SiteNavigationMenu({ isScrolled, isAlwaysDark = false }: { isScr
 
       {/* Backdrop */}
       <div 
-        className={`fixed inset-0 z-[90] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+        className={`fixed inset-0 z-[90] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
         onClick={() => setIsOpen(false)}
         aria-hidden="true"
       />
 
       {/* Side Drawer Menu */}
       <div 
-        className={`fixed inset-y-0 left-0 w-full md:w-[450px] z-[100] bg-[#F9F9F9] transition-transform duration-500 ease-in-out flex flex-col shadow-2xl ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 w-full md:w-[450px] z-[100] bg-[#F9F9F9] transition-transform duration-500 ease-in-out flex flex-col shadow-2xl pointer-events-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Close Button */}
         <div className="flex justify-end p-6 md:p-8">
