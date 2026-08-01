@@ -27,16 +27,18 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, s) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
       if (s) {
         const { data: p } = await supabase.from("profiles").select("role").eq("id", s.user.id).single();
         setProfile(p);
-        // Auto-redirect staff/admin on login
-        if (p?.role === "admin") {
-          window.location.href = "/admin";
-        } else if (p?.role === "staff") {
-          window.location.href = "/caja";
+        // Auto-redirect staff/admin ONLY on fresh login, not on every page load
+        if (event === "SIGNED_IN") {
+          if (p?.role === "admin") {
+            window.location.href = "/admin";
+          } else if (p?.role === "staff") {
+            window.location.href = "/caja";
+          }
         }
       } else {
         setProfile(null);
