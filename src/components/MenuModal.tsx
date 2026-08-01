@@ -46,9 +46,15 @@ export interface Category {
 
 /**
  * FALLBACK VACÍO — Los platos ahora se cargan completamente desde Supabase en tiempo real.
- * Si no hay datos en la BD, esta lista vacía se usa como fallback.
+ * Si no hay datos en la BD, se usa esta lista mínima para evitar crashes.
  */
-export const categories: Category[] = [];
+export const categories: Category[] = [
+  {
+    id: "cargando",
+    label: "Cargando categorías...",
+    dishes: [],
+  },
+];
 
 interface DishCardProps {
   dish: Dish;
@@ -164,8 +170,21 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
 
   if (!open) return null;
 
-  const currentCategories = liveCategories.length > 0 ? liveCategories : categories;
+  const currentCategories = liveCategories && liveCategories.length > 0 ? liveCategories : categories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
+
+  if (!active) {
+    return (
+      <div className="fixed inset-0 z-[100] flex flex-col bg-piedra overflow-hidden animate-in fade-in zoom-in-[0.98] duration-300">
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center px-6">
+            <p className="font-serif text-2xl text-nogal/60 mb-2">Cargando menú...</p>
+            <p className="text-sm text-nogal/40">Por favor espera mientras cargamos la carta desde la base de datos.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-piedra overflow-hidden animate-in fade-in zoom-in-[0.98] duration-300">
@@ -252,13 +271,13 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-8 border-b border-black/5 pb-4">
               <h2 className="font-serif text-3xl md:text-4xl font-bold" style={{ color: R.morado }}>
-                {active.label}
+                {active?.label || "Cargando..."}
               </h2>
               <span
                 className="text-[10px] uppercase tracking-[0.3em] font-bold px-4 py-2 rounded-full"
                 style={{ background: `${R.morado}15`, color: R.morado }}
               >
-                {active.dishes.length} platos
+                {(active?.dishes?.length || 0)} platos
               </span>
             </div>
 
@@ -266,7 +285,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
               key={activeId}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 pb-32 animate-in fade-in slide-in-from-bottom-8 duration-500"
             >
-              {active.dishes.map((dish, i) => (
+              {(active?.dishes || []).map((dish, i) => (
                 <DishCard
                   key={i}
                   dish={dish}

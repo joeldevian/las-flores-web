@@ -24,11 +24,13 @@ import {
   BarChart3,
   ShieldCheck,
   Ticket,
+  ListTree,
 } from "lucide-react";
 
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
 import { AdminProductModal } from "../components/AdminProductModal";
 import { AdminCouponModal } from "../components/AdminCouponModal";
+import { AdminCategoryListModal } from "../components/AdminCategoryListModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
 import { removeProductById } from "../utils/adminProducts";
 
@@ -150,6 +152,7 @@ function AdminRoute() {
 
   const [selectedCoupon, setSelectedCoupon] = useState<any | null>(null);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -600,16 +603,25 @@ function AdminRoute() {
           {/* Quick Header Action Buttons */}
           <div className="flex items-center gap-3">
             {activeTab === "menu" && (
-              <button
-                onClick={() => {
-                  setSelectedProduct(null);
-                  setIsProductModalOpen(true);
-                }}
-                className="px-4 py-2.5 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
-              >
-                <Plus size={15} />
-                Nuevo Plato
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsCategoryModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-white border border-eucalipto/20 hover:bg-eucalipto/5 text-nogal font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <ListTree size={15} className="text-chilca" />
+                  Categorías
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedProduct(null);
+                    setIsProductModalOpen(true);
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <Plus size={15} />
+                  Nuevo Plato
+                </button>
+              </div>
             )}
 
             {activeTab === "coupons" && (
@@ -1281,6 +1293,12 @@ function AdminRoute() {
         onClose={() => setIsCouponModalOpen(false)}
         coupon={selectedCoupon}
         onSave={fetchData}
+      />
+
+      <AdminCategoryListModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onCategoryChanged={fetchData}
       />
 
     </div>

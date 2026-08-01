@@ -67,7 +67,7 @@ export function SiteNavigationMenu({
           <img
             src="/images.png"
             alt="Restaurante Las Flores"
-            className="h-14 w-auto object-contain"
+            className="h-10 md:h-12 w-auto object-contain"
             style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)' }}
           />
           <button

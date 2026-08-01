@@ -54,7 +54,7 @@ function ContactoPage() {
             <img 
               src="/images.png" 
               alt="Las Flores" 
-              className={`transition-all duration-300 origin-center ${isScrolled ? "h-10 opacity-100" : "h-14 opacity-100 invert brightness-0"}`}
+              className={`transition-all duration-300 origin-center ${isScrolled ? "h-8 opacity-100" : "h-10 md:h-12 opacity-100 invert brightness-0"}`}
               style={isScrolled ? { filter: "brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)" } : {}}
             />
           </a>

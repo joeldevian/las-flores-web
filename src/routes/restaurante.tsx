@@ -280,7 +280,7 @@ function ChefAccordionSection() {
             return (
               <button
                 key={plate.name}
-                ref={(el) => (itemRefs.current[index] = el)}
+                ref={(el) => { itemRefs.current[index] = el; }}
                 data-plate-index={index}
                 type="button"
                 onClick={() => setActiveIndex(index)}
@@ -352,7 +352,7 @@ function RestaurantePage() {
           <img
             src="/images.png"
             alt="Las Flores Logo"
-            className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? "" : "brightness-0 invert"}`}
+            className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-8" : "h-10 md:h-12 brightness-0 invert"}`}
           />
         </Link>
         <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">

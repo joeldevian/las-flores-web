@@ -28,11 +28,10 @@ function normalizeCategorySlug(nameOrSlug: string): string {
  */
 export async function getLiveCategories(): Promise<Category[]> {
   try {
-    // 1. Obtener categorías activas de Supabase
+    // 1. Obtener todas las categorías de Supabase (activas e inactivas)
     const { data: dbCategories, error: catError } = await supabase
       .from("categories")
       .select("*")
-      .eq("is_active", true)
       .order("sort_order", { ascending: true });
 
     // 2. Obtener productos disponibles de Supabase
@@ -53,20 +52,32 @@ export async function getLiveCategories(): Promise<Category[]> {
     // Crear mapa de categorías basándose en Supabase o estático
     const categoriesMap = new Map<string, Category>();
 
-    // Inicializar mapa con la estructura estática para preservar orden y categorías base
-    staticCategories.forEach((cat) => {
-      categoriesMap.set(cat.id, {
-        id: cat.id,
-        label: cat.label,
-        dishes: [],
+    // Identificar slugs de categorías inactivas explícitamente en BD
+    const inactiveSlugs = new Set<string>();
+    if (dbCategories) {
+      dbCategories.forEach(c => {
+        if (c.is_active === false) {
+          inactiveSlugs.add(c.slug || normalizeCategorySlug(c.name));
+        }
       });
+    }
+
+    // Inicializar mapa con la estructura estática, omitiendo las que fueron desactivadas en BD
+    staticCategories.forEach((cat) => {
+      if (!inactiveSlugs.has(cat.id)) {
+        categoriesMap.set(cat.id, {
+          id: cat.id,
+          label: cat.label,
+          dishes: [],
+        });
+      }
     });
 
-    // Agregar categorías nuevas de Supabase si existen
+    // Agregar categorías nuevas de Supabase si existen y están activas
     if (dbCategories) {
       dbCategories.forEach((c) => {
         const slug = c.slug || normalizeCategorySlug(c.name);
-        if (!categoriesMap.has(slug)) {
+        if (c.is_active !== false && !categoriesMap.has(slug)) {
           categoriesMap.set(slug, {
             id: slug,
             label: c.name,
