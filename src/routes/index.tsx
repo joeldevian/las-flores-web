@@ -672,7 +672,7 @@ function Index() {
           <img
             src="/images.png"
             alt="Las Flores Logo"
-            className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? "" : "brightness-0 invert"}`}
+            className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-8" : "h-10 md:h-12 brightness-0 invert"}`}
           />
         </Link>
         
