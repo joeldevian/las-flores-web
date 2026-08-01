@@ -12,12 +12,31 @@ const DEFAULT_CENTER = {
 
 interface LocationSelectorProps {
   onLocationSelect: (lat: number, lng: number) => void;
+  onAddressResolve?: (address: string) => void;
   initialLocation?: { lat: number; lng: number } | null;
 }
 
-export function LocationSelector({ onLocationSelect, initialLocation }: LocationSelectorProps) {
+export function LocationSelector({ onLocationSelect, onAddressResolve, initialLocation }: LocationSelectorProps) {
   const [MapComponents, setMapComponents] = useState<typeof import("react-leaflet") | null>(null);
   const position = initialLocation || DEFAULT_CENTER;
+
+  const reverseGeocode = async (lat: number, lng: number) => {
+    if (!onAddressResolve) return;
+    try {
+      const key = import.meta.env.VITE_MAPTILER_API_KEY;
+      const res = await fetch(
+        `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${key}&language=es`
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      const feature = data?.features?.[0];
+      if (feature?.place_name) {
+        onAddressResolve(feature.place_name);
+      }
+    } catch (e) {
+      console.error("Reverse geocoding error:", e);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -50,6 +69,7 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
     useMapEvents({
       click(e: LeafletMouseEvent) {
         onLocationSelect(e.latlng.lat, e.latlng.lng);
+        reverseGeocode(e.latlng.lat, e.latlng.lng);
       },
     });
     return null;
@@ -64,6 +84,7 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
           if (marker != null) {
             const newPos = marker.getLatLng();
             onLocationSelect(newPos.lat, newPos.lng);
+            reverseGeocode(newPos.lat, newPos.lng);
           }
         },
       }),
@@ -75,6 +96,8 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
     );
   }
 
+  const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
+
   return (
     <div className="w-full h-[250px] rounded-xl overflow-hidden border-2 border-black/10 relative z-0">
       <MapContainer
@@ -84,8 +107,8 @@ export function LocationSelector({ onLocationSelect, initialLocation }: Location
         style={{ height: "100%", width: "100%", zIndex: 0 }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url={`https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`}
         />
         <MapEvents />
         <DraggableMarker />

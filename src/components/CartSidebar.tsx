@@ -220,11 +220,30 @@ export function CartSidebar() {
   const [processing, setProcessing] = useState(false);
   const [clientLocation, setClientLocation] = useState<{ lat: number; lng: number } | null>(null);
 
+  const reverseGeocode = async (lat: number, lng: number) => {
+    try {
+      const key = import.meta.env.VITE_MAPTILER_API_KEY;
+      const res = await fetch(
+        `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${key}&language=es`
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      const feature = data?.features?.[0];
+      if (feature?.place_name) {
+        setDelivery((d) => ({ ...d, address: d.address || feature.place_name }));
+      }
+    } catch (e) {
+      console.error("Reverse geocoding error:", e);
+    }
+  };
+
   const handleUseGPS = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setClientLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          const { latitude: lat, longitude: lng } = pos.coords;
+          setClientLocation({ lat, lng });
+          reverseGeocode(lat, lng);
         },
         (err) => {
           console.error("GPS error:", err);
@@ -919,12 +938,15 @@ export function CartSidebar() {
                         <LocationSelector
                           initialLocation={clientLocation}
                           onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
+                          onAddressResolve={(address) =>
+                            setDelivery((d) => ({ ...d, address: d.address || address }))
+                          }
                         />
                       )}
 
                       {clientLocation ? (
                         <div className="p-3 bg-white rounded-xl border border-black/5 text-xs text-ink/80 flex items-center justify-between">
-                          <span>📍 Distancia estimada: <strong>{distanceKm.toFixed(1)} km</strong></span>
+                          <span className="flex items-center gap-1.5"><MapPin size={12} className="text-eucalipto flex-shrink-0" /> Distancia estimada: <strong>{distanceKm.toFixed(1)} km</strong></span>
                           <span className="font-bold text-eucalipto">Costo: S/ {DELIVERY_FEE.toFixed(2)}</span>
                         </div>
                       ) : (
@@ -967,7 +989,7 @@ export function CartSidebar() {
                       {orderType === "delivery" && clientLocation && (
                         <div className="p-3 bg-white rounded-xl border border-black/10 flex items-center justify-between text-xs">
                           <div className="min-w-0 pr-2">
-                            <span className="block font-bold text-ink truncate">📍 {delivery.address || "Ubicación fijada"}</span>
+                            <span className="block font-bold text-ink truncate"><MapPin size={11} className="inline mr-1 text-eucalipto" />{delivery.address || "Ubicación fijada"}</span>
                             <span className="block text-[10px] text-black/50">A {distanceKm.toFixed(1)} km del restaurante</span>
                           </div>
                           <button
