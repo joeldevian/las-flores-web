@@ -340,8 +340,6 @@ export function AdminProductModal({
         category_id: categoryId,
         image_url: imageUrl.trim() || null,
         is_available: isAvailable,
-        is_customizable: isCustomizable,
-        custom_options: isCustomizable ? customSections : null,
       };
 
       if (product) {
