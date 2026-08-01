@@ -134,7 +134,7 @@ function GenerationFlipCard({
         <div className={`relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] [transform-style:preserve-3d] md:group-hover:[transform:rotateY(180deg)] md:group-focus:[transform:rotateY(180deg)] ${isActive ? "[transform:rotateY(180deg)] md:[transform:none]" : ""} shadow-xl`}>
           {/* Front Face */}
           <div
-            className="absolute inset-0 h-full w-full rounded-[2rem] overflow-hidden bg-ink"
+            className="absolute inset-0 h-full w-full rounded-[2rem] overflow-hidden bg-eucalipto"
             style={{ backfaceVisibility: "hidden" }}
           >
             <img
@@ -145,8 +145,8 @@ function GenerationFlipCard({
               className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/30 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-8 text-cream">
-              <span className="inline-flex rounded-full border border-cream/30 bg-ink/30 backdrop-blur-md px-4 py-1.5 text-[10px] uppercase tracking-[0.35em] text-cream/90 mb-4">
+            <div className="absolute inset-x-0 bottom-0 p-8 text-piedra">
+              <span className="inline-flex rounded-full border border-piedra/30 bg-eucalipto/30 backdrop-blur-md px-4 py-1.5 text-[10px] uppercase tracking-[0.35em] text-piedra/90 mb-4">
                 {generation.generation}
               </span>
               <h3 className="font-serif text-3xl md:text-4xl leading-tight text-balance">
@@ -157,26 +157,26 @@ function GenerationFlipCard({
 
           {/* Back Face */}
           <div
-            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-[2rem] bg-[#f8f4e6] p-8 md:p-10 text-ink shadow-inner border border-ink/5"
+            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-[2rem] bg-[#f8f4e6] p-8 md:p-10 text-nogal shadow-inner border border-nogal/5"
             style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
           >
             <div>
-              <span className="inline-flex rounded-full border border-ink/20 bg-ink/5 px-4 py-1.5 text-[10px] uppercase tracking-[0.35em] text-ink/80 mb-5">
+              <span className="inline-flex rounded-full border border-nogal/20 bg-piedra px-4 py-1.5 text-[10px] uppercase tracking-[0.35em] text-nogal/80 mb-5">
                 {generation.generation}
               </span>
-              <h3 className="font-serif text-3xl leading-tight text-ink text-balance mb-6">
+              <h3 className="font-serif text-3xl leading-tight text-nogal text-balance mb-6">
                 {generation.name}
               </h3>
-              <p className="text-base leading-relaxed text-ink/80 text-pretty">
+              <p className="text-base leading-relaxed text-nogal/80 text-pretty">
                 {generation.summary}
               </p>
             </div>
 
-            <div className="mt-auto pt-6 border-t border-ink/10">
-              <span className="block text-[10px] uppercase tracking-[0.3em] text-ink/60 mb-2 font-bold">
+            <div className="mt-auto pt-6 border-t border-nogal/10">
+              <span className="block text-[10px] uppercase tracking-[0.3em] text-nogal/60 mb-2 font-bold">
                 Su Legado
               </span>
-              <p className="text-sm leading-relaxed text-ink/80">{generation.contribution}</p>
+              <p className="text-sm leading-relaxed text-nogal/80">{generation.contribution}</p>
             </div>
           </div>
         </div>
@@ -189,7 +189,7 @@ function GenerationsSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   return (
-    <section id="historia" className="bg-cream py-16 md:py-20 px-6">
+    <section id="historia" className="bg-piedra py-16 md:py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-3xl mb-8 md:mb-12">
           <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-4 block">
@@ -263,7 +263,7 @@ function ChefAccordionSection() {
   }, [isMobile]);
 
   return (
-    <section className="bg-eucalipto/5 py-16 md:py-20 px-6">
+    <section className="bg-piedra py-16 md:py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-4 block">
@@ -284,7 +284,7 @@ function ChefAccordionSection() {
                 data-plate-index={index}
                 type="button"
                 onClick={() => setActiveIndex(index)}
-                className={`group relative overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white text-left shadow-md transition-all duration-500 ease-out ${isActive ? "md:flex-[2.2]" : "md:flex-[0.9]"} ${isActive ? "min-h-[280px]" : "min-h-[120px]"}`}
+                className={`group relative overflow-hidden rounded-[1.75rem] border border-nogal/10 bg-white text-left shadow-md transition-all duration-500 ease-out ${isActive ? "md:flex-[2.2]" : "md:flex-[0.9]"} ${isActive ? "min-h-[280px]" : "min-h-[120px]"}`}
               >
                 <img
                   src={plate.image}
@@ -299,13 +299,13 @@ function ChefAccordionSection() {
                 <div
                   className={`absolute inset-0 transition-all duration-500 ${isActive ? "bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" : "bg-gradient-to-t from-ink/70 via-ink/20 to-transparent"}`}
                 />
-                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 text-cream">
+                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 text-piedra">
                   <div
                     className={`transition-all duration-500 ${isActive ? "translate-y-0 opacity-100" : "translate-y-3 opacity-90"}`}
                   >
                     <h3 className="text-lg md:text-xl font-serif leading-tight">{plate.name}</h3>
                     <p
-                      className={`mt-3 text-sm leading-relaxed text-cream/80 transition-all duration-500 ${isActive ? "max-h-32 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}
+                      className={`mt-3 text-sm leading-relaxed text-piedra/80 transition-all duration-500 ${isActive ? "max-h-32 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}
                     >
                       {plate.description}
                     </p>
@@ -336,10 +336,10 @@ function RestaurantePage() {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="bg-cream text-ink font-sans selection:bg-retama/30">
+    <div className="bg-piedra text-nogal font-sans selection:bg-chilca/30">
       {/* Nav: nuestra historia | logo | reservas y delivery */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-piedra text-nogal shadow-md" : "bg-transparent text-piedra"}`}
       >
         <div className="flex-1 flex justify-start items-center">
           <SiteNavigationMenu isScrolled={isScrolled} />
@@ -358,23 +358,23 @@ function RestaurantePage() {
         <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
           <button
             onClick={() => setIsReservationOpen(true)}
-            className="hover:text-retama transition-colors"
+            className="hover:text-chilca transition-colors"
           >
             RESERVAS
           </button>
           <button
             onClick={() => startTransition(() => setIsMenuOpen(true))}
-            className="hover:text-retama transition-colors"
+            className="hover:text-chilca transition-colors"
           >
             DELIVERY
           </button>
           {totalItems > 0 && (
             <button
               onClick={() => setCartOpen(true)}
-              className="relative hover:text-retama transition-colors"
+              className="relative hover:text-chilca transition-colors"
             >
               <ShoppingCart size={20} />
-              <span className="absolute -top-2 -right-2 bg-retama text-ink text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-chilca text-nogal text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                 {totalItems}
               </span>
             </button>
@@ -384,7 +384,7 @@ function RestaurantePage() {
 
       <header
         id="historia"
-        className="relative min-h-[100svh] w-full overflow-hidden bg-ink flex items-center pt-32 pb-24"
+        className="relative min-h-[100svh] w-full overflow-hidden bg-eucalipto flex items-center pt-32 pb-24"
       >
         <img
           src={cocinaImg}
@@ -396,12 +396,12 @@ function RestaurantePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/35 to-ink/90" />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8 text-cream">
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8 text-piedra">
           <div className="max-w-3xl text-center">
             <h1 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05] text-balance animate-reveal [animation-delay:200ms]">
               La familia detrás de cada plato
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-[1.7] text-cream/80">
+            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-[1.7] text-piedra/80">
               Cada generación ha dejado una huella distinta: una fundadora que abrió el fuego, una
               segunda etapa que consolidó el proyecto y una tercera que lo lleva al presente con una
               mirada contemporánea.
@@ -415,16 +415,16 @@ function RestaurantePage() {
       <ChefAccordionSection />
 
       {/* Eventos Corporativos */}
-      <section id="corporativo" className="bg-ink text-cream py-24 md:py-32 px-6">
+      <section id="corporativo" className="bg-eucalipto text-piedra py-24 md:py-32 px-6">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 md:gap-20">
           <div className="flex-1 max-w-[50ch]">
-            <span className="text-retama font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
+            <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
               Eventos Corporativos
             </span>
             <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-balance mb-6">
               El mejor escenario para sus negocios en Ayacucho
             </h2>
-            <p className="text-lg text-cream/70 leading-[1.7] mb-8">
+            <p className="text-lg text-piedra/70 leading-[1.7] mb-8">
               Contamos con ambientes exclusivos y un servicio de primera categoría, diseñados
               especialmente para almuerzos de negocios, cenas de gala, conferencias y reuniones
               corporativas. Garantice el éxito de su evento con la mejor propuesta gastronómica y el
@@ -447,14 +447,14 @@ function RestaurantePage() {
                 decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 border border-cream/20 m-4 rounded-sm pointer-events-none" />
+              <div className="absolute inset-0 border border-piedra/20 m-4 rounded-sm pointer-events-none" />
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Reservas y Delivery */}
-      <section id="reservas" className="bg-cream py-24 md:py-32 px-6">
+      <section id="reservas" className="bg-piedra py-24 md:py-32 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs block mb-6">
             Reservas y Delivery
@@ -462,7 +462,7 @@ function RestaurantePage() {
           <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] mb-8 text-balance">
             Reserve su mesa o disfrute Las Flores en casa
           </h2>
-          <p className="text-lg text-ink/70 leading-[1.7] max-w-[52ch] mx-auto mb-12">
+          <p className="text-lg text-nogal/70 leading-[1.7] max-w-[52ch] mx-auto mb-12">
             Separe su lugar con anticipación o pida nuestros platos con delivery y recojo en
             Ayacucho.
           </p>
@@ -475,7 +475,7 @@ function RestaurantePage() {
             </button>
             <button
               onClick={() => startTransition(() => setIsMenuOpen(true))}
-              className="px-10 py-5 font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg rounded-xl hover:-translate-y-0.5 bg-eucalipto text-cream"
+              className="px-10 py-5 font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg rounded-xl hover:-translate-y-0.5 bg-eucalipto text-piedra"
             >
               Pedir delivery
             </button>
@@ -491,3 +491,4 @@ function RestaurantePage() {
     </div>
   );
 }
+

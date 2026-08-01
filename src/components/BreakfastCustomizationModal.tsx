@@ -137,15 +137,15 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4 md:p-6 animate-in fade-in duration-250">
       {/* Fondo oscuro traslúcido con blur */}
       <div
-        className="absolute inset-0 bg-ink/80 backdrop-blur-md cursor-pointer transition-opacity"
+        className="absolute inset-0 bg-eucalipto/80 backdrop-blur-md cursor-pointer transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Principal */}
-      <div className="relative z-10 w-full max-w-2xl bg-[#FAF6EE] text-ink rounded-[28px] shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[92vh] md:max-h-[88vh] animate-in zoom-in-95 duration-300">
+      <div className="relative z-10 w-full max-w-2xl bg-[#FAF6EE] text-nogal rounded-[28px] shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[92vh] md:max-h-[88vh] animate-in zoom-in-95 duration-300">
         
         {/* Cabecera con Imagen y Etiquetas */}
-        <div className="relative h-44 sm:h-52 md:h-56 overflow-hidden flex-shrink-0 bg-ink">
+        <div className="relative h-44 sm:h-52 md:h-56 overflow-hidden flex-shrink-0 bg-eucalipto">
           {dish.image ? (
             <img
               src={dish.image}
@@ -162,7 +162,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
           {/* Botón de Cierre */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-ink transition-colors flex items-center justify-center shadow-md backdrop-blur-xs active:scale-95"
+            className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-nogal transition-colors flex items-center justify-center shadow-md backdrop-blur-xs active:scale-95"
             title="Cerrar modal"
           >
             <X size={20} />
@@ -174,15 +174,15 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
               <span className="text-[10px] uppercase tracking-[0.22em] font-bold px-3 py-1 rounded-full bg-retablo text-white shadow-xs flex items-center gap-1">
                 <Sparkles size={11} /> Personaliza tu pedido
               </span>
-              <span className="text-[10px] uppercase tracking-[0.15em] font-bold px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-cream">
+              <span className="text-[10px] uppercase tracking-[0.15em] font-bold px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-piedra">
                 {selectedCount}/{sectionsList.length} Seleccionados
               </span>
             </div>
             <div className="flex justify-between items-end gap-3">
-              <h2 className="font-serif font-bold text-2xl sm:text-3xl text-cream drop-shadow-sm leading-tight">
+              <h2 className="font-serif font-bold text-2xl sm:text-3xl text-piedra drop-shadow-sm leading-tight">
                 {dish.name}
               </h2>
-              <span className="font-serif font-bold text-xl sm:text-2xl text-cream flex-shrink-0 bg-white/15 px-3.5 py-1 rounded-2xl backdrop-blur-md border border-white/20 shadow-xs">
+              <span className="font-serif font-bold text-xl sm:text-2xl text-piedra flex-shrink-0 bg-white/15 px-3.5 py-1 rounded-2xl backdrop-blur-md border border-white/20 shadow-xs">
                 S/ {resolveSelectedPrice().toFixed(2)}
               </span>
             </div>
@@ -204,7 +204,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
                       {idx + 1}
                     </div>
                     <div>
-                      <h3 className="font-serif font-bold text-base text-ink">{section.title}</h3>
+                      <h3 className="font-serif font-bold text-base text-nogal">{section.title}</h3>
                       <p className="text-[11px] text-black/50 font-medium">Selección obligatoria • 1 opción</p>
                     </div>
                   </div>
@@ -228,7 +228,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
                         onClick={() => handleSelectOption(secKey, item.name)}
                         className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                           isSelected
-                            ? "bg-eucalipto/10 border-eucalipto text-ink shadow-xs"
+                            ? "bg-eucalipto/10 border-eucalipto text-nogal shadow-xs"
                             : "bg-black/2 border-transparent hover:border-black/10 hover:bg-black/4"
                         }`}
                       >
@@ -240,7 +240,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
                           {isSelected && <Check size={12} strokeWidth={3} />}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className="block text-xs font-serif font-bold text-ink leading-tight">
+                          <span className="block text-xs font-serif font-bold text-nogal leading-tight">
                             {item.name}
                           </span>
                           {item.desc && (
@@ -272,7 +272,7 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
                   <div
                     key={secKey}
                     className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs ${
-                      val ? "bg-white border-eucalipto/30 text-ink" : "bg-white/40 border-black/5 text-ink/40"
+                      val ? "bg-white border-eucalipto/30 text-nogal" : "bg-white/40 border-black/5 text-nogal/40"
                     }`}
                   >
                     <span className="font-bold truncate max-w-[40%]">{cleanTitle}:</span>
@@ -313,3 +313,4 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
     document.body
   );
 }
+

@@ -73,7 +73,7 @@ const festividades: Festividad[] = [
     id: 1,
     nombre: "Semana Santa Ayacuchana",
     fecha: "Marzo / Abril",
-    colorAccent: "bg-pantiwaita",
+    colorAccent: "bg-cochinilla",
     imagen: "/imagenes-reales/FESTIVIDADES LISTO/SEMANA SANTA/semana santa-opt.webp",
     descripcionCorta:
       "La mayor expresión de fe y fervor religioso en el Perú, con impresionantes alfombras de flores.",
@@ -92,7 +92,7 @@ const festividades: Festividad[] = [
     id: 2,
     nombre: "Carnaval Ayacuchano",
     fecha: "Febrero / Marzo",
-    colorAccent: "bg-retama",
+    colorAccent: "bg-chilca",
     imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVALES/Carnavales-opt.webp",
     descripcionCorta:
       "Vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas.",
@@ -266,9 +266,9 @@ function Modal({
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10"
       onClick={onClose}
     >
-      <div className="absolute inset-0 bg-ink/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-cafe/85 backdrop-blur-sm" />
       <div
-        className="relative bg-cream text-ink max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        className="relative bg-piedra text-nogal max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Imagen cabecera con arco en CSS */}
@@ -277,16 +277,16 @@ function Modal({
           <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center border border-cream/40 text-cream hover:bg-cream/10 transition-colors text-sm"
+            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center border border-piedra/40 text-piedra hover:bg-piedra/10 transition-colors text-sm"
             aria-label="Cerrar"
           >
             ✕
           </button>
           <div className="absolute bottom-0 left-0 p-7">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-cream/60 mb-2">
+            <p className="text-[10px] uppercase tracking-[0.35em] text-piedra/60 mb-2">
               {subtitulo}
             </p>
-            <h2 className="font-serif italic text-2xl md:text-3xl text-cream leading-snug">
+            <h2 className="font-serif italic text-2xl md:text-3xl text-piedra leading-snug">
               {titulo}
             </h2>
           </div>
@@ -334,7 +334,7 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
   const fest = festividades[activo];
 
   return (
-    <div className="relative overflow-hidden bg-ink w-full aspect-[4/3] md:aspect-[21/9] rounded-3xl shadow-xl group">
+    <div className="relative overflow-hidden bg-cafe w-full aspect-[4/3] md:aspect-[21/9] rounded-3xl shadow-xl group">
       <style>{`
         @keyframes fillProgress {
           from { width: 0%; }
@@ -354,18 +354,18 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
         </div>
       ))}
 
-      <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 z-10 text-cream">
+      <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 z-10 text-piedra">
         <div className="max-w-3xl">
-          <p className="text-[10px] uppercase tracking-[0.35em] mb-3 text-cream/70">{fest.fecha}</p>
+          <p className="text-[10px] uppercase tracking-[0.35em] mb-3 text-piedra/70">{fest.fecha}</p>
           <h3 className="font-serif italic text-3xl md:text-5xl mb-4 leading-tight">
             {fest.nombre}
           </h3>
-          <p className="text-sm md:text-base text-cream/80 leading-relaxed mb-6 max-w-2xl hidden md:block">
+          <p className="text-sm md:text-base text-piedra/80 leading-relaxed mb-6 max-w-2xl hidden md:block">
             {fest.descripcionCorta}
           </p>
           <button
             onClick={() => onSelect(fest)}
-            className="inline-flex items-center gap-3 px-6 py-3 bg-cream/10 hover:bg-cream text-cream hover:text-ink transition-colors text-[10px] uppercase tracking-[0.2em] font-semibold rounded-sm border border-cream/20"
+            className="inline-flex items-center gap-3 px-6 py-3 bg-piedra/10 hover:bg-piedra text-piedra hover:text-nogal transition-colors text-[10px] uppercase tracking-[0.2em] font-semibold rounded-sm border border-piedra/20"
           >
             Descubrir Festividad <span aria-hidden>→</span>
           </button>
@@ -376,7 +376,7 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
       <div className="absolute top-1/2 -translate-y-1/2 left-4 md:left-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button
           onClick={prev}
-          className="p-3 bg-ink/40 hover:bg-ink/80 rounded-full text-cream backdrop-blur-sm transition-all"
+          className="p-3 bg-cafe/40 hover:bg-cafe/80 rounded-full text-piedra backdrop-blur-sm transition-all"
           aria-label="Anterior"
         >
           <svg
@@ -397,7 +397,7 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
       <div className="absolute top-1/2 -translate-y-1/2 right-4 md:right-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button
           onClick={next}
-          className="p-3 bg-ink/40 hover:bg-ink/80 rounded-full text-cream backdrop-blur-sm transition-all"
+          className="p-3 bg-cafe/40 hover:bg-cafe/80 rounded-full text-piedra backdrop-blur-sm transition-all"
           aria-label="Siguiente"
         >
           <svg
@@ -422,13 +422,13 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
           <button
             key={i}
             onClick={() => goTo(i)}
-            className={`relative overflow-hidden transition-all duration-500 ${i === activo ? "w-12 h-1.5 rounded-full bg-cream/30" : "w-1.5 h-1.5 rounded-full bg-cream/50 hover:bg-cream"}`}
+            className={`relative overflow-hidden transition-all duration-500 ${i === activo ? "w-12 h-1.5 rounded-full bg-piedra/30" : "w-1.5 h-1.5 rounded-full bg-piedra/50 hover:bg-piedra"}`}
             aria-label={`Ver festividad ${i + 1}`}
           >
             {i === activo && (
               <div
                 key={activo}
-                className="absolute top-0 left-0 h-full bg-cream"
+                className="absolute top-0 left-0 h-full bg-piedra"
                 style={{ animation: "fillProgress 5s linear forwards" }}
               />
             )}
@@ -518,7 +518,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
             />
             {/* Gradiente más oscuro abajo para que lea el texto */}
             <div
-              className={`absolute inset-0 transition-opacity duration-500 ${isExpanded ? "bg-gradient-to-t from-ink via-ink/20 to-transparent" : "bg-ink/60 hover:bg-ink/40"}`}
+              className={`absolute inset-0 transition-opacity duration-500 ${isExpanded ? "bg-gradient-to-t from-ink via-ink/20 to-transparent" : "bg-cafe/60 hover:bg-cafe/40"}`}
             />
 
             {/* Número Romano */}
@@ -526,7 +526,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
               className={`absolute top-4 transition-all duration-700 z-20 ${isExpanded ? "right-5 md:right-8" : "left-1/2 -translate-x-1/2 md:left-4 md:translate-x-0"}`}
             >
               <span
-                className={`font-serif text-cream/40 select-none transition-all duration-700 ${isExpanded ? "text-4xl" : "text-xl md:text-2xl"}`}
+                className={`font-serif text-piedra/40 select-none transition-all duration-700 ${isExpanded ? "text-4xl" : "text-xl md:text-2xl"}`}
               >
                 {lugar.numeral}
               </span>
@@ -543,14 +543,14 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
               <span className="text-eucalipto text-[10px] uppercase tracking-[0.35em] font-semibold mb-2 block">
                 {lugar.categoria}
               </span>
-              <h3 className="font-serif text-cream text-2xl md:text-4xl leading-tight mb-3">
+              <h3 className="font-serif text-piedra text-2xl md:text-4xl leading-tight mb-3">
                 {lugar.nombre}
               </h3>
-              <p className="text-cream/70 text-sm line-clamp-2 mb-5 hidden md:block max-w-[40ch]">
+              <p className="text-piedra/70 text-sm line-clamp-2 mb-5 hidden md:block max-w-[40ch]">
                 {lugar.descripcion}
               </p>
-              <div className="flex items-center gap-3 text-cream text-[10px] uppercase tracking-[0.2em] font-semibold mt-auto">
-                <span className="w-8 h-[1px] bg-retama block"></span> Descubrir
+              <div className="flex items-center gap-3 text-piedra text-[10px] uppercase tracking-[0.2em] font-semibold mt-auto">
+                <span className="w-8 h-[1px] bg-chilca block"></span> Descubrir
               </div>
             </div>
 
@@ -560,7 +560,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
                 isExpanded ? "opacity-0" : "opacity-100"
               }`}
             >
-              <span className="text-cream font-serif text-xl tracking-wider whitespace-nowrap -rotate-90">
+              <span className="text-piedra font-serif text-xl tracking-wider whitespace-nowrap -rotate-90">
                 {lugar.nombre}
               </span>
             </div>
@@ -571,7 +571,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
                 isExpanded ? "opacity-0" : "opacity-100"
               }`}
             >
-              <span className="text-cream font-serif text-sm tracking-widest text-center px-4 drop-shadow-md">
+              <span className="text-piedra font-serif text-sm tracking-widest text-center px-4 drop-shadow-md">
                 {lugar.nombre}
               </span>
             </div>
@@ -598,7 +598,7 @@ function Index() {
   }, []);
 
   return (
-    <div className="bg-cream text-ink font-sans selection:bg-retama/30">
+    <div className="bg-piedra text-nogal font-sans selection:bg-chilca/30">
       {/* MODAL — Festividad */}
       {festividadActiva && (
         <Modal
@@ -609,20 +609,20 @@ function Index() {
           onClose={() => setFestividadActiva(null)}
           cuerpo={
             <>
-              <p className="text-ink/80 text-base md:text-lg leading-[1.85] mb-8">
+              <p className="text-nogal/80 text-base md:text-lg leading-[1.85] mb-8">
                 {festividadActiva.descripcion}
               </p>
               <h4 className="font-serif text-xl mb-5">Tradiciones</h4>
               <ul className="space-y-3 mb-8">
                 {festividadActiva.tradiciones.map((t, i) => (
-                  <li key={i} className="flex items-start gap-4 text-ink/75">
-                    <span className="w-px h-4 bg-pantiwaita shrink-0 mt-1" />
+                  <li key={i} className="flex items-start gap-4 text-nogal/75">
+                    <span className="w-px h-4 bg-cochinilla shrink-0 mt-1" />
                     <span className="text-sm leading-relaxed">{t}</span>
                   </li>
                 ))}
               </ul>
-              <div className="border-t border-ink/10 pt-6">
-                <p className="text-sm text-ink/55 leading-relaxed">
+              <div className="border-t border-nogal/10 pt-6">
+                <p className="text-sm text-nogal/55 leading-relaxed">
                   <span className="font-semibold text-eucalipto">Dato cultural — </span>
                   {festividadActiva.dato}
                 </p>
@@ -642,14 +642,14 @@ function Index() {
           onClose={() => setLugarActivo(null)}
           cuerpo={
             <>
-              <p className="text-ink/80 text-base md:text-lg leading-[1.85] mb-8">
+              <p className="text-nogal/80 text-base md:text-lg leading-[1.85] mb-8">
                 {lugarActivo.descripcion}
               </p>
               <div className="border-l-2 border-eucalipto pl-6 py-1">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-eucalipto font-semibold mb-2">
                   Consejo de visita
                 </p>
-                <p className="text-sm text-ink/70 leading-relaxed">{lugarActivo.consejo}</p>
+                <p className="text-sm text-nogal/70 leading-relaxed">{lugarActivo.consejo}</p>
               </div>
             </>
           }
@@ -658,7 +658,7 @@ function Index() {
 
       {/* NAV */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-piedra text-nogal shadow-md" : "bg-transparent text-piedra"}`}
       >
         <div className="flex-1 flex justify-start items-center">
           <SiteNavigationMenu isScrolled={isScrolled} />
@@ -684,13 +684,13 @@ function Index() {
               alt="Peru Flag" 
               className="w-6 h-auto shadow-sm rounded-[2px]" 
             />
-            <span className={isScrolled ? "text-ink" : "text-cream"}>ES</span>
+            <span className={isScrolled ? "text-nogal" : "text-piedra"}>ES</span>
           </div>
         </div>
       </nav>
 
       {/* HERO */}
-      <header className="relative h-screen w-full overflow-hidden bg-ink">
+      <header className="relative h-screen w-full overflow-hidden bg-eucalipto">
         <img
           src={ayacuchoHero}
           alt="Vista panorámica de Ayacucho al atardecer con sus iglesias coloniales y los Andes"
@@ -701,13 +701,13 @@ function Index() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-transparent to-ink/80" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-          <span className="text-retama/90 uppercase tracking-[0.4em] text-xs md:text-sm mb-6 animate-reveal font-semibold">
+          <span className="text-chilca/90 uppercase tracking-[0.4em] text-xs md:text-sm mb-6 animate-reveal font-semibold">
             Huamanga · Perú
           </span>
-          <h1 className="font-serif italic text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-cream leading-[1.05] text-balance max-w-[20ch] animate-reveal [animation-delay:200ms]">
+          <h1 className="font-serif italic text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-piedra leading-[1.05] text-balance max-w-[20ch] animate-reveal [animation-delay:200ms]">
             Guardianes de la Cultura Ayacuchana
           </h1>
-          <p className="mt-8 max-w-[52ch] text-cream/80 text-sm sm:text-base md:text-lg leading-[1.7] animate-reveal [animation-delay:400ms]">
+          <p className="mt-8 max-w-[52ch] text-piedra/80 text-sm sm:text-base md:text-lg leading-[1.7] animate-reveal [animation-delay:400ms]">
             Treinta y tres iglesias, retablos que guardan siglos y calles donde la tradición
             respira. Nosotros no solo servimos comida, preservamos el alma de Ayacucho.
           </p>
@@ -718,7 +718,7 @@ function Index() {
             <span>Nuestra Historia</span> <span aria-hidden>→</span>
           </Link>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-cream/60 text-[10px] uppercase tracking-[0.4em]">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-piedra/60 text-[10px] uppercase tracking-[0.4em]">
           Desliza
         </div>
       </header>
@@ -744,7 +744,7 @@ function Index() {
             <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
               El retablo, la textilería y el fogón
             </h2>
-            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75">
+            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-nogal/75">
               En Ayacucho el arte y la comida comparten origen: manos que tallan retablos, tejen
               mantas y avivan el fogón con la misma paciencia. Cada grano de maíz morado, cada aroma
               a leña y cada textura de la piedra volcánica cuentan la historia de una tierra que se
@@ -755,7 +755,7 @@ function Index() {
       </section>
 
       {/* LUGARES PARA VISITAR */}
-      <section className="py-20 md:py-32 px-6 bg-eucalipto/5">
+      <section className="py-20 md:py-32 px-6 bg-piedra">
         <div className="max-w-7xl mx-auto">
           <div className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
@@ -766,7 +766,7 @@ function Index() {
                 Ayacucho más allá de la mesa
               </h2>
             </div>
-            <p className="text-sm sm:text-base text-ink/60 leading-[1.7] max-w-[36ch] md:text-right">
+            <p className="text-sm sm:text-base text-nogal/60 leading-[1.7] max-w-[36ch] md:text-right">
               Historia, naturaleza y arte vivo en cada rincón. Conoce la tierra que inspira nuestros
               sabores.
             </p>
@@ -788,7 +788,7 @@ function Index() {
                 El calendario que da vida a nuestra cocina
               </h2>
             </div>
-            <p className="text-base text-ink/60 leading-[1.7] max-w-[36ch] md:text-right">
+            <p className="text-base text-nogal/60 leading-[1.7] max-w-[36ch] md:text-right">
               Cada plato de Las Flores tiene una celebración detrás. Estas son las fiestas de
               nuestra tierra.
             </p>
@@ -798,16 +798,16 @@ function Index() {
       </section>
 
       {/* PLATOS TÍPICOS */}
-      <section className="py-12 md:py-16 px-6 bg-ink text-cream selection:bg-retama/30">
+      <section className="py-12 md:py-16 px-6 bg-cafe text-piedra selection:bg-chilca/30">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 max-w-3xl">
-            <span className="text-retama font-medium uppercase tracking-[0.3em] text-[10px] mb-4 block">
+            <span className="text-chilca font-medium uppercase tracking-[0.3em] text-[10px] mb-4 block">
               Platos Típicos
             </span>
             <h2 className="font-serif text-3xl md:text-5xl leading-[1.1] text-balance">
               La despensa de la sierra en cinco sabores
             </h2>
-            <p className="mt-4 text-base text-cream/70 leading-[1.6] max-w-2xl">
+            <p className="mt-4 text-base text-piedra/70 leading-[1.6] max-w-2xl">
               Recetas que definen la identidad ayacuchana. El fruto del fogón y las festividades que
               atraviesan generaciones.
             </p>
@@ -836,7 +836,7 @@ function Index() {
               },
             ].map((p) => (
               <article key={p.nombre} className="flex flex-col group">
-                <div className="dish-card-hover aspect-[5/4] bg-ink/40 rounded-lg">
+                <div className="dish-card-hover aspect-[5/4] bg-cafe/40 rounded-lg">
                   <img
                     src={p.img}
                     alt={p.nombre}
@@ -847,11 +847,11 @@ function Index() {
                     className="w-full h-full object-cover"
                   />
                   <div className="dish-card-overlay">
-                    <span className="text-retama font-bold text-[10px] uppercase tracking-[0.25em] mb-1">
+                    <span className="text-chilca font-bold text-[10px] uppercase tracking-[0.25em] mb-1">
                       Plato Tradicional
                     </span>
-                    <h4 className="font-serif text-lg font-bold text-cream mb-1">{p.nombre}</h4>
-                    <p className="text-xs text-cream/80 leading-relaxed">{p.desc}</p>
+                    <h4 className="font-serif text-lg font-bold text-piedra mb-1">{p.nombre}</h4>
+                    <p className="text-xs text-piedra/80 leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               </article>
@@ -870,38 +870,38 @@ function Index() {
             <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
               Nuestra devoción <span className="italic">premiada</span>
             </h2>
-            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-ink/75 mb-10">
+            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-nogal/75 mb-10">
               Ser el mejor restaurante de Ayacucho no es solo un título, es una responsabilidad.
               Estos galardones reflejan nuestro respeto inquebrantable por la herencia culinaria.
             </p>
             <ul className="space-y-6 max-w-md">
               <li className="flex items-start gap-5">
-                <span className="w-px h-10 bg-pantiwaita shrink-0 mt-1" />
+                <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
                 <div>
                   <h4 className="font-serif text-xl font-semibold mb-0.5">
                     Mejor Restaurante Regional
                   </h4>
-                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">
+                  <p className="text-sm text-nogal/50 uppercase tracking-[0.2em]">
                     Premios Summum 2024
                   </p>
                 </div>
               </li>
               <li className="flex items-start gap-5">
-                <span className="w-px h-10 bg-pantiwaita shrink-0 mt-1" />
+                <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
                 <div>
                   <h4 className="font-serif text-xl font-semibold mb-0.5">
                     Guardianes de la Tradición
                   </h4>
-                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">
+                  <p className="text-sm text-nogal/50 uppercase tracking-[0.2em]">
                     Ministerio de Cultura
                   </p>
                 </div>
               </li>
               <li className="flex items-start gap-5">
-                <span className="w-px h-10 bg-pantiwaita shrink-0 mt-1" />
+                <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
                 <div>
                   <h4 className="font-serif text-xl font-semibold mb-0.5">Ayacucho Emprende</h4>
-                  <p className="text-sm text-ink/50 uppercase tracking-[0.2em]">
+                  <p className="text-sm text-nogal/50 uppercase tracking-[0.2em]">
                     Municipalidad de Huamanga
                   </p>
                 </div>
@@ -925,14 +925,14 @@ function Index() {
       {/* CITA DEL PERSONAL */}
       <section className="relative bg-eucalipto py-24 md:py-32 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <span className="text-retama font-medium uppercase tracking-[0.3em] text-xs block mb-8">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs block mb-8">
             El Orgullo de nuestro Personal
           </span>
-          <blockquote className="font-serif italic text-3xl md:text-5xl leading-[1.15] text-cream/95 text-balance">
+          <blockquote className="font-serif italic text-3xl md:text-5xl leading-[1.15] text-piedra/95 text-balance">
             «Siento un profundo respeto al portar los colores de nuestra tierra. Aquí no solo
             atendemos, aquí somos embajadores de Ayacucho.»
           </blockquote>
-          <cite className="not-italic block mt-10 text-xs uppercase tracking-[0.3em] text-cream/60">
+          <cite className="not-italic block mt-10 text-xs uppercase tracking-[0.3em] text-piedra/60">
             — Carmen R., Anfitriona
           </cite>
         </div>
@@ -949,15 +949,15 @@ function Index() {
           decoding="async"
           className="w-full h-[60vh] md:h-[600px] object-cover"
         />
-        <div className="absolute inset-0 bg-ink/75" />
+        <div className="absolute inset-0 bg-cafe/75" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-          <span className="text-cream/70 uppercase tracking-[0.35em] text-xs block mb-6">
+          <span className="text-piedra/70 uppercase tracking-[0.35em] text-xs block mb-6">
             Vive la Experiencia
           </span>
-          <h2 className="font-serif italic text-cream text-4xl md:text-6xl max-w-[24ch] leading-tight text-balance">
+          <h2 className="font-serif italic text-piedra text-4xl md:text-6xl max-w-[24ch] leading-tight text-balance">
             De esta tierra nace Las Flores
           </h2>
-          <p className="mt-6 max-w-[40ch] text-cream/80 text-sm md:text-base leading-relaxed">
+          <p className="mt-6 max-w-[40ch] text-piedra/80 text-sm md:text-base leading-relaxed">
             Reserva una mesa en nuestro santuario de tradición o recibe el sabor de Ayacucho en tu
             hogar.
           </p>
@@ -970,7 +970,7 @@ function Index() {
             </Link>
             <Link
               to="/restaurante"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-cream/30 text-cream text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-cream/10 transition-colors rounded-sm"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/30 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm"
             >
               Pedir por Delivery
             </Link>
@@ -982,3 +982,5 @@ function Index() {
     </div>
   );
 }
+
+

@@ -79,13 +79,13 @@ export function AdminOrderDetailModal({
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-[#14231D] text-cream px-6 py-5 flex items-center justify-between">
+        <div className="bg-[#14231D] text-piedra px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-retama">
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-chilca">
               <ShoppingBag size={22} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-cream flex items-center gap-2">
+              <h2 className="text-lg font-bold text-piedra flex items-center gap-2">
                 Pedido #{order.order_number}
                 <span className={`text-xs px-2 py-0.5 rounded font-normal ${
                   order.order_type === 'delivery' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
@@ -93,7 +93,7 @@ export function AdminOrderDetailModal({
                   {order.order_type === 'delivery' ? 'Delivery' : 'Recojo en tienda'}
                 </span>
               </h2>
-              <p className="text-xs text-cream/70 flex items-center gap-1 mt-0.5">
+              <p className="text-xs text-piedra/70 flex items-center gap-1 mt-0.5">
                 <Clock size={12} />
                 {new Date(order.created_at).toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" })}
               </p>
@@ -102,7 +102,7 @@ export function AdminOrderDetailModal({
 
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-cream/80 hover:text-cream flex items-center justify-center transition-colors"
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-piedra/80 hover:text-piedra flex items-center justify-center transition-colors"
           >
             <X size={20} />
           </button>
@@ -264,3 +264,4 @@ export function AdminOrderDetailModal({
     </div>
   );
 }
+

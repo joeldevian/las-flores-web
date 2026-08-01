@@ -59,7 +59,17 @@
   --color-retama: var(--retama);
   --color-pantiwaita: var(--pantiwaita);
   --color-retablo-blue: var(--retablo-blue);
-  --color-retablo: var(--adobe); /* Mapping retablo to adobe color for the terracotta look */
+  --color-retablo: var(--adobe);
+  /* Naturaleza y Cultura palette */
+  --color-piedra: var(--piedra);
+  --color-cochinilla: var(--cochinilla);
+  --color-pacay: var(--pacay);
+  --color-adobe-new: var(--adobe-new);
+  --color-chilca: var(--chilca);
+  --color-nogal: var(--nogal);
+  --color-maiz: var(--maiz);
+  --color-cafe: var(--cafe);
+  --color-cielo: var(--cielo);
   --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Spectral", Georgia, serif;
 }
@@ -75,6 +85,17 @@
   --retama: oklch(0.85 0.16 95);     /* Vibrant yellow */
   --pantiwaita: oklch(0.60 0.22 350);/* Traditional magenta/pink */
   --retablo-blue: oklch(0.45 0.15 250);/* Vibrant retablo blue */
+  /* Naturaleza y Cultura palette */
+  --piedra: #F1E9DA;
+  --cochinilla: #A32638;
+  --pacay: #7C9A5C;
+  --adobe-new: #B9673E;
+  --chilca: #D9A441;
+  --nogal: #5A3D2B;
+  --maiz: #5B3358;
+  --cafe: #231A14;
+  --cielo: #5E85A8;
+  --eucalipto: #3E5C4E;
 
   --background: var(--cream);
   --foreground: var(--ink);
@@ -187,12 +208,12 @@
   animation: hero-zoom 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Efecto hover deslizado blanco para botones amarillos */
+/* Efecto hover deslizado blanco para botones amarillos/rojos */
 .btn-yellow-hover {
   position: relative !important;
   overflow: hidden !important;
-  background-color: var(--retama) !important;
-  color: var(--ink) !important;
+  background-color: var(--cochinilla) !important;
+  color: var(--piedra) !important;
   z-index: 1;
   transition: color 250ms ease, transform 250ms ease;
 }

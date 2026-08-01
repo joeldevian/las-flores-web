@@ -45,7 +45,7 @@ export function SiteFooter() {
   };
 
   return (
-    <footer className="bg-eucalipto-dark text-cream/80 py-16 md:py-20 text-sm border-t border-cream/5">
+    <footer className="bg-eucalipto-dark text-piedra/80 py-16 md:py-20 text-sm border-t border-cream/5">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 pb-16">
           {/* Logo and Policies */}
@@ -63,17 +63,20 @@ export function SiteFooter() {
             </Link>
 
             <div className="flex flex-col space-y-2 text-sm">
-              <a href="#" className="hover:text-retama transition-colors">
+              <a href="#" className="hover:text-chilca transition-colors">
                 Política de Privacidad
               </a>
-              <a href="#" className="hover:text-retama transition-colors">
+              <a href="#" className="hover:text-chilca transition-colors">
                 Términos y Condiciones
+              </a>
+              <a href="#" className="hover:text-chilca transition-colors font-semibold">
+                Únete al Equipo
               </a>
             </div>
 
             <a
               href="#"
-              className="flex items-center gap-3 mt-4 hover:opacity-80 transition-opacity bg-white text-ink py-2 px-3 rounded-sm"
+              className="flex items-center gap-3 mt-4 hover:opacity-80 transition-opacity bg-white text-nogal py-2 px-3 rounded-sm"
             >
               <BookOpen size={24} className="text-eucalipto" />
               <div className="leading-none text-left">
@@ -88,20 +91,22 @@ export function SiteFooter() {
 
           {/* Central info (Address, Email, Phone) */}
           <div className="md:col-span-4 flex flex-col items-start md:items-center justify-center text-left md:text-center space-y-4">
-            <span className="text-cream font-medium tracking-[0.2em] uppercase text-xs">
+            <span className="text-piedra font-medium tracking-[0.2em] uppercase text-xs">
               @RESTLASFLORES
             </span>
             <p className="leading-[1.8]">
               Jr. José Olaya 106, Ayacucho, Perú.
               <br />
-              +51 066 312 450 / reservas@lasflores.pe
+              967 456 230 / +51 980 723 422
+              <br />
+              restaurantelasfloresperu@gmail.com
             </p>
           </div>
 
           {/* Schedule and Socials */}
           <div className="md:col-span-4 flex flex-col items-start md:items-end justify-center space-y-4 text-left md:text-right">
             <div className="space-y-1">
-              <p className="font-semibold text-cream">Horario de Atención</p>
+              <p className="font-semibold text-piedra">Horario de Atención</p>
               <p>Lunes a Domingo</p>
               <p>11:00 - 18:00</p>
             </div>
@@ -109,30 +114,37 @@ export function SiteFooter() {
             <div className="flex gap-4 pt-4">
               <a
                 href="#"
-                className="p-2 border border-cream/20 rounded-full hover:bg-cream/10 hover:text-retama transition-all"
+                className="p-2 border border-cream/20 rounded-full hover:bg-piedra/10 hover:text-chilca transition-all"
                 aria-label="Facebook"
               >
                 <Facebook size={18} />
               </a>
               <a
                 href="#"
-                className="p-2 border border-cream/20 rounded-full hover:bg-cream/10 hover:text-retama transition-all"
+                className="p-2 border border-cream/20 rounded-full hover:bg-piedra/10 hover:text-chilca transition-all"
                 aria-label="Instagram"
               >
                 <Instagram size={18} />
+              </a>
+              <a
+                href="#"
+                className="p-2 border border-cream/20 rounded-full hover:bg-piedra/10 hover:text-chilca transition-all"
+                aria-label="TikTok"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
               </a>
             </div>
           </div>
         </div>
 
         {/* Bottom Credits */}
-        <div className="pt-8 border-t border-cream/10 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] tracking-wider text-cream/40">
+        <div className="pt-8 border-t border-cream/10 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] tracking-wider text-piedra/40">
           <span>© 2026 Restaurante Las Flores S.A.C.</span>
           <div className="flex items-center gap-4">
             <button
               onClick={handleAdminLogin}
               disabled={signingIn}
-              className="hover:text-cream transition-colors"
+              className="hover:text-piedra transition-colors"
               title="Acceso Administrativo"
             >
               {signingIn ? <Loader2 size={12} className="animate-spin" /> : <Lock size={12} />}
@@ -144,3 +156,4 @@ export function SiteFooter() {
     </footer>
   );
 }
+

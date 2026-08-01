@@ -264,3 +264,4 @@ export function CashierOrderCard({
     </div>
   );
 }
+
