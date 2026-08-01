@@ -280,7 +280,7 @@ function ChefAccordionSection() {
             return (
               <button
                 key={plate.name}
-                ref={(el) => (itemRefs.current[index] = el)}
+                ref={(el) => { itemRefs.current[index] = el; }}
                 data-plate-index={index}
                 type="button"
                 onClick={() => setActiveIndex(index)}

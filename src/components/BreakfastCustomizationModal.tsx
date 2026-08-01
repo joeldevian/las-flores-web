@@ -101,8 +101,9 @@ export function BreakfastCustomizationModal({ dish, open, onClose }: BreakfastCu
         (option: any) => option.name === selectedOptionName || option.id === selectedOptionName,
       );
 
-      if (matched?.price) {
-        priceString = typeof matched.price === "number" ? `S/ ${matched.price.toFixed(2)}` : matched.price;
+      const anyMatched = matched as any;
+      if (anyMatched?.price) {
+        priceString = typeof anyMatched.price === "number" ? `S/ ${anyMatched.price.toFixed(2)}` : anyMatched.price;
       }
     });
 
