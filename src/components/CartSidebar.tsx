@@ -490,6 +490,7 @@ export function CartSidebar() {
         className="relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-nogal rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 shrink-0"
       >
         {/* ── HEADER FIJO (estilo Chicha) ── */}
+        {step !== "profile" && (
         <div className="flex items-center justify-between px-5 py-3.5 bg-[#f8f4e6] border-b border-nogal/8 z-10 shrink-0">
 
           {/* Izquierda: Selector de idioma */}
@@ -547,9 +548,10 @@ export function CartSidebar() {
             )}
           </div>
         </div>
+        )}
 
         {/* ══ BARRA DE PASOS ══ */}
-        {step !== "success" && (
+        {step !== "success" && step !== "profile" && (
           <div className="flex flex-shrink-0 bg-white border-b border-black/5 shadow-sm">
             {(["cart", "delivery", "payment"] as const).map((s, i) => {
               const stepList = ["cart", "delivery", "payment"];
@@ -587,6 +589,15 @@ export function CartSidebar() {
         )}
 
         {/* ══ CONTENIDO ══ */}
+        {step === "profile" ? (
+          <CustomerHistoryModal
+            open={true}
+            onClose={() => setStep("cart")}
+            user={activeUser}
+            inline={true}
+          />
+        ) : (
+        <>
         <div className="flex-1 overflow-y-auto">
           {/* PASO 1: CARRITO */}
           {step === "cart" && (
@@ -1366,6 +1377,8 @@ export function CartSidebar() {
             </button>
           )}
         </div>
+        </>
+        )}
       </div>
 
       {/* ── BOTÓN CERRAR FLOTANTE (fuera del modal, abajo centrado) ── */}
@@ -1379,17 +1392,6 @@ export function CartSidebar() {
         </svg>
       </button>
       </div>
-      )}
-
-      {step === "profile" && (
-        <div className="absolute inset-0 bg-white z-[60] flex flex-col">
-          <CustomerHistoryModal
-            open={true}
-            onClose={() => setStep("cart")}
-            user={activeUser}
-            inline={true}
-          />
-        </div>
       )}
     </>,
     portalRef.current
