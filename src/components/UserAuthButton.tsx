@@ -119,26 +119,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     .join("")
     .toUpperCase();
 
-  // Admin / Staff: ícono especial con punto verde
-  if (role === "admin" || role === "staff") {
-    return (
-      <button
-        onClick={handleClick}
-        className={`relative flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
-        aria-label={role === "admin" ? "Panel Administrador" : "Panel Caja"}
-        title={role === "admin" ? "Ir al Panel Administrador" : "Ir a Caja"}
-      >
-        {role === "admin" ? (
-          <BarChart3 size={26} strokeWidth={2} />
-        ) : (
-          <UtensilsCrossed size={26} strokeWidth={2} />
-        )}
-        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-green-400 border border-white" />
-      </button>
-    );
-  }
-
-  // Cliente: avatar con punto verde — abre el CustomerHistoryModal del CartSidebar
+  // Avatar con punto verde — abre el CustomerHistoryModal del CartSidebar (o redirige a admin según lógica en el modal)
   return (
     <button
       onClick={handleClick}
