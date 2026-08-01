@@ -345,7 +345,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     <div className="fixed inset-0 z-[100] flex flex-col items-center justify-end sm:justify-start sm:pt-2">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-ink/60 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-eucalipto/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
@@ -353,10 +353,10 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
       <div className="relative w-full max-w-[390px] bg-[#f8f4e6] h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] shadow-2xl flex flex-col animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-400 overflow-hidden rounded-t-3xl sm:rounded-3xl shrink-0">
 
         {/* ── HEADER FIJO ── */}
-        <div className="flex items-center justify-between px-5 py-3.5 bg-[#f8f4e6] border-b border-ink/8 z-10 shrink-0">
+        <div className="flex items-center justify-between px-5 py-3.5 bg-[#f8f4e6] border-b border-nogal/8 z-10 shrink-0">
 
           {/* Izquierda: Selector de idioma */}
-          <div className="w-12 flex items-center gap-1 text-ink/70">
+          <div className="w-12 flex items-center gap-1 text-nogal/70">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="12" cy="12" r="10" />
               <line x1="2" y1="12" x2="22" y2="12" />
@@ -389,7 +389,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     onError={() => setImgError(true)}
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-black/5 text-ink flex items-center justify-center text-xs font-serif font-bold border border-black/10">
+                  <div className="w-7 h-7 rounded-full bg-black/5 text-nogal flex items-center justify-center text-xs font-serif font-bold border border-black/10">
                     {(activeUser.user_metadata?.full_name || activeUser.email || "C")
                       .charAt(0)
                       .toUpperCase()}
@@ -400,7 +400,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="flex items-center justify-center text-ink/50 hover:text-eucalipto transition-colors"
+                className="flex items-center justify-center text-nogal/50 hover:text-eucalipto transition-colors"
                 aria-label="Iniciar sesión"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -419,10 +419,10 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             {/* ── PASO 0: BIENVENIDO DE NUEVO ── */}
             {step === 0 && (
               <div className="flex flex-col items-center justify-center h-full animate-in fade-in zoom-in-95 duration-500 text-center pb-8 pt-4">
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-ink mb-1">
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-nogal mb-1">
                   Bienvenido de nuevo
                 </h2>
-                <p className="text-xl text-ink/70 mb-8">
+                <p className="text-xl text-nogal/70 mb-8">
                   {form.name.split(" ")[0]}
                 </p>
                 <button
@@ -437,14 +437,14 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
 
                 <button
                   onClick={() => setStep(1)}
-                  className="w-full max-w-[280px] py-4 rounded-xl bg-[#611224] text-cream font-bold text-sm tracking-wider transition-all shadow-md hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2"
+                  className="w-full max-w-[280px] py-4 rounded-xl bg-[#611224] text-piedra font-bold text-sm tracking-wider transition-all shadow-md hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2"
                 >
                   <Calendar size={18} />
                   Hacer una reserva
                 </button>
                 
                 <div className="mt-auto pt-8">
-                   <p className="text-[10px] text-ink/40">desarrollado por <span className="font-bold text-[#f84c5c]">Meitre</span></p>
+                   <p className="text-[10px] text-nogal/40">desarrollado por <span className="font-bold text-[#f84c5c]">Meitre</span></p>
                 </div>
               </div>
             )}
@@ -453,10 +453,10 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             {step === 1 && (
               <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="text-center mb-6 mt-1">
-                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mb-1">
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-nogal mb-1">
                     ¿Cuántos comensales?
                   </h2>
-                  <p className="text-xs text-ink/70">Selecciona la cantidad de personas</p>
+                  <p className="text-xs text-nogal/70">Selecciona la cantidad de personas</p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 mb-4">
@@ -466,7 +466,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       onClick={() => setForm((f) => ({ ...f, guests: n, customGuests: "" }))}
                       className={`py-3.5 px-2 rounded-xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-0.5
                         ${form.guests === n && !form.customGuests
-                          ? "bg-eucalipto text-cream border-eucalipto shadow-sm scale-[1.02]"
+                          ? "bg-eucalipto text-piedra border-eucalipto shadow-sm scale-[1.02]"
                           : "bg-white border-black/10 hover:border-eucalipto/40 text-eucalipto shadow-xs"
                         }`}
                     >
@@ -479,7 +479,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                 </div>
 
                 <div className="bg-white/90 p-3.5 rounded-xl border border-black/10 mt-1 shadow-xs">
-                  <p className="text-[10px] uppercase tracking-widest text-ink/60 mb-2 font-bold text-center">
+                  <p className="text-[10px] uppercase tracking-widest text-nogal/60 mb-2 font-bold text-center">
                     Grupo de más de 6 personas
                   </p>
                   <div className="flex items-center gap-3">
@@ -494,7 +494,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       }
                       className="flex-1 bg-black/5 border border-black/10 rounded-lg focus:border-eucalipto outline-none px-3 py-1.5 text-base font-serif text-center transition-colors"
                     />
-                    <span className="text-xs font-bold text-ink/70">Personas</span>
+                    <span className="text-xs font-bold text-nogal/70">Personas</span>
                   </div>
                 </div>
 
@@ -504,8 +504,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     disabled={!form.guests}
                     className={`w-full py-3.5 rounded-xl font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2 text-sm
                       ${!form.guests
-                        ? "bg-black/10 text-ink/40 border border-black/5 cursor-not-allowed"
-                        : "bg-eucalipto text-cream hover:bg-eucalipto-dark hover:shadow-md"
+                        ? "bg-black/10 text-nogal/40 border border-black/5 cursor-not-allowed"
+                        : "bg-eucalipto text-piedra hover:bg-eucalipto-dark hover:shadow-md"
                       }`}
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -526,8 +526,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             {step === 2 && (
               <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 shadow-sm border border-ink/10">
-                    <span className="text-xs font-bold text-ink flex items-center gap-2">
+                  <div className="inline-flex items-center justify-center bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 shadow-sm border border-nogal/10">
+                    <span className="text-xs font-bold text-nogal flex items-center gap-2">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
@@ -537,16 +537,16 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       {form.guests} Personas
                     </span>
                   </div>
-                  <h2 className="font-serif text-3xl font-bold text-ink mb-2 leading-tight">
+                  <h2 className="font-serif text-3xl font-bold text-nogal mb-2 leading-tight">
                     ¿Cuándo te<br />gustaría visitarnos?
                   </h2>
-                  <p className="text-sm text-ink/70 mt-2">Selecciona tu fecha preferida</p>
+                  <p className="text-sm text-nogal/70 mt-2">Selecciona tu fecha preferida</p>
                 </div>
 
                 <div className="relative group">
                   <button
                     onClick={() => scrollContainerRef.current?.scrollBy({ left: -120, behavior: "smooth" })}
-                    className="absolute left-[-15px] top-[45%] -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-ink/10 shadow-md rounded-full w-10 h-10 flex items-center justify-center text-ink hover:scale-105 transition-all"
+                    className="absolute left-[-15px] top-[45%] -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-nogal/10 shadow-md rounded-full w-10 h-10 flex items-center justify-center text-nogal hover:scale-105 transition-all"
                     aria-label="Anterior"
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -564,7 +564,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                         onClick={() => setForm((f) => ({ ...f, date: d.value }))}
                         className={`flex-none w-[100px] h-[120px] snap-center rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1
                           ${form.date === d.value
-                            ? "bg-eucalipto text-cream border-eucalipto shadow-md scale-[1.02]"
+                            ? "bg-eucalipto text-piedra border-eucalipto shadow-md scale-[1.02]"
                             : "bg-white shadow-sm border-transparent hover:border-eucalipto/30 text-eucalipto"
                           }`}
                       >
@@ -577,7 +577,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
 
                   <button
                     onClick={() => scrollContainerRef.current?.scrollBy({ left: 120, behavior: "smooth" })}
-                    className="absolute right-[-15px] top-[45%] -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-ink/10 shadow-md rounded-full w-10 h-10 flex items-center justify-center text-ink hover:scale-105 transition-all"
+                    className="absolute right-[-15px] top-[45%] -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm border border-nogal/10 shadow-md rounded-full w-10 h-10 flex items-center justify-center text-nogal hover:scale-105 transition-all"
                     aria-label="Siguiente"
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -589,7 +589,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                 <div className="mt-2 flex justify-center">
                   <button
                     onClick={() => dateInputRef.current?.showPicker()}
-                    className="flex items-center gap-2 text-sm font-bold text-ink hover:opacity-70 transition-opacity bg-white/50 backdrop-blur-md px-6 py-3 rounded-full border border-ink/10 shadow-sm"
+                    className="flex items-center gap-2 text-sm font-bold text-nogal hover:opacity-70 transition-opacity bg-white/50 backdrop-blur-md px-6 py-3 rounded-full border border-nogal/10 shadow-sm"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -617,8 +617,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     disabled={!form.date}
                     className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
                       ${!form.date
-                        ? "bg-white/80 text-ink/40 backdrop-blur-md border border-ink/10 cursor-not-allowed"
-                        : "bg-eucalipto text-cream hover:-translate-y-0.5 hover:shadow-lg"
+                        ? "bg-white/80 text-nogal/40 backdrop-blur-md border border-nogal/10 cursor-not-allowed"
+                        : "bg-eucalipto text-piedra hover:-translate-y-0.5 hover:shadow-lg"
                       }`}
                   >
                     Continuar
@@ -632,15 +632,15 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
               <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center justify-center gap-2 mb-6">
-                    <span className="bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-ink border border-ink/10 shadow-sm">
+                    <span className="bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-nogal border border-nogal/10 shadow-sm">
                       {form.guests} Personas
                     </span>
-                    <span className="bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-ink border border-ink/10 shadow-sm">
+                    <span className="bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-nogal border border-nogal/10 shadow-sm">
                       {new Date(form.date + "T12:00").toLocaleDateString("es-PE", { weekday: "short", day: "numeric", month: "short" })}
                     </span>
                   </div>
-                  <h2 className="font-serif text-3xl font-bold text-ink mb-2">Selecciona una hora</h2>
-                  <p className="text-sm text-ink/70">Elige tu horario disponible</p>
+                  <h2 className="font-serif text-3xl font-bold text-nogal mb-2">Selecciona una hora</h2>
+                  <p className="text-sm text-nogal/70">Elige tu horario disponible</p>
                 </div>
 
                 {!form.service ? (
@@ -671,7 +671,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                           onClick={() => setForm((f) => ({ ...f, time: t }))}
                           className={`py-4 rounded-xl border-2 transition-all duration-300 flex items-center justify-center gap-2
                             ${form.time === t
-                              ? "bg-eucalipto text-cream border-eucalipto shadow-md"
+                              ? "bg-eucalipto text-piedra border-eucalipto shadow-md"
                               : "bg-white/80 border-transparent hover:border-eucalipto/30 text-eucalipto"
                             }`}
                         >
@@ -690,8 +690,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                         disabled={!form.time}
                         className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
                           ${!form.time
-                            ? "bg-white/80 text-ink/40 backdrop-blur-md border border-ink/10 cursor-not-allowed"
-                            : "bg-eucalipto text-cream hover:-translate-y-0.5 hover:shadow-lg"
+                            ? "bg-white/80 text-nogal/40 backdrop-blur-md border border-nogal/10 cursor-not-allowed"
+                            : "bg-eucalipto text-piedra hover:-translate-y-0.5 hover:shadow-lg"
                           }`}
                       >
                         Continuar
@@ -706,8 +706,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             {step === 4 && (
               <div className="flex flex-col h-full items-center justify-center animate-in fade-in zoom-in-95 duration-500">
                 <div className="text-center mb-8">
-                  <h2 className="font-serif text-3xl font-bold text-ink mb-3">Casi listo</h2>
-                  <p className="text-sm text-ink/70 px-4 leading-relaxed">
+                  <h2 className="font-serif text-3xl font-bold text-nogal mb-3">Casi listo</h2>
+                  <p className="text-sm text-nogal/70 px-4 leading-relaxed">
                     Inicia sesión con Google para asociar tu reserva a tu cuenta de forma rápida y segura.
                   </p>
                 </div>
@@ -722,7 +722,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   </svg>
-                  <span className="font-serif font-bold text-ink">Continuar con Google</span>
+                  <span className="font-serif font-bold text-nogal">Continuar con Google</span>
                 </button>
               </div>
             )}
@@ -731,8 +731,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             {step === 5 && (
               <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="text-center mb-6">
-                  <h2 className="font-serif text-3xl font-bold text-ink mb-2">Ya casi</h2>
-                  <p className="text-sm text-ink/70 px-2 leading-relaxed">
+                  <h2 className="font-serif text-3xl font-bold text-nogal mb-2">Ya casi</h2>
+                  <p className="text-sm text-nogal/70 px-2 leading-relaxed">
                     Agrega un teléfono para completar tu registro.
                   </p>
                 </div>
@@ -746,12 +746,12 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                       <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                     </svg>
-                    <span className="text-sm font-medium text-ink/70">Continuando con Google</span>
+                    <span className="text-sm font-medium text-nogal/70">Continuando con Google</span>
                   </div>
 
                   {/* Nombre */}
                   <div className="flex items-center gap-3 bg-white/80 border border-black/10 rounded-xl px-4 py-3 shadow-xs">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-ink/40 shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-nogal/40 shrink-0">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -763,7 +763,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                         setForm((f) => ({ ...f, name: e.target.value }));
                       }}
                       placeholder="Tu nombre completo"
-                      className="flex-1 bg-transparent outline-none text-sm font-medium text-ink placeholder:text-ink/40"
+                      className="flex-1 bg-transparent outline-none text-sm font-medium text-nogal placeholder:text-nogal/40"
                     />
                   </div>
 
@@ -774,10 +774,10 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       <button
                         type="button"
                         onClick={() => setShowCountryPicker((v) => !v)}
-                        className="flex items-center gap-1.5 px-3 py-3 border-r border-black/10 bg-white/60 hover:bg-white/90 transition-colors text-sm font-bold text-ink rounded-l-xl h-full"
+                        className="flex items-center gap-1.5 px-3 py-3 border-r border-black/10 bg-white/60 hover:bg-white/90 transition-colors text-sm font-bold text-nogal rounded-l-xl h-full"
                       >
                         <img src={`https://flagcdn.com/w20/${selectedCountry.iso}.png`} alt={selectedCountry.name} className="w-5 h-auto rounded-[2px] shadow-sm" />
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-ink/40">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-nogal/40">
                           <polyline points="6 9 12 15 18 9" />
                         </svg>
                       </button>
@@ -804,11 +804,11 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                                 setShowCountryPicker(false);
                               }}
                               className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-eucalipto/10 transition-colors text-left
-                                ${form.phoneCountry === c.code ? "bg-eucalipto/5 font-bold text-eucalipto" : "text-ink"}`}
+                                ${form.phoneCountry === c.code ? "bg-piedra font-bold text-eucalipto" : "text-nogal"}`}
                             >
                               <img src={`https://flagcdn.com/w20/${c.iso}.png`} alt={c.name} className="w-5 h-auto rounded-[2px] shadow-sm" />
                               <span>{c.name}</span>
-                              <span className="ml-auto text-xs text-ink/50">{c.code}</span>
+                              <span className="ml-auto text-xs text-nogal/50">{c.code}</span>
                             </button>
                           ))}
                         </div>
@@ -820,17 +820,17 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                       value={form.phone}
                       onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                       placeholder={`Ej: ${form.phoneCountry} 912 345 678`}
-                      className="flex-1 bg-transparent outline-none px-3 py-3 text-sm font-medium text-ink placeholder:text-ink/30 rounded-r-xl"
+                      className="flex-1 bg-transparent outline-none px-3 py-3 text-sm font-medium text-nogal placeholder:text-nogal/30 rounded-r-xl"
                     />
                   </div>
 
                   {/* Email (solo lectura) */}
                   <div className="flex items-center gap-3 bg-black/5 border border-black/8 rounded-xl px-4 py-3">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-ink/30 shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-nogal/30 shrink-0">
                       <rect x="2" y="4" width="20" height="16" rx="2" />
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                     </svg>
-                    <span className="text-sm text-ink/50 font-medium truncate">{form.email}</span>
+                    <span className="text-sm text-nogal/50 font-medium truncate">{form.email}</span>
                   </div>
 
                   {/* Checkbox marketing */}
@@ -848,7 +848,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     </div>
                     <span
                       onClick={() => setForm((f) => ({ ...f, acceptMarketing: !f.acceptMarketing }))}
-                      className="text-xs text-ink/70 leading-relaxed"
+                      className="text-xs text-nogal/70 leading-relaxed"
                     >
                       Acepto que el restaurante me envíe información ocasional sobre eventos especiales o celebraciones.
                     </span>
@@ -862,8 +862,8 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                     disabled={isSavingProfile || !form.phone}
                     className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2
                       ${isSavingProfile || !form.phone
-                        ? "bg-black/10 text-ink/40 cursor-not-allowed"
-                        : "bg-eucalipto text-cream hover:-translate-y-0.5 hover:shadow-lg"
+                        ? "bg-black/10 text-nogal/40 cursor-not-allowed"
+                        : "bg-eucalipto text-piedra hover:-translate-y-0.5 hover:shadow-lg"
                       }`}
                   >
                     {isSavingProfile ? (
@@ -887,7 +887,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
                         setStep(6);
                       }
                     }}
-                    className="text-xs text-ink/50 hover:text-ink/70 transition-colors text-center underline underline-offset-2"
+                    className="text-xs text-nogal/50 hover:text-nogal/70 transition-colors text-center underline underline-offset-2"
                   >
                     Omitir por ahora
                   </button>
@@ -908,37 +908,37 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
             {step === 7 && (
               <div className="flex flex-col h-full items-center justify-center text-center animate-in fade-in zoom-in-95 duration-500">
                 <div className="relative mb-8">
-                  <div className="absolute -inset-4 rounded-full bg-cream opacity-20 animate-pulse" />
-                  <div className="relative w-20 h-20 rounded-full bg-eucalipto flex items-center justify-center shadow-lg text-cream">
+                  <div className="absolute -inset-4 rounded-full bg-piedra opacity-20 animate-pulse" />
+                  <div className="relative w-20 h-20 rounded-full bg-eucalipto flex items-center justify-center shadow-lg text-piedra">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 6 9 17l-5-5" />
                     </svg>
                   </div>
                 </div>
 
-                <h3 className="font-serif text-3xl font-bold text-ink mb-2">¡Solicitud de Reserva Recibida!</h3>
-                <p className="text-sm font-medium text-ink/70">
+                <h3 className="font-serif text-3xl font-bold text-nogal mb-2">¡Solicitud de Reserva Recibida!</h3>
+                <p className="text-sm font-medium text-nogal/70">
                   Hola {form.name.split(" ")[0]}, tu reserva fue registrada en estado <strong className="text-eucalipto font-bold">Pendiente de Confirmación</strong>.
                 </p>
 
-                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 text-sm text-left w-full mt-8 shadow-sm border border-ink/10">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-ink/50 mb-4">Resumen</p>
-                  <div className="space-y-3 font-medium text-ink">
-                    <p className="flex justify-between border-b border-ink/10 pb-2">
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 text-sm text-left w-full mt-8 shadow-sm border border-nogal/10">
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-nogal/50 mb-4">Resumen</p>
+                  <div className="space-y-3 font-medium text-nogal">
+                    <p className="flex justify-between border-b border-nogal/10 pb-2">
                       <span className="opacity-70">Mesa:</span>
                       <strong>{form.table === "Aleatoria" ? "Asignación a la llegada" : form.table}</strong>
                     </p>
-                    <p className="flex justify-between border-b border-ink/10 pb-2">
+                    <p className="flex justify-between border-b border-nogal/10 pb-2">
                       <span className="opacity-70">Fecha:</span>
                       <span className="capitalize">
                         {new Date(form.date + "T12:00").toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" })}
                       </span>
                     </p>
-                    <p className="flex justify-between border-b border-ink/10 pb-2">
+                    <p className="flex justify-between border-b border-nogal/10 pb-2">
                       <span className="opacity-70">Hora:</span>
                       <span>{form.time}</span>
                     </p>
-                    <p className="flex justify-between border-b border-ink/10 pb-2">
+                    <p className="flex justify-between border-b border-nogal/10 pb-2">
                       <span className="opacity-70">Invitados:</span>
                       <span>{form.guests}</span>
                     </p>
@@ -947,7 +947,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
 
                 <button
                   onClick={onClose}
-                  className="w-full mt-auto py-4 rounded-xl font-bold uppercase tracking-wider transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg bg-eucalipto text-cream"
+                  className="w-full mt-auto py-4 rounded-xl font-bold uppercase tracking-wider transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg bg-eucalipto text-piedra"
                 >
                   Finalizar
                 </button>
@@ -958,11 +958,11 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
 
         {/* ── BARRA INFERIOR: volver + progreso ── */}
         {step < 7 && (
-          <div className="px-5 py-4 bg-[#f8f4e6] border-t border-ink/8 relative z-10 flex items-center gap-4 shrink-0">
+          <div className="px-5 py-4 bg-[#f8f4e6] border-t border-nogal/8 relative z-10 flex items-center gap-4 shrink-0">
             {step > 1 ? (
               <button
                 onClick={() => setStep((s) => s - 1)}
-                className="w-10 h-10 rounded-full border-2 border-eucalipto/30 bg-white flex items-center justify-center text-eucalipto hover:border-eucalipto hover:bg-eucalipto hover:text-cream transition-all shrink-0 shadow-sm"
+                className="w-10 h-10 rounded-full border-2 border-eucalipto/30 bg-white flex items-center justify-center text-eucalipto hover:border-eucalipto hover:bg-eucalipto hover:text-piedra transition-all shrink-0 shadow-sm"
                 aria-label="Volver"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -973,14 +973,14 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
               <div className="w-10 h-10 shrink-0" />
             )}
 
-            <div className="flex-1 h-1 bg-ink/10 rounded-full overflow-hidden">
+            <div className="flex-1 h-1 bg-eucalipto/10 rounded-full overflow-hidden">
               <div
                 className="h-full bg-eucalipto transition-all duration-500 ease-out rounded-full"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
 
-            <span className="text-[10px] uppercase tracking-widest font-bold text-ink/40 shrink-0 w-6 text-right">
+            <span className="text-[10px] uppercase tracking-widest font-bold text-nogal/40 shrink-0 w-6 text-right">
               {step}/{TOTAL_STEPS}
             </span>
           </div>
@@ -990,7 +990,7 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
       {/* ── BOTÓN CERRAR FLOTANTE (fuera del modal, abajo centrado) ── */}
       <button
         onClick={onClose}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 sm:w-[50px] sm:h-[50px] rounded-full bg-eucalipto text-cream flex items-center justify-center shadow-xl hover:bg-[#1e3329] hover:scale-105 active:scale-95 transition-all z-[102]"
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 sm:w-[50px] sm:h-[50px] rounded-full bg-eucalipto text-piedra flex items-center justify-center shadow-xl hover:bg-[#1e3329] hover:scale-105 active:scale-95 transition-all z-[102]"
         aria-label="Cerrar"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1006,3 +1006,4 @@ export function ReservationModal({ open, onClose }: ReservationModalProps) {
     </div>
   );
 }
+

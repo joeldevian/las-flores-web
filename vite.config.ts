@@ -19,4 +19,7 @@ export default defineConfig({
       webp: { quality: 80 },
     }),
   ],
+  build: {
+    chunkSizeWarningLimit: 1500,
+  }
 });

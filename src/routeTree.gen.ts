@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RestauranteRouteImport } from './routes/restaurante'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as CartaRouteImport } from './routes/carta'
 import { Route as CajaRouteImport } from './routes/caja'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -30,6 +31,11 @@ const ReservasRoute = ReservasRouteImport.update({
 const EventosRoute = EventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactoRoute = ContactoRouteImport.update({
+  id: '/contacto',
+  path: '/contacto',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartaRoute = CartaRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/caja': typeof CajaRoute
   '/carta': typeof CartaRoute
+  '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/caja': typeof CajaRoute
   '/carta': typeof CartaRoute
+  '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/caja': typeof CajaRoute
   '/carta': typeof CartaRoute
+  '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/caja'
     | '/carta'
+    | '/contacto'
     | '/eventos'
     | '/reservas'
     | '/restaurante'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/caja'
     | '/carta'
+    | '/contacto'
     | '/eventos'
     | '/reservas'
     | '/restaurante'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/caja'
     | '/carta'
+    | '/contacto'
     | '/eventos'
     | '/reservas'
     | '/restaurante'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CajaRoute: typeof CajaRoute
   CartaRoute: typeof CartaRoute
+  ContactoRoute: typeof ContactoRoute
   EventosRoute: typeof EventosRoute
   ReservasRoute: typeof ReservasRoute
   RestauranteRoute: typeof RestauranteRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos'
       fullPath: '/eventos'
       preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacto': {
+      id: '/contacto'
+      path: '/contacto'
+      fullPath: '/contacto'
+      preLoaderRoute: typeof ContactoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carta': {
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CajaRoute: CajaRoute,
   CartaRoute: CartaRoute,
+  ContactoRoute: ContactoRoute,
   EventosRoute: EventosRoute,
   ReservasRoute: ReservasRoute,
   RestauranteRoute: RestauranteRoute,

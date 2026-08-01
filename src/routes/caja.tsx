@@ -411,17 +411,17 @@ function CashierDashboardRoute() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#14231D] pb-20 font-sans selection:bg-[#D4AF37] selection:text-[#14231D]">
+    <div className="min-h-screen bg-piedra text-nogal pb-20 font-sans selection:bg-chilca selection:text-nogal">
       
       {/* Realtime Floating Banner Toast for Orders */}
       {newOrderNotification && (
-        <div className="fixed top-4 right-4 z-50 bg-[#14231D] text-[#FAF8F5] p-4 rounded-2xl shadow-2xl border-2 border-[#D4AF37] flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md">
-          <div className="w-12 h-12 rounded-xl bg-[#D4AF37] text-[#14231D] flex items-center justify-center font-bold shrink-0 animate-bounce">
+        <div className="fixed top-4 right-4 z-50 bg-eucalipto text-piedra p-4 rounded-2xl shadow-2xl border-2 border-chilca flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md">
+          <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex border-2 border-white/20 items-center justify-center font-bold shrink-0 animate-bounce">
             🛎️
           </div>
 
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-[#D4AF37] block">
+            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-chilca block">
               ¡NUEVO PEDIDO RECIBIDO!
             </span>
             <h4 className="font-mono font-black text-base text-white">
@@ -449,7 +449,7 @@ function CashierDashboardRoute() {
             setReservationStatusFilter("pendiente");
             setNewReservationNotification(null);
           }}
-          className="fixed top-20 right-4 z-50 bg-[#14231D] text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-[#1B2E27] transition-all"
+          className="fixed top-20 right-4 z-50 bg-eucalipto text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-eucalipto transition-all"
         >
           <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce overflow-hidden p-1.5">
             <img src="/LOGO.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert" />
@@ -480,11 +480,11 @@ function CashierDashboardRoute() {
       )}
 
       {/* Header Operator Bar - Eucalyptus Green Palette #5F8575 */}
-      <header className="bg-[#5F8575] text-[#FAF8F5] sticky top-0 z-40 border-b border-[#D4AF37]/40 shadow-md">
+      <header className="bg-eucalipto text-piedra sticky top-0 z-40 border-b border-chilca/40 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-[#D4AF37] shadow-md shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-chilca shadow-md shrink-0">
               <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain rounded-lg" />
             </div>
             <div>
@@ -495,7 +495,7 @@ function CashierDashboardRoute() {
                   TIMBRE EN VIVO
                 </span>
               </h1>
-              <p className="text-[11px] text-[#FAF8F5]/90 font-serif italic">
+              <p className="text-[11px] text-piedra/90 font-serif italic">
                 Procesamiento Rápido de Comandas & Reservas — Restaurante Las Flores
               </p>
             </div>
@@ -526,7 +526,7 @@ function CashierDashboardRoute() {
               to="/admin"
               className="px-3.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/20"
             >
-              <ShieldCheck size={14} className="text-[#D4AF37]" />
+              <ShieldCheck size={14} className="text-chilca" />
               <span className="hidden md:inline">Volver a Admin</span>
             </Link>
 
@@ -544,11 +544,11 @@ function CashierDashboardRoute() {
             onClick={() => setViewMode("orders")}
             className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
               viewMode === "orders"
-                ? "bg-[#5F8575] text-white shadow-md font-extrabold ring-2 ring-[#5F8575]/30"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-bold"
+                ? "bg-white text-eucalipto shadow-md font-extrabold border border-white"
+                : "text-eucalipto/70 hover:text-eucalipto hover:bg-white/50 font-bold"
             }`}
           >
-            <ShoppingBag size={15} className={viewMode === "orders" ? "text-[#D4AF37]" : "text-gray-500"} />
+            <ShoppingBag size={15} className={viewMode === "orders" ? "text-chilca" : "text-gray-500"} />
             <span>Comandas & Pedidos ({pendingCount} Pendientes)</span>
           </button>
 
@@ -556,11 +556,11 @@ function CashierDashboardRoute() {
             onClick={() => setViewMode("reservations")}
             className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
               viewMode === "reservations"
-                ? "bg-[#5F8575] text-white shadow-md font-extrabold ring-2 ring-[#5F8575]/30"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-bold"
+                ? "bg-white text-eucalipto shadow-md font-extrabold border border-white"
+                : "text-eucalipto/70 hover:text-eucalipto hover:bg-white/50 font-bold"
             }`}
           >
-            <Calendar size={15} className={viewMode === "reservations" ? "text-[#D4AF37]" : "text-gray-500"} />
+            <Calendar size={15} className={viewMode === "reservations" ? "text-chilca" : "text-gray-500"} />
             <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
           </button>
         </div>
@@ -578,24 +578,24 @@ function CashierDashboardRoute() {
                 onClick={() => setStatusFilter("pendiente")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "pendiente"
-                    ? "bg-amber-100/90 text-amber-950 border-2 border-amber-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-amber-900 border border-amber-200/80 hover:bg-amber-50/60 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-chilca shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-amber-900">
+                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
                     Pendientes
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "pendiente" ? "bg-amber-300 text-amber-950" : "bg-amber-100 text-amber-800"
+                    statusFilter === "pendiente" ? "bg-chilca text-cafe" : "bg-chilca/15 text-nogal/60"
                   }`}>
                     Acción
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-amber-950">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
                   {pendingCount}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-amber-800">Requieren atención</p>
+                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Requieren atención</p>
               </button>
 
               {/* 2. EN COCINA (Azul Pastel) */}
@@ -603,24 +603,24 @@ function CashierDashboardRoute() {
                 onClick={() => setStatusFilter("en_preparacion")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "en_preparacion"
-                    ? "bg-blue-100/90 text-blue-950 border-2 border-blue-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-blue-900 border border-blue-200/80 hover:bg-blue-50/60 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-cielo shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-blue-900">
+                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
                     En Cocina
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "en_preparacion" ? "bg-blue-300 text-blue-950" : "bg-blue-100 text-blue-800"
+                    statusFilter === "en_preparacion" ? "bg-cielo text-white" : "bg-cielo/15 text-nogal/60"
                   }`}>
                     Cocina
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-blue-950">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
                   {inKitchenCount}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-blue-800">En preparación</p>
+                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">En preparación</p>
               </button>
 
               {/* 3. EN CAMINO / LISTO (Morado / Púrpura Pastel) */}
@@ -628,24 +628,24 @@ function CashierDashboardRoute() {
                 onClick={() => setStatusFilter("en_camino")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "en_camino"
-                    ? "bg-purple-100/90 text-purple-950 border-2 border-purple-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-purple-900 border border-purple-200/80 hover:bg-purple-50/60 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-purple-500 shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-purple-900">
+                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
                     En Camino / Listo
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "en_camino" ? "bg-purple-300 text-purple-950" : "bg-purple-100 text-purple-800"
+                    statusFilter === "en_camino" ? "bg-adobe-new text-white" : "bg-adobe-new/15 text-nogal/60"
                   }`}>
                     Despacho
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-purple-950">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
                   {onWayCount}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-purple-800">Delivery / Recojo</p>
+                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Delivery / Recojo</p>
               </button>
 
               {/* 4. ENTREGADOS (Esmeralda Pastel) */}
@@ -653,24 +653,24 @@ function CashierDashboardRoute() {
                 onClick={() => setStatusFilter("entregado")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   statusFilter === "entregado"
-                    ? "bg-emerald-100/90 text-emerald-950 border-2 border-emerald-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-emerald-900 border border-emerald-200/80 hover:bg-emerald-50/60 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-pacay shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-emerald-900">
+                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
                     Entregados
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "entregado" ? "bg-emerald-300 text-emerald-950" : "bg-emerald-100 text-emerald-800"
+                    statusFilter === "entregado" ? "bg-pacay text-white" : "bg-pacay/15 text-nogal/60"
                   }`}>
                     Listo
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-emerald-950">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
                   {completedCount}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-emerald-800">Completados</p>
+                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Completados</p>
               </button>
 
               {/* 5. TODOS LOS PEDIDOS (Eucalipto Pastel de Marca) */}
@@ -678,8 +678,8 @@ function CashierDashboardRoute() {
                 onClick={() => setStatusFilter("all")}
                 className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 font-sans ${
                   statusFilter === "all"
-                    ? "bg-[#5F8575]/25 text-[#1E322A] border-2 border-[#5F8575] shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-eucalipto shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -687,7 +687,7 @@ function CashierDashboardRoute() {
                     Todos los Pedidos
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "all" ? "bg-[#5F8575] text-white" : "bg-gray-100 text-gray-700"
+                    statusFilter === "all" ? "bg-eucalipto text-white" : "bg-gray-100 text-gray-700"
                   }`}>
                     Total
                   </span>
@@ -695,7 +695,7 @@ function CashierDashboardRoute() {
                 <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
                   {orders.length}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-[#5F8575]">Total de comandas</p>
+                <p className="text-[10px] mt-0.5 font-medium text-pacay">Total de comandas</p>
               </button>
 
             </div>
@@ -712,7 +712,7 @@ function CashierDashboardRoute() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Buscar por # de orden, cliente o teléfono..."
-                      className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]"
+                      className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cafe"
                     />
                   </div>
                   
@@ -776,19 +776,19 @@ function CashierDashboardRoute() {
                   </span>
                   <button
                     onClick={() => setQuickOrderDateRange("today")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-eucalipto text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
                   >
                     Hoy
                   </button>
                   <button
                     onClick={() => setQuickOrderDateRange("week")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200"}`}
                   >
                     Esta Semana
                   </button>
                   <button
                     onClick={() => setQuickOrderDateRange("month")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200"}`}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200"}`}
                   >
                     Este Mes
                   </button>
@@ -805,7 +805,7 @@ function CashierDashboardRoute() {
             {/* Orders Cards Grid */}
             {loading ? (
               <div className="py-20 text-center space-y-3">
-                <RefreshCw size={28} className="animate-spin text-[#14231D] mx-auto" />
+                <RefreshCw size={28} className="animate-spin text-nogal mx-auto" />
                 <p className="text-sm font-bold text-gray-600">Cargando comandas en vivo...</p>
               </div>
             ) : filteredOrders.length === 0 ? (
@@ -845,8 +845,8 @@ function CashierDashboardRoute() {
                 onClick={() => setReservationStatusFilter("today")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "today"
-                    ? "bg-[#5F8575]/25 text-[#1E322A] border-2 border-[#5F8575] shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-[#2A4237] border border-gray-200/80 hover:bg-[#FAF8F5] shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-eucalipto shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -854,7 +854,7 @@ function CashierDashboardRoute() {
                     Reservas del Día
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "today" ? "bg-[#5F8575] text-white" : "bg-[#5F8575]/15 text-[#5F8575]"
+                    reservationStatusFilter === "today" ? "bg-eucalipto text-white" : "bg-eucalipto/15 text-pacay"
                   }`}>
                     Hoy
                   </span>
@@ -862,15 +862,15 @@ function CashierDashboardRoute() {
                 <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
                   {todayReservationsCount}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-[#5F8575]">Programadas para HOY</p>
+                <p className="text-[10px] mt-0.5 font-medium text-pacay">Programadas para HOY</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("pendiente")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "pendiente"
-                    ? "bg-amber-100/90 text-amber-950 border-2 border-amber-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-amber-900 border border-amber-200/80 hover:bg-amber-50/60 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-chilca shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -878,7 +878,7 @@ function CashierDashboardRoute() {
                     Pendientes
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "pendiente" ? "bg-amber-300 text-amber-950" : "bg-amber-100 text-amber-800"
+                    reservationStatusFilter === "pendiente" ? "bg-amber-300 text-amber-950" : "bg-chilca/15 text-amber-800"
                   }`}>
                     Por Confirmar
                   </span>
@@ -896,8 +896,8 @@ function CashierDashboardRoute() {
                 }}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "confirmada"
-                    ? "bg-blue-100/90 text-blue-950 border-2 border-blue-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-blue-900 border border-blue-200/80 hover:bg-blue-50/60 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-cielo shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -905,7 +905,7 @@ function CashierDashboardRoute() {
                     Confirmadas
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "confirmada" ? "bg-blue-300 text-blue-950" : "bg-blue-100 text-blue-800"
+                    reservationStatusFilter === "confirmada" ? "bg-blue-300 text-blue-950" : "bg-cielo/15 text-blue-800"
                   }`}>
                     Confirmado
                   </span>
@@ -923,8 +923,8 @@ function CashierDashboardRoute() {
                 }}
                 className={`p-4 rounded-2xl text-left transition-all font-sans ${
                   reservationStatusFilter === "all"
-                    ? "bg-slate-100 text-slate-950 border-2 border-slate-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white text-slate-800 border border-gray-200/80 hover:bg-slate-50 shadow-2xs"
+                    ? "bg-white text-nogal border-t-4 border-t-slate-400 shadow-md font-extrabold scale-[1.02]"
+                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -990,7 +990,7 @@ function CashierDashboardRoute() {
                 <button
                   onClick={() => fetchData()}
                   disabled={refreshing}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
+                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
                 >
                   <RefreshCw size={14} className={refreshing ? "animate-spin text-emerald-700" : ""} />
                   <span>Actualizar</span>
@@ -1005,19 +1005,19 @@ function CashierDashboardRoute() {
                   </span>
                   <button
                     onClick={() => setQuickDateRange("today")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-[#5F8575] text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
                   >
                     Hoy
                   </button>
                   <button
                     onClick={() => setQuickDateRange("week")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-[#5F8575] text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
                   >
                     Esta Semana
                   </button>
                   <button
                     onClick={() => setQuickDateRange("month")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-[#5F8575] text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
+                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
                   >
                     Este Mes
                   </button>
@@ -1112,3 +1112,9 @@ function CashierDashboardRoute() {
     </div>
   );
 }
+
+
+
+
+
+

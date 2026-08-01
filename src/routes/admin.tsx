@@ -371,9 +371,9 @@ function AdminRoute() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center flex-col gap-4 text-[#14231D]">
-        <Loader2 className="w-10 h-10 animate-spin text-[#D4AF37]" />
-        <p className="font-serif text-sm font-bold tracking-widest uppercase text-[#14231D]">
+      <div className="min-h-screen bg-piedra flex items-center justify-center flex-col gap-4 text-nogal">
+        <Loader2 className="w-10 h-10 animate-spin text-chilca" />
+        <p className="font-serif text-sm font-bold tracking-widest uppercase text-nogal">
           Restaurante Las Flores | Cargas de Panel...
         </p>
       </div>
@@ -383,12 +383,12 @@ function AdminRoute() {
   if (!isAuthorized) return null;
 
   return (
-    <div className="min-h-screen bg-[#F5F3EE] text-[#14231D] font-sans selection:bg-[#D4AF37] selection:text-[#14231D] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-piedra text-nogal font-sans selection:bg-cochinillahilca selection:text-nogal flex flex-col md:flex-row">
       
       {/* ==================================================================== */}
       {/* LEFT VERTICAL NAVIGATION SIDEBAR (Eucalyptus Green #5F8575)          */}
       {/* ==================================================================== */}
-      <aside className="w-full md:w-64 lg:w-72 bg-[#14231D] text-white border-r border-white/5 shrink-0 flex flex-col justify-between md:h-screen md:sticky md:top-0 z-40 shadow-2xl overflow-hidden font-sans">
+      <aside className="w-full md:w-64 lg:w-72 bg-eucalipto text-white border-r border-white/5 shrink-0 flex flex-col justify-between md:h-screen md:sticky md:top-0 z-40 shadow-2xl overflow-hidden font-sans">
         
         {/* Top Scrollable Navigation Container */}
         <div className="p-5 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -413,7 +413,7 @@ function AdminRoute() {
 
           {/* User Profile Chip */}
           <div className="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/30 text-[#D4AF37] font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-cochinillahilca/20 border border-chilca/30 text-chilca font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
               AD
             </div>
             <div className="min-w-0 flex-1">
@@ -438,16 +438,16 @@ function AdminRoute() {
               onClick={() => setActiveTab("analytics")}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
                 activeTab === "analytics"
-                  ? "bg-[#D4AF37] text-[#14231D] font-black shadow-md"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
                   : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
               }`}
             >
               <div className="flex items-center gap-3">
-                <BarChart3 size={17} className={activeTab === "analytics" ? "text-[#14231D]" : "text-white/40"} />
+                <BarChart3 size={17} className={activeTab === "analytics" ? "text-chilca" : "text-white/40"} />
                 <span>Analítica & BI</span>
               </div>
               <span className={`text-[10px] px-2 py-0.5 rounded-full font-sans font-bold ${
-                activeTab === "analytics" ? "bg-[#14231D]/15 text-[#14231D]" : "bg-white/10 text-white/60"
+                activeTab === "analytics" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
                 PRO
               </span>
@@ -458,16 +458,16 @@ function AdminRoute() {
               onClick={() => setActiveTab("reservations")}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
                 activeTab === "reservations"
-                  ? "bg-[#D4AF37] text-[#14231D] font-black shadow-md"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
                   : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Calendar size={17} className={activeTab === "reservations" ? "text-[#14231D]" : "text-white/40"} />
+                <Calendar size={17} className={activeTab === "reservations" ? "text-chilca" : "text-white/40"} />
                 <span>Control de Reservas</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "reservations" ? "bg-[#14231D]/15 text-[#14231D]" : "bg-white/10 text-white/60"
+                activeTab === "reservations" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
                 {reservations.length}
               </span>
@@ -478,16 +478,16 @@ function AdminRoute() {
               onClick={() => setActiveTab("orders")}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
                 activeTab === "orders"
-                  ? "bg-[#D4AF37] text-[#14231D] font-black shadow-md"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
                   : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
               }`}
             >
               <div className="flex items-center gap-3">
-                <ShoppingBag size={17} className={activeTab === "orders" ? "text-[#14231D]" : "text-white/40"} />
+                <ShoppingBag size={17} className={activeTab === "orders" ? "text-chilca" : "text-white/40"} />
                 <span>Gestión de Pedidos</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "orders" ? "bg-[#14231D]/15 text-[#14231D]" : "bg-white/10 text-white/60"
+                activeTab === "orders" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
                 {orders.length}
               </span>
@@ -498,16 +498,16 @@ function AdminRoute() {
               onClick={() => setActiveTab("menu")}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
                 activeTab === "menu"
-                  ? "bg-[#D4AF37] text-[#14231D] font-black shadow-md"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
                   : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
               }`}
             >
               <div className="flex items-center gap-3">
-                <MenuIcon size={17} className={activeTab === "menu" ? "text-[#14231D]" : "text-white/40"} />
+                <MenuIcon size={17} className={activeTab === "menu" ? "text-chilca" : "text-white/40"} />
                 <span>Gestión de Carta</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "menu" ? "bg-[#14231D]/15 text-[#14231D]" : "bg-white/10 text-white/60"
+                activeTab === "menu" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
                 {products.length}
               </span>
@@ -518,16 +518,16 @@ function AdminRoute() {
               onClick={() => setActiveTab("coupons")}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
                 activeTab === "coupons"
-                  ? "bg-[#D4AF37] text-[#14231D] font-black shadow-md"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
                   : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Ticket size={17} className={activeTab === "coupons" ? "text-[#14231D]" : "text-white/40"} />
+                <Ticket size={17} className={activeTab === "coupons" ? "text-chilca" : "text-white/40"} />
                 <span>Cupones & Ofertas</span>
               </div>
               <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "coupons" ? "bg-[#14231D]/15 text-[#14231D]" : "bg-white/10 text-white/60"
+                activeTab === "coupons" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
                 {coupons.length}
               </span>
@@ -537,12 +537,12 @@ function AdminRoute() {
         </div>
 
         {/* Bottom Sidebar Action Quick Links - ALWAYS PINNED & VISIBLE */}
-        <div className="p-4 space-y-2 border-t border-white/8 bg-black/40 shrink-0 font-sans">
+        <div className="p-4 space-y-2 border-t border-white/8 bg-transparent shrink-0 font-sans">
           <Link
             to="/caja"
             className="w-full py-2.5 px-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98 border border-white/10"
           >
-            <UtensilsCrossed size={15} className="text-[#D4AF37]" />
+            <UtensilsCrossed size={15} className="text-chilca" />
             <span>Panel Caja / Cocina</span>
           </Link>
 
@@ -553,7 +553,7 @@ function AdminRoute() {
               className="py-2 px-2 rounded-xl bg-white/8 hover:bg-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/8"
               title="Sincronizar Supabase"
             >
-              <RefreshCw size={13} className={`text-[#D4AF37] ${refreshing ? "animate-spin" : ""}`} />
+              <RefreshCw size={13} className={`text-chilca ${refreshing ? "animate-spin" : ""}`} />
               <span>Sincronizar</span>
             </button>
 
@@ -561,14 +561,14 @@ function AdminRoute() {
               onClick={() => { window.location.href = "/restaurante"; }}
               className="py-2 px-2 rounded-xl bg-white/8 hover:bg-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/8"
             >
-              <ArrowLeft size={13} className="text-[#D4AF37]" />
+              <ArrowLeft size={13} className="text-chilca" />
               <span>Ver Web</span>
             </button>
           </div>
 
           <button
             onClick={handleSignOut}
-            className="w-full py-2 px-3 rounded-xl bg-red-900/30 hover:bg-red-800/50 text-red-300 border border-red-500/20 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-1"
+            className="w-full py-2 px-3 rounded-xl bg-cochinilla hover:bg-cochinilla/90 text-white border border-transparent shadow-sm text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-1"
           >
             <LogOut size={14} />
             <span>Cerrar Sesión</span>
@@ -583,12 +583,12 @@ function AdminRoute() {
       <div className="flex-1 flex flex-col min-w-0 pb-20">
         
         {/* Top Header Bar */}
-        <header className="bg-white border-b border-[#14231D]/8 px-6 py-4 sticky top-0 z-30 shadow-sm flex items-center justify-between">
+        <header className="bg-white border-b border-eucalipto/8 px-6 py-4 sticky top-0 z-30 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#5F8575]/70 block">
+            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-pacay/70 block">
               Panel Administrativo • Restaurante Las Flores
             </span>
-            <h1 className="font-sans text-xl font-bold text-[#14231D] flex items-center gap-2">
+            <h1 className="font-sans text-xl font-bold text-nogal flex items-center gap-2">
               {activeTab === "analytics" && "Analítica & Inteligencia de Negocios (BI)"}
               {activeTab === "reservations" && "Control de Reservas de Mesas"}
               {activeTab === "orders" && "Gestión de Pedidos & Comandas"}
@@ -605,7 +605,7 @@ function AdminRoute() {
                   setSelectedProduct(null);
                   setIsProductModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#D4AF37] font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                className="px-4 py-2.5 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
               >
                 <Plus size={15} />
                 Nuevo Plato
@@ -618,7 +618,7 @@ function AdminRoute() {
                   setSelectedCoupon(null);
                   setIsCouponModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#D4AF37] font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                className="px-4 py-2.5 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
               >
                 <Plus size={15} />
                 Crear Cupón
@@ -634,72 +634,72 @@ function AdminRoute() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             
             {/* Facturación Acumulada */}
-            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-[#14231D]/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Facturación Total</span>
-                <div className="w-9 h-9 rounded-xl bg-[#14231D] text-[#D4AF37] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-eucalipto text-chilca flex items-center justify-center">
                   <DollarSign size={18} />
                 </div>
               </div>
               <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#14231D]">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
                   S/ {totalSales.toFixed(2)}
                 </span>
-                <p className="text-[11px] text-[#5F8575] mt-1 font-semibold flex items-center gap-1">
+                <p className="text-[11px] text-pacay mt-1 font-semibold flex items-center gap-1">
                   <TrendingUp size={12} /> Órdenes confirmadas
                 </p>
               </div>
             </div>
 
             {/* Pedidos en Proceso */}
-            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-[#14231D]/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Pedidos Activos</span>
-                <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-cielo text-white flex items-center justify-center">
                   <ShoppingBag size={18} />
                 </div>
               </div>
               <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#14231D]">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
                   {activeOrdersCount}
                 </span>
-                <p className="text-[11px] text-blue-600 mt-1 font-semibold flex items-center gap-1">
+                <p className="text-[11px] text-cielo mt-1 font-semibold flex items-center gap-1">
                   <Clock size={12} /> En cocina o despacho
                 </p>
               </div>
             </div>
 
             {/* Reservas Pendientes */}
-            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-[#14231D]/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Reservas Pendientes</span>
-                <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-chilca text-cafe flex items-center justify-center">
                   <Calendar size={18} />
                 </div>
               </div>
               <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#14231D]">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
                   {pendingReservationsCount}
                 </span>
-                <p className="text-[11px] text-amber-600 mt-1 font-semibold flex items-center gap-1">
+                <p className="text-[11px] text-chilca mt-1 font-semibold flex items-center gap-1">
                   <UserCheck size={12} /> Por confirmar horario
                 </p>
               </div>
             </div>
 
             {/* Platos Disponibles */}
-            <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-[#14231D]/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
                 <span>Carta Activa</span>
-                <div className="w-9 h-9 rounded-xl bg-[#5F8575] text-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-eucalipto text-white flex items-center justify-center">
                   <UtensilsCrossed size={18} />
                 </div>
               </div>
               <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#14231D]">
-                  {availableProductsCount} <span className="text-base text-[#14231D]/30 font-normal">/ {products.length}</span>
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
+                  {availableProductsCount} <span className="text-base text-nogal/30 font-normal">/ {products.length}</span>
                 </span>
-                <p className="text-[11px] text-[#5F8575] mt-1 font-semibold flex items-center gap-1">
+                <p className="text-[11px] text-pacay mt-1 font-semibold flex items-center gap-1">
                   <CheckCircle2 size={12} /> Platos disponibles en carta
                 </p>
               </div>
@@ -708,7 +708,7 @@ function AdminRoute() {
           </div>
 
           {/* Panel Tab Content Display */}
-          <div className="bg-white rounded-2xl border border-[#14231D]/8 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-eucalipto/8 shadow-sm overflow-hidden">
             
             {/* ================= ANALYTICS TAB ================= */}
             {activeTab === "analytics" && (
@@ -723,40 +723,40 @@ function AdminRoute() {
           {/* ================= RESERVATIONS TAB ================= */}
           {activeTab === "reservations" && (
             <div>
-              <div className="p-4 bg-[#F5F3EE] border-b border-[#14231D]/8 space-y-3">
+              <div className="p-4 bg-piedra border-b border-eucalipto/8 space-y-3">
                 <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
                   {/* Search bar */}
                   <div className="relative w-full lg:w-80">
-                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14231D]/30" />
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-nogal/30" />
                     <input
                       type="text"
                       value={resSearch}
                       onChange={(e) => setResSearch(e.target.value)}
                       placeholder="Buscar cliente o teléfono..."
-                      className="w-full text-xs bg-white border border-[#14231D]/12 rounded-xl pl-9 pr-4 py-2.5 text-[#14231D] focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+                      className="w-full text-xs bg-white border border-eucalipto/12 rounded-xl pl-9 pr-4 py-2.5 text-nogal focus:outline-none focus:ring-2 focus:ring-cafe/20"
                     />
                   </div>
 
                   {/* Date Range Inputs - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
                   {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
                     <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                      <div className="flex items-center gap-1.5 bg-white border border-[#14231D]/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                        <span className="text-[10px] font-serif font-bold text-[#14231D]/40 uppercase">Desde:</span>
+                      <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
+                        <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Desde:</span>
                         <input
                           type="date"
                           value={resDateFrom}
                           onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
-                          className="text-xs bg-transparent font-semibold text-[#14231D] focus:outline-none"
+                          className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
                         />
                       </div>
 
-                      <div className="flex items-center gap-1.5 bg-white border border-[#14231D]/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                        <span className="text-[10px] font-serif font-bold text-[#14231D]/40 uppercase">Hasta:</span>
+                      <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
+                        <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Hasta:</span>
                         <input
                           type="date"
                           value={resDateTo}
                           onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
-                          className="text-xs bg-transparent font-semibold text-[#14231D] focus:outline-none"
+                          className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
                         />
                       </div>
                     </div>
@@ -764,15 +764,15 @@ function AdminRoute() {
 
                   {/* Status buttons */}
                   <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto">
-                    <span className="text-xs font-serif font-bold text-[#14231D]/40 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                    <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Estado:</span>
                     {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
                       <button
                         key={st}
                         onClick={() => setResStatusFilter(st)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all whitespace-nowrap ${
                           resStatusFilter === st
-                            ? "bg-[#14231D] text-white shadow-sm"
-                            : "bg-white border border-[#14231D]/12 text-[#14231D]/60 hover:bg-[#14231D]/5"
+                            ? "bg-eucalipto text-white shadow-sm"
+                            : "bg-white border border-eucalipto/12 text-nogal/60 hover:bg-eucalipto/5"
                         }`}
                       >
                         {st === "all" ? "Todas" : st === "pending" ? "Pendientes" : st === "confirmed" ? "Confirmadas" : st === "completed" ? "Completadas" : "Canceladas"}
@@ -783,25 +783,25 @@ function AdminRoute() {
 
                 {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
                 {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#14231D]/8 overflow-x-auto">
-                    <span className="text-[11px] font-serif font-bold text-[#14231D]/40 uppercase tracking-wider shrink-0">
+                  <div className="flex items-center gap-2 pt-2 border-t border-eucalipto/8 overflow-x-auto">
+                    <span className="text-[11px] font-serif font-bold text-nogal/40 uppercase tracking-wider shrink-0">
                       Filtro Rápido de Calendario:
                     </span>
                     <button
                       onClick={() => setQuickDateRange("today")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-[#14231D] text-white" : "bg-white hover:bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/15"}`}
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}
                     >
                       Hoy
                     </button>
                     <button
                       onClick={() => setQuickDateRange("week")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-[#14231D] text-white" : "bg-white hover:bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/15"}`}
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}
                     >
                       Esta Semana
                     </button>
                     <button
                       onClick={() => setQuickDateRange("month")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-[#14231D] text-white" : "bg-white hover:bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/15"}`}
+                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}
                     >
                       Este Mes
                     </button>
@@ -817,7 +817,7 @@ function AdminRoute() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#14231D]/40 bg-[#F5F3EE] border-b border-[#14231D]/8">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
                     <tr>
                       <th className="px-6 py-4">Cliente</th>
                       <th className="px-6 py-4">Fecha y Hora</th>
@@ -830,7 +830,7 @@ function AdminRoute() {
                   <tbody className="divide-y divide-[#14231D]/5">
                     {filteredReservations.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-[#14231D]/30">
+                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
                           No hay reservas para mostrar.
                         </td>
                       </tr>
@@ -841,26 +841,26 @@ function AdminRoute() {
                         const whatsappUrl = `https://wa.me/${fullPhone}?text=Hola%20${encodeURIComponent(res.client_name)},%20te%20contactamos%20de%20Restaurante%20Las%20Flores%20sobre%20tu%20reserva%20para%20el%20dia%20${encodeURIComponent(res.reservation_date)}.`;
 
                         return (
-                          <tr key={res.id} className="hover:bg-[#F5F3EE]/60 transition-colors">
+                          <tr key={res.id} className="hover:bg-piedra/60 transition-colors">
                             <td className="px-6 py-4">
-                              <div className="font-bold text-[#14231D]">{res.client_name}</div>
-                              <div className="text-[#14231D]/40">{res.client_phone || "Sin teléfono"}</div>
+                              <div className="font-bold text-nogal">{res.client_name}</div>
+                              <div className="text-nogal/40">{res.client_phone || "Sin teléfono"}</div>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="font-bold text-[#14231D]">{res.reservation_date}</div>
-                              <div className="text-[#5F8575] font-semibold">{res.reservation_time}</div>
+                              <div className="font-bold text-nogal">{res.reservation_date}</div>
+                              <div className="text-pacay font-semibold">{res.reservation_time}</div>
                             </td>
-                            <td className="px-6 py-4 font-bold text-[#14231D]">
+                            <td className="px-6 py-4 font-bold text-nogal">
                               {res.guest_count} personas
                             </td>
-                            <td className="px-6 py-4 capitalize text-[#14231D]/60 font-medium">
+                            <td className="px-6 py-4 capitalize text-nogal/60 font-medium">
                               {res.service_type || "Almuerzo"}
                             </td>
                             <td className="px-6 py-4">
                               <select
                                 value={res.status || "pending"}
                                 onChange={(e) => handleUpdateReservationStatus(res.id, e.target.value)}
-                                className="bg-white border border-[#14231D]/12 text-[#14231D] font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+                                className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cafe/20"
                               >
                                 <option value="pending">Pendiente</option>
                                 <option value="confirmed">Confirmada</option>
@@ -893,35 +893,35 @@ function AdminRoute() {
           {/* ================= ORDERS TAB ================= */}
           {activeTab === "orders" && (
             <div>
-              <div className="p-4 bg-[#F5F3EE] border-b border-[#14231D]/8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="p-4 bg-piedra border-b border-eucalipto/8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex flex-col gap-4 w-full md:w-auto">
                   <div className="relative w-full md:w-80">
-                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14231D]/30" />
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-nogal/30" />
                     <input
                       type="text"
                       value={orderSearch}
                       onChange={(e) => setOrderSearch(e.target.value)}
                       placeholder="Buscar pedido #, cliente..."
-                      className="w-full text-xs bg-white border border-[#14231D]/12 rounded-xl pl-9 pr-4 py-2.5 text-[#14231D] focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+                      className="w-full text-xs bg-white border border-eucalipto/12 rounded-xl pl-9 pr-4 py-2.5 text-nogal focus:outline-none focus:ring-2 focus:ring-cafe/20"
                     />
                   </div>
                   <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div className="flex items-center gap-1.5 bg-white border border-[#14231D]/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                      <span className="text-[10px] font-serif font-bold text-[#14231D]/40 uppercase">Desde:</span>
+                    <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
+                      <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Desde:</span>
                       <input
                         type="date"
                         value={orderDateFrom}
                         onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-[#14231D] focus:outline-none"
+                        className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
                       />
                     </div>
-                    <div className="flex items-center gap-1.5 bg-white border border-[#14231D]/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                      <span className="text-[10px] font-serif font-bold text-[#14231D]/40 uppercase">Hasta:</span>
+                    <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
+                      <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Hasta:</span>
                       <input
                         type="date"
                         value={orderDateTo}
                         onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-[#14231D] focus:outline-none"
+                        className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
                       />
                     </div>
                   </div>
@@ -929,7 +929,7 @@ function AdminRoute() {
 
                 <div className="flex flex-col gap-4 w-full md:w-auto items-start md:items-end">
                   <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
-                    <span className="text-xs font-serif font-bold text-[#14231D]/40 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                    <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Estado:</span>
                     {[
                       { id: "all", label: "Todos" },
                       { id: "received", label: "Recibidos" },
@@ -943,8 +943,8 @@ function AdminRoute() {
                         onClick={() => setOrderStatusFilter(st.id)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
                           orderStatusFilter === st.id
-                            ? "bg-[#14231D] text-white shadow-sm"
-                            : "bg-white border border-[#14231D]/12 text-[#14231D]/60 hover:bg-[#14231D]/5"
+                            ? "bg-eucalipto text-white shadow-sm"
+                            : "bg-white border border-eucalipto/12 text-nogal/60 hover:bg-eucalipto/5"
                         }`}
                       >
                         {st.label}
@@ -955,19 +955,19 @@ function AdminRoute() {
               </div>
 
               {/* Quick Date Range Shortcuts */}
-              <div className="px-4 pb-4 pt-3 bg-[#F5F3EE] border-b border-[#14231D]/8 flex items-center gap-2 overflow-x-auto">
-                <span className="text-[11px] font-serif font-bold text-[#14231D]/40 uppercase tracking-wider shrink-0">
+              <div className="px-4 pb-4 pt-3 bg-piedra border-b border-eucalipto/8 flex items-center gap-2 overflow-x-auto">
+                <span className="text-[11px] font-serif font-bold text-nogal/40 uppercase tracking-wider shrink-0">
                   Filtro Rápido de Calendario:
                 </span>
-                <button onClick={() => setQuickOrderDateRange("today")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-[#14231D] text-white" : "bg-white hover:bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/15"}`}>Hoy</button>
-                <button onClick={() => setQuickOrderDateRange("week")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-[#14231D] text-white" : "bg-white hover:bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/15"}`}>Esta Semana</button>
-                <button onClick={() => setQuickOrderDateRange("month")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-[#14231D] text-white" : "bg-white hover:bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/15"}`}>Este Mes</button>
+                <button onClick={() => setQuickOrderDateRange("today")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}>Hoy</button>
+                <button onClick={() => setQuickOrderDateRange("week")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}>Esta Semana</button>
+                <button onClick={() => setQuickOrderDateRange("month")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}>Este Mes</button>
                 <button onClick={() => setQuickOrderDateRange("all")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-600 text-white" : "bg-white hover:bg-red-50 text-red-700 border border-red-200"}`}>Limpiar Fechas (Ver Histórico Completo)</button>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#14231D]/40 bg-[#F5F3EE] border-b border-[#14231D]/8">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
                     <tr>
                       <th className="px-6 py-4">N° Orden</th>
                       <th className="px-6 py-4">Cliente</th>
@@ -980,33 +980,33 @@ function AdminRoute() {
                   <tbody className="divide-y divide-[#14231D]/5">
                     {filteredOrders.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-[#14231D]/30">
+                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
                           No hay pedidos registrados.
                         </td>
                       </tr>
                     ) : (
                       filteredOrders.map((ord) => (
-                        <tr key={ord.id} className="hover:bg-[#F5F3EE]/60 transition-colors">
-                          <td className="px-6 py-4 font-serif font-bold text-[#14231D] text-sm">
+                        <tr key={ord.id} className="hover:bg-piedra/60 transition-colors">
+                          <td className="px-6 py-4 font-serif font-bold text-nogal text-sm">
                             #{ord.order_number}
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-bold text-[#14231D]">{ord.client_name || "Anónimo"}</div>
-                            <div className="text-[#14231D]/40">{ord.client_phone}</div>
+                            <div className="font-bold text-nogal">{ord.client_name || "Anónimo"}</div>
+                            <div className="text-nogal/40">{ord.client_phone}</div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#14231D]/5 text-[#14231D]/70 border border-[#14231D]/10">
+                            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-eucalipto/5 text-nogal/70 border border-eucalipto/10">
                               {ord.order_type === "delivery" ? "Delivery" : "Recojo"}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-serif font-black text-[#5F8575] text-sm">
+                          <td className="px-6 py-4 font-serif font-black text-pacay text-sm">
                             S/ {Number(ord.total).toFixed(2)}
                           </td>
                           <td className="px-6 py-4">
                             <select
                               value={ord.status || "received"}
                               onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
-                              className="bg-white border border-[#14231D]/12 text-[#14231D] font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+                              className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cafe/20"
                             >
                               <option value="received">Recibido</option>
                               <option value="preparing">En Preparación</option>
@@ -1021,7 +1021,7 @@ function AdminRoute() {
                                 setSelectedOrder(ord);
                                 setIsOrderModalOpen(true);
                               }}
-                              className="px-3.5 py-1.5 rounded-lg bg-[#14231D]/5 hover:bg-[#14231D]/10 text-[#14231D] font-bold border border-[#14231D]/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                              className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
                             >
                               <Eye size={13} /> Detalle
                             </button>
@@ -1038,24 +1038,24 @@ function AdminRoute() {
           {/* ================= MENU TAB ================= */}
           {activeTab === "menu" && (
             <div>
-              <div className="p-4 bg-[#F5F3EE] border-b border-[#14231D]/8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="p-4 bg-piedra border-b border-eucalipto/8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="relative w-full md:w-80">
-                  <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#14231D]/30" />
+                  <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-nogal/30" />
                   <input
                     type="text"
                     value={menuSearch}
                     onChange={(e) => setMenuSearch(e.target.value)}
                     placeholder="Buscar plato por nombre..."
-                    className="w-full text-xs bg-white border border-[#14231D]/12 rounded-xl pl-9 pr-4 py-2.5 text-[#14231D] focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+                    className="w-full text-xs bg-white border border-eucalipto/12 rounded-xl pl-9 pr-4 py-2.5 text-nogal focus:outline-none focus:ring-2 focus:ring-cafe/20"
                   />
                 </div>
 
                 <div className="flex items-center gap-2 w-full md:w-auto">
-                  <span className="text-xs font-serif font-bold text-[#14231D]/40 uppercase tracking-wider whitespace-nowrap">Categoría:</span>
+                  <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Categoría:</span>
                   <select
                     value={menuCategoryFilter}
                     onChange={(e) => setMenuCategoryFilter(e.target.value)}
-                    className="bg-white border border-[#14231D]/12 text-[#14231D] font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+                    className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cafe/20"
                   >
                     <option value="all">Todas ({categories.length})</option>
                     {categories.map((c) => (
@@ -1069,7 +1069,7 @@ function AdminRoute() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#14231D]/40 bg-[#F5F3EE] border-b border-[#14231D]/8">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
                     <tr>
                       <th className="px-6 py-4 w-20">Imagen</th>
                       <th className="px-6 py-4">Producto</th>
@@ -1082,32 +1082,32 @@ function AdminRoute() {
                   <tbody className="divide-y divide-[#14231D]/5">
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-[#14231D]/30">
+                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
                           No hay platos registrados.
                         </td>
                       </tr>
                     ) : (
                       filteredProducts.map((prod) => (
-                        <tr key={prod.id} className="hover:bg-[#F5F3EE]/60 transition-colors">
+                        <tr key={prod.id} className="hover:bg-piedra/60 transition-colors">
                           <td className="px-6 py-4">
-                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#14231D]/5 border border-[#14231D]/8 shrink-0">
+                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-eucalipto/5 border border-eucalipto/8 shrink-0">
                               {prod.image_url ? (
                                 <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-[#14231D]/30">
+                                <div className="w-full h-full flex items-center justify-center text-nogal/30">
                                   <UtensilsCrossed size={16} />
                                 </div>
                               )}
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-serif font-bold text-[#14231D] text-sm">{prod.name}</div>
-                            {prod.description && <p className="text-[#14231D]/40 text-xs line-clamp-1">{prod.description}</p>}
+                            <div className="font-serif font-bold text-nogal text-sm">{prod.name}</div>
+                            {prod.description && <p className="text-nogal/40 text-xs line-clamp-1">{prod.description}</p>}
                           </td>
-                          <td className="px-6 py-4 text-[#14231D]/60 font-medium">
+                          <td className="px-6 py-4 text-nogal/60 font-medium">
                             {prod.categories?.name || "General"}
                           </td>
-                          <td className="px-6 py-4 font-serif font-bold text-[#5F8575] text-sm">
+                          <td className="px-6 py-4 font-serif font-bold text-pacay text-sm">
                             S/ {Number(prod.price).toFixed(2)}
                           </td>
                           <td className="px-6 py-4">
@@ -1129,7 +1129,7 @@ function AdminRoute() {
                                   setSelectedProduct(prod);
                                   setIsProductModalOpen(true);
                                 }}
-                                className="px-3.5 py-1.5 rounded-lg bg-[#14231D]/5 hover:bg-[#14231D]/10 text-[#14231D] font-bold border border-[#14231D]/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
                               >
                                 <Edit2 size={12} /> Editar
                               </button>
@@ -1153,13 +1153,13 @@ function AdminRoute() {
           {/* ================= COUPONS TAB ================= */}
           {activeTab === "coupons" && (
             <div>
-              <div className="p-4 bg-[#F5F3EE] border-b border-[#14231D]/8 flex items-center justify-between">
+              <div className="p-4 bg-piedra border-b border-eucalipto/8 flex items-center justify-between">
                 <div>
-                  <h3 className="font-serif font-bold text-sm text-[#14231D] flex items-center gap-2">
-                    <Ticket size={16} className="text-[#14231D]" />
+                  <h3 className="font-serif font-bold text-sm text-nogal flex items-center gap-2">
+                    <Ticket size={16} className="text-nogal" />
                     Gestión de Cupones & Códigos Promocionales
                   </h3>
-                  <p className="text-xs text-[#14231D]/40">Configuración de límites de uso, descuentos en % o S/ y restricciones</p>
+                  <p className="text-xs text-nogal/40">Configuración de límites de uso, descuentos en % o S/ y restricciones</p>
                 </div>
 
                 <button
@@ -1167,7 +1167,7 @@ function AdminRoute() {
                     setSelectedCoupon(null);
                     setIsCouponModalOpen(true);
                   }}
-                  className="px-4 py-2 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#D4AF37] text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
+                  className="px-4 py-2 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
                 >
                   <Plus size={14} /> Crear Nuevo Cupón
                 </button>
@@ -1175,7 +1175,7 @@ function AdminRoute() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#14231D]/40 bg-[#F5F3EE] border-b border-[#14231D]/8">
+                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
                     <tr>
                       <th className="px-6 py-4">Código del Cupón</th>
                       <th className="px-6 py-4">Descuento</th>
@@ -1188,7 +1188,7 @@ function AdminRoute() {
                   <tbody className="divide-y divide-[#14231D]/5">
                     {coupons.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-[#14231D]/30">
+                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
                           No hay cupones creados aún. Haz clic en "Crear Nuevo Cupón" para comenzar (ej: FLORES).
                         </td>
                       </tr>
@@ -1198,37 +1198,37 @@ function AdminRoute() {
                         const isExpired = (c.used_count || 0) >= (c.max_uses || 1);
 
                         return (
-                          <tr key={c.id} className="hover:bg-[#F5F3EE]/60 transition-colors">
+                          <tr key={c.id} className="hover:bg-piedra/60 transition-colors">
                             <td className="px-6 py-4">
-                              <span className="font-mono font-black text-sm px-3 py-1 bg-[#D4AF37]/10 text-[#14231D] border border-[#D4AF37]/30 rounded-lg tracking-wider">
+                              <span className="font-mono font-black text-sm px-3 py-1 bg-cochinillahilca/10 text-nogal border border-chilca/30 rounded-lg tracking-wider">
                                 {c.code}
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="font-serif font-extrabold text-sm text-[#5F8575]">
+                              <span className="font-serif font-extrabold text-sm text-pacay">
                                 {c.discount_type === "percent" ? `${c.discount_value}% OFF` : `S/ ${Number(c.discount_value).toFixed(2)} OFF`}
                               </span>
                               {c.min_order_total > 0 && (
-                                <p className="text-[10px] text-[#14231D]/40 mt-0.5">Min: S/ {c.min_order_total}</p>
+                                <p className="text-[10px] text-nogal/40 mt-0.5">Min: S/ {c.min_order_total}</p>
                               )}
                             </td>
                             <td className="px-6 py-4">
                               <div className="space-y-1">
                                 <div className="flex justify-between text-xs font-bold">
-                                  <span className={isExpired ? "text-red-700" : "text-[#14231D]"}>
+                                  <span className={isExpired ? "text-red-700" : "text-nogal"}>
                                     {c.used_count || 0} / {c.max_uses} usos
                                   </span>
-                                  <span className="text-[#14231D]/30 font-mono text-[11px]">{usedPercent}%</span>
+                                  <span className="text-nogal/30 font-mono text-[11px]">{usedPercent}%</span>
                                 </div>
-                                <div className="w-48 bg-[#14231D]/8 h-2 rounded-full overflow-hidden border border-[#14231D]/8">
+                                <div className="w-48 bg-eucalipto/8 h-2 rounded-full overflow-hidden border border-eucalipto/8">
                                   <div
                                     style={{ width: `${usedPercent}%` }}
-                                    className={`h-full transition-all ${isExpired ? "bg-red-500" : "bg-[#5F8575]"}`}
+                                    className={`h-full transition-all ${isExpired ? "bg-red-500" : "bg-eucalipto"}`}
                                   />
                                 </div>
                               </div>
                             </td>
-                            <td className="px-6 py-4 font-semibold text-[#14231D]/60 capitalize">
+                            <td className="px-6 py-4 font-semibold text-nogal/60 capitalize">
                               {c.order_type_restriction === "delivery" ? "Solo Delivery" : c.order_type_restriction === "pickup" ? "Solo Recojo" : "Todas las Modalidades"}
                             </td>
                             <td className="px-6 py-4">
@@ -1246,7 +1246,7 @@ function AdminRoute() {
                                   setSelectedCoupon(c);
                                   setIsCouponModalOpen(true);
                                 }}
-                                className="px-3.5 py-1.5 rounded-lg bg-[#14231D]/5 hover:bg-[#14231D]/10 text-[#14231D] font-bold border border-[#14231D]/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
                               >
                                 <Edit2 size={12} /> Editar
                               </button>
@@ -1292,3 +1292,9 @@ function AdminRoute() {
     </div>
   );
 }
+
+
+
+
+
+

@@ -164,7 +164,7 @@ export function SeatSelector({ onSelectTable, onSkip, guestCount = 2 }: SeatSele
   // ─── Vista zona: plano detallado con círculos ─────────────────────────────
   if (selectedZone && zone) {
     return (
-      <div className="text-ink animate-in fade-in slide-in-from-right-4 duration-400">
+      <div className="text-nogal animate-in fade-in slide-in-from-right-4 duration-400">
         <button
           onClick={() => { setSelectedZone(null); setSelectedTable(null); }}
           className="text-sm font-bold flex items-center gap-1.5 text-eucalipto hover:opacity-70 transition-opacity mb-3"
@@ -279,7 +279,7 @@ export function SeatSelector({ onSelectTable, onSkip, guestCount = 2 }: SeatSele
 
   // ─── Vista principal: plano interactivo ──────────────────────────────────
   return (
-    <div className="text-ink animate-in fade-in duration-500">
+    <div className="text-nogal animate-in fade-in duration-500">
       <div className="text-center mb-4">
         <h3 className="font-serif text-3xl font-bold mb-1">Elige tu mesa</h3>
         <p className="text-sm opacity-60">Toca una zona en el plano o déjanos asignarte una</p>
@@ -317,22 +317,22 @@ export function SeatSelector({ onSelectTable, onSkip, guestCount = 2 }: SeatSele
           {/* Zoom controls */}
           <div className="flex items-center gap-1.5">
             <button onClick={() => setZoom((p) => Math.min(p + 0.4, 4))}
-              className="w-7 h-7 rounded-full bg-white border border-ink/15 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
+              className="w-7 h-7 rounded-full bg-white border border-nogal/15 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
               <ZoomIn size={13} />
             </button>
             <button onClick={() => setZoom((p) => Math.max(p - 0.4, 1))}
-              className="w-7 h-7 rounded-full bg-white border border-ink/15 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
+              className="w-7 h-7 rounded-full bg-white border border-nogal/15 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
               <ZoomOut size={13} />
             </button>
             <button onClick={() => setZoom(1)}
-              className="w-7 h-7 rounded-full bg-white border border-ink/15 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
+              className="w-7 h-7 rounded-full bg-white border border-nogal/15 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
               <RotateCcw size={12} />
             </button>
           </div>
         </div>
 
         <div
-          className="w-full rounded-2xl border border-ink/10 bg-[#fdf8f0] shadow-sm overflow-hidden"
+          className="w-full rounded-2xl border border-nogal/10 bg-[#fdf8f0] shadow-sm overflow-hidden"
           style={{ height: "220px", touchAction: "none" }}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -465,3 +465,4 @@ export function SeatSelector({ onSelectTable, onSkip, guestCount = 2 }: SeatSele
     </div>
   );
 }
+

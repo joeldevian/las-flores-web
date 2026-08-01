@@ -411,9 +411,9 @@ export function AdminProductModal({
       >
         
         {/* Header (Fijo en la parte superior) */}
-        <div className="bg-[#2D473C] text-[#FAF8F5] p-4 sm:p-5 flex items-center justify-between border-b border-[#D4AF37]/30 shrink-0">
+        <div className="bg-eucalipto text-piedra p-4 sm:p-5 flex items-center justify-between border-b border-chilca/30 shrink-0">
           <div className="flex items-center gap-2.5">
-            <Utensils className="text-[#D4AF37]" size={20} />
+            <Utensils className="text-chilca" size={20} />
             <h2 className="font-sans font-extrabold text-base sm:text-lg text-white">
               {product ? "Editar / Actualizar Plato" : "Nuevo Lanzamiento o Promoción"}
             </h2>
@@ -555,7 +555,7 @@ export function AdminProductModal({
                 <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                   {uploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
                 </div>
-                <span className="text-xs font-bold text-[#14231D] block">
+                <span className="text-xs font-bold text-nogal block">
                   {uploading ? "Optimizando y Subiendo Foto..." : "Haga clic aquí para Seleccionar Foto (Celular o PC)"}
                 </span>
                 <span className="text-[11px] text-gray-500 block mt-0.5">
@@ -822,9 +822,9 @@ export function AdminProductModal({
               <button
                 type="submit"
                 disabled={saving || uploading}
-                className="px-6 py-2.5 rounded-xl bg-[#2D473C] hover:bg-[#243B31] text-[#FAF8F5] text-xs font-bold shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-eucalipto hover:bg-eucalipto text-piedra text-xs font-bold shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
               >
-                {saving ? <Loader2 size={14} className="animate-spin text-[#D4AF37]" /> : null}
+                {saving ? <Loader2 size={14} className="animate-spin text-chilca" /> : null}
                 {product ? "Guardar Cambios" : "Publicar en Carta"}
               </button>
             </div>
@@ -837,3 +837,7 @@ export function AdminProductModal({
     </div>
   );
 }
+
+
+
+

@@ -180,9 +180,14 @@ export function CartSidebar() {
       }
     };
 
+    const handleOpenHistory = () => {
+      setIsHistoryOpen(true);
+    };
+
     window.addEventListener("message", handleMessage);
     window.addEventListener("supabase_auth_changed", handleCustomAuth);
     window.addEventListener("storage", handleStorage);
+    window.addEventListener("open_customer_history", handleOpenHistory);
 
     return () => {
       isCancelled = true;
@@ -190,6 +195,7 @@ export function CartSidebar() {
       window.removeEventListener("message", handleMessage);
       window.removeEventListener("supabase_auth_changed", handleCustomAuth);
       window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("open_customer_history", handleOpenHistory);
     };
   }, []);
 
@@ -469,22 +475,24 @@ export function CartSidebar() {
     }
   };
 
-  if (!isMounted || !portalRef.current || !isOpen) return null;
+  if (!isMounted || !portalRef.current || (!isOpen && !isHistoryOpen)) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[110] flex flex-col items-center justify-end sm:justify-start sm:pt-2 animate-in fade-in duration-300">
+    <>
+      {isOpen && (
+        <div className="fixed inset-0 z-[110] flex flex-col items-center justify-end sm:justify-start sm:pt-2 animate-in fade-in duration-300">
       {/* Fondo oscuro con blur */}
-      <div className="absolute inset-0 bg-ink/75 backdrop-blur-sm cursor-pointer" onClick={handleClose} />
+      <div className="absolute inset-0 bg-eucalipto/75 backdrop-blur-sm cursor-pointer" onClick={handleClose} />
 
       {/* Modal flotante central */}
       <div
-        className="relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-ink rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 shrink-0"
+        className="relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-nogal rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-black/10 flex flex-col h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 shrink-0"
       >
         {/* ── HEADER FIJO (estilo Chicha) ── */}
-        <div className="flex items-center justify-between px-5 py-3.5 bg-[#f8f4e6] border-b border-ink/8 z-10 shrink-0">
+        <div className="flex items-center justify-between px-5 py-3.5 bg-[#f8f4e6] border-b border-nogal/8 z-10 shrink-0">
 
           {/* Izquierda: Selector de idioma */}
-          <div className="w-12 flex items-center gap-1 text-ink/70">
+          <div className="w-12 flex items-center gap-1 text-nogal/70">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="12" cy="12" r="10" />
               <line x1="2" y1="12" x2="22" y2="12" />
@@ -516,7 +524,7 @@ export function CartSidebar() {
                     className="w-7 h-7 rounded-full object-cover border border-eucalipto/30 shadow-sm"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-black/5 text-ink flex items-center justify-center text-xs font-serif font-bold border border-black/10">
+                  <div className="w-7 h-7 rounded-full bg-black/5 text-nogal flex items-center justify-center text-xs font-serif font-bold border border-black/10">
                     {(activeUser.user_metadata?.full_name || activeUser.email || "C")
                       .charAt(0)
                       .toUpperCase()}
@@ -527,7 +535,7 @@ export function CartSidebar() {
               <button
                 type="button"
                 onClick={async () => { try { await signInWithGoogle(); } catch (e) { console.error(e); } }}
-                className="flex items-center justify-center text-ink/50 hover:text-eucalipto transition-colors"
+                className="flex items-center justify-center text-nogal/50 hover:text-eucalipto transition-colors"
                 aria-label="Iniciar sesión"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -625,7 +633,7 @@ export function CartSidebar() {
                         <div className="flex-1 min-w-0 flex flex-col justify-between min-h-16 py-0.5">
                           <div className="flex justify-between items-start gap-2">
                             <div>
-                              <p className="font-serif text-sm font-bold leading-snug text-ink">
+                              <p className="font-serif text-sm font-bold leading-snug text-nogal">
                                 {item.name}
                               </p>
                               {item.customizations && (
@@ -668,16 +676,16 @@ export function CartSidebar() {
                             <div className="flex items-center gap-1.5 bg-black/4 rounded-lg p-0.5 border border-black/5">
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-ink/70 hover:text-eucalipto hover:bg-white transition-all"
+                                className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-nogal/70 hover:text-eucalipto hover:bg-white transition-all"
                               >
                                 <Minus size={11} strokeWidth={2.5} />
                               </button>
-                              <span className="text-xs font-bold w-4 text-center text-ink">
+                              <span className="text-xs font-bold w-4 text-center text-nogal">
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-ink/70 hover:text-eucalipto hover:bg-white transition-all"
+                                className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-nogal/70 hover:text-eucalipto hover:bg-white transition-all"
                               >
                                 <Plus size={11} strokeWidth={2.5} />
                               </button>
@@ -720,12 +728,12 @@ export function CartSidebar() {
                           className={`rounded-xl p-3 text-left transition-all border-2 flex items-center gap-3 ${
                             active
                               ? "bg-eucalipto/10 border-eucalipto text-eucalipto shadow-xs"
-                              : "bg-white border-black/10 text-ink/60 hover:border-black/20 hover:text-ink"
+                              : "bg-white border-black/10 text-nogal/60 hover:border-black/20 hover:text-nogal"
                           }`}
                         >
                           <div
                             className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
-                              active ? "bg-eucalipto text-cream" : "bg-black/5 text-ink/60"
+                              active ? "bg-eucalipto text-piedra" : "bg-black/5 text-nogal/60"
                             }`}
                           >
                             <Icon size={18} />
@@ -821,7 +829,7 @@ export function CartSidebar() {
                     )}
 
                     <div className="flex justify-between font-serif font-bold text-base pt-2 border-t border-black/5">
-                      <span className="text-ink/80">Total</span>
+                      <span className="text-nogal/80">Total</span>
                       <span className="text-eucalipto font-serif font-bold text-lg">S/ {total.toFixed(2)}</span>
                     </div>
                   </div>
@@ -856,7 +864,7 @@ export function CartSidebar() {
                   <div className="w-12 h-12 rounded-full bg-eucalipto/10 text-eucalipto flex items-center justify-center mx-auto mb-4">
                     <Lock size={22} />
                   </div>
-                  <h3 className="font-serif font-bold text-lg text-ink mb-1">
+                  <h3 className="font-serif font-bold text-lg text-nogal mb-1">
                     Identifícate para continuar
                   </h3>
                   <p className="text-xs text-black/55 mb-6 leading-relaxed">
@@ -945,7 +953,7 @@ export function CartSidebar() {
                       )}
 
                       {clientLocation ? (
-                        <div className="p-3 bg-white rounded-xl border border-black/5 text-xs text-ink/80 flex items-center justify-between">
+                        <div className="p-3 bg-white rounded-xl border border-black/5 text-xs text-nogal/80 flex items-center justify-between">
                           <span className="flex items-center gap-1.5"><MapPin size={12} className="text-eucalipto flex-shrink-0" /> Distancia estimada: <strong>{distanceKm.toFixed(1)} km</strong></span>
                           <span className="font-bold text-eucalipto">Costo: S/ {DELIVERY_FEE.toFixed(2)}</span>
                         </div>
@@ -989,7 +997,7 @@ export function CartSidebar() {
                       {orderType === "delivery" && clientLocation && (
                         <div className="p-3 bg-white rounded-xl border border-black/10 flex items-center justify-between text-xs">
                           <div className="min-w-0 pr-2">
-                            <span className="block font-bold text-ink truncate"><MapPin size={11} className="inline mr-1 text-eucalipto" />{delivery.address || "Ubicación fijada"}</span>
+                            <span className="block font-bold text-nogal truncate"><MapPin size={11} className="inline mr-1 text-eucalipto" />{delivery.address || "Ubicación fijada"}</span>
                             <span className="block text-[10px] text-black/50">A {distanceKm.toFixed(1)} km del restaurante</span>
                           </div>
                           <button
@@ -1354,20 +1362,23 @@ export function CartSidebar() {
       {/* ── BOTÓN CERRAR FLOTANTE (fuera del modal, abajo centrado) ── */}
       <button
         onClick={handleClose}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 sm:w-[50px] sm:h-[50px] rounded-full bg-eucalipto text-cream flex items-center justify-center shadow-xl hover:bg-[#1e3329] hover:scale-105 active:scale-95 transition-all z-[112]"
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 sm:w-[50px] sm:h-[50px] rounded-full bg-eucalipto text-piedra flex items-center justify-center shadow-xl hover:bg-[#1e3329] hover:scale-105 active:scale-95 transition-all z-[112]"
         aria-label="Cerrar"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 6 6 18M6 6l12 12" />
         </svg>
       </button>
+      </div>
+      )}
 
       <CustomerHistoryModal
         open={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
         user={activeUser}
       />
-    </div>,
+    </>,
     portalRef.current
   );
 }
+

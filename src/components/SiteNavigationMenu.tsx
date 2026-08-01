@@ -1,75 +1,150 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Facebook, Instagram } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { Menu, X, Facebook, Instagram, Phone, Mail, MessageCircle } from 'lucide-react';
+import { Link, useLocation } from '@tanstack/react-router';
+import { UserAuthButton } from './UserAuthButton';
 
-export function SiteNavigationMenu({ isScrolled, isAlwaysDark = false }: { isScrolled: boolean, isAlwaysDark?: boolean }) {
+const NAV_LINKS = [
+  { label: 'Nuestra Tierra',      to: '/',             hash: '' },
+  { label: 'Nuestro Restaurante', to: '/restaurante',  hash: '' },
+  { label: 'La Carta',            to: '/carta',        hash: '' },
+  { label: 'Eventos',             to: '/eventos',      hash: '' },
+  { label: 'Reservas',            to: '/',             hash: 'reservas' },
+  { label: 'Contacto',            to: '/contacto',     hash: '' },
+];
+
+export function SiteNavigationMenu({
+  isScrolled,
+  isAlwaysDark = false,
+}: {
+  isScrolled: boolean;
+  isAlwaysDark?: boolean;
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
-  // Prevent background scrolling when menu is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  const textColor = isAlwaysDark ? "text-ink" : (isScrolled ? "text-ink" : "text-cream");
+  const textColor = isAlwaysDark
+    ? 'text-nogal'
+    : isScrolled
+    ? 'text-nogal'
+    : 'text-piedra';
 
   return (
     <>
-      {/* Hamburger Icon */}
-      <button 
-        onClick={() => setIsOpen(true)}
-        className="flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto"
-        aria-label="Menú principal"
-      >
-        <Menu size={32} className={textColor} />
-      </button>
+      {/* ── Trigger buttons ── */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto"
+          aria-label="Menú principal"
+        >
+          <Menu size={32} className={textColor} />
+        </button>
+        <UserAuthButton textColorClass={textColor} />
+      </div>
 
-      {/* Backdrop */}
-      <div 
-        className={`fixed inset-0 z-[90] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
+      {/* ── Backdrop ── */}
+      <div
+        className={`fixed inset-0 z-[90] bg-black/40 backdrop-blur-sm transition-opacity duration-400 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={() => setIsOpen(false)}
         aria-hidden="true"
       />
 
-      {/* Side Drawer Menu */}
-      <div 
-        className={`fixed inset-y-0 left-0 w-full md:w-[450px] z-[100] bg-[#F9F9F9] transition-transform duration-500 ease-in-out flex flex-col shadow-2xl pointer-events-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      {/* ── Drawer — diseño de una sola pantalla, sin scroll ── */}
+      <div
+        className={`fixed inset-y-0 left-0 w-[min(100vw,420px)] z-[100] bg-piedra flex flex-col shadow-2xl pointer-events-auto transition-transform duration-500 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        {/* Close Button */}
-        <div className="flex justify-end p-6 md:p-8">
-          <button 
+        {/* ── Header con logo + cerrar ── */}
+        <div className="flex items-center justify-between px-8 pt-7 pb-4 shrink-0">
+          <img
+            src="/images.png"
+            alt="Restaurante Las Flores"
+            className="h-14 w-auto object-contain"
+            style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)' }}
+          />
+          <button
             onClick={() => setIsOpen(false)}
-            className="p-1.5 border border-gray-400 text-gray-800 hover:bg-gray-200 transition-colors pointer-events-auto rounded-sm"
+            className="p-2 border border-nogal/20 text-nogal hover:bg-nogal/8 transition-colors rounded-md"
+            aria-label="Cerrar menú"
           >
-            <X size={24} />
+            <X size={22} />
           </button>
         </div>
 
-        {/* Menu Links */}
-        <div className="flex-1 flex flex-col items-start justify-start pt-6 md:pt-12 gap-6 md:gap-10 px-10 md:px-14 overflow-y-auto">
-          <Link to="/" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">NUESTRA TIERRA</Link>
-          <Link to="/restaurante" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">NUESTRO RESTAURANTE</Link>
-          <Link to="/carta" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">LA CARTA</Link>
-          <Link to="/eventos" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">EVENTOS</Link>
-        </div>
+        {/* ── Separador ── */}
+        <div className="mx-8 border-t border-nogal/10 shrink-0" />
 
-        {/* Footer Info */}
-        <div className="pb-10 pt-8 flex flex-col items-start gap-3 mx-10 md:mx-14 text-left border-t border-gray-200">
-          <a href="mailto:informes@lasflores.pe" className="text-sm md:text-base text-gray-600 font-light tracking-wide hover:text-[#5F8575] transition-colors">
-            informes@lasflores.pe
-          </a>
-          <p className="text-sm md:text-base text-gray-600 font-light tracking-wide">
-            +51 941 663 265
-          </p>
-          <div className="flex gap-5 mt-2 justify-start">
-            <a href="#" className="text-gray-800 hover:text-[#5F8575] transition-colors"><Facebook size={20} /></a>
-            <a href="#" className="text-gray-800 hover:text-[#5F8575] transition-colors"><Instagram size={20} /></a>
+        {/* ── Nav links — tamaño mejorado para llenar el espacio ── */}
+        <nav className="flex flex-col items-start justify-start flex-1 gap-0 px-4 pt-6 pb-4 overflow-y-auto w-full">
+          {NAV_LINKS.map(({ label, to, hash }) => {
+            const isActive = location.pathname === to && location.hash === hash;
+            return (
+              <Link
+                key={label}
+                to={to}
+                hash={hash || undefined}
+                onClick={() => setIsOpen(false)}
+                className={`w-full py-5 px-6 font-sans text-lg md:text-xl tracking-[0.1em] transition-all duration-300 font-bold leading-none uppercase border-b border-nogal/10 last:border-b-0 border-l-4 ${
+                  isActive
+                    ? "text-chilca bg-nogal/5 border-l-chilca"
+                    : "text-nogal hover:text-pacay hover:translate-x-2 border-l-transparent"
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* ── Footer de contacto y redes ── */}
+        <div className="px-8 pb-8 pt-4 shrink-0 border-t border-nogal/10">
+          <div className="flex flex-col gap-2.5 mb-5">
+            <a
+              href="tel:967456230"
+              className="flex items-center gap-3 text-xs text-nogal/70 hover:text-nogal transition-colors font-semibold tracking-wide"
+            >
+              <Phone size={15} strokeWidth={2.5} />
+              967 456 230
+            </a>
+            <a
+              href="https://wa.me/51980723422"
+              className="flex items-center gap-3 text-xs text-nogal/70 hover:text-nogal transition-colors font-semibold tracking-wide"
+            >
+              {/* Ícono de WhatsApp nativo */}
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              +51 980 723 422
+            </a>
+            <a
+              href="mailto:restaurantelasfloresperu@gmail.com"
+              className="flex items-center gap-3 text-xs text-nogal/70 hover:text-nogal transition-colors font-semibold tracking-wide"
+            >
+              <Mail size={15} strokeWidth={2.5} />
+              restaurantelasfloresperu@gmail.com
+            </a>
+          </div>
+
+          <div className="flex gap-4 items-center">
+            <a href="#" aria-label="Instagram" className="text-nogal/50 hover:text-nogal transition-colors">
+              <Instagram size={20} strokeWidth={1.8} />
+            </a>
+            <a href="#" aria-label="Facebook" className="text-nogal/50 hover:text-nogal transition-colors">
+              <Facebook size={20} strokeWidth={1.8} />
+            </a>
+            <a href="#" aria-label="TikTok" className="text-nogal/50 hover:text-nogal transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>

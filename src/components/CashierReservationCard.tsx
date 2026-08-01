@@ -94,37 +94,39 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
     }
   };
 
-  // Configuración de Colores Semánticos Pastel por Estado
+  // Configuración de Colores Análogos — Paleta Andina
+  // Principio: Fondo blanco neutro + acento de borde izquierdo semántico
   const theme = isConfirmed
     ? {
-        cardBorder: "border-blue-200/80 hover:border-blue-400/80 shadow-2xs hover:shadow-md",
-        headerBg: "bg-blue-100/90 border-b border-blue-200 text-blue-950",
-        iconBox: "bg-blue-200/80 text-blue-900 border border-blue-300/80",
-        badge: "bg-blue-200 text-blue-950 border border-blue-400/80",
-        typeText: "text-blue-800",
+        cardBorder: "border-l-4 border-l-[#5E85A8] border-y border-r border-gray-100 hover:shadow-md shadow-sm",
+        headerBg: "bg-[#5E85A8]/8 border-b border-[#5E85A8]/15 text-nogal",
+        iconBox: "bg-[#5E85A8]/15 text-[#3A6080] border border-[#5E85A8]/25",
+        badge: "bg-[#5E85A8] text-white border-none",
+        typeText: "text-[#3A6080]",
       }
     : isCompleted
     ? {
-        cardBorder: "border-emerald-200/80 hover:border-emerald-400/80 shadow-2xs hover:shadow-md",
-        headerBg: "bg-emerald-100/90 border-b border-emerald-200 text-emerald-950",
-        iconBox: "bg-emerald-200/80 text-emerald-900 border border-emerald-300/80",
-        badge: "bg-emerald-200 text-emerald-950 border border-emerald-400/80",
-        typeText: "text-emerald-800",
+        cardBorder: "border-l-4 border-l-[#7C9A5C] border-y border-r border-gray-100 hover:shadow-md shadow-sm",
+        headerBg: "bg-[#7C9A5C]/8 border-b border-[#7C9A5C]/15 text-nogal",
+        iconBox: "bg-[#7C9A5C]/15 text-[#4A6A30] border border-[#7C9A5C]/25",
+        badge: "bg-[#7C9A5C] text-white border-none",
+        typeText: "text-[#4A6A30]",
       }
     : isCancelled
     ? {
-        cardBorder: "border-red-200/70 opacity-80 shadow-2xs",
-        headerBg: "bg-red-100/90 border-b border-red-200 text-red-950",
-        iconBox: "bg-red-200/80 text-red-900 border border-red-300/80",
-        badge: "bg-red-200 text-red-950 border border-red-400/80",
-        typeText: "text-red-800",
+        cardBorder: "border-l-4 border-l-[#A32638] border-y border-r border-gray-100 opacity-75 shadow-2xs",
+        headerBg: "bg-[#A32638]/8 border-b border-[#A32638]/15 text-nogal",
+        iconBox: "bg-[#A32638]/15 text-[#A32638] border border-[#A32638]/25",
+        badge: "bg-[#A32638] text-white border-none",
+        typeText: "text-[#A32638]",
       }
     : {
-        cardBorder: "border-amber-200/80 hover:border-amber-400/80 shadow-2xs hover:shadow-md",
-        headerBg: "bg-amber-100/90 border-b border-amber-200 text-amber-950",
-        iconBox: "bg-amber-200/80 text-amber-900 border border-amber-300/80",
-        badge: "bg-amber-200 text-amber-950 border border-amber-400/80",
-        typeText: "text-amber-800",
+        // Pendiente — Chilca dorado
+        cardBorder: "border-l-4 border-l-[#D9A441] border-y border-r border-gray-100 hover:shadow-md shadow-sm",
+        headerBg: "bg-[#D9A441]/8 border-b border-[#D9A441]/15 text-nogal",
+        iconBox: "bg-[#D9A441]/15 text-[#8C6010] border border-[#D9A441]/25",
+        badge: "bg-[#D9A441] text-[#231A14] border-none font-black",
+        typeText: "text-[#8C6010]",
       };
 
   return (
@@ -292,3 +294,5 @@ Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aqu�
     </div>
   );
 }
+
+

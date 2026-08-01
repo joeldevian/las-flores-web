@@ -553,7 +553,7 @@ function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
   return (
     <div
       onClick={isCustomizable ? handleAdd : undefined}
-      className={`bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-cream/50 ${
+      className={`bg-white rounded-2xl overflow-hidden flex flex-col h-full shadow-sm hover:shadow-xl transition-all duration-300 group border-2 border-transparent hover:border-piedra/50 ${
         isCustomizable ? "cursor-pointer" : ""
       }`}
     >
@@ -576,7 +576,7 @@ function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
       )}
       <div className="px-5 pb-5 pt-3 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-3 mb-2">
-          <h3 className="text-lg font-serif font-bold leading-tight text-ink">
+          <h3 className="text-lg font-serif font-bold leading-tight text-nogal">
             {dish.name}
           </h3>
           <span className="font-serif font-bold text-sm flex-shrink-0 px-3 py-1 rounded-full bg-eucalipto/10 text-eucalipto">
@@ -591,7 +591,7 @@ function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
             e.stopPropagation();
             handleAdd();
           }}
-          className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border border-eucalipto/30 text-eucalipto font-bold text-sm bg-eucalipto/5 hover:bg-eucalipto hover:text-white shadow-xs hover:shadow-sm active:scale-[0.99]"
+          className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border border-eucalipto/30 text-eucalipto font-bold text-sm bg-piedra hover:bg-eucalipto hover:text-white shadow-xs hover:shadow-sm active:scale-[0.99]"
         >
           <Plus size={15} strokeWidth={2.5} />
           {isCustomizable ? "Personalizar y Agregar" : "Agregar"}
@@ -640,10 +640,10 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-cream overflow-hidden animate-in fade-in zoom-in-[0.98] duration-300">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-piedra overflow-hidden animate-in fade-in zoom-in-[0.98] duration-300">
       {/* Header — Light & Luxurious Warm Cream Header */}
       <div
-        className="relative bg-cream/95 backdrop-blur-md border-b border-black/5 py-4 px-6 md:px-10 flex items-center justify-between sticky top-0 z-20 shadow-sm"
+        className="relative bg-piedra/95 backdrop-blur-md border-b border-black/5 py-4 px-6 md:px-10 flex items-center justify-between sticky top-0 z-20 shadow-sm"
       >
         <div className="flex items-center gap-4 relative">
           <div
@@ -667,15 +667,15 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
             onClick={() => {
               setSidebarOpen(true);
             }}
-            className={`relative transition-all duration-300 flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-cream ${
-              isBouncing ? "scale-[1.03] ring-4 ring-eucalipto/30 shadow-lg bg-[#2A4433]" : ""
+            className={`relative transition-all duration-300 flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 bg-eucalipto text-piedra ${
+              isBouncing ? "scale-[1.03] ring-4 ring-cafe/30 shadow-lg bg-eucalipto" : ""
             }`}
           >
             <ShoppingCart size={18} strokeWidth={2.5} className={`transition-transform duration-300 ${isBouncing ? "-rotate-12 scale-110" : ""}`} />
             <span className="hidden md:inline">Ver Pedido</span>
             {totalItems > 0 && (
               <span
-                className={`absolute -top-2 -right-2 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm bg-[#8B261D] transition-all duration-300 ${
+                className={`absolute -top-2 -right-2 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm bg-cochinilla transition-all duration-300 ${
                   isBouncing ? "scale-[1.35] rotate-12" : "scale-100"
                 }`}
               >
@@ -685,7 +685,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
           </button>
           <button
             onClick={onClose}
-            className="text-ink/50 hover:text-ink transition-colors p-2 rounded-full hover:bg-black/5"
+            className="text-nogal/50 hover:text-nogal transition-colors p-2 rounded-full hover:bg-black/5"
           >
             <X size={24} />
           </button>
@@ -708,8 +708,8 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
                   onClick={() => setActiveId(cat.id)}
                   className={`text-center md:text-left whitespace-nowrap md:whitespace-normal px-5 md:px-6 py-3.5 md:py-3.5 text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] transition-all rounded-xl ${
                     isActive
-                      ? "bg-eucalipto text-cream shadow-xs font-bold"
-                      : "text-ink/60 hover:text-eucalipto hover:bg-black/5 font-medium"
+                      ? "bg-eucalipto text-piedra shadow-xs font-bold"
+                      : "text-nogal/60 hover:text-eucalipto hover:bg-black/5 font-medium"
                   }`}
                 >
                   {cat.label}
@@ -759,3 +759,7 @@ export function MenuModal({ open, onClose }: MenuModalProps) {
     </div>
   );
 }
+
+
+
+
