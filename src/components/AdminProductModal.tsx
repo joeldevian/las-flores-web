@@ -779,7 +779,7 @@ export function AdminProductModal({
           {/* Modal Actions (Fijo Abajo fuera del Scroll) */}
           <div className="p-4 sm:p-5 border-t border-gray-100 bg-white flex items-center justify-between shrink-0 font-sans">
             
-            {/* Soft disable toggle and permanent delete actions */}
+            {/* Soft disable action */}
             {product ? (
               <div className="flex items-center gap-2">
                 <button
@@ -795,17 +795,6 @@ export function AdminProductModal({
                 >
                   {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   <span>{isAvailable ? "Desactivar (Ocultar)" : "Reactivar en Carta"}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleDeleteProduct}
-                  disabled={deleting}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50 border bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
-                  title="Elimina permanentemente el plato de la carta"
-                >
-                  {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                  <span>Eliminar</span>
                 </button>
               </div>
             ) : <div />}

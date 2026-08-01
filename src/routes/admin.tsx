@@ -1133,12 +1133,6 @@ function AdminRoute() {
                               >
                                 <Edit2 size={12} /> Editar
                               </button>
-                              <button
-                                onClick={() => handleDeleteProduct(prod.id)}
-                                className="px-3.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold border border-red-200 text-xs inline-flex items-center gap-1.5 transition-colors"
-                              >
-                                <Trash2 size={12} /> Eliminar
-                              </button>
                             </div>
                           </td>
                         </tr>
