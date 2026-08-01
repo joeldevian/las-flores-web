@@ -32,7 +32,7 @@ import { LocationSelector } from "./LocationSelector";
 import { CustomerHistoryModal } from "./CustomerHistoryModal";
 import type { User } from "@supabase/supabase-js";
 
-type Step = "cart" | "delivery" | "payment" | "success";
+type Step = "cart" | "delivery" | "payment" | "success" | "profile";
 type OrderType = "delivery" | "pickup";
 
 interface DeliveryForm {
@@ -88,7 +88,7 @@ export function CartSidebar() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
   // Ref para medir si ya estamos completamente en el cliente (evita problemas de hidratación SSR)
   const portalRef = useRef<HTMLDivElement | null>(null);
 
@@ -181,7 +181,8 @@ export function CartSidebar() {
     };
 
     const handleOpenHistory = () => {
-      setIsHistoryOpen(true);
+      setStep("profile");
+      setIsOpen(true);
     };
 
     window.addEventListener("message", handleMessage);
@@ -475,7 +476,7 @@ export function CartSidebar() {
     }
   };
 
-  if (!isMounted || !portalRef.current || (!isOpen && !isHistoryOpen)) return null;
+  if (!isMounted || !portalRef.current || !isOpen) return null;
 
   return createPortal(
     <>
@@ -513,7 +514,7 @@ export function CartSidebar() {
             {activeUser ? (
               <button
                 type="button"
-                onClick={() => setIsHistoryOpen(true)}
+                onClick={() => setStep("profile")}
                 className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
                 aria-label="Mi perfil e historial"
               >
@@ -1380,11 +1381,16 @@ export function CartSidebar() {
       </div>
       )}
 
-      <CustomerHistoryModal
-        open={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-        user={activeUser}
-      />
+      {step === "profile" && (
+        <div className="absolute inset-0 bg-white z-[60] flex flex-col">
+          <CustomerHistoryModal
+            open={true}
+            onClose={() => setStep("cart")}
+            user={activeUser}
+            inline={true}
+          />
+        </div>
+      )}
     </>,
     portalRef.current
   );

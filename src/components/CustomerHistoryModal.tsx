@@ -28,6 +28,7 @@ interface CustomerHistoryModalProps {
   open: boolean;
   onClose: () => void;
   user: User | null;
+  inline?: boolean;
 }
 
 const MONTHS = [
@@ -56,7 +57,7 @@ const YEARS = Array.from({ length: 80 }, (_, i) => {
   return { value: `${y}`, label: `${y}` };
 });
 
-export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryModalProps) {
+export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHistoryModalProps) {
   const [activeTab, setActiveTab] = useState<"orders" | "reservations" | "profile">("orders");
   const [orders, setOrders] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
@@ -237,13 +238,8 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
   const firstName = fullName.split(" ")[0];
   const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-end sm:justify-start sm:pt-2 p-4 md:p-0 animate-in fade-in duration-300">
-      {/* Fondo oscuro con blur */}
-      <div className="absolute inset-0 bg-eucalipto/75 backdrop-blur-sm" onClick={handleCloseOrAccept} />
-
-      {/* Modal flotante central */}
-      <div className="relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-nogal rounded-[24px] sm:rounded-[32px] rounded-b-none sm:rounded-b-[32px] shadow-2xl overflow-hidden border border-black/10 flex flex-col h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 shrink-0">
+  const content = (
+      <div className={`relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-nogal rounded-[24px] sm:rounded-[32px] rounded-b-none sm:rounded-b-[32px] shadow-2xl overflow-hidden border border-black/10 flex flex-col shrink-0 ${inline ? "h-full max-w-full shadow-none border-none rounded-none w-full" : "h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200"}`}>
         {/* Header & Navbar Pinned Bar */}
         <div className="bg-white shrink-0 border-b border-black/10 shadow-xs z-20">
           {/* Header estilo Chicha */}
@@ -625,6 +621,16 @@ export function CustomerHistoryModal({ open, onClose, user }: CustomerHistoryMod
           )}
         </div>
       </div>
+  );
+
+  if (inline) {
+    return content;
+  }
+
+  return (
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-end sm:justify-start sm:pt-2 p-4 md:p-0 animate-in fade-in duration-300">
+      <div className="absolute inset-0 bg-eucalipto/75 backdrop-blur-sm" onClick={handleCloseOrAccept} />
+      {content}
     </div>
   );
 }
