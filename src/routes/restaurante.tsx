@@ -7,7 +7,8 @@ const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
 import { useState, useTransition, useEffect, useRef } from "react";
-import { ShoppingCart } from "lucide-react";
+import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart } from "lucide-react";
+import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 import { ReservationModal } from "@/components/ReservationModal";
 import { MenuModal } from "@/components/MenuModal";
@@ -338,12 +339,10 @@ function RestaurantePage() {
     <div className="bg-cream text-ink font-sans selection:bg-retama/30">
       {/* Nav: nuestra historia | logo | reservas y delivery */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-0 md:py-1 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
       >
-        <div className="flex-1 hidden md:flex gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
-          <Link to="/" className="hover:text-retama transition-colors">
-            NUESTRA TIERRA
-          </Link>
+        <div className="flex-1 flex justify-start items-center">
+          <SiteNavigationMenu isScrolled={isScrolled} />
         </div>
         <Link
           to="/restaurante"

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { categories as staticCategories, Dish } from "@/components/MenuModal";
 import { BreakfastCustomizationModal } from "@/components/BreakfastCustomizationModal";
 import { SiteFooter } from "@/components/site-footer";
@@ -32,14 +33,9 @@ function CartaPage() {
   return (
     <div className="min-h-screen bg-cream text-ink font-sans flex flex-col">
       {/* Sleek Top Nav Bar - Premium Style (Centered Logo) */}
-      <nav className="bg-ink text-cream px-6 md:px-10 py-3 md:py-4 flex items-center justify-between shadow-md relative z-30">
+      <nav className="bg-ink text-cream px-4 md:px-10 py-2 md:py-4 flex items-center justify-between shadow-md relative z-30">
         <div className="flex-1 flex justify-start">
-          <Link
-            to="/restaurante"
-            className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-retama transition-colors"
-          >
-            RESTAURANTE
-          </Link>
+          <SiteNavigationMenu isScrolled={false} />
         </div>
 
         <div className="flex-none">

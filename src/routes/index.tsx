@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Star, MapPin, ChefHat, Info, ArrowRight, ArrowRightCircle } from "lucide-react";
+import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useState, useEffect, useRef } from "react";
 const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
@@ -656,9 +658,12 @@ function Index() {
 
       {/* NAV */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-0 md:py-1 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-cream text-ink shadow-md" : "bg-transparent text-cream"}`}
       >
-        <div className="flex-1 pointer-events-auto" />
+        <div className="flex-1 flex justify-start items-center">
+          <SiteNavigationMenu isScrolled={isScrolled} />
+        </div>
+        
         <Link
           to="/"
           className="flex-none pointer-events-auto"
@@ -670,14 +675,17 @@ function Index() {
             className={`h-10 md:h-16 w-auto object-contain transition-all duration-500 ${isScrolled ? "" : "brightness-0 invert"}`}
           />
         </Link>
-        <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] md:tracking-[0.15em] font-semibold">
-          <Link
-            to="/restaurante"
-            className="hover:text-retama transition-colors pointer-events-auto"
-          >
-            <span className="md:hidden">RESTAURANTE</span>
-            <span className="hidden md:inline">NUESTRO RESTAURANTE</span>
-          </Link>
+        
+        <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] font-semibold items-center">
+          {/* Language Selector Indicator (Visual Only) */}
+          <div className="pointer-events-auto flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <img 
+              src="https://flagcdn.com/w40/pe.png" 
+              alt="Peru Flag" 
+              className="w-6 h-auto shadow-sm rounded-[2px]" 
+            />
+            <span className={isScrolled ? "text-ink" : "text-cream"}>ES</span>
+          </div>
         </div>
       </nav>
 
