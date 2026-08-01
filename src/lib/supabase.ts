@@ -136,6 +136,44 @@ export async function signInWithGoogle() {
   return data;
 }
 
+/**
+ * Iniciar sesión con Facebook OAuth mediante ventana emergente Popup
+ */
+export async function signInWithFacebook() {
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://las-flores-web-oo79.vercel.app";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "facebook",
+    options: {
+      skipBrowserRedirect: true,
+      redirectTo: `${currentOrigin}/`,
+    },
+  });
+
+  if (error) throw error;
+
+  if (data?.url) {
+    const width = 500;
+    const height = 650;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    const popup = window.open(
+      data.url,
+      "facebook_auth_popup",
+      `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
+    );
+
+    if (!popup) {
+      window.location.href = data.url;
+    }
+  }
+  return data;
+}
+
 export interface ProfileUpdatePayload {
   full_name?: string;
   phone?: string;
