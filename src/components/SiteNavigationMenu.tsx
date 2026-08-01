@@ -52,11 +52,11 @@ export function SiteNavigationMenu({ isScrolled, isAlwaysDark = false }: { isScr
         </div>
 
         {/* Menu Links */}
-        <div className="flex-1 flex flex-col items-start justify-center gap-8 md:gap-10 px-10 md:px-14">
-          <Link to="/" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light">NUESTRA TIERRA</Link>
-          <Link to="/restaurante" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light">NUESTRO RESTAURANTE</Link>
-          <Link to="/carta" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light">LA CARTA</Link>
-          <Link to="/eventos" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light">EVENTOS</Link>
+        <div className="flex-1 flex flex-col items-start justify-start pt-6 md:pt-12 gap-6 md:gap-10 px-10 md:px-14 overflow-y-auto">
+          <Link to="/" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">NUESTRA TIERRA</Link>
+          <Link to="/restaurante" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">NUESTRO RESTAURANTE</Link>
+          <Link to="/carta" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">LA CARTA</Link>
+          <Link to="/eventos" onClick={() => setIsOpen(false)} className="font-sans text-2xl md:text-3xl tracking-[0.15em] text-gray-700 hover:text-[#5F8575] transition-colors font-light leading-snug">EVENTOS</Link>
         </div>
 
         {/* Footer Info */}
