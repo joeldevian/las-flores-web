@@ -14,6 +14,7 @@ import {
   Plus,
   Eye,
   Edit2,
+  Trash2,
   DollarSign,
   TrendingUp,
   Clock,
@@ -29,6 +30,7 @@ import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
 import { AdminProductModal } from "../components/AdminProductModal";
 import { AdminCouponModal } from "../components/AdminCouponModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
+import { removeProductById } from "../utils/adminProducts";
 
 const getLocalYYYYMMDD = (d = new Date()) => {
   const year = d.getFullYear();
@@ -289,6 +291,33 @@ function AdminRoute() {
     } catch (err) {
       console.error(err);
       alert("Error al cambiar disponibilidad.");
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    const productToDelete = products.find((product) => product.id === productId);
+    if (!productToDelete) return;
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de eliminar permanentemente el plato "${productToDelete.name}" de la carta?`
+    );
+    if (!confirmed) return;
+
+    try {
+      const { error } = await supabase.from("products").delete().eq("id", productId);
+      if (error) throw error;
+
+      setProducts((prev) => removeProductById(prev, productId));
+
+      if (selectedProduct?.id === productId) {
+        setSelectedProduct(null);
+      }
+      if (isProductModalOpen) {
+        setIsProductModalOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar el plato.");
     }
   };
 
@@ -1094,15 +1123,23 @@ function AdminRoute() {
                             </button>
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <button
-                              onClick={() => {
-                                setSelectedProduct(prod);
-                                setIsProductModalOpen(true);
-                              }}
-                              className="px-3.5 py-1.5 rounded-lg bg-[#14231D]/5 hover:bg-[#14231D]/10 text-[#14231D] font-bold border border-[#14231D]/10 text-xs inline-flex items-center gap-1.5 transition-colors"
-                            >
-                              <Edit2 size={12} /> Editar
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => {
+                                  setSelectedProduct(prod);
+                                  setIsProductModalOpen(true);
+                                }}
+                                className="px-3.5 py-1.5 rounded-lg bg-[#14231D]/5 hover:bg-[#14231D]/10 text-[#14231D] font-bold border border-[#14231D]/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                              >
+                                <Edit2 size={12} /> Editar
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProduct(prod.id)}
+                                className="px-3.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold border border-red-200 text-xs inline-flex items-center gap-1.5 transition-colors"
+                              >
+                                <Trash2 size={12} /> Eliminar
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -1242,6 +1279,7 @@ function AdminRoute() {
         product={selectedProduct}
         categories={categories}
         onSave={fetchData}
+        onDelete={handleDeleteProduct}
       />
 
       <AdminCouponModal

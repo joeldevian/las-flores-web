@@ -247,6 +247,28 @@ export function AdminProductModal({
     }
   };
 
+  const handleDeleteProduct = async () => {
+    if (!product || !onDelete) return;
+
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de eliminar permanentemente el plato "${product.name}" de la carta?`
+    );
+    if (!confirmDelete) return;
+
+    setDeleting(true);
+    setErrorMsg("");
+
+    try {
+      await onDelete(product.id);
+      onClose();
+    } catch (err: any) {
+      console.error("Error deleting product:", err);
+      setErrorMsg(err.message || "No se pudo eliminar el plato.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   // Helper functions for Custom Sections builder
   const handleAddSection = () => {
     const newSec: CustomSection = {
@@ -757,22 +779,35 @@ export function AdminProductModal({
           {/* Modal Actions (Fijo Abajo fuera del Scroll) */}
           <div className="p-4 sm:p-5 border-t border-gray-100 bg-white flex items-center justify-between shrink-0 font-sans">
             
-            {/* Soft Disable Toggle button instead of hard delete */}
+            {/* Soft disable toggle and permanent delete actions */}
             {product ? (
-              <button
-                type="button"
-                onClick={handleToggleDisableProduct}
-                disabled={deleting}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50 border ${
-                  isAvailable
-                    ? "bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300"
-                    : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-300"
-                }`}
-                title="Deshabilita el plato de la carta sin borrar su historial para reportes de BI"
-              >
-                {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                <span>{isAvailable ? "Desactivar (Ocultar)" : "Reactivar en Carta"}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleToggleDisableProduct}
+                  disabled={deleting}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50 border ${
+                    isAvailable
+                      ? "bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300"
+                      : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-300"
+                  }`}
+                  title="Deshabilita el plato de la carta sin borrar su historial para reportes de BI"
+                >
+                  {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  <span>{isAvailable ? "Desactivar (Ocultar)" : "Reactivar en Carta"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDeleteProduct}
+                  disabled={deleting}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50 border bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                  title="Elimina permanentemente el plato de la carta"
+                >
+                  {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  <span>Eliminar</span>
+                </button>
+              </div>
             ) : <div />}
 
             <div className="flex items-center gap-3">
