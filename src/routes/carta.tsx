@@ -3,7 +3,10 @@ import { useState } from "react";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { categories as staticCategories } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
-import { useLiveMenuCategories } from "@/lib/liveProducts";
+import { useLiveMenuCategories, Dish } from "@/lib/liveProducts";
+import { useCart } from "@/context/CartContext";
+import { CartSidebar } from "@/components/CartSidebar";
+import { BreakfastCustomizationModal } from "@/components/BreakfastCustomizationModal";
 
 export const Route = createFileRoute("/carta")({
   head: () => ({
@@ -22,6 +25,8 @@ export const Route = createFileRoute("/carta")({
 function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
+  const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
+  const { addItem } = useCart();
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
@@ -104,9 +109,10 @@ function CartaPage() {
 
           <div
             key={activeId}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-12"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
             {active.dishes.map((dish, i) => {
+              const isCustomizable = dish.is_customizable || false;
               return (
                 <div
                   key={i}
@@ -173,6 +179,13 @@ function CartaPage() {
       </div>
 
       <SiteFooter />
+
+      <CartSidebar />
+      <BreakfastCustomizationModal
+        open={!!selectedBreakfastDish}
+        onClose={() => setSelectedBreakfastDish(null)}
+        dish={selectedBreakfastDish}
+      />
     </div>
   );
 }

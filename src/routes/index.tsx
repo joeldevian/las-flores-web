@@ -495,7 +495,7 @@ function LugaresAccordion({ onSelect }: { onSelect: (l: Lugar) => void }) {
         return (
           <div
             key={lugar.id}
-            ref={(el) => (itemRefs.current[i] = el)}
+            ref={(el) => { itemRefs.current[i] = el; }}
             data-lugar-id={lugar.id}
             onMouseEnter={() => setHovered(lugar.id)}
             onClick={() => {

@@ -61,6 +61,7 @@ export interface ReservationPayload {
   client_email: string;
   client_phone?: string;
   notes?: string;
+  status?: string;
 }
 
 export interface OrderPayload {
