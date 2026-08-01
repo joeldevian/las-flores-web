@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
-import { categories as staticCategories, Dish } from "@/components/MenuModal";
-import { BreakfastCustomizationModal } from "@/components/BreakfastCustomizationModal";
+import { categories as staticCategories } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
-import { useCart } from "@/context/CartContext";
 import { useLiveMenuCategories } from "@/lib/liveProducts";
 
 export const Route = createFileRoute("/carta")({
@@ -22,10 +20,8 @@ export const Route = createFileRoute("/carta")({
 });
 
 function CartaPage() {
-  const { addItem } = useCart();
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
-  const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
@@ -111,20 +107,10 @@ function CartaPage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-12"
           >
             {active.dishes.map((dish, i) => {
-              const isCustomizable =
-                dish.is_customizable === true ||
-                dish.name.toLowerCase().includes("desayuno ayacuchano") ||
-                dish.name.toLowerCase().includes("arma tu ronda");
-
               return (
                 <div
                   key={i}
-                  onClick={() => {
-                    if (isCustomizable) setSelectedBreakfastDish(dish);
-                  }}
-                  className={`bg-white rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group border-b-4 border-transparent hover:border-retama ${
-                    isCustomizable ? "cursor-pointer" : ""
-                  }`}
+                  className="bg-white rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group border-b-4 border-transparent hover:border-retama"
                 >
                   {dish.image ? (
                     <div className="h-48 overflow-hidden relative">
@@ -154,25 +140,6 @@ function CartaPage() {
                     <p className="text-ink/60 text-xs flex-1 mb-4 leading-relaxed font-light">
                       {dish.description}
                     </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isCustomizable) {
-                          setSelectedBreakfastDish(dish);
-                        } else {
-                          const priceNum = parseFloat(dish.price.replace("S/ ", ""));
-                          addItem({
-                            id: `${activeId}-${dish.name}`,
-                            name: dish.name,
-                            price: priceNum,
-                            image: dish.image,
-                          });
-                        }
-                      }}
-                      className="w-full py-2 bg-ink text-cream hover:bg-retablo text-xs uppercase tracking-[0.15em] font-semibold transition-colors rounded-sm"
-                    >
-                      {isCustomizable ? "Personalizar y Agregar" : "Agregar al Carrito"}
-                    </button>
                   </div>
                 </div>
               );
@@ -180,12 +147,6 @@ function CartaPage() {
           </div>
         </main>
       </div>
-
-      <BreakfastCustomizationModal
-        dish={selectedBreakfastDish}
-        open={!!selectedBreakfastDish}
-        onClose={() => setSelectedBreakfastDish(null)}
-      />
 
       <SiteFooter />
     </div>
