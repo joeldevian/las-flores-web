@@ -4,9 +4,7 @@ import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { categories as staticCategories } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
 import { useLiveMenuCategories, Dish } from "@/lib/liveProducts";
-import { useCart } from "@/context/CartContext";
 import { CartSidebar } from "@/components/CartSidebar";
-import { BreakfastCustomizationModal } from "@/components/BreakfastCustomizationModal";
 
 export const Route = createFileRoute("/carta")({
   head: () => ({
@@ -25,8 +23,6 @@ export const Route = createFileRoute("/carta")({
 function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
-  const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
-  const { addItem } = useCart();
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
@@ -112,16 +108,10 @@ function CartaPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
             {active.dishes.map((dish, i) => {
-              const isCustomizable = dish.is_customizable || false;
               return (
                 <div
                   key={i}
-                  onClick={() => {
-                    if (isCustomizable) setSelectedBreakfastDish(dish);
-                  }}
-                  className={`bg-piedra border border-pacay/50 rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group hover:border-pacay ${
-                    isCustomizable ? "cursor-pointer" : ""
-                  }`}
+                  className="bg-piedra border border-pacay/50 rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group hover:border-pacay"
                 >
                   {dish.image ? (
                     <div className="h-48 overflow-hidden relative">
@@ -151,25 +141,6 @@ function CartaPage() {
                     <p className="text-nogal/70 text-xs flex-1 mb-4 leading-relaxed font-light">
                       {dish.description}
                     </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isCustomizable) {
-                          setSelectedBreakfastDish(dish);
-                        } else {
-                          const priceNum = parseFloat(dish.price.replace("S/ ", ""));
-                          addItem({
-                            id: `${activeId}-${dish.name}`,
-                            name: dish.name,
-                            price: priceNum,
-                            image: dish.image,
-                          });
-                        }
-                      }}
-                      className="w-full py-2.5 bg-cochinilla text-piedra hover:bg-cochinilla/90 text-[11px] uppercase tracking-[0.15em] font-semibold transition-colors rounded-sm"
-                    >
-                      {isCustomizable ? "Personalizar y Agregar" : "Agregar al Carrito"}
-                    </button>
                   </div>
                 </div>
               );
@@ -181,11 +152,6 @@ function CartaPage() {
       <SiteFooter />
 
       <CartSidebar />
-      <BreakfastCustomizationModal
-        open={!!selectedBreakfastDish}
-        onClose={() => setSelectedBreakfastDish(null)}
-        dish={selectedBreakfastDish}
-      />
     </div>
   );
 }
