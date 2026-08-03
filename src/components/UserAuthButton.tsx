@@ -32,16 +32,28 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
       if (s) {
         const { data: p } = await supabase.from("profiles").select("role").eq("id", s.user.id).single();
         setProfile(p);
-        // Auto-redirect staff/admin ONLY on fresh login, not on every page load
+
+        // Solo redirigir en el evento SIGNED_IN real (no en TOKEN_REFRESHED ni INITIAL_SESSION)
+        // y solo si aún no hemos redirigido en esta sesión de navegador
         if (event === "SIGNED_IN") {
-          if (p?.role === "admin") {
-            window.location.href = "/admin";
-          } else if (p?.role === "staff") {
-            window.location.href = "/caja";
+          const alreadyRedirected = sessionStorage.getItem("staff_redirected");
+          const currentPath = window.location.pathname;
+          const isAlreadyOnStaffPage = currentPath === "/admin" || currentPath === "/caja";
+
+          if (!alreadyRedirected && !isAlreadyOnStaffPage) {
+            if (p?.role === "admin") {
+              sessionStorage.setItem("staff_redirected", "1");
+              window.location.href = "/admin";
+            } else if (p?.role === "staff") {
+              sessionStorage.setItem("staff_redirected", "1");
+              window.location.href = "/caja";
+            }
           }
         }
       } else {
         setProfile(null);
+        // Limpiar el flag al cerrar sesión
+        sessionStorage.removeItem("staff_redirected");
       }
     });
 
