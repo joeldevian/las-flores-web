@@ -1,12 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { SiteFooter } from "@/components/site-footer";
-import { SeatSelector } from "@/components/SeatSelector";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 import { signInWithGoogle, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
-import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart } from "lucide-react";
+import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check } from "lucide-react";
 
 export const Route = createFileRoute("/reservas")({
   component: ReservasPage,
@@ -232,33 +231,82 @@ function ReservasPage() {
 
   const renderProgressBar = () => {
     const steps = [
-      { num: 1, label: "Encontrar", icon: <Search size={16} /> },
-      { num: 2, label: "Información", icon: <UserIcon size={16} /> },
-      { num: 3, label: "Adicional", icon: <MapPin size={16} /> },
-      { num: 4, label: "Confirmación", icon: <CheckCircle2 size={16} /> },
+      { num: 1, label: "Encontrar" },
+      { num: 2, label: "Información" },
+      { num: 3, label: "Adicional" },
+      { num: 4, label: "Confirmación" },
     ];
 
+    const progressPercentage = ((mainStep - 1) / (steps.length - 1)) * 100;
+
+    const handleBack = () => {
+      if (mainStep > 1) {
+        setMainStep((prev) => prev - 1);
+      } else {
+        navigate({ to: "/" });
+      }
+    };
+
     return (
-      <div className="w-full max-w-4xl mx-auto mb-12 mt-8">
-        <div className="flex justify-between items-center relative">
-          {/* Connecting Line */}
-          <div className="absolute left-[12%] right-[12%] top-6 h-[2px] bg-nogal/10 -z-10" />
-          
-          {steps.map((s, i) => {
+      <div className="w-full max-w-4xl mx-auto mb-12 mt-4">
+        {/* Botón Volver */}
+        <div className="flex items-center justify-start mb-4">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-nogal/70 hover:text-nogal transition-colors group py-1 px-2 rounded-lg hover:bg-nogal/5"
+            title="Volver al paso anterior"
+          >
+            <ChevronLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+            <span>VOLVER</span>
+          </button>
+        </div>
+
+        {/* Separador Superior */}
+        <div className="w-full border-t border-nogal/15 mb-8" />
+
+        {/* Stepper con Barra Gruesa y Conexión Gruesa */}
+        <div className="relative flex w-full items-center z-0">
+          {/* Track de fondo (Barra gruesa inactiva) */}
+          <div className="absolute left-[12.5%] right-[12.5%] top-[24px] -translate-y-1/2 h-[18px] bg-nogal/20 z-0" />
+
+          {/* Track lleno de progreso (Barra gruesa activa) */}
+          <div className="absolute left-[12.5%] right-[12.5%] top-[24px] -translate-y-1/2 h-[18px] z-0 overflow-hidden pointer-events-none">
+            <div
+              className="h-full bg-nogal transition-all duration-500 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+
+          {steps.map((s) => {
             const isActive = mainStep === s.num;
             const isCompleted = mainStep > s.num;
+
             return (
-              <div key={s.num} className="flex flex-col items-center gap-3 w-1/4">
-                <div 
-                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white
-                    ${isActive ? "border-eucalipto text-eucalipto shadow-lg scale-110" : 
-                      isCompleted ? "border-eucalipto text-eucalipto opacity-50" : 
-                      "border-nogal/20 text-nogal/40"}`}
+              <div key={s.num} className="w-1/4 relative z-10 flex flex-col items-center gap-2.5">
+                <button
+                  type="button"
+                  disabled={!isCompleted && !isActive}
+                  onClick={() => {
+                    if (isCompleted) setMainStep(s.num);
+                  }}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 font-bold ${
+                    isCompleted
+                      ? "bg-nogal text-white shadow-md hover:scale-105 cursor-pointer"
+                      : isActive
+                      ? "bg-[#f8f4e6] text-nogal border-4 border-nogal shadow-lg scale-110"
+                      : "bg-[#f8f4e6] text-nogal/40 border-2 border-nogal/30 cursor-not-allowed"
+                  }`}
                 >
-                  {isCompleted ? <CheckCircle2 size={24} /> : <span className="font-serif text-lg font-bold">{s.num}</span>}
-                </div>
-                <span className={`text-xs uppercase tracking-widest font-bold transition-colors
-                  ${isActive ? "text-eucalipto" : isCompleted ? "text-nogal" : "text-nogal/40"}`}
+                  {isCompleted ? (
+                    <Check size={22} strokeWidth={3.5} />
+                  ) : (
+                    <span className="font-serif text-lg font-bold">{s.num}</span>
+                  )}
+                </button>
+                <span
+                  className={`text-[11px] md:text-xs uppercase tracking-widest font-bold text-center transition-colors ${
+                    isActive || isCompleted ? "text-nogal font-extrabold" : "text-nogal/40"
+                  }`}
                 >
                   {s.label}
                 </span>
@@ -266,6 +314,9 @@ function ReservasPage() {
             );
           })}
         </div>
+
+        {/* Separador Inferior */}
+        <div className="w-full border-b border-nogal/15 mt-8" />
       </div>
     );
   };
@@ -578,7 +629,7 @@ function ReservasPage() {
               )}
             </div>
           )}
-          {/* --- PASO 3: ADICIONAL (Selección de Ambiente y Mesa) --- */}
+          {/* --- PASO 3: ADICIONAL (Selección de Ambiente) --- */}
           {mainStep === 3 && (
             <div className="animate-in fade-in slide-in-from-right-8 duration-500">
               <div className="text-center mb-12">
@@ -586,96 +637,57 @@ function ReservasPage() {
                 <p className="text-nogal/60 text-lg">Selecciona el espacio perfecto para tu experiencia en Las Flores.</p>
               </div>
 
-              {!form.table.startsWith("zone:") ? (
-                <>
-                  {/* Zone Photo Cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-                    {[
-                      { id: "salon-entrada",   name: "Salón Entrada",   desc: "El primer saludo del restaurante. Ideal para grupos pequeños.",                     tables: 7,  img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" },
-                      { id: "salon-ventana",   name: "Salón Ventana",   desc: "Luz natural y vistas al exterior. Ambiente íntimo y cálido.",                       tables: 6,  img: "https://images.unsplash.com/photo-1550966871-3ed3cbe818b0?w=600&q=80" },
-                      { id: "estrado",         name: "Estrado",         desc: "El escenario del restaurante. Perfecto para ocasiones especiales.",                  tables: 6,  img: "https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=600&q=80" },
-                      { id: "salon-principal", name: "Salón Principal", desc: "El corazón del restaurante. Amplio y elegante para grupos grandes.",                tables: 13, img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" },
-                      { id: "jardin",          name: "Jardín",          desc: "Rodeado de naturaleza. La experiencia más fresca y tranquila.",                      tables: 4,  img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80" },
-                      { id: "terraza",         name: "Terraza",         desc: "Vista al cielo de Ayacucho. El ambiente más especial y abierto.",                    tables: 14, img: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" },
-                    ].map((zone) => (
-                      <button
-                        key={zone.id}
-                        onClick={() => setForm((f) => ({ ...f, table: `zone:${zone.id}` }))}
-                        className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 text-left focus:outline-none focus:ring-2 focus:ring-eucalipto"
-                      >
-                        {/* Photo */}
-                        <div className="aspect-[4/3] overflow-hidden">
-                          <img
-                            src={zone.img}
-                            alt={zone.name}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                        </div>
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                        {/* Tables badge */}
-                        <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border border-white/30">
-                          {zone.tables} mesas
-                        </div>
-                        {/* Text content */}
-                        <div className="absolute bottom-0 left-0 right-0 p-5">
-                          <h3 className="text-white font-serif text-xl font-bold mb-1 drop-shadow">{zone.name}</h3>
-                          <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{zone.desc}</p>
-                        </div>
-                        {/* Hover CTA */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <span className="bg-white text-eucalipto font-bold text-sm px-5 py-2.5 rounded-full shadow-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                            Elegir este ambiente →
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="text-center">
-                    <button
-                      onClick={() => handleTableSelect("Aleatoria")}
-                      className="text-nogal/50 hover:text-eucalipto text-sm underline underline-offset-4 transition-colors"
-                    >
-                      Asignarme la mejor mesa disponible automáticamente
-                    </button>
-                  </div>
-                </>
-              ) : (
-                /* After zone selection → show seat map */
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {/* Zone Photo Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                {[
+                  { id: "salon-entrada",   name: "Salón Entrada",   desc: "El primer saludo del restaurante. Ideal para grupos pequeños.",                     tables: 7,  img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" },
+                  { id: "salon-ventana",   name: "Salón Ventana",   desc: "Luz natural y vistas al exterior. Ambiente íntimo y cálido.",                       tables: 6,  img: "https://images.unsplash.com/photo-1550966871-3ed3cbe818b0?w=600&q=80" },
+                  { id: "estrado",         name: "Estrado",         desc: "El escenario del restaurante. Perfecto para ocasiones especiales.",                  tables: 6,  img: "https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=600&q=80" },
+                  { id: "salon-principal", name: "Salón Principal", desc: "El corazón del restaurante. Amplio y elegante para grupos grandes.",                tables: 13, img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" },
+                  { id: "jardin",          name: "Jardín",          desc: "Rodeado de naturaleza. La experiencia más fresca y tranquila.",                      tables: 4,  img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80" },
+                  { id: "terraza",         name: "Terraza",         desc: "Vista al cielo de Ayacucho. El ambiente más especial y abierto.",                    tables: 14, img: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" },
+                ].map((zone) => (
                   <button
-                    onClick={() => setForm((f) => ({ ...f, table: "" }))}
-                    className="mb-6 flex items-center gap-2 text-sm font-bold text-nogal/60 hover:text-nogal transition-colors"
+                    key={zone.id}
+                    onClick={() => handleTableSelect(zone.name)}
+                    className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 text-left focus:outline-none focus:ring-2 focus:ring-eucalipto"
                   >
-                    ← Cambiar ambiente
+                    {/* Photo */}
+                    <div className="aspect-[4/3] overflow-hidden">
+                      <img
+                        src={zone.img}
+                        alt={zone.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    </div>
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    {/* Tables badge */}
+                    <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border border-white/30">
+                      {zone.tables} mesas
+                    </div>
+                    {/* Text content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <h3 className="text-white font-serif text-xl font-bold mb-1 drop-shadow">{zone.name}</h3>
+                      <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{zone.desc}</p>
+                    </div>
+                    {/* Hover CTA */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="bg-white text-eucalipto font-bold text-sm px-5 py-2.5 rounded-full shadow-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        Elegir este ambiente →
+                      </span>
+                    </div>
                   </button>
-                  {(() => {
-                    const ZONE_NAMES: Record<string, string> = {
-                      "salon-entrada": "Salón Entrada", "salon-ventana": "Salón Ventana",
-                      "estrado": "Estrado", "salon-principal": "Salón Principal",
-                      "jardin": "Jardín", "terraza": "Terraza",
-                    };
-                    const zoneId = form.table.replace("zone:", "");
-                    return (
-                      <div className="flex items-center gap-3 mb-8">
-                        <div className="w-1.5 h-8 bg-eucalipto rounded-full" />
-                        <div>
-                          <p className="text-xs text-nogal/50 uppercase tracking-widest font-bold">Ambiente seleccionado</p>
-                          <h3 className="font-serif text-2xl text-nogal">{ZONE_NAMES[zoneId] ?? zoneId}</h3>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                  <div className="w-full bg-[#f8f4e6] p-6 rounded-3xl border border-nogal/10 mb-6">
-                    <SeatSelector
-                      onSelectTable={handleTableSelect}
-                      onSkip={() => handleTableSelect("Aleatoria")}
-                      guestCount={parseInt(form.guests) || 1}
-                      initialZone={form.table.replace("zone:", "")}
-                    />
-                  </div>
-                </div>
-              )}
+                ))}
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={() => handleTableSelect("Aleatoria")}
+                  className="text-nogal/50 hover:text-eucalipto text-sm underline underline-offset-4 transition-colors"
+                >
+                  Asignarme la mejor mesa disponible automáticamente
+                </button>
+              </div>
             </div>
           )}
 

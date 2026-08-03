@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Facebook, Instagram, Phone, Mail, MessageCircle } from 'lucide-react';
-import { Link, useLocation } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { UserAuthButton } from './UserAuthButton';
 
 const NAV_LINKS = [
@@ -20,7 +20,6 @@ export function SiteNavigationMenu({
   isAlwaysDark?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -85,18 +84,13 @@ export function SiteNavigationMenu({
         {/* ── Nav links — tamaño mejorado para llenar el espacio ── */}
         <nav className="flex flex-col items-start justify-start flex-1 gap-0 px-4 pt-6 pb-4 overflow-y-auto w-full">
           {NAV_LINKS.map(({ label, to, hash }) => {
-            const isActive = location.pathname === to && location.hash === hash;
             return (
               <Link
                 key={label}
                 to={to}
                 hash={hash || undefined}
                 onClick={() => setIsOpen(false)}
-                className={`w-full py-5 px-6 font-sans text-lg md:text-xl tracking-[0.1em] transition-all duration-300 font-bold leading-none uppercase border-b border-nogal/10 last:border-b-0 border-l-4 ${
-                  isActive
-                    ? "text-chilca bg-nogal/5 border-l-chilca"
-                    : "text-nogal hover:text-pacay hover:translate-x-2 border-l-transparent"
-                }`}
+                className="w-full py-5 px-6 font-sans text-lg md:text-xl tracking-[0.1em] transition-all duration-300 font-bold leading-none uppercase border-b border-nogal/10 last:border-b-0 text-nogal hover:text-pacay hover:translate-x-2"
               >
                 {label}
               </Link>
