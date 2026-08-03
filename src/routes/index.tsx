@@ -676,7 +676,17 @@ function Index() {
           />
         </Link>
         
-        <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] font-semibold items-center">
+        <div className="flex-1 flex justify-end gap-4 md:gap-6 text-[11px] md:text-sm uppercase tracking-[0.15em] font-semibold items-center">
+          <Link
+            to="/reservas"
+            className={`pointer-events-auto px-4.5 py-1.5 md:px-5 md:py-2 text-[11px] md:text-xs font-bold uppercase tracking-widest transition-all rounded-full border ${
+              isScrolled
+                ? "border-nogal text-nogal hover:bg-nogal hover:text-white shadow-sm"
+                : "border-piedra/60 text-piedra hover:bg-piedra hover:text-nogal shadow-sm"
+            }`}
+          >
+            Reservar
+          </Link>
           {/* Language Selector Indicator (Visual Only) */}
           <div className="pointer-events-auto flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
             <img 
