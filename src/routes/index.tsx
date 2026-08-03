@@ -963,7 +963,7 @@ function Index() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
             <Link
-              to="/restaurante"
+              to="/reservas"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 font-serif font-bold text-lg tracking-wide rounded-xl btn-yellow-hover"
             >
               <span>Reserva tu Mesa</span>

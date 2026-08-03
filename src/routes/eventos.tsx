@@ -11,7 +11,7 @@ import { SiteNavigationMenu } from '../components/SiteNavigationMenu';
 import { useState, useTransition, useEffect } from 'react';
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { ReservationModal } from "@/components/ReservationModal";
+
 import { MenuModal } from "@/components/MenuModal";
 
 export const Route = createFileRoute("/eventos")({
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/eventos")({
 
 function EventosPage() {
   const { totalItems, setIsOpen: setCartOpen } = useCart();
-  const [isReservationOpen, setIsReservationOpen] = useState(false);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -76,12 +76,12 @@ function EventosPage() {
           />
         </Link>
         <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-sm uppercase tracking-[0.15em] font-semibold pointer-events-auto">
-          <button
-            onClick={() => setIsReservationOpen(true)}
+          <Link
+            to="/reservas"
             className="hover:text-chilca transition-colors"
           >
             RESERVAS
-          </button>
+          </Link>
           <button
             onClick={() => startTransition(() => setIsMenuOpen(true))}
             className="hover:text-chilca transition-colors"
@@ -263,9 +263,6 @@ function EventosPage() {
       </section>
 
       <SiteFooter />
-      {isReservationOpen && (
-        <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />
-      )}
       {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
 
       {/* Drawer Formulario Lateral */}

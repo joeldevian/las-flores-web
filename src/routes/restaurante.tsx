@@ -10,7 +10,7 @@ import { useState, useTransition, useEffect, useRef } from "react";
 import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
-import { ReservationModal } from "@/components/ReservationModal";
+
 import { MenuModal } from "@/components/MenuModal";
 
 export const Route = createFileRoute("/restaurante")({
@@ -322,7 +322,7 @@ function ChefAccordionSection() {
 
 function RestaurantePage() {
   const { totalItems, setIsOpen: setCartOpen } = useCart();
-  const [isReservationOpen, setIsReservationOpen] = useState(false);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -356,12 +356,12 @@ function RestaurantePage() {
           />
         </Link>
         <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
-          <button
-            onClick={() => setIsReservationOpen(true)}
+          <Link
+            to="/reservas"
             className="hover:text-chilca transition-colors"
           >
             RESERVAS
-          </button>
+          </Link>
           <button
             onClick={() => startTransition(() => setIsMenuOpen(true))}
             className="hover:text-chilca transition-colors"
@@ -467,12 +467,12 @@ function RestaurantePage() {
             Ayacucho.
           </p>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6 mt-4">
-            <button
-              onClick={() => setIsReservationOpen(true)}
-              className="px-10 py-5 font-serif font-bold text-lg tracking-wide rounded-xl btn-yellow-hover"
+            <Link
+              to="/reservas"
+              className="px-10 py-5 font-serif font-bold text-lg tracking-wide rounded-xl btn-yellow-hover inline-block"
             >
               <span>Reservar mesa</span>
-            </button>
+            </Link>
             <button
               onClick={() => startTransition(() => setIsMenuOpen(true))}
               className="px-10 py-5 font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg rounded-xl hover:-translate-y-0.5 bg-eucalipto text-piedra"
@@ -484,9 +484,6 @@ function RestaurantePage() {
       </section>
 
       <SiteFooter />
-      {isReservationOpen && (
-        <ReservationModal open={isReservationOpen} onClose={() => setIsReservationOpen(false)} />
-      )}
       {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
     </div>
   );
