@@ -735,20 +735,12 @@ function Index() {
             Treinta y tres iglesias, retablos que guardan siglos y calles donde la tradición
             respira. Nosotros no solo servimos comida, preservamos el alma de Ayacucho.
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 animate-reveal [animation-delay:600ms]">
-            <Link
-              to="/restaurante"
-              className="inline-flex items-center gap-3 px-8 py-4 text-[11px] uppercase tracking-[0.25em] font-bold rounded-sm btn-yellow-hover"
-            >
-              <span>Nuestra Historia</span> <span aria-hidden>→</span>
-            </Link>
-            <Link
-              to="/carta"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/40 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm"
-            >
-              <span>Explorar la Carta</span>
-            </Link>
-          </div>
+          <Link
+            to="/restaurante"
+            className="mt-14 inline-flex items-center gap-3 px-8 py-4 text-[11px] uppercase tracking-[0.25em] font-bold animate-reveal [animation-delay:600ms] rounded-sm btn-yellow-hover"
+          >
+            <span>Nuestra Historia</span> <span aria-hidden>→</span>
+          </Link>
         </div>
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-piedra/60 text-[10px] uppercase tracking-[0.4em]">
           Desliza
@@ -853,8 +845,8 @@ function Index() {
                   </svg>
                 </a>
                 <a
-                  href="/menu"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 font-sans font-semibold text-[10px] lg:text-[11px] uppercase tracking-[0.2em] transition-all duration-300"
+                  href="/carta"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 font-sans font-semibold text-[10px] lg:text-[11px] uppercase tracking-[0.25em] transition-all duration-300"
                   style={{
                     background: "transparent",
                     color: "#5D2E0C",
