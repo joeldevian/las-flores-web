@@ -5,6 +5,8 @@ import { categories as staticCategories } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
 import { useLiveMenuCategories, Dish } from "@/lib/liveProducts";
 import { CartSidebar } from "@/components/CartSidebar";
+import { useCart } from "@/context/CartContext";
+import { ShoppingCart } from "lucide-react";
 
 export const Route = createFileRoute("/carta")({
   head: () => ({
@@ -23,34 +25,59 @@ export const Route = createFileRoute("/carta")({
 function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
+  const { totalItems, setIsOpen: setIsCartOpen } = useCart();
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
 
   return (
     <div className="min-h-screen bg-piedra text-nogal font-sans flex flex-col">
-      {/* Sleek Top Nav Bar - Premium Style (Centered Logo) */}
-      <nav className="bg-eucalipto text-piedra px-4 md:px-10 py-2 md:py-4 flex items-center justify-between shadow-md relative z-30">
-        <div className="flex-1 flex justify-start">
-          <SiteNavigationMenu isScrolled={false} />
+      {/* Unified Top Nav Bar - Premium Style (Matches Homepage & Reservas) */}
+      <nav className="bg-[#f8f4e6] text-nogal px-4 md:px-10 py-3 flex items-center justify-between shadow-xs border-b border-nogal/10 sticky top-0 z-50">
+        <div className="flex-1 flex justify-start items-center">
+          <SiteNavigationMenu isScrolled={true} />
         </div>
 
-        <div className="flex-none">
-          <div
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white shadow-sm flex items-center justify-center p-1"
-            style={{ borderColor: "var(--color-cream)" }}
-          >
-            <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
-          </div>
-        </div>
+        <Link
+          to="/"
+          className="flex-none pointer-events-auto"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <img
+            src="/images.png"
+            alt="Las Flores Logo"
+            className="h-8 md:h-10 w-auto object-contain"
+          />
+        </Link>
 
-        <div className="flex-1 flex justify-end gap-6 md:gap-8">
+        <div className="flex-1 flex justify-end items-center gap-4 md:gap-6 text-[11px] md:text-xs uppercase tracking-widest font-semibold">
+          {totalItems > 0 && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative hover:opacity-70 transition-opacity text-nogal"
+            >
+              <ShoppingCart size={20} />
+              <span className="absolute -top-2 -right-2 bg-chilca text-nogal text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                {totalItems}
+              </span>
+            </button>
+          )}
+
           <Link
             to="/reservas"
-            className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-chilca transition-colors"
+            className="px-4.5 py-1.5 md:px-5 md:py-2 text-[11px] md:text-xs font-bold uppercase tracking-widest transition-all rounded-full border border-nogal text-nogal hover:bg-nogal hover:text-white shadow-xs"
           >
-            RESERVAS
+            Reservar
           </Link>
+
+          <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <img
+              src="https://flagcdn.com/w40/pe.png"
+              alt="Peru Flag"
+              className="w-5 md:w-6 h-auto shadow-xs rounded-[2px]"
+            />
+            <span className="text-nogal font-bold text-xs">ES</span>
+          </div>
         </div>
       </nav>
 
