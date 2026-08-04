@@ -127,7 +127,9 @@ export function SiteFooter() {
                 <Instagram size={18} />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@lasfloresayacucho"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 border border-cream/20 rounded-full hover:bg-piedra/10 hover:text-chilca transition-all"
                 aria-label="TikTok"
               >

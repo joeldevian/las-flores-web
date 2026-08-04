@@ -237,7 +237,7 @@ export function CartSidebar() {
       const data = await res.json();
       const feature = data?.features?.[0];
       if (feature?.place_name) {
-        setDelivery((d) => ({ ...d, address: feature.place_name }));
+        setDelivery((d) => ({ ...d, address: d.address || feature.place_name }));
       }
     } catch (e) {
       console.error("Reverse geocoding error:", e);

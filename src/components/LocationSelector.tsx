@@ -38,7 +38,6 @@ export function LocationSelector({ onLocationSelect, onAddressResolve, initialLo
     }
   };
 
-
   useEffect(() => {
     let mounted = true;
     Promise.all([import("react-leaflet"), import("leaflet")]).then(([rl, L]) => {
