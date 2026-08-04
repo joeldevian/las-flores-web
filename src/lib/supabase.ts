@@ -53,7 +53,7 @@ export interface ReservationPayload {
   user_id?: string;
   guest_count: number;
   reservation_date: string;
-  service_type: "desayuno" | "almuerzo";
+  service_type: "desayuno" | "almuerzo" | "cena";
   reservation_time: string;
   zone_id?: string;
   table_number?: string;

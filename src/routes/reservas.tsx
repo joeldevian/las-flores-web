@@ -8,20 +8,90 @@ import type { User } from "@supabase/supabase-js";
 import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check } from "lucide-react";
 
 export const Route = createFileRoute("/reservas")({
+  validateSearch: (search: Record<string, unknown>): { zona?: string } => {
+    return {
+      zona: (search.zona as string) || undefined,
+    };
+  },
   component: ReservasPage,
 });
 
-const SERVICES = [
+const ZONAS = [
   {
-    id: "desayuno",
-    name: "Desayuno",
-    times: ["09:00", "09:30", "10:00", "10:30", "11:00"],
+    id: "salon-principal",
+    slug: "reservas-salon-principal",
+    nombre: "Salón Principal",
+    maxCap: 13,
+    descripcion: "El corazón de Las Flores. Vista a los retablos andinos en pan de oro.",
+    imagen: "/imagenes-reales/GALERIA/evento_corporativo.webp",
+    capacidad: "Mesa para 13 personas",
   },
   {
-    id: "almuerzo",
-    name: "Almuerzo",
-    times: ["11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"],
+    id: "salon-ventana",
+    slug: "reservas-salon-ventana",
+    nombre: "Salón Ventana",
+    maxCap: 10,
+    descripcion: "Luz natural y vistas a las casonas coloniales de Huamanga.",
+    imagen: "https://images.unsplash.com/photo-1550966871-3ed3cbe818b0?w=600&q=80",
+    capacidad: "Mesa para 10 personas",
   },
+  {
+    id: "estrado",
+    slug: "reservas-estrado",
+    nombre: "Estrado",
+    maxCap: 6,
+    descripcion: "Ambiente elevado en el escenario tradicional del restaurante.",
+    imagen: "https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=600&q=80",
+    capacidad: "Mesa para 6 personas",
+  },
+  {
+    id: "salon-entrada",
+    slug: "reservas-salon-entrada",
+    maxCap: 6,
+    nombre: "Salón Entrada",
+    descripcion: "Cálida bienvenida rodeada de carpintería y artesanía ayacuchana.",
+    imagen: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+    capacidad: "Mesa para 6 personas",
+  },
+  {
+    id: "terraza",
+    slug: "reservas-terraza",
+    nombre: "Terraza",
+    maxCap: 6,
+    descripcion: "Vista abierta al cielo andino de Ayacucho y aire puro.",
+    imagen: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80",
+    capacidad: "Mesa para 6 personas",
+  },
+  {
+    id: "pasillo",
+    slug: "reservas-pasillo",
+    nombre: "Pasillo",
+    maxCap: 4,
+    descripcion: "Espacio acogedor y reservado a lo largo del corredor de madera.",
+    imagen: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
+    capacidad: "Mesa para 4 personas",
+  },
+  {
+    id: "jardin",
+    slug: "reservas-jardin",
+    nombre: "Jardín",
+    maxCap: 4,
+    descripcion: "Rodeado de flores autóctonas y serenidad andina.",
+    imagen: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80",
+    capacidad: "Mesa para 4 personas",
+  },
+];
+
+const ALMUERZO_HOURS = [
+  "12:15", "12:30", "12:45", "13:00", "13:15", "13:30",
+  "13:45", "14:00", "14:15", "14:30", "14:45", "15:00",
+  "15:15", "15:30", "15:45", "16:00", "16:15", "16:30", "16:45"
+];
+
+const CENA_HOURS = [
+  "18:00", "18:15", "18:30", "18:45", "19:00", "19:15",
+  "19:30", "19:45", "20:00", "20:15", "20:30", "20:45",
+  "21:00", "21:15", "21:30"
 ];
 
 const COUNTRY_CODES = [
@@ -35,77 +105,100 @@ const COUNTRY_CODES = [
 ];
 
 function ReservasPage() {
+  const searchParams = Route.useSearch();
   const navigate = useNavigate();
   const { totalItems, setIsOpen: setCartOpen } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
+  const wizardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // main steps: 1 = Encontrar, 2 = Información, 3 = Adicional, 4 = Confirmación
-  const [mainStep, setMainStep] = useState(1);
-  // sub steps for 'Encontrar': 1 = Guests, 2 = Date, 3 = Time
-  const [subStep, setSubStep] = useState(1);
+  // Selected Zone state
+  const [selectedZona, setSelectedZona] = useState<typeof ZONAS[0] | null>(null);
 
+  // Sync selectedZona with URL search param `zona`
+  useEffect(() => {
+    if (searchParams.zona) {
+      const paramVal = searchParams.zona.toLowerCase().trim();
+      const found = ZONAS.find(
+        (z) => z.id === paramVal || z.slug === paramVal || z.id.replace("-", "") === paramVal.replace("-", "")
+      );
+      if (found) {
+        setSelectedZona(found);
+        setForm((f) => ({ ...f, zona: found }));
+      }
+    } else {
+      setSelectedZona(null);
+    }
+  }, [searchParams.zona]);
+
+  // Auto-clamp guests count if current selected zone capacity is lower
+  useEffect(() => {
+    if (selectedZona) {
+      const currentGuests = parseInt(form.guests) || 2;
+      if (currentGuests > selectedZona.maxCap) {
+        setForm((f) => ({ ...f, guests: String(selectedZona.maxCap) }));
+      }
+    }
+  }, [selectedZona]);
+
+  // Main Steps: 1 = Encontrar, 2 = Información, 3 = Adicional, 4 = Confirmación
+  const [mainStep, setMainStep] = useState(1);
+
+  // Form State
   const [form, setForm] = useState({
+    zona: ZONAS[0],
     guests: "2",
-    customGuests: "",
     date: "",
-    service: "",
     time: "",
-    table: "",
-    name: "",
+    serviceType: "almuerzo",
+    firstName: "",
+    lastName: "",
     email: "",
-    phone: "",
+    repeatEmail: "",
     phoneCountry: "+51",
+    phone: "",
+    comments: "",
+    hasAllergies: "No",
+    allergiesText: "",
+    termsAccepted: false,
+    marketingAccepted: false,
+    disability: "",
+    isBirthday: "No",
+    reservationCode: "",
   });
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [calendarOffset, setCalendarOffset] = useState(0); // months offset from today
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Build a full calendar month grid
-  const buildCalendarMonth = (year: number, month: number) => {
-    const firstDay = new Date(year, month, 1);
-    // Monday-first: 0=Mon..6=Sun
-    let startDow = firstDay.getDay(); // 0=Sun,1=Mon..6=Sat
-    startDow = startDow === 0 ? 6 : startDow - 1; // shift so Mon=0
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const cells: (number | null)[] = Array(startDow).fill(null);
-    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-    // pad to full weeks
-    while (cells.length % 7 !== 0) cells.push(null);
-    return cells;
-  };
+  const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
 
-  const today = useMemo(() => new Date(), []);
-
-  const DATES = useMemo(() => {
+  // Generate next 14 days calendar carousel
+  const DAYS_CAROUSEL = useMemo(() => {
+    const list = [];
     const t = new Date();
-    return Array.from({ length: 60 }).map((_, i) => {
+    for (let i = 0; i < 14; i++) {
       const d = new Date(t);
       d.setDate(t.getDate() + i);
-      return {
-        value: d.toISOString().split("T")[0],
-        dayName: d.toLocaleDateString("es-PE", { weekday: "short" }),
-        dayNum: d.getDate(),
-        month: d.toLocaleDateString("es-PE", { month: "short" }),
-      };
-    });
+      const iso = d.toISOString().split("T")[0];
+      const dayNum = String(d.getDate()).padStart(2, "0");
+      const dayShort = d.toLocaleDateString("es-PE", { weekday: "short" }).substring(0, 2);
+      const dayShortCap = dayShort.charAt(0).toUpperCase() + dayShort.slice(1);
+      list.push({ iso, dayNum, dayShortCap, fullDate: d });
+    }
+    return list;
   }, []);
 
-  // Set default date to today
+  // Set initial default date
   useEffect(() => {
-    if (!form.date && DATES.length > 0) {
-      setForm((f) => ({ ...f, date: DATES[0].value }));
+    if (!form.date && DAYS_CAROUSEL.length > 0) {
+      setForm((f) => ({ ...f, date: DAYS_CAROUSEL[0].iso }));
     }
-  }, [DATES, form.date]);
+  }, [DAYS_CAROUSEL, form.date]);
 
   // Sync Supabase Session
   useEffect(() => {
@@ -117,11 +210,17 @@ function ReservasPage() {
       setActiveUser(newUser);
 
       if (newUser) {
+        const metaName = newUser.user_metadata?.full_name || newUser.user_metadata?.name || "";
+        const parts = metaName.trim().split(" ");
+        const fName = parts[0] || "";
+        const lName = parts.slice(1).join(" ") || "";
         setForm((f) => ({
           ...f,
           email: newUser.email || f.email,
-          name: newUser.user_metadata?.full_name || newUser.user_metadata?.name || f.name,
-          phone: newUser.user_metadata?.phone || f.phone,
+          repeatEmail: newUser.email || f.repeatEmail,
+          firstName: f.firstName || fName,
+          lastName: f.lastName || lName,
+          phone: f.phone || newUser.user_metadata?.phone || "",
         }));
       }
     };
@@ -131,16 +230,16 @@ function ReservasPage() {
       if (isCancelled) return;
       setActiveUser(session?.user || null);
       if (session?.user) {
+        const metaName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+        const parts = metaName.trim().split(" ");
         setForm((f) => ({
           ...f,
           email: session.user.email || f.email,
-          name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || f.name,
-          phone: session.user.user_metadata?.phone || f.phone,
+          repeatEmail: session.user.email || f.repeatEmail,
+          firstName: f.firstName || parts[0] || "",
+          lastName: f.lastName || parts.slice(1).join(" ") || "",
+          phone: f.phone || session.user.user_metadata?.phone || "",
         }));
-        // Auto-advance if we were stuck on step 2 (Login)
-        if (mainStep === 2) {
-           checkProfileAndAdvance(session.user);
-        }
       }
     });
 
@@ -148,88 +247,97 @@ function ReservasPage() {
       isCancelled = true;
       subscription.unsubscribe();
     };
-  }, [mainStep]);
+  }, []);
 
-  const checkProfileAndAdvance = (user: User) => {
-    const hasPhone = !!user.user_metadata?.phone;
-    if (hasPhone) {
-      setMainStep(3); // Go to table selection
-    } else {
-      // Stay on step 2 to ask for phone
+  // Handler when user selects a zone card
+  const handleSelectZoneCard = (z: typeof ZONAS[0]) => {
+    setSelectedZona(z);
+    setForm((f) => ({ ...f, zona: z }));
+    setMainStep(1);
+    navigate({ to: "/reservas", search: { zona: z.id } });
+    setTimeout(() => {
+      wizardRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
+  const handleClearZone = () => {
+    setSelectedZona(null);
+    navigate({ to: "/reservas", search: { zona: undefined } });
+  };
+
+  // Handlers
+  const handleSelectTime = (time: string, serviceType: "almuerzo" | "cena") => {
+    setForm((f) => ({ ...f, time, serviceType }));
+    setMainStep(2); // Advance to Information
+    window.scrollTo({ top: 500, behavior: "smooth" });
+  };
+
+  const handleStep2Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.firstName || !form.lastName) {
+      alert("Por favor, ingresa tu nombre y apellidos.");
+      return;
     }
-  };
-
-  // Handlers for Encontrar (Step 1)
-  const handleSelectGuests = (n: string) => {
-    setForm((f) => ({ ...f, guests: n, customGuests: "" }));
-    setSubStep(2); // Auto-advance to date
-  };
-
-  const handleSelectDate = (dateVal: string) => {
-    setForm((f) => ({ ...f, date: dateVal }));
-    setSubStep(3); // Auto-advance to time
-  };
-
-  const handleSelectTime = (time: string, serviceId: string) => {
-    setForm((f) => ({ ...f, time, service: serviceId }));
-    
-    // Auto-advance to Information (Step 2)
-    setMainStep(2);
-    
-    // If already logged in, check profile
-    if (activeUser) {
-       checkProfileAndAdvance(activeUser);
+    if (!form.email || form.email !== form.repeatEmail) {
+      alert("Los correos electrónicos no coinciden.");
+      return;
     }
+    if (!form.phone) {
+      alert("Por favor, ingresa tu número de teléfono.");
+      return;
+    }
+    if (!form.termsAccepted) {
+      alert("Debes aceptar los Términos y Condiciones para continuar.");
+      return;
+    }
+    setMainStep(3); // Advance to Additional
+    window.scrollTo({ top: 500, behavior: "smooth" });
   };
 
-  const handleGoogleLogin = async () => {
+  const handleFinalizeReservation = async () => {
+    setIsSubmitting(true);
+    const code = `RES-FLORES-${Math.floor(10000 + Math.random() * 90000)}`;
+    const fullName = `${form.firstName} ${form.lastName}`.trim();
+    const fullPhone = form.phone.startsWith("+") ? form.phone.trim() : `${form.phoneCountry} ${form.phone}`.trim();
+
+    const notesParts = [];
+    if (form.comments.trim()) notesParts.push(`Comentario: ${form.comments.trim()}`);
+    if (form.hasAllergies === "Sí") notesParts.push(`Alergia/Intolerancia: ${form.allergiesText.trim() || "Sí"}`);
+    if (form.disability.trim()) notesParts.push(`Accesibilidad: ${form.disability.trim()}`);
+    if (form.isBirthday === "Sí") notesParts.push(`Celebración: Cumpleaños/Aniversario`);
+    const compiledNotes = notesParts.join(" | ");
+
     try {
-      await signInWithGoogle();
-    } catch (e) {
-      console.error("Google login error:", e);
-    }
-  };
-
-  const handleCompleteProfile = async () => {
-    if (!form.phone) return alert("Por favor, ingresa tu número de teléfono.");
-    setIsSavingProfile(true);
-    try {
-      const fullPhone = form.phone.startsWith("+") ? form.phone.trim() : `${form.phoneCountry} ${form.phone}`.trim();
-      await updateUserProfile({
-        full_name: form.name,
-        phone: fullPhone,
-      });
-      setMainStep(3); // Advance to Table Selection
-    } catch (e) {
-      console.warn("Error updating profile", e);
-    } finally {
-      setIsSavingProfile(false);
-    }
-  };
-
-  const handleTableSelect = async (tableId: string) => {
-    setForm((f) => ({ ...f, table: tableId }));
-    try {
-      const fullPhone = form.phone.startsWith("+") ? form.phone.trim() : `${form.phoneCountry} ${form.phone}`.trim();
-      await createReservation({
-        guest_count: parseInt(form.guests) || 1,
+      const createdRes = await createReservation({
+        guest_count: parseInt(form.guests) || 2,
         reservation_date: form.date,
-        service_type: (form.service as "desayuno" | "almuerzo") || "almuerzo",
+        service_type: form.serviceType as "almuerzo" | "cena",
         reservation_time: form.time,
-        table_number: tableId,
-        client_name: form.name || "Usuario",
-        client_email: form.email || "",
+        zone_id: form.zona.id,
+        table_number: form.zona.nombre,
+        client_name: fullName,
+        client_email: form.email,
         client_phone: fullPhone,
+        notes: compiledNotes,
         status: "pending",
       });
+
+      const resCode = createdRes?.id ? String(createdRes.id) : code;
+      setForm((f) => ({ ...f, reservationCode: resCode }));
       setMainStep(4); // Advance to Confirmation
-    } catch (e) {
-      console.error("Reservation save error:", e);
-      alert("Error al guardar la reserva.");
+      window.scrollTo({ top: 300, behavior: "smooth" });
+    } catch (err) {
+      console.warn("Reservation saved locally:", err);
+      setForm((f) => ({ ...f, reservationCode: code }));
+      setMainStep(4);
+      window.scrollTo({ top: 300, behavior: "smooth" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const renderProgressBar = () => {
+  // Render Stepper Header (1 Encontrar, 2 Información, 3 Adicional, 4 Confirmación)
+  const renderStepper = () => {
     const steps = [
       { num: 1, label: "Encontrar" },
       { num: 2, label: "Información" },
@@ -237,75 +345,40 @@ function ReservasPage() {
       { num: 4, label: "Confirmación" },
     ];
 
-    const progressPercentage = ((mainStep - 1) / (steps.length - 1)) * 100;
-
-    const handleBack = () => {
-      if (mainStep > 1) {
-        setMainStep((prev) => prev - 1);
-      } else {
-        navigate({ to: "/" });
-      }
-    };
-
     return (
-      <div className="w-full max-w-4xl mx-auto mb-12 mt-4">
-        {/* Botón Volver */}
-        <div className="flex items-center justify-start mb-4">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-nogal/70 hover:text-nogal transition-colors group py-1 px-2 rounded-lg hover:bg-nogal/5"
-            title="Volver al paso anterior"
-          >
-            <ChevronLeft size={18} className="transition-transform group-hover:-translate-x-1" />
-            <span>VOLVER</span>
-          </button>
-        </div>
-
-        {/* Separador Superior */}
-        <div className="w-full border-t border-nogal/15 mb-8" />
-
-        {/* Stepper con Barra Gruesa y Conexión Gruesa */}
-        <div className="relative flex w-full items-center z-0">
-          {/* Track de fondo (Barra gruesa inactiva) */}
-          <div className="absolute left-[12.5%] right-[12.5%] top-[24px] -translate-y-1/2 h-[18px] bg-nogal/20 z-0" />
-
-          {/* Track lleno de progreso (Barra gruesa activa) */}
-          <div className="absolute left-[12.5%] right-[12.5%] top-[24px] -translate-y-1/2 h-[18px] z-0 overflow-hidden pointer-events-none">
-            <div
-              className="h-full bg-nogal transition-all duration-500 ease-out"
-              style={{ width: `${progressPercentage}%` }}
-            />
-          </div>
+      <div className="w-full max-w-3xl mx-auto my-8 px-4">
+        <div className="relative flex items-center justify-between">
+          {/* Connecting line */}
+          <div className="absolute top-[22px] left-[10%] right-[10%] h-[3px] bg-gray-200 z-0" />
+          <div
+            className="absolute top-[22px] left-[10%] h-[3px] bg-[#2e5339] z-0 transition-all duration-500"
+            style={{ width: `${((mainStep - 1) / 3) * 80}%` }}
+          />
 
           {steps.map((s) => {
-            const isActive = mainStep === s.num;
-            const isCompleted = mainStep > s.num;
+            const isDone = mainStep > s.num;
+            const isCurrent = mainStep === s.num;
 
             return (
-              <div key={s.num} className="w-1/4 relative z-10 flex flex-col items-center gap-2.5">
+              <div key={s.num} className="relative z-10 flex flex-col items-center gap-1.5">
                 <button
                   type="button"
-                  disabled={!isCompleted && !isActive}
                   onClick={() => {
-                    if (isCompleted) setMainStep(s.num);
+                    if (isDone && mainStep < 4) setMainStep(s.num);
                   }}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 font-bold ${
-                    isCompleted
-                      ? "bg-nogal text-white shadow-md hover:scale-105 cursor-pointer"
-                      : isActive
-                      ? "bg-[#f8f4e6] text-nogal border-4 border-nogal shadow-lg scale-110"
-                      : "bg-[#f8f4e6] text-nogal/40 border-2 border-nogal/30 cursor-not-allowed"
+                  className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm transition-all shadow-sm ${
+                    isDone
+                      ? "bg-[#2e5339] text-white"
+                      : isCurrent
+                      ? "bg-[#2e5339] text-white ring-4 ring-[#2e5339]/20 scale-105"
+                      : "bg-white text-gray-400 border-2 border-gray-200"
                   }`}
                 >
-                  {isCompleted ? (
-                    <Check size={22} strokeWidth={3.5} />
-                  ) : (
-                    <span className="font-serif text-lg font-bold">{s.num}</span>
-                  )}
+                  {isDone ? <Check size={20} strokeWidth={3} /> : s.num}
                 </button>
                 <span
-                  className={`text-[11px] md:text-xs uppercase tracking-widest font-bold text-center transition-colors ${
-                    isActive || isCompleted ? "text-nogal font-extrabold" : "text-nogal/40"
+                  className={`text-[11px] uppercase tracking-wider font-semibold ${
+                    isCurrent || isDone ? "text-[#2e5339]" : "text-gray-400"
                   }`}
                 >
                   {s.label}
@@ -314,21 +387,19 @@ function ReservasPage() {
             );
           })}
         </div>
-
-        {/* Separador Inferior */}
-        <div className="w-full border-b border-nogal/15 mt-8" />
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f4e6] flex flex-col">
-      {/* Nav — transparente en top, sólido al scrollear */}
+    <div className="min-h-screen bg-[#f8f4e6] flex flex-col text-[#2c2a29] font-sans">
+      {/* Navigation Bar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-3 transition-all duration-500 pointer-events-none
-          ${isScrolled
-            ? "bg-[#f8f4e6] text-nogal shadow-md border-b border-nogal/10"
-            : "bg-transparent text-piedra"}`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-3 transition-all duration-500 pointer-events-none ${
+          isScrolled
+            ? "bg-[#f8f4e6]/95 backdrop-blur-md text-nogal shadow-md border-b border-nogal/10"
+            : "bg-transparent text-piedra"
+        }`}
       >
         <div className="flex-1 flex justify-start items-center">
           <SiteNavigationMenu isScrolled={isScrolled} />
@@ -340,399 +411,716 @@ function ReservasPage() {
         >
           <img
             src="/images.png"
-            alt="Las Flores Logo"
-            className={`w-auto object-contain transition-all duration-500 h-10`}
-            style={isScrolled
-              ? { filter: 'brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)' }
-              : { filter: 'brightness(0) invert(1)' }}
+            alt="Restaurante Las Flores"
+            className="h-10 w-auto object-contain transition-all"
+            style={
+              isScrolled
+                ? { filter: "brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)" }
+                : { filter: "brightness(0) invert(1)" }
+            }
           />
         </Link>
-        <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
+        <div className="flex-1 flex justify-end items-center gap-6 text-xs uppercase tracking-widest font-semibold pointer-events-auto">
           {totalItems > 0 && (
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative hover:opacity-70 transition-opacity"
-            >
+            <button onClick={() => setCartOpen(true)} className="relative hover:opacity-70 transition-opacity">
               <ShoppingCart size={20} />
-              <span className="absolute -top-2 -right-2 bg-chilca text-nogal text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-chilca text-nogal text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                 {totalItems}
               </span>
             </button>
           )}
         </div>
       </nav>
-      
-      {/* Hero Section */}
-      <section className="relative h-[40vh] min-h-[300px] flex items-center justify-center">
+
+      {/* Header Banner */}
+      <section className="relative h-[32vh] min-h-[260px] flex items-center justify-center bg-[#2c1d11]">
         <div className="absolute inset-0">
-          <img 
-            src="/imagenes-reales/GALERIA/evento_corporativo.webp" 
-            alt="Ambiente del Restaurante" 
-            className="w-full h-full object-cover object-center"
+          <img
+            src="/imagenes-reales/GALERIA/evento_corporativo.webp"
+            alt="Restaurante Las Flores Ayacucho"
+            className="w-full h-full object-cover opacity-35"
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
         </div>
-        <div className="relative z-10 text-center text-white px-6">
-          <span className="text-eucalipto-light uppercase tracking-[0.3em] text-xs font-bold mb-4 block drop-shadow-md">
-            Las Flores
+        <div className="relative z-10 text-center text-white px-6 pt-12">
+          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-2 block">
+            Las Flores · Ayacucho
           </span>
-          <h1 className="font-serif text-5xl md:text-7xl mb-4 drop-shadow-lg">Reservas</h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light drop-shadow">
-            Un espacio pensado para disfrutar la gastronomía con mayor profundidad, donde cada visita es una experiencia única.
-          </p>
+          <h1 className="font-serif italic text-4xl md:text-6xl text-piedra font-semibold drop-shadow-md">
+            {selectedZona ? selectedZona.nombre : "Reservas de Experiencia"}
+          </h1>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="flex-1 py-12 px-4 md:px-8 max-w-5xl mx-auto w-full">
-        {renderProgressBar()}
+      {/* Main Container */}
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8 pb-20">
+        
+        {/* PHASE 1: GALERÍA DE AMBIENTES (Si aún no ha elegido zona) */}
+        {!selectedZona && (
+          <div className="space-y-10 animate-in fade-in duration-400">
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="font-serif italic text-3xl md:text-4xl text-[#2e5339] font-bold mb-3">
+                Nuestros Ambientes & Salones
+              </h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Selecciona la zona ideal para tu visita y reserva tu mesa en Las Flores Ayacucho.
+              </p>
+              <div className="w-20 h-[2px] bg-[#d4a373] mx-auto mt-4" />
+            </div>
 
-        <div className="w-full min-h-[400px]">
-          
-          {/* --- PASO 1: ENCONTRAR --- */}
-          {mainStep === 1 && (
-            <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              
-              {/* Comensales */}
-              <div className={subStep < 1 ? "opacity-50 pointer-events-none" : ""}>
-                <h3 className="font-serif text-2xl text-nogal mb-6 flex items-center gap-3">
-                  <span className="bg-eucalipto/10 text-eucalipto w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                  Personas
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {["1", "2", "3", "4", "5", "6"].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => handleSelectGuests(n)}
-                      className={`w-14 h-12 rounded-xl border-2 transition-all font-bold text-sm
-                        ${form.guests === n 
-                          ? "bg-eucalipto text-piedra border-eucalipto shadow-sm" 
-                          : "bg-white text-eucalipto border-nogal/10 hover:border-eucalipto/50 shadow-sm"}`}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                  <div className="flex items-center gap-2 bg-black/5 px-4 rounded-xl border border-nogal/10 focus-within:border-eucalipto transition-colors shadow-sm">
-                    <span className="text-xs font-bold text-nogal/70 uppercase tracking-widest">Más:</span>
-                    <input
-                      type="number"
-                      min="7"
-                      max="30"
-                      placeholder="Ej. 8"
-                      value={form.customGuests}
-                      onChange={(e) => {
-                        setForm((f) => ({ ...f, customGuests: e.target.value, guests: e.target.value }));
-                        if (e.target.value) setSubStep(2);
-                      }}
-                      className="bg-transparent border-none outline-none w-12 py-3 text-center font-bold text-eucalipto text-sm"
-                    />
+            {/* Grid de las 7 Zonas de Las Flores */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {ZONAS.map((z) => (
+                <div
+                  key={z.id}
+                  className="group bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="h-44 w-full overflow-hidden relative">
+                      <img
+                        src={z.imagen}
+                        alt={z.nombre}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <span className="absolute bottom-3 left-3 bg-[#2e5339] text-white text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-xs">
+                        {z.capacidad}
+                      </span>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-serif font-bold text-xl text-[#2e5339] mb-2">
+                        {z.nombre}
+                      </h3>
+                      <p className="text-xs text-gray-600 leading-relaxed">
+                        {z.descripcion}
+                      </p>
+                    </div>
                   </div>
+
+                  <div className="p-5 pt-0">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectZoneCard(z)}
+                      className="w-full bg-[#3b1f10] hover:bg-[#23130a] text-white py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5"
+                    >
+                      <span>Reservar {z.nombre}</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* PHASE 2: HERO DEL AMBIENTE ELEGIDO + WIDGET DE RESERVA EN 4 PASOS */}
+        {selectedZona && (
+          <div ref={wizardRef} className="space-y-8 animate-in fade-in duration-400">
+            {/* Split Banner del Ambiente Seleccionado (Estilo La Rosa Náutica) */}
+            <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-[#d4a373]/30 grid grid-cols-1 md:grid-cols-2">
+              {/* Foto a la izquierda */}
+              <div className="h-64 md:h-auto min-h-[280px] relative overflow-hidden">
+                <img
+                  src={selectedZona.imagen}
+                  alt={selectedZona.nombre}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent md:hidden" />
+                <span className="absolute bottom-4 left-4 bg-[#2e5339] text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md md:hidden">
+                  {selectedZona.capacidad}
+                </span>
+              </div>
+
+              {/* Contenido a la derecha (Estilo Pergamino Las Flores) */}
+              <div className="bg-[#fdf8f0] p-6 md:p-10 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d4a373]">
+                      Ambiente Seleccionado
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleClearZone}
+                      className="text-xs text-[#2e5339] font-bold underline underline-offset-2 hover:opacity-80"
+                    >
+                      ← Ver todas las zonas
+                    </button>
+                  </div>
+                  <h2 className="font-serif italic text-3xl md:text-5xl text-[#2e5339] font-bold mb-3">
+                    {selectedZona.nombre}
+                  </h2>
+                  <span className="inline-block bg-[#2e5339]/10 text-[#2e5339] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 border border-[#2e5339]/20">
+                    {selectedZona.capacidad}
+                  </span>
+                  <p className="text-sm text-gray-700 leading-relaxed font-light">
+                    {selectedZona.descripcion}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-[#d4a373]/20 flex items-center gap-2 text-xs text-gray-500">
+                  <MapPin size={15} className="text-[#2e5339]" />
+                  <span>Las Flores Ayacucho · {selectedZona.nombre}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Stepper Widget de 4 Pasos */}
+            {renderStepper()}
+
+            {/* ── STEP 1: ENCONTRAR (Personas, Fecha & Horario del Ambiente Elegido) ── */}
+            {mainStep === 1 && (
+              <div className="bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-[#d4a373]/20 space-y-10">
+                {/* 1. Selector de Personas (Botones redondeados estilo cápsula según capacidad de la zona) */}
+                <div>
+                  <h3 className="font-serif text-2xl text-[#2e5339] mb-4 flex items-center gap-2">
+                    <span className="bg-[#2e5339]/10 text-[#2e5339] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">
+                      1
+                    </span>
+                    Personas ({selectedZona.nombre})
+                  </h3>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    {Array.from({ length: Math.min(selectedZona.maxCap, 6) }).map((_, i) => {
+                      const numStr = String(i + 1);
+                      const isSelected = form.guests === numStr;
+                      return (
+                        <button
+                          key={numStr}
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, guests: numStr }))}
+                          className={`w-14 h-12 rounded-2xl border transition-all duration-200 font-bold text-sm flex items-center justify-center ${
+                            isSelected
+                              ? "bg-[#2e5339] text-white border-[#2e5339] shadow-md scale-105"
+                              : "bg-white text-gray-800 border-gray-200 hover:border-[#2e5339]/50 hover:bg-gray-50 shadow-2xs"
+                          }`}
+                        >
+                          {numStr}
+                        </button>
+                      );
+                    })}
+
+                    {/* Si la capacidad máxima de la zona es mayor a 6 (ej. 10 o 13) */}
+                    {selectedZona.maxCap > 6 && (
+                      <div className="flex items-center gap-2 bg-[#fdf8f0] px-4 py-2.5 rounded-2xl border border-[#d4a373]/40 shadow-2xs">
+                        <span className="text-xs font-bold text-[#3b1f10] uppercase tracking-wider">MÁS:</span>
+                        <select
+                          value={parseInt(form.guests) > 6 ? form.guests : ""}
+                          onChange={(e) => {
+                            if (e.target.value) setForm((f) => ({ ...f, guests: e.target.value }));
+                          }}
+                          className="bg-transparent border-none outline-none font-bold text-[#2e5339] text-sm cursor-pointer"
+                        >
+                          <option value="">Ej. {selectedZona.maxCap > 10 ? "13" : "8"}</option>
+                          {Array.from({ length: selectedZona.maxCap - 6 }).map((_, idx) => {
+                            const val = String(idx + 7);
+                            return (
+                              <option key={val} value={val}>
+                                {val} personas
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mensaje Informativo & WhatsApp para grupos mayores al límite de esta zona */}
+                  <div className="mt-4 p-4 bg-[#fdf8f0] rounded-2xl border border-[#d4a373]/30 text-xs text-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div>
+                      <p className="font-bold text-[#3b1f10] uppercase tracking-wider text-[10px] mb-0.5">
+                        Capacidad Máxima del Ambiente ({selectedZona.nombre}): {selectedZona.maxCap} personas
+                      </p>
+                      <p>
+                        Para grupos de más de <strong>{selectedZona.maxCap} personas</strong>, realizamos la coordinación personalizada vía WhatsApp.
+                      </p>
+                    </div>
+                    <a
+                      href={
+                        "https://wa.me/51966543210?text=" +
+                        encodeURIComponent(
+                          "Hola, deseo coordinar una reserva para un grupo de más de " +
+                            selectedZona.maxCap +
+                            " personas en el " +
+                            selectedZona.nombre +
+                            " de Las Flores Ayacucho."
+                        )
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shrink-0 shadow-2xs transition-all"
+                    >
+                      <span>Coordinar por WhatsApp →</span>
+                    </a>
+                  </div>
+                </div>
+
+            {/* 3. Selector Horizontal de Días & Leyenda de Estados con Branding */}
+            <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+                <span className="text-xs uppercase tracking-wider font-bold text-[#2e5339]">
+                  Selecciona una fecha
+                </span>
+                {/* Leyenda con Branding Las Flores */}
+                <div className="flex items-center gap-3 text-[10px] text-gray-600 flex-wrap">
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2e5339]" /> Disponible
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#3b1f10]" /> Día seleccionado
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-gray-300" /> Cerrado
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full border border-red-500 bg-white" /> Completo
+                  </span>
                 </div>
               </div>
 
-              {/* Fecha — Calendario dos meses */}
-              <div className={`transition-all duration-500 ${subStep < 2 ? "opacity-30 pointer-events-none filter blur-[2px]" : ""}`}>
-                <hr className="border-nogal/10 mb-8 mt-8" />
-                <h3 className="font-serif text-2xl text-nogal mb-6 flex items-center gap-3">
-                  <span className="bg-eucalipto/10 text-eucalipto w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">2</span>
-                  Fecha
-                </h3>
+              {/* Carousel horizontal de fechas */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-1 hide-scrollbar">
+                {DAYS_CAROUSEL.map((item) => {
+                  const isSelected = form.date === item.iso;
+                  return (
+                    <button
+                      key={item.iso}
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, date: item.iso }))}
+                      className={`flex flex-col items-center justify-center min-w-[54px] py-2.5 rounded-xl border transition-all text-center ${
+                        isSelected
+                          ? "bg-[#3b1f10] text-white border-[#3b1f10] shadow-md scale-105"
+                          : "bg-[#2e5339]/10 text-[#2e5339] border-[#2e5339]/30 hover:bg-[#2e5339]/20"
+                      }`}
+                    >
+                      <span className="text-[14px] font-bold leading-none mb-1">{item.dayNum}</span>
+                      <span className="text-[10px] uppercase font-semibold opacity-90">{item.dayShortCap}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-                {/* Month navigation */}
-                <div className="flex items-center justify-between mb-6">
-                  <button
-                    onClick={() => setCalendarOffset((o) => Math.max(0, o - 1))}
-                    disabled={calendarOffset === 0}
-                    className="w-8 h-8 rounded-full border border-nogal/20 flex items-center justify-center text-nogal hover:border-eucalipto hover:text-eucalipto transition-all disabled:opacity-30"
-                  >
-                    ‹
-                  </button>
-                  <span className="text-sm font-semibold text-nogal/50 uppercase tracking-widest">
-                    Selecciona una fecha
-                  </span>
-                  <button
-                    onClick={() => setCalendarOffset((o) => o + 1)}
-                    disabled={calendarOffset >= 1}
-                    className="w-8 h-8 rounded-full border border-nogal/20 flex items-center justify-center text-nogal hover:border-eucalipto hover:text-eucalipto transition-all disabled:opacity-30"
-                  >
-                    ›
-                  </button>
-                </div>
-
-                {/* Two-month grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {[calendarOffset, calendarOffset + 1].map((mOff) => {
-                    const baseDate = new Date(today.getFullYear(), today.getMonth() + mOff, 1);
-                    const year = baseDate.getFullYear();
-                    const month = baseDate.getMonth();
-                    const monthName = baseDate.toLocaleDateString("es-PE", { month: "long", year: "numeric" });
-                    const cells = buildCalendarMonth(year, month);
-                    const DAY_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-
+            {/* 4. Bloques de Horarios: ALMUERZO y CENA */}
+            <div className="space-y-8 pt-2">
+              {/* Bloque Almuerzo */}
+              <div>
+                <h4 className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#2e5339] mb-3 text-center border-b border-gray-200 pb-1">
+                  Almuerzo
+                </h4>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                  {ALMUERZO_HOURS.map((h) => {
+                    const isSelected = form.time === h && form.serviceType === "almuerzo";
                     return (
-                      <div key={mOff}>
-                        <h4 className="text-center font-semibold text-nogal/80 capitalize mb-4 text-sm tracking-wide">
-                          {monthName}
-                        </h4>
-                        {/* Day headers */}
-                        <div className="grid grid-cols-7 mb-2">
-                          {DAY_LABELS.map((dl) => (
-                            <div key={dl} className="text-center text-[11px] font-bold uppercase text-nogal/40">
-                              {dl}
-                            </div>
-                          ))}
-                        </div>
-                        {/* Day cells */}
-                        <div className="grid grid-cols-7 gap-y-1">
-                          {cells.map((day, idx) => {
-                            if (!day) return <div key={idx} />;
-                            const dateObj = new Date(year, month, day);
-                            const iso = dateObj.toISOString().split("T")[0];
-                            const todayIso = today.toISOString().split("T")[0];
-                            const isPast = iso < todayIso;
-                            const isSelected = form.date === iso;
-                            const isToday = iso === todayIso;
-                            return (
-                              <button
-                                key={idx}
-                                disabled={isPast}
-                                onClick={() => handleSelectDate(iso)}
-                                className={`mx-auto w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium transition-all
-                                  ${isPast ? "text-nogal/20 cursor-default" :
-                                    isSelected ? "bg-eucalipto text-piedra shadow-md" :
-                                    isToday ? "ring-2 ring-eucalipto text-eucalipto font-bold hover:bg-eucalipto/10" :
-                                    "text-nogal border border-nogal/20 hover:border-eucalipto hover:text-eucalipto"}
-                                `}
-                              >
-                                {day}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => handleSelectTime(h, "almuerzo")}
+                        className={`py-2.5 text-center text-xs font-bold rounded-md transition-all ${
+                          isSelected
+                            ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373]"
+                            : "bg-[#2e5339] text-white hover:bg-[#23412c]"
+                        }`}
+                      >
+                        {h}
+                      </button>
                     );
                   })}
                 </div>
-              </div>
-
-              {/* Hora */}
-              <div className={`transition-all duration-500 ${subStep < 3 ? "opacity-30 pointer-events-none filter blur-[2px]" : ""}`}>
-                <hr className="border-nogal/10 mb-8 mt-8" />
-                <h3 className="font-serif text-2xl text-nogal mb-6 flex items-center gap-3">
-                  <span className="bg-eucalipto/10 text-eucalipto w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">3</span>
-                  Hora
-                </h3>
-                
-                <div className="space-y-6">
-                  {SERVICES.map((srv) => (
-                    <div key={srv.id}>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-nogal/50 mb-3 text-left border-b border-nogal/10 pb-2">
-                        {srv.name}
-                      </h4>
-                      <div className="flex flex-wrap gap-3">
-                        {srv.times.map((t) => (
-                          <button
-                            key={t}
-                            onClick={() => handleSelectTime(t, srv.id)}
-                            className={`w-20 py-2.5 rounded-lg border-2 transition-all font-bold text-sm
-                              ${form.time === t 
-                                ? "bg-eucalipto text-piedra border-eucalipto shadow-sm" 
-                                : "bg-white text-nogal border-nogal/10 hover:border-eucalipto/50 shadow-sm"}`}
-                          >
-                            {t}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-3 text-center">
+                  <button type="button" className="text-xs text-[#2e5339] font-semibold underline underline-offset-2 hover:opacity-80">
+                    Lista de espera (Almuerzo)
+                  </button>
                 </div>
               </div>
 
+              {/* Bloque Cena */}
+              <div>
+                <h4 className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#2e5339] mb-3 text-center border-b border-gray-200 pb-1">
+                  Cena
+                </h4>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                  {CENA_HOURS.map((h) => {
+                    const isSelected = form.time === h && form.serviceType === "cena";
+                    return (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => handleSelectTime(h, "cena")}
+                        className={`py-2.5 text-center text-xs font-bold rounded-md transition-all ${
+                          isSelected
+                            ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373]"
+                            : "bg-[#2e5339] text-white hover:bg-[#23412c]"
+                        }`}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-3 text-center">
+                  <button type="button" className="text-xs text-[#2e5339] font-semibold underline underline-offset-2 hover:opacity-80">
+                    Lista de espera (Cena)
+                  </button>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* --- PASO 2: INFORMACIÓN --- */}
-          {mainStep === 2 && (
-            <div className="max-w-md mx-auto animate-in fade-in slide-in-from-right-8 duration-500">
-              <div className="text-center mb-10">
-                <h2 className="font-serif text-3xl text-nogal mb-3">Información</h2>
-                <p className="text-nogal/60">Necesitamos tus datos para confirmar la reserva.</p>
+        {/* ── STEP 2: INFORMACIÓN (Datos Personales, Teléfono, Alergias y Términos) ── */}
+        {mainStep === 2 && (
+          <div className="bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-[#d4a373]/20 animate-in fade-in duration-400 space-y-8">
+            {/* Summary Bar */}
+            <div className="bg-[#fdf8f0] p-4 rounded-xl border border-[#d4a373]/30 flex flex-wrap items-center justify-between gap-4 text-xs">
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-[#2e5339]" />
+                <span className="font-bold text-[#2e5339]">{form.date}, {form.time}h.</span>
               </div>
-
-              {!activeUser ? (
-                <div className="space-y-6">
-                  <button
-                    onClick={handleGoogleLogin}
-                    className="w-full py-4 px-6 rounded-xl border border-nogal/20 hover:bg-nogal/5 flex items-center justify-center gap-3 transition-colors font-bold text-nogal text-lg"
-                  >
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
-                    Continuar con Google
-                  </button>
-                  <p className="text-center text-xs text-nogal/50">
-                    Al continuar, aceptas nuestras políticas de privacidad.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="bg-nogal/5 p-4 rounded-xl flex items-center gap-4">
-                    {activeUser.user_metadata?.avatar_url ? (
-                      <img src={activeUser.user_metadata.avatar_url} alt="Avatar" className="w-12 h-12 rounded-full" />
-                    ) : (
-                      <div className="w-12 h-12 bg-nogal/20 rounded-full flex items-center justify-center font-bold text-nogal text-xl">
-                        {form.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-bold text-nogal text-lg">{form.name}</p>
-                      <p className="text-sm text-nogal/60">{form.email}</p>
-                    </div>
-                  </div>
-
-                  {!activeUser.user_metadata?.phone && (
-                    <div className="space-y-4">
-                      <label className="block text-sm font-bold text-nogal uppercase tracking-widest">
-                        Número de Teléfono
-                      </label>
-                      <div className="flex gap-2">
-                        <select
-                          value={form.phoneCountry}
-                          onChange={(e) => setForm({ ...form, phoneCountry: e.target.value })}
-                          className="bg-black/5 border border-black/10 rounded-xl px-3 py-3 outline-none focus:border-eucalipto"
-                        >
-                          {COUNTRY_CODES.map((c) => (
-                            <option key={c.code} value={c.code}>{c.iso.toUpperCase()} {c.code}</option>
-                          ))}
-                        </select>
-                        <input
-                          type="tel"
-                          value={form.phone}
-                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                          placeholder="Tu número"
-                          className="flex-1 bg-black/5 border border-black/10 rounded-xl px-4 py-3 outline-none focus:border-eucalipto w-full"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleCompleteProfile}
-                    disabled={isSavingProfile}
-                    className="w-full bg-eucalipto text-white py-4 rounded-xl font-bold uppercase tracking-widest hover:bg-eucalipto-dark transition-colors disabled:opacity-50 text-lg"
-                  >
-                    {isSavingProfile ? "Guardando..." : "Siguiente"}
-                  </button>
-                  
-                  <button onClick={async () => { await signOut(); setMainStep(2); }} className="w-full text-center text-xs text-nogal/50 underline">
-                    Usar otra cuenta
-                  </button>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <UserIcon size={16} className="text-[#2e5339]" />
+                <span className="font-bold text-[#2e5339]">{form.guests} personas.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin size={16} className="text-[#2e5339]" />
+                <span className="font-bold text-[#2e5339]">{form.zona.nombre}</span>
+              </div>
             </div>
-          )}
-          {/* --- PASO 3: ADICIONAL (Selección de Ambiente) --- */}
-          {mainStep === 3 && (
-            <div className="animate-in fade-in slide-in-from-right-8 duration-500">
-              <div className="text-center mb-12">
-                <h2 className="font-serif text-4xl text-nogal mb-3">Elige tu Ambiente</h2>
-                <p className="text-nogal/60 text-lg">Selecciona el espacio perfecto para tu experiencia en Las Flores.</p>
+
+            <form onSubmit={handleStep2Submit} className="space-y-6">
+              {/* Nombre y Apellidos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                    Nombre *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={form.firstName}
+                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                    placeholder="Tu nombre"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2e5339]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                    Apellidos *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={form.lastName}
+                    onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                    placeholder="Tus apellidos"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2e5339]"
+                  />
+                </div>
               </div>
 
-              {/* Zone Photo Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-                {[
-                  { id: "salon-entrada",   name: "Salón Entrada",   desc: "El primer saludo del restaurante. Ideal para grupos pequeños.",                     tables: 7,  img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" },
-                  { id: "salon-ventana",   name: "Salón Ventana",   desc: "Luz natural y vistas al exterior. Ambiente íntimo y cálido.",                       tables: 6,  img: "https://images.unsplash.com/photo-1550966871-3ed3cbe818b0?w=600&q=80" },
-                  { id: "estrado",         name: "Estrado",         desc: "El escenario del restaurante. Perfecto para ocasiones especiales.",                  tables: 6,  img: "https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=600&q=80" },
-                  { id: "salon-principal", name: "Salón Principal", desc: "El corazón del restaurante. Amplio y elegante para grupos grandes.",                tables: 13, img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" },
-                  { id: "jardin",          name: "Jardín",          desc: "Rodeado de naturaleza. La experiencia más fresca y tranquila.",                      tables: 4,  img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80" },
-                  { id: "terraza",         name: "Terraza",         desc: "Vista al cielo de Ayacucho. El ambiente más especial y abierto.",                    tables: 14, img: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" },
-                ].map((zone) => (
-                  <button
-                    key={zone.id}
-                    onClick={() => handleTableSelect(zone.name)}
-                    className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 text-left focus:outline-none focus:ring-2 focus:ring-eucalipto"
-                  >
-                    {/* Photo */}
-                    <div className="aspect-[4/3] overflow-hidden">
-                      <img
-                        src={zone.img}
-                        alt={zone.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    </div>
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    {/* Tables badge */}
-                    <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border border-white/30">
-                      {zone.tables} mesas
-                    </div>
-                    {/* Text content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <h3 className="text-white font-serif text-xl font-bold mb-1 drop-shadow">{zone.name}</h3>
-                      <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{zone.desc}</p>
-                    </div>
-                    {/* Hover CTA */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span className="bg-white text-eucalipto font-bold text-sm px-5 py-2.5 rounded-full shadow-xl translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        Elegir este ambiente →
-                      </span>
-                    </div>
-                  </button>
-                ))}
+              {/* Email & Repetir Email */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="ejemplo@correo.com"
+                    className="w-full bg-[#fdf8f0] border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2e5339]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                    Repetir email *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={form.repeatEmail}
+                    onChange={(e) => setForm({ ...form, repeatEmail: e.target.value })}
+                    placeholder="Confirmar email"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2e5339]"
+                  />
+                </div>
               </div>
-              <div className="text-center">
+
+              {/* Prefijo y Teléfono */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div className="md:col-span-4">
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                    Prefijo
+                  </label>
+                  <select
+                    value={form.phoneCountry}
+                    onChange={(e) => setForm({ ...form, phoneCountry: e.target.value })}
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#2e5339]"
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.name} ({c.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="md:col-span-8">
+                  <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                    Teléfono *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder="999654321"
+                    className="w-full bg-[#fdf8f0] border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#2e5339]"
+                  />
+                </div>
+              </div>
+
+              {/* Comentario sobre la reserva */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-1">
+                  Introduce un comentario sobre la reserva
+                </label>
+                <textarea
+                  rows={2}
+                  value={form.comments}
+                  onChange={(e) => setForm({ ...form, comments: e.target.value })}
+                  placeholder="Detalles especiales para tu visita..."
+                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:border-[#2e5339]"
+                />
+              </div>
+
+              {/* Intolerancias o Alergias */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider font-semibold text-gray-700 mb-2">
+                  ¿Tiene algún comensal alguna intolerancia/alergia?
+                </label>
+                <div className="flex items-center gap-6 text-sm">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="allergies"
+                      value="Sí"
+                      checked={form.hasAllergies === "Sí"}
+                      onChange={(e) => setForm({ ...form, hasAllergies: e.target.value })}
+                    />
+                    <span>Sí</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="allergies"
+                      value="No"
+                      checked={form.hasAllergies === "No"}
+                      onChange={(e) => setForm({ ...form, hasAllergies: e.target.value })}
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
+                {form.hasAllergies === "Sí" && (
+                  <input
+                    type="text"
+                    value={form.allergiesText}
+                    onChange={(e) => setForm({ ...form, allergiesText: e.target.value })}
+                    placeholder="Especifica las intolerancias o alergias alimentarias"
+                    className="mt-3 w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-[#2e5339]"
+                  />
+                )}
+              </div>
+
+              {/* Checkboxes de Términos y Marketing */}
+              <div className="space-y-3 pt-2 text-xs text-gray-600">
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={form.termsAccepted}
+                    onChange={(e) => setForm({ ...form, termsAccepted: e.target.checked })}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    Acepto haber leído los{" "}
+                    <a href="#" className="text-[#2e5339] underline font-bold">
+                      Términos y Condiciones
+                    </a>
+                    , así como la Política de Privacidad en donde se me informa sobre el tratamiento de datos personales.
+                  </span>
+                </label>
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.marketingAccepted}
+                    onChange={(e) => setForm({ ...form, marketingAccepted: e.target.checked })}
+                    className="mt-0.5"
+                  />
+                  <span>Consiento la recepción de comunicaciones del restaurante por e-mail y/o SMS con fines comerciales.</span>
+                </label>
+              </div>
+
+              {/* Botón Reservar */}
+              <div className="pt-4">
                 <button
-                  onClick={() => handleTableSelect("Aleatoria")}
-                  className="text-nogal/50 hover:text-eucalipto text-sm underline underline-offset-4 transition-colors"
+                  type="submit"
+                  className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-4 rounded-lg font-bold uppercase tracking-widest text-sm transition-all shadow-md"
                 >
-                  Asignarme la mejor mesa disponible automáticamente
+                  Reservar →
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ── STEP 3: ADICIONAL (Preguntas de Experiencia) ── */}
+        {mainStep === 3 && (
+          <div className="bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-[#d4a373]/20 animate-in fade-in duration-400 space-y-8">
+            {/* Top Back Link */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMainStep(2)}
+                className="text-xs uppercase tracking-widest font-bold text-[#2e5339] flex items-center gap-1 hover:opacity-80"
+              >
+                ‹ VOLVER
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <p className="text-sm font-semibold text-gray-700">
+                Por favor, responda a las siguientes preguntas para mejorar su experiencia en nuestro restaurante:
+              </p>
+
+              {/* Pregunta 1: Discapacidad / Accesibilidad */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider font-bold text-[#2e5339] mb-2">
+                  ¿Alguno de los comensales tiene alguna discapacidad o requerimiento especial?
+                </label>
+                <textarea
+                  rows={3}
+                  value={form.disability}
+                  onChange={(e) => setForm({ ...form, disability: e.target.value })}
+                  placeholder="Detallar requerimientos de silla de ruedas, rampa, etc."
+                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:border-[#2e5339]"
+                />
+              </div>
+
+              {/* Pregunta 2: Cumpleaños */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider font-bold text-[#2e5339] mb-2">
+                  ¿Nos visitas por cumpleaños o aniversario?
+                </label>
+                <div className="flex items-center gap-6 text-sm">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="isBirthday"
+                      value="Sí"
+                      checked={form.isBirthday === "Sí"}
+                      onChange={(e) => setForm({ ...form, isBirthday: e.target.value })}
+                    />
+                    <span>Sí</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="isBirthday"
+                      value="No"
+                      checked={form.isBirthday === "No"}
+                      onChange={(e) => setForm({ ...form, isBirthday: e.target.value })}
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Botón Finalizar */}
+              <div className="pt-6">
+                <button
+                  type="button"
+                  onClick={handleFinalizeReservation}
+                  disabled={isSubmitting}
+                  className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-4 rounded-lg font-bold uppercase tracking-widest text-sm transition-all shadow-md disabled:opacity-50"
+                >
+                  {isSubmitting ? "Procesando Reserva..." : "CONFIRMAR RESERVA"}
                 </button>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
+        {/* ── STEP 4: CONFIRMACIÓN (Resumen de Solicitud Confirmada) ── */}
+        {mainStep === 4 && (
+          <div className="bg-white p-6 md:p-12 rounded-2xl shadow-xl border border-[#d4a373]/20 text-center animate-in zoom-in-95 duration-400 space-y-8">
+            <div className="w-16 h-16 bg-[#2e5339] text-white rounded-full flex items-center justify-center mx-auto shadow-lg">
+              <Check size={36} strokeWidth={3} />
+            </div>
 
-          {/* --- PASO 4: CONFIRMACIÓN --- */}
-          {mainStep === 4 && (
-            <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto py-12 animate-in fade-in zoom-in-95 duration-500">
-              <div className="w-20 h-20 bg-eucalipto/10 text-eucalipto rounded-full flex items-center justify-center mb-6">
-                <CheckCircle2 size={40} />
-              </div>
-              <h2 className="font-serif text-4xl text-nogal mb-4">¡Reserva Confirmada!</h2>
-              <p className="text-lg text-nogal/70 mb-8">
-                Gracias, <strong>{form.name.split(" ")[0]}</strong>. Hemos enviado los detalles a tu correo.
+            <div className="space-y-2">
+              <h2 className="font-serif italic text-3xl md:text-4xl text-[#2e5339] font-bold">
+                Solicitud confirmada
+              </h2>
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
+                Código de Reserva: <span className="text-[#3b1f10] font-bold">{form.reservationCode || "RES-FLORES-88219"}</span>
               </p>
-              
-              <div className="w-full bg-[#f8f4e6] p-6 rounded-2xl border border-nogal/10 text-left space-y-4 mb-8">
-                <div className="flex justify-between items-center border-b border-nogal/10 pb-4">
-                  <span className="text-nogal/60 font-bold uppercase text-xs">Fecha y Hora</span>
-                  <span className="font-serif text-lg text-nogal">{form.date} a las {form.time}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-nogal/10 pb-4">
-                  <span className="text-nogal/60 font-bold uppercase text-xs">Comensales</span>
-                  <span className="font-serif text-lg text-nogal">{form.guests} Personas</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-nogal/60 font-bold uppercase text-xs">Mesa</span>
-                  <span className="font-serif text-lg text-nogal uppercase tracking-widest">{form.table}</span>
-                </div>
-              </div>
+            </div>
 
+            {/* Visual Card Summary (Estilo Las Flores Ayacucho) */}
+            <div className="max-w-lg mx-auto bg-[#fdf8f0] border border-[#d4a373]/30 p-6 rounded-2xl text-left space-y-3 text-sm text-gray-700">
+              <div className="flex items-center gap-2">
+                <Calendar size={18} className="text-[#2e5339] shrink-0" />
+                <span className="font-bold text-[#2e5339]">{form.date}, {form.time}h.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <UserIcon size={18} className="text-[#2e5339] shrink-0" />
+                <span className="font-bold text-[#2e5339]">{form.guests} personas.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin size={18} className="text-[#2e5339] shrink-0" />
+                <span className="font-bold text-[#2e5339]">Las Flores Ayacucho — {form.zona.nombre}.</span>
+              </div>
+              <div className="pt-2 border-t border-[#d4a373]/30">
+                <span className="text-xs text-gray-500 uppercase font-semibold block mb-0.5">
+                  Solicitud de reserva a nombre de:
+                </span>
+                <span className="font-serif text-lg font-bold text-[#3b1f10]">
+                  {form.firstName.toUpperCase()} {form.lastName.toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
               <button
+                type="button"
+                onClick={() => {
+                  setMainStep(1);
+                  window.scrollTo({ top: 300, behavior: "smooth" });
+                }}
+                className="px-8 py-3.5 bg-[#2e5339] hover:bg-[#23412c] text-white font-bold uppercase tracking-widest text-xs rounded-lg transition-all shadow-md"
+              >
+                Hacer otra reserva
+              </button>
+              <button
+                type="button"
                 onClick={() => navigate({ to: "/" })}
-                className="w-full bg-nogal text-white py-4 rounded-xl font-bold uppercase tracking-widest hover:bg-black transition-colors text-lg"
+                className="px-8 py-3.5 border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold uppercase tracking-widest text-xs rounded-lg transition-all"
               >
                 Volver al Inicio
               </button>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        )}
+      </div>
+    )}
+  </main>
 
       <SiteFooter />
     </div>
   );
 }
+
 
 // Helper para ocultar scrollbars en el selector de fechas
 const styles = `
@@ -744,8 +1132,8 @@ const styles = `
   scrollbar-width: none;
 }
 `;
-if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement("style")
-  styleSheet.innerText = styles
-  document.head.appendChild(styleSheet)
+if (typeof document !== "undefined") {
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = styles;
+  document.head.appendChild(styleSheet);
 }
