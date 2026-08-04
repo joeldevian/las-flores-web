@@ -229,15 +229,14 @@ export function CartSidebar() {
 
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
-      const key = import.meta.env.VITE_MAPTILER_API_KEY;
       const res = await fetch(
-        `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${key}&language=es`
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`,
+        { headers: { "Accept-Language": "es" } }
       );
       if (!res.ok) return;
       const data = await res.json();
-      const feature = data?.features?.[0];
-      if (feature?.place_name) {
-        setDelivery((d) => ({ ...d, address: feature.place_name }));
+      if (data?.display_name) {
+        setDelivery((d) => ({ ...d, address: data.display_name }));
       }
     } catch (e) {
       console.error("Reverse geocoding error:", e);
