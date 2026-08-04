@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
 const retabloImg =
-  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Lopez.webp";
+  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/seccion-retablo.webp";
 const platoPucaImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/PUCA PICANTE/puca.webp"; // placeholder if needed
 const platoCuyImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/CUY FRITO/cuy.webp"; // placeholder
 const platoMondongoImg =
@@ -184,7 +184,7 @@ const lugares: Lugar[] = [
     numeral: "II",
     nombre: "Pampa de Quinua",
     categoria: "Historia",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/PUYAS DE RAIMONDI/QuinuaQ.webp",
+    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/PAMPA DE QUINUA/pampa de quinua.webp",
     descripcion:
       "A solo 45 minutos de Huamanga, la Pampa de Quinua es un majestuoso escenario histórico coronado por un obelisco que conmemora la Batalla de Ayacucho.",
     consejo: "Complementar la visita explorando la tradicional alfarería del pueblo aledaño.",
@@ -215,7 +215,7 @@ const lugares: Lugar[] = [
     numeral: "V",
     nombre: "Arte y Cultura Ayacuchana",
     categoria: "Artesanía",
-    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/RetabloR.webp",
+    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp",
     descripcion:
       "El retablo ayacuchano plasma magistralmente las costumbres andinas y religiosas mediante diminutas figuras en coloridas cajas de madera. Patrimonio Cultural de la Nación.",
     consejo:
@@ -752,7 +752,7 @@ function Index() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center p-5 lg:p-10 overflow-hidden">
             
             {/* Columna Izquierda: Foto del retablo */}
-            <div className="lg:col-span-5 w-full max-w-[240px] lg:max-w-none mx-auto shrink-0">
+            <div className="lg:col-span-5 w-full max-w-[220px] lg:max-w-none mx-auto shrink-0">
               <div className="relative">
                 <div
                   className="absolute -inset-2 z-0"

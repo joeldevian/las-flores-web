@@ -106,8 +106,8 @@ function ContactoPage() {
                   <div className="pt-0.5">
                     <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Nuestra Ubicación</h3>
                     <p className="text-nogal/70 leading-relaxed text-sm">
-                      Av. Mariscal Cáceres 1234<br/>
-                      Huamanga, Ayacucho - Perú
+                      Jr. José Olaya 106,<br/>
+                      Ayacucho, Perú.
                     </p>
                   </div>
                 </div>
@@ -147,8 +147,10 @@ function ContactoPage() {
                   <div className="pt-0.5">
                     <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Horario de Atención</h3>
                     <p className="text-nogal/70 leading-relaxed text-sm">
-                      Lunes a Domingo<br/>
-                      08:00 a. m. - 10:00 p. m.
+                      Lunes a Viernes<br/>
+                      7:00 a. m. - 5:00 p. m.<br/>
+                      Sábado y Domingo<br/>
+                      7:00 a. m. - 5:30 p. m.
                     </p>
                   </div>
                 </div>
@@ -163,7 +165,7 @@ function ContactoPage() {
               </div>
               <iframe 
                 title="Mapa de Restaurante Las Flores"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15534.629575199923!2d-74.23700018898124!3d-13.152495861195657!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91127d1421e33c69%3A0xc3042dc085603ef8!2sAyacucho!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" 
+                src="https://www.google.com/maps?q=-13.162825034398038,-74.21792188690533&z=17&output=embed"
                 width="100%" 
                 height="100%" 
                 style={{ border: 0, opacity: 0.8 }} 

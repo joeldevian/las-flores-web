@@ -107,8 +107,10 @@ export function SiteFooter() {
           <div className="md:col-span-4 flex flex-col items-start md:items-end justify-center space-y-4 text-left md:text-right">
             <div className="space-y-1">
               <p className="font-semibold text-piedra">Horario de Atención</p>
-              <p>Lunes a Domingo</p>
-              <p>11:00 - 18:00</p>
+              <p>Lunes a Viernes</p>
+              <p>7:00 a. m. - 5:00 p. m.</p>
+              <p>Sábado y Domingo</p>
+              <p>7:00 a. m. - 5:30 p. m.</p>
             </div>
 
             <div className="flex gap-4 pt-4">
