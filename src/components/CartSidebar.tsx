@@ -229,14 +229,15 @@ export function CartSidebar() {
 
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
+      const key = import.meta.env.VITE_MAPTILER_API_KEY;
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`,
-        { headers: { "Accept-Language": "es" } }
+        `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${key}&language=es`
       );
       if (!res.ok) return;
       const data = await res.json();
-      if (data?.display_name) {
-        setDelivery((d) => ({ ...d, address: data.display_name }));
+      const feature = data?.features?.[0];
+      if (feature?.place_name) {
+        setDelivery((d) => ({ ...d, address: d.address || feature.place_name }));
       }
     } catch (e) {
       console.error("Reverse geocoding error:", e);
@@ -966,7 +967,7 @@ export function CartSidebar() {
                           initialLocation={clientLocation}
                           onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
                           onAddressResolve={(address) =>
-                            setDelivery((d) => ({ ...d, address }))
+                            setDelivery((d) => ({ ...d, address: d.address || address }))
                           }
                         />
                       )}

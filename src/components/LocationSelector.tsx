@@ -23,20 +23,20 @@ export function LocationSelector({ onLocationSelect, onAddressResolve, initialLo
   const reverseGeocode = async (lat: number, lng: number) => {
     if (!onAddressResolve) return;
     try {
+      const key = import.meta.env.VITE_MAPTILER_API_KEY;
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`,
-        { headers: { "Accept-Language": "es" } }
+        `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${key}&language=es`
       );
       if (!res.ok) return;
       const data = await res.json();
-      if (data?.display_name) {
-        onAddressResolve(data.display_name);
+      const feature = data?.features?.[0];
+      if (feature?.place_name) {
+        onAddressResolve(feature.place_name);
       }
     } catch (e) {
       console.error("Reverse geocoding error:", e);
     }
   };
-
 
   useEffect(() => {
     let mounted = true;
