@@ -46,16 +46,10 @@ function CartaPage() {
 
         <div className="flex-1 flex justify-end gap-6 md:gap-8">
           <Link
-            to="/restaurante"
+            to="/reservas"
             className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-chilca transition-colors"
           >
             RESERVAS
-          </Link>
-          <Link
-            to="/restaurante"
-            className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-chilca transition-colors hidden sm:block"
-          >
-            DELIVERY
           </Link>
         </div>
       </nav>
