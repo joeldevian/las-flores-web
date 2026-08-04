@@ -15,6 +15,7 @@ const platoMaizImg =
 import { SiteFooter } from "@/components/site-footer";
 import { LocationSelector } from "../components/LocationSelector";
 import RetabloWrapper, { AyacuchoFlowerInline } from "../components/RetabloWrapper";
+import { MenuModal } from "@/components/MenuModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -590,6 +591,7 @@ function Index() {
   const [festividadActiva, setFestividadActiva] = useState<Festividad | null>(null);
   const [lugarActivo, setLugarActivo] = useState<Lugar | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -733,12 +735,20 @@ function Index() {
             Treinta y tres iglesias, retablos que guardan siglos y calles donde la tradición
             respira. Nosotros no solo servimos comida, preservamos el alma de Ayacucho.
           </p>
-          <Link
-            to="/restaurante"
-            className="mt-14 inline-flex items-center gap-3 px-8 py-4 text-[11px] uppercase tracking-[0.25em] font-bold animate-reveal [animation-delay:600ms] rounded-sm btn-yellow-hover"
-          >
-            <span>Nuestra Historia</span> <span aria-hidden>→</span>
-          </Link>
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 animate-reveal [animation-delay:600ms]">
+            <Link
+              to="/restaurante"
+              className="inline-flex items-center gap-3 px-8 py-4 text-[11px] uppercase tracking-[0.25em] font-bold rounded-sm btn-yellow-hover"
+            >
+              <span>Descubrir Las Flores</span> <span aria-hidden>→</span>
+            </Link>
+            <Link
+              to="/carta"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/40 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm"
+            >
+              <span>Ver la Carta</span>
+            </Link>
+          </div>
         </div>
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-piedra/60 text-[10px] uppercase tracking-[0.4em]">
           Desliza
@@ -1083,15 +1093,18 @@ function Index() {
             >
               <span>Reserva tu Mesa</span>
             </Link>
-            <Link
-              to="/restaurante"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/30 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm"
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/30 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm cursor-pointer"
             >
               Pedir por Delivery
-            </Link>
+            </button>
           </div>
         </div>
       </section>
+
+      <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
       <SiteFooter />
     </div>
