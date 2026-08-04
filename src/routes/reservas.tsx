@@ -23,7 +23,7 @@ const ZONAS = [
     nombre: "Salón Principal",
     maxCap: 13,
     descripcion: "El corazón de Las Flores. Vista a los retablos andinos en pan de oro.",
-    imagen: "/imagenes-reales/GALERIA/evento_corporativo.webp",
+    imagen: "/imagenes-reales/Salones/Salonprincipal.webp",
     capacidad: "Mesa para 13 personas",
   },
   {
@@ -32,7 +32,7 @@ const ZONAS = [
     nombre: "Salón Ventana",
     maxCap: 10,
     descripcion: "Luz natural y vistas a las casonas coloniales de Huamanga.",
-    imagen: "https://images.unsplash.com/photo-1550966871-3ed3cbe818b0?w=600&q=80",
+    imagen: "/imagenes-reales/Salones/Ventana.webp",
     capacidad: "Mesa para 10 personas",
   },
   {
@@ -41,7 +41,7 @@ const ZONAS = [
     nombre: "Estrado",
     maxCap: 6,
     descripcion: "Ambiente elevado en el escenario tradicional del restaurante.",
-    imagen: "https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=600&q=80",
+    imagen: "/imagenes-reales/Salones/Estrado%20.webp",
     capacidad: "Mesa para 6 personas",
   },
   {
@@ -50,7 +50,7 @@ const ZONAS = [
     maxCap: 6,
     nombre: "Salón Entrada",
     descripcion: "Cálida bienvenida rodeada de carpintería y artesanía ayacuchana.",
-    imagen: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+    imagen: "/imagenes-reales/Salones/entrada.webp",
     capacidad: "Mesa para 6 personas",
   },
   {
@@ -59,7 +59,7 @@ const ZONAS = [
     nombre: "Terraza",
     maxCap: 6,
     descripcion: "Vista abierta al cielo andino de Ayacucho y aire puro.",
-    imagen: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80",
+    imagen: "/imagenes-reales/Salones/Terraza.webp",
     capacidad: "Mesa para 6 personas",
   },
   {
@@ -68,7 +68,7 @@ const ZONAS = [
     nombre: "Pasillo",
     maxCap: 4,
     descripcion: "Espacio acogedor y reservado a lo largo del corredor de madera.",
-    imagen: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
+    imagen: "/imagenes-reales/Salones/pasillo.webp",
     capacidad: "Mesa para 4 personas",
   },
   {
@@ -77,7 +77,7 @@ const ZONAS = [
     nombre: "Jardín",
     maxCap: 4,
     descripcion: "Rodeado de flores autóctonas y serenidad andina.",
-    imagen: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80",
+    imagen: "/imagenes-reales/Salones/jardin.webp",
     capacidad: "Mesa para 4 personas",
   },
 ];
