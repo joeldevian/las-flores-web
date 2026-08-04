@@ -967,7 +967,7 @@ export function CartSidebar() {
                           initialLocation={clientLocation}
                           onLocationSelect={(lat, lng) => setClientLocation({ lat, lng })}
                           onAddressResolve={(address) =>
-                            setDelivery((d) => ({ ...d, address: d.address || address }))
+                            setDelivery((d) => ({ ...d, address }))
                           }
                         />
                       )}
