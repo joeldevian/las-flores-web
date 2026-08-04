@@ -38,13 +38,6 @@ export function LocationSelector({ onLocationSelect, onAddressResolve, initialLo
     }
   };
 
-  // Geocodificar cada vez que cambia la ubicación (GPS inicial o clic del usuario)
-  useEffect(() => {
-    if (initialLocation) {
-      reverseGeocode(initialLocation.lat, initialLocation.lng);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialLocation?.lat, initialLocation?.lng]);
 
   useEffect(() => {
     let mounted = true;
@@ -77,6 +70,7 @@ export function LocationSelector({ onLocationSelect, onAddressResolve, initialLo
     useMapEvents({
       click(e: LeafletMouseEvent) {
         onLocationSelect(e.latlng.lat, e.latlng.lng);
+        reverseGeocode(e.latlng.lat, e.latlng.lng);
       },
     });
     return null;
@@ -91,6 +85,7 @@ export function LocationSelector({ onLocationSelect, onAddressResolve, initialLo
           if (marker != null) {
             const newPos = marker.getLatLng();
             onLocationSelect(newPos.lat, newPos.lng);
+            reverseGeocode(newPos.lat, newPos.lng);
           }
         },
       }),
