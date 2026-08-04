@@ -433,138 +433,148 @@ function ReservasPage() {
       </nav>
 
       {/* Header Banner */}
-      <section className="relative h-[32vh] min-h-[260px] flex items-center justify-center bg-[#2c1d11]">
-        <div className="absolute inset-0">
-          <img
-            src="/imagenes-reales/GALERIA/evento_corporativo.webp"
-            alt="Restaurante Las Flores Ayacucho"
-            className="w-full h-full object-cover opacity-35"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
-        </div>
-        <div className="relative z-10 text-center text-white px-6 pt-12">
-          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-2 block">
-            Las Flores · Ayacucho
-          </span>
-          <h1 className="font-serif italic text-4xl md:text-6xl text-piedra font-semibold drop-shadow-md">
-            {selectedZona ? selectedZona.nombre : "Reservas de Experiencia"}
-          </h1>
-        </div>
-      </section>
+      {!selectedZona && (
+        <section className="relative h-[36vh] min-h-[280px] flex items-center justify-center bg-[#2c1d11]">
+          <div className="absolute inset-0">
+            <img
+              src="/imagenes-reales/GALERIA/evento_corporativo.webp"
+              alt="Restaurante Las Flores Ayacucho"
+              className="w-full h-full object-cover opacity-35"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
+          </div>
+          <div className="relative z-10 text-center text-white px-6 pt-12">
+            <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-2 block">
+              Las Flores · Ayacucho
+            </span>
+            <h1 className="font-serif italic text-4xl md:text-6xl text-piedra font-semibold drop-shadow-md">
+              Reserva tu Experiencia
+            </h1>
+          </div>
+        </section>
+      )}
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8 pb-20">
-        
-        {/* PHASE 1: GALERÍA DE AMBIENTES (Si aún no ha elegido zona) */}
-        {!selectedZona && (
-          <div className="space-y-10 animate-in fade-in duration-400">
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="font-serif italic text-3xl md:text-4xl text-[#2e5339] font-bold mb-3">
-                Nuestros Ambientes & Salones
-              </h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Selecciona la zona ideal para tu visita y reserva tu mesa en Las Flores Ayacucho.
-              </p>
-              <div className="w-20 h-[2px] bg-[#d4a373] mx-auto mt-4" />
-            </div>
+      {/* PHASE 1: GALERÍA DE AMBIENTES (Estilo La Rosa Náutica: Tarjetas limpias, fotos verticales y botones ovalados) */}
+      {!selectedZona && (
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <h2 className="font-serif italic text-3xl md:text-5xl text-[#2e5339] font-bold mb-4">
+              Nuestros Ambientes & Salones
+            </h2>
+            <p className="text-sm md:text-base text-gray-600 font-light leading-relaxed">
+              Elige cómo quieres vivir la experiencia: desde la calidez del Salón Principal, la vista abierta de la Terraza o la intimidad del Jardín. Cada espacio propone una forma única de disfrutar nuestra gastronomía.
+            </p>
+            <div className="w-24 h-[2px] bg-[#d4a373] mx-auto mt-6" />
+          </div>
 
-            {/* Grid de las 7 Zonas de Las Flores */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {ZONAS.map((z) => (
-                <div
-                  key={z.id}
-                  className="group bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="h-44 w-full overflow-hidden relative">
-                      <img
-                        src={z.imagen}
-                        alt={z.nombre}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <span className="absolute bottom-3 left-3 bg-[#2e5339] text-white text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-xs">
-                        {z.capacidad}
-                      </span>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-serif font-bold text-xl text-[#2e5339] mb-2">
-                        {z.nombre}
-                      </h3>
-                      <p className="text-xs text-gray-600 leading-relaxed">
-                        {z.descripcion}
-                      </p>
-                    </div>
+          {/* Grid de Tarjetas Elegantes (Estilo La Rosa Náutica: Fotos altas y prominentes) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+            {ZONAS.map((z) => (
+              <div
+                key={z.id}
+                onClick={() => handleSelectZoneCard(z)}
+                className="group flex flex-col justify-between cursor-pointer transition-all duration-300"
+              >
+                <div>
+                  {/* Foto Vertical Estilo La Rosa Náutica (Altura uniforme fija h-[580px]) */}
+                  <div className="w-full h-[500px] sm:h-[540px] lg:h-[580px] overflow-hidden relative rounded-xs shadow-md">
+                    <img
+                      src={z.imagen}
+                      alt={z.nombre}
+                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-108"
+                    />
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
+                    <span className="absolute bottom-3 left-3 bg-black/65 backdrop-blur-xs text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-xs">
+                      {z.capacidad}
+                    </span>
                   </div>
 
-                  <div className="p-5 pt-0">
-                    <button
-                      type="button"
-                      onClick={() => handleSelectZoneCard(z)}
-                      className="w-full bg-[#3b1f10] hover:bg-[#23130a] text-white py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5"
-                    >
-                      <span>Reservar {z.nombre}</span>
-                      <span>→</span>
-                    </button>
+                  {/* Texto e Información */}
+                  <div className="pt-5 text-center px-1">
+                    <h3 className="font-serif text-2xl text-[#2c2a29] font-medium tracking-wide mb-2 group-hover:text-[#2e5339] transition-colors">
+                      {z.nombre}
+                    </h3>
+                    <p className="text-xs text-gray-600 font-light leading-relaxed mb-6 line-clamp-3">
+                      {z.descripcion}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* PHASE 2: HERO DEL AMBIENTE ELEGIDO + WIDGET DE RESERVA EN 4 PASOS */}
-        {selectedZona && (
-          <div ref={wizardRef} className="space-y-8 animate-in fade-in duration-400">
-            {/* Split Banner del Ambiente Seleccionado (Estilo La Rosa Náutica) */}
-            <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-[#d4a373]/30 grid grid-cols-1 md:grid-cols-2">
-              {/* Foto a la izquierda */}
-              <div className="h-64 md:h-auto min-h-[280px] relative overflow-hidden">
-                <img
-                  src={selectedZona.imagen}
-                  alt={selectedZona.nombre}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent md:hidden" />
-                <span className="absolute bottom-4 left-4 bg-[#2e5339] text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md md:hidden">
+                {/* Botón Ovalado de Contorno (Estilo La Rosa Náutica) */}
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectZoneCard(z);
+                    }}
+                    className="w-full border border-[#3b1f10] text-[#3b1f10] group-hover:bg-[#3b1f10] group-hover:text-white rounded-full py-2.5 px-4 text-[11px] font-bold tracking-widest uppercase transition-all duration-300 shadow-2xs"
+                  >
+                    Reservar {z.nombre}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      )}
+
+      {/* PHASE 2: HERO DEL AMBIENTE ELEGIDO (Pantalla completa sin márgenes / 100vh Full Viewport Height) */}
+      {selectedZona && (
+        <div ref={wizardRef} className="animate-in fade-in duration-500">
+          {/* Edge-to-Edge Split Hero Banner (Ocupa el 100% de la ventana de pantalla h-screen) */}
+          <div className="w-full h-screen min-h-[680px] grid grid-cols-1 lg:grid-cols-2 bg-[#fdf8f0] border-b border-[#d4a373]/30 shadow-md overflow-hidden">
+            {/* Foto a la izquierda a pantalla completa */}
+            <div className="h-[400px] lg:h-full w-full relative overflow-hidden">
+              <img
+                src={selectedZona.imagen}
+                alt={selectedZona.nombre}
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent lg:hidden" />
+              <span className="absolute bottom-4 left-4 bg-[#2e5339] text-white text-xs font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-md lg:hidden shadow-md">
+                {selectedZona.capacidad}
+              </span>
+            </div>
+
+            {/* Contenido a la derecha con fondo pergamino y altura completa */}
+            <div className="p-8 md:p-14 lg:p-24 flex flex-col justify-between h-full pt-20 lg:pt-24">
+              <div>
+                <button
+                  type="button"
+                  onClick={handleClearZone}
+                  className="inline-flex items-center gap-1.5 text-xs text-[#2e5339] font-bold uppercase tracking-widest hover:underline mb-8 group"
+                >
+                  <span className="transition-transform group-hover:-translate-x-1">←</span>
+                  <span>Ver todos los ambientes</span>
+                </button>
+
+                <span className="block text-xs font-bold uppercase tracking-[0.25em] text-[#d4a373] mb-2">
+                  Ambiente Seleccionado
+                </span>
+
+                <h1 className="font-serif italic text-4xl md:text-6xl text-[#2e5339] font-bold mb-4 leading-tight">
+                  {selectedZona.nombre}
+                </h1>
+
+                <span className="inline-block bg-[#2e5339]/10 text-[#2e5339] border border-[#2e5339]/20 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
                   {selectedZona.capacidad}
                 </span>
+
+                <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed mb-8 max-w-xl">
+                  {selectedZona.descripcion}
+                </p>
               </div>
 
-              {/* Contenido a la derecha (Estilo Pergamino Las Flores) */}
-              <div className="bg-[#fdf8f0] p-6 md:p-10 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d4a373]">
-                      Ambiente Seleccionado
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleClearZone}
-                      className="text-xs text-[#2e5339] font-bold underline underline-offset-2 hover:opacity-80"
-                    >
-                      ← Ver todas las zonas
-                    </button>
-                  </div>
-                  <h2 className="font-serif italic text-3xl md:text-5xl text-[#2e5339] font-bold mb-3">
-                    {selectedZona.nombre}
-                  </h2>
-                  <span className="inline-block bg-[#2e5339]/10 text-[#2e5339] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 border border-[#2e5339]/20">
-                    {selectedZona.capacidad}
-                  </span>
-                  <p className="text-sm text-gray-700 leading-relaxed font-light">
-                    {selectedZona.descripcion}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-[#d4a373]/20 flex items-center gap-2 text-xs text-gray-500">
-                  <MapPin size={15} className="text-[#2e5339]" />
-                  <span>Las Flores Ayacucho · {selectedZona.nombre}</span>
-                </div>
+              <div className="pt-6 border-t border-[#d4a373]/30 flex items-center gap-2 text-xs uppercase tracking-widest text-[#d4a373] font-semibold">
+                <MapPin size={16} className="text-[#2e5339]" />
+                <span>Las Flores Ayacucho · {selectedZona.nombre}</span>
               </div>
             </div>
+          </div>
 
-            {/* Stepper Widget de 4 Pasos */}
+          {/* Stepper Widget Container */}
+          <main className="max-w-4xl mx-auto w-full px-4 py-10 pb-24">
             {renderStepper()}
 
             {/* ── STEP 1: ENCONTRAR (Personas, Fecha & Horario del Ambiente Elegido) ── */}
@@ -1112,9 +1122,9 @@ function ReservasPage() {
             </div>
           </div>
         )}
-      </div>
-    )}
-  </main>
+      </main>
+    </div>
+  )}
 
       <SiteFooter />
     </div>
