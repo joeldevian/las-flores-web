@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
 const retabloImg =
-  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/seccion-retablo.webp";
+  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/LopezA.webp";
 const platoPucaImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/PUCA PICANTE/puca.webp"; // placeholder if needed
 const platoCuyImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/CUY FRITO/cuy.webp"; // placeholder
 const platoMondongoImg =
@@ -216,7 +216,7 @@ const lugares: Lugar[] = [
     numeral: "V",
     nombre: "Arte y Cultura Ayacuchana",
     categoria: "Artesanía",
-    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp",
+    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/RetabloR.webp",
     descripcion:
       "El retablo ayacuchano plasma magistralmente las costumbres andinas y religiosas mediante diminutas figuras en coloridas cajas de madera. Patrimonio Cultural de la Nación.",
     consejo:
