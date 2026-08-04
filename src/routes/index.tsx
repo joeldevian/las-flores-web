@@ -740,13 +740,13 @@ function Index() {
               to="/restaurante"
               className="inline-flex items-center gap-3 px-8 py-4 text-[11px] uppercase tracking-[0.25em] font-bold rounded-sm btn-yellow-hover"
             >
-              <span>Descubrir Las Flores</span> <span aria-hidden>→</span>
+              <span>Nuestra Historia</span> <span aria-hidden>→</span>
             </Link>
             <Link
               to="/carta"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/40 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm"
             >
-              <span>Ver la Carta</span>
+              <span>Explorar la Carta</span>
             </Link>
           </div>
         </div>
