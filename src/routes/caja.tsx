@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { playOrderChime } from "../utils/audioAlert";
@@ -410,422 +410,297 @@ function CashierDashboardRoute() {
     return s === "confirmed" || s === "confirmada";
   }).length;
 
+
   return (
-    <div className="min-h-screen bg-piedra text-nogal pb-20 font-sans selection:bg-chilca selection:text-nogal">
-      
-      {/* Realtime Floating Banner Toast for Orders */}
+    <div className="min-h-screen font-sans" style={{ background: "#F0EFE9" }}>
+
+      {/* ── TOAST: Nuevo Pedido ─────────────────────────────────────────── */}
       {newOrderNotification && (
-        <div className="fixed top-4 right-4 z-50 bg-eucalipto text-piedra p-4 rounded-2xl shadow-2xl border-2 border-chilca flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md">
-          <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex border-2 border-white/20 items-center justify-center font-bold shrink-0 animate-bounce">
-            🛎️
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-chilca block">
-              ¡NUEVO PEDIDO RECIBIDO!
-            </span>
-            <h4 className="font-mono font-black text-base text-white">
-              #{newOrderNotification.order_number || "LF-NUEVO"}
-            </h4>
-            <p className="text-xs text-gray-300 truncate">
-              {newOrderNotification.client_name || "Cliente"} — S/ {Number(newOrderNotification.total || 0).toFixed(2)}
-            </p>
-          </div>
-
-          <button
-            onClick={() => setNewOrderNotification(null)}
-            className="p-1 text-gray-400 hover:text-white rounded-full hover:bg-white/10"
-          >
-            <X size={18} />
-          </button>
-        </div>
-      )}
-
-      {/* Realtime Floating Banner Toast for Reservations (Tono Verde Eucalipto) */}
-      {newReservationNotification && (
-        <div
-          onClick={() => {
-            setViewMode("reservations");
-            setReservationStatusFilter("pendiente");
-            setNewReservationNotification(null);
-          }}
-          className="fixed top-20 right-4 z-50 bg-eucalipto text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-eucalipto transition-all"
-        >
-          <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce overflow-hidden p-1.5">
-            <img src="/LOGO.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert" />
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-emerald-300 block">
-              ¡NUEVA RESERVA RECIBIDA (VER PENDIENTES)!
-            </span>
-            <h4 className="font-serif font-bold text-base text-white">
-              {newReservationNotification.client_name || "Cliente Reserva"}
-            </h4>
-            <p className="text-xs text-emerald-100 truncate">
-              📅 {newReservationNotification.reservation_date} • 👥 {newReservationNotification.guest_count || 1} personas
-            </p>
-          </div>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setNewReservationNotification(null);
-            }}
-            className="p-1 text-gray-400 hover:text-white rounded-full hover:bg-white/10"
-          >
-            <X size={18} />
-          </button>
-        </div>
-      )}
-
-      {/* Header Operator Bar - Eucalyptus Green Palette #5F8575 */}
-      <header className="bg-eucalipto text-piedra sticky top-0 z-40 border-b border-chilca/40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-chilca shadow-md shrink-0">
-              <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain rounded-lg" />
+        <div className="fixed top-4 right-4 z-[200] max-w-sm w-full animate-in slide-in-from-top-4 duration-300">
+          <div className="rounded-2xl shadow-2xl overflow-hidden flex" style={{ background: "#1C3528" }}>
+            <div className="w-1.5 shrink-0" style={{ background: "#F0C060" }} />
+            <div className="flex items-center gap-3 p-4 flex-1">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 animate-bounce" style={{ background: "rgba(240,192,96,0.15)" }}>
+                🛎️
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#F0C060" }}>Nuevo pedido</p>
+                <p className="font-bold text-white text-sm">#{newOrderNotification.order_number || "LF-NUEVO"}</p>
+                <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  {newOrderNotification.client_name} — S/ {Number(newOrderNotification.total || 0).toFixed(2)}
+                </p>
+              </div>
+              <button onClick={() => setNewOrderNotification(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors">
+                <X size={16} />
+              </button>
             </div>
-            <div>
-              <h1 className="font-serif text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                Panel de Caja & Recepción
-                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-emerald-300/20 text-emerald-100 border border-emerald-300/40 font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                  TIMBRE EN VIVO
-                </span>
-              </h1>
-              <p className="text-[11px] text-piedra/90 font-serif italic">
-                Procesamiento Rápido de Comandas & Reservas — Restaurante Las Flores
+          </div>
+        </div>
+      )}
+
+      {/* ── TOAST: Nueva Reserva ────────────────────────────────────────── */}
+      {newReservationNotification && (
+        <div className="fixed top-20 right-4 z-[200] max-w-sm w-full animate-in slide-in-from-top-4 duration-300 cursor-pointer"
+          onClick={() => { setViewMode("reservations"); setReservationStatusFilter("pendiente"); setNewReservationNotification(null); }}>
+          <div className="rounded-2xl shadow-2xl overflow-hidden flex" style={{ background: "#1C3528" }}>
+            <div className="w-1.5 shrink-0" style={{ background: "#6EE7B7" }} />
+            <div className="flex items-center gap-3 p-4 flex-1">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(110,231,183,0.15)" }}>
+                <Calendar size={18} style={{ color: "#6EE7B7" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#6EE7B7" }}>Nueva reserva</p>
+                <p className="font-bold text-white text-sm">{newReservationNotification.client_name}</p>
+                <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  📅 {newReservationNotification.reservation_date} · 👥 {newReservationNotification.guest_count || 1} personas
+                </p>
+              </div>
+              <button onClick={(e) => { e.stopPropagation(); setNewReservationNotification(null); }} className="p-1.5 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors">
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── HEADER ──────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 border-b" style={{ background: "#1C3528", borderColor: "rgba(255,255,255,0.08)" }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+
+          {/* Logo + título */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-white p-0.5">
+              <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-white font-bold text-sm leading-none tracking-tight truncate">Caja & Recepción</h1>
+              <p className="text-[10px] leading-none mt-0.5 truncate" style={{ color: "rgba(255,255,255,0.45)" }}>
+                Restaurante Las Flores
               </p>
             </div>
+            {/* Indicador live */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ background: "rgba(110,231,183,0.12)", color: "#6EE7B7" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              EN VIVO
+            </div>
           </div>
 
-          {/* Header Controls */}
-          <div className="flex items-center gap-3">
-            
-            {/* Sound Toggle Button */}
+          {/* Controles derecha */}
+          <div className="flex items-center gap-2">
+            {/* Botón sonido */}
             <button
-              onClick={() => {
-                const next = !soundEnabled;
-                setSoundEnabled(next);
-                if (next) playOrderChime();
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
-                soundEnabled
-                  ? "bg-emerald-300/20 text-emerald-100 border-emerald-300/40 hover:bg-emerald-300/30"
-                  : "bg-red-500/20 text-red-200 border-red-500/40 hover:bg-red-500/30"
-              }`}
-              title="Activar / Silenciar Timbre"
+              onClick={() => { const next = !soundEnabled; setSoundEnabled(next); if (next) playOrderChime(); }}
+              title={soundEnabled ? "Silenciar alertas" : "Activar alertas"}
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+              style={{ background: soundEnabled ? "rgba(110,231,183,0.12)" : "rgba(239,68,68,0.12)", color: soundEnabled ? "#6EE7B7" : "#FCA5A5" }}
             >
-              {soundEnabled ? <Volume2 size={14} className="text-emerald-300" /> : <BellOff size={14} className="text-red-300" />}
-              <span className="hidden sm:inline">{soundEnabled ? "Alerta Sonora Activa" : "Alerta Silenciada"}</span>
+              {soundEnabled ? <Volume2 size={15} /> : <BellOff size={15} />}
             </button>
 
-            <Link
-              to="/admin"
-              className="px-3.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/20"
+            {/* Botón refrescar */}
+            <button
+              onClick={() => fetchData()}
+              disabled={refreshing}
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors disabled:opacity-40"
+              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}
+              title="Actualizar datos"
             >
-              <ShieldCheck size={14} className="text-chilca" />
-              <span className="hidden md:inline">Volver a Admin</span>
+              <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+            </button>
+
+            {/* Volver admin */}
+            <Link to="/admin" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.7)" }}>
+              <ShieldCheck size={13} />
+              Admin
             </Link>
-
           </div>
-
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
-        
-        {/* View Mode Switcher Header Bar */}
-        <div className="bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-2 max-w-xl">
+      {/* ── CONTENIDO PRINCIPAL ─────────────────────────────────────────── */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+
+        {/* ── SWITCHER VISTAS ─────────────────────────────────────────── */}
+        <div className="flex items-center gap-2 p-1 rounded-xl w-fit" style={{ background: "#E2E0D8" }}>
           <button
             onClick={() => setViewMode("orders")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
-              viewMode === "orders"
-                ? "bg-white text-eucalipto shadow-md font-extrabold border border-white"
-                : "text-eucalipto/70 hover:text-eucalipto hover:bg-white/50 font-bold"
-            }`}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={viewMode === "orders"
+              ? { background: "#1C3528", color: "#fff", boxShadow: "0 2px 8px rgba(28,53,40,0.25)" }
+              : { background: "transparent", color: "#5A5A4A" }}
           >
-            <ShoppingBag size={15} className={viewMode === "orders" ? "text-chilca" : "text-gray-500"} />
-            <span>Comandas & Pedidos ({pendingCount} Pendientes)</span>
+            <ShoppingBag size={15} />
+            Comandas
+            {pendingCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black leading-none"
+                style={viewMode === "orders" ? { background: "#F0C060", color: "#1C3528" } : { background: "#1C3528", color: "#fff" }}>
+                {pendingCount}
+              </span>
+            )}
           </button>
-
           <button
             onClick={() => setViewMode("reservations")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
-              viewMode === "reservations"
-                ? "bg-white text-eucalipto shadow-md font-extrabold border border-white"
-                : "text-eucalipto/70 hover:text-eucalipto hover:bg-white/50 font-bold"
-            }`}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={viewMode === "reservations"
+              ? { background: "#1C3528", color: "#fff", boxShadow: "0 2px 8px rgba(28,53,40,0.25)" }
+              : { background: "transparent", color: "#5A5A4A" }}
           >
-            <Calendar size={15} className={viewMode === "reservations" ? "text-chilca" : "text-gray-500"} />
-            <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
+            <Calendar size={15} />
+            Reservas
+            {todayReservationsCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black leading-none"
+                style={viewMode === "reservations" ? { background: "#F0C060", color: "#1C3528" } : { background: "#1C3528", color: "#fff" }}>
+                {todayReservationsCount}
+              </span>
+            )}
           </button>
         </div>
 
-        {/* ==================================================================== */}
-        {/* VISTA 1: COMANDAS Y PEDIDOS */}
-        {/* ==================================================================== */}
+        {/* ════════════════════════════════════════════════════════════════
+            VISTA COMANDAS
+        ════════════════════════════════════════════════════════════════ */}
         {viewMode === "orders" && (
           <>
-            {/* Quick Filter Status Tabs for Orders - Semantic Soft Pastel Tone Palette */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              
-              {/* 1. PENDIENTES (Ámbar Pastel) */}
-              <button
-                onClick={() => setStatusFilter("pendiente")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "pendiente"
-                    ? "bg-white text-nogal border-t-4 border-t-chilca shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    Pendientes
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "pendiente" ? "bg-chilca text-cafe" : "bg-chilca/15 text-nogal/60"
-                  }`}>
-                    Acción
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {pendingCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Requieren atención</p>
-              </button>
+            {/* Métricas de estado */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-5 gap-3">
 
-              {/* 2. EN COCINA (Azul Pastel) */}
-              <button
-                onClick={() => setStatusFilter("en_preparacion")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "en_preparacion"
-                    ? "bg-white text-nogal border-t-4 border-t-cielo shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    En Cocina
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "en_preparacion" ? "bg-cielo text-white" : "bg-cielo/15 text-nogal/60"
-                  }`}>
-                    Cocina
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {inKitchenCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">En preparación</p>
-              </button>
+              {/* Pendientes */}
+              {[
+                { key: "pendiente",      label: "Pendientes",   count: pendingCount,    emoji: "⏳", accent: "#F0C060", textDark: "#78450A" },
+                { key: "en_preparacion", label: "En Cocina",    count: inKitchenCount,  emoji: "🍳", accent: "#60A5FA", textDark: "#1E3A5F" },
+                { key: "en_camino",      label: "En Camino",    count: onWayCount,      emoji: "🛵", accent: "#C084FC", textDark: "#4B1D82" },
+                { key: "entregado",      label: "Entregados",   count: completedCount,  emoji: "✅", accent: "#34D399", textDark: "#064E3B" },
+              ].map(({ key, label, count, emoji, accent, textDark }) => (
+                <button
+                  key={key}
+                  onClick={() => setStatusFilter(key)}
+                  className="relative p-4 rounded-2xl text-left transition-all"
+                  style={{
+                    background: statusFilter === key ? "#1C3528" : "#fff",
+                    boxShadow: statusFilter === key ? `0 4px 20px rgba(28,53,40,0.2), inset 3px 0 0 ${accent}` : "0 1px 4px rgba(0,0,0,0.06)",
+                    transform: statusFilter === key ? "translateY(-2px)" : "none",
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="text-2xl">{emoji}</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      style={{ background: statusFilter === key ? `${accent}22` : `${accent}18`, color: statusFilter === key ? accent : textDark }}>
+                      {label}
+                    </span>
+                  </div>
+                  <p className="text-3xl font-black tabular-nums leading-none"
+                    style={{ color: statusFilter === key ? "#fff" : "#1a1a1a" }}>
+                    {count}
+                  </p>
+                  <p className="text-[11px] mt-1 font-medium"
+                    style={{ color: statusFilter === key ? "rgba(255,255,255,0.5)" : "#888" }}>
+                    {key === "pendiente" ? "Requieren atención" : key === "en_preparacion" ? "En preparación" : key === "en_camino" ? "Delivery / Recojo" : "Completados hoy"}
+                  </p>
+                </button>
+              ))}
 
-              {/* 3. EN CAMINO / LISTO (Morado / Púrpura Pastel) */}
-              <button
-                onClick={() => setStatusFilter("en_camino")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "en_camino"
-                    ? "bg-white text-nogal border-t-4 border-t-purple-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    En Camino / Listo
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "en_camino" ? "bg-adobe-new text-white" : "bg-adobe-new/15 text-nogal/60"
-                  }`}>
-                    Despacho
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {onWayCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Delivery / Recojo</p>
-              </button>
-
-              {/* 4. ENTREGADOS (Esmeralda Pastel) */}
-              <button
-                onClick={() => setStatusFilter("entregado")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "entregado"
-                    ? "bg-white text-nogal border-t-4 border-t-pacay shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    Entregados
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "entregado" ? "bg-pacay text-white" : "bg-pacay/15 text-nogal/60"
-                  }`}>
-                    Listo
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {completedCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Completados</p>
-              </button>
-
-              {/* 5. TODOS LOS PEDIDOS (Eucalipto Pastel de Marca) */}
+              {/* Todos */}
               <button
                 onClick={() => setStatusFilter("all")}
-                className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 font-sans ${
-                  statusFilter === "all"
-                    ? "bg-white text-nogal border-t-4 border-t-eucalipto shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
+                className="p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-4 xl:col-span-1"
+                style={{
+                  background: statusFilter === "all" ? "#1C3528" : "#fff",
+                  boxShadow: statusFilter === "all" ? "0 4px 20px rgba(28,53,40,0.2), inset 3px 0 0 #F0C060" : "0 1px 4px rgba(0,0,0,0.06)",
+                  transform: statusFilter === "all" ? "translateY(-2px)" : "none",
+                }}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-[#2A4237]">
-                    Todos los Pedidos
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "all" ? "bg-eucalipto text-white" : "bg-gray-100 text-gray-700"
-                  }`}>
-                    Total
+                <div className="flex items-start justify-between mb-2">
+                  <span className="text-2xl">📋</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: statusFilter === "all" ? "rgba(240,192,96,0.2)" : "rgba(28,53,40,0.08)", color: statusFilter === "all" ? "#F0C060" : "#1C3528" }}>
+                    Historial
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
+                <p className="text-3xl font-black tabular-nums leading-none" style={{ color: statusFilter === "all" ? "#fff" : "#1a1a1a" }}>
                   {orders.length}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-pacay">Total de comandas</p>
+                </p>
+                <p className="text-[11px] mt-1 font-medium" style={{ color: statusFilter === "all" ? "rgba(255,255,255,0.5)" : "#888" }}>
+                  Total de comandas
+                </p>
               </button>
-
             </div>
 
-            {/* Filter controls wrapper */}
-            <div className="flex flex-col gap-3">
-              {/* Search Bar & Manual Refresh */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm">
-                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-                  <div className="relative w-full md:w-80">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Buscar por # de orden, cliente o teléfono..."
-                      className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cafe"
-                    />
-                  </div>
-                  
-                  {/* Date Range & Status Inputs */}
-                  {statusFilter === "all" && (
-                    <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Estado:</span>
-                        <select
-                          value={historicalStatusFilter}
-                          onChange={(e) => setHistoricalStatusFilter(e.target.value)}
-                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none cursor-pointer"
-                        >
-                          <option value="all">Todos</option>
-                          <option value="pendiente">Pendientes</option>
-                          <option value="en_preparacion">En Preparación</option>
-                          <option value="en_camino">En Camino / Listo</option>
-                          <option value="entregado">Entregados</option>
-                          <option value="cancelado">Cancelados</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
-                        <input
-                          type="date"
-                          value={orderDateFrom}
-                          onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
-                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                        />
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                        <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
-                        <input
-                          type="date"
-                          value={orderDateTo}
-                          onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
-                          className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-                  <button
-                    onClick={() => fetchData()}
-                    disabled={refreshing}
-                    className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-                    Actualizar Tabla
-                  </button>
-                </div>
+            {/* Barra búsqueda + filtros comandas */}
+            <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-3 flex flex-wrap items-center gap-3">
+              <div className="relative flex-1 min-w-48">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="# orden, cliente o teléfono..."
+                  className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-800/20 focus:border-emerald-800/30"
+                />
               </div>
 
-              {/* Quick Date Range Shortcuts */}
               {statusFilter === "all" && (
-                <div className="px-4 pb-2 pt-1 flex items-center gap-2 overflow-x-auto">
-                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                    Filtro Rápido de Fecha:
-                  </span>
-                  <button
-                    onClick={() => setQuickOrderDateRange("today")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-eucalipto text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
+                <>
+                  <select
+                    value={historicalStatusFilter}
+                    onChange={(e) => setHistoricalStatusFilter(e.target.value)}
+                    className="text-xs border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-800/20 font-medium text-gray-700"
                   >
-                    Hoy
-                  </button>
-                  <button
-                    onClick={() => setQuickOrderDateRange("week")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200"}`}
-                  >
-                    Esta Semana
-                  </button>
-                  <button
-                    onClick={() => setQuickOrderDateRange("month")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200"}`}
-                  >
-                    Este Mes
-                  </button>
-                  <button
-                    onClick={() => setQuickOrderDateRange("all")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
-                  >
-                    Limpiar Fechas (Ver Histórico Completo)
-                  </button>
+                    <option value="all">Todos los estados</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="en_preparacion">En Cocina</option>
+                    <option value="en_camino">En Camino</option>
+                    <option value="entregado">Entregados</option>
+                    <option value="cancelado">Cancelados</option>
+                  </select>
+                  <input type="date" value={orderDateFrom}
+                    onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
+                    className="text-xs border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 focus:outline-none text-gray-700" />
+                  <input type="date" value={orderDateTo}
+                    onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
+                    className="text-xs border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 focus:outline-none text-gray-700" />
+                </>
+              )}
+
+              {statusFilter === "all" && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {(["today","week","month","all"] as const).map((t) => {
+                    const labels = { today: "Hoy", week: "Semana", month: "Mes", all: "Todo" };
+                    return (
+                      <button key={t} onClick={() => setQuickOrderDateRange(t)}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors"
+                        style={activeOrderDateFilter === t
+                          ? { background: "#1C3528", color: "#fff" }
+                          : { background: "#F0EFE9", color: "#555" }}>
+                        {labels[t]}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            {/* Orders Cards Grid */}
+            {/* Grid de comandas */}
             {loading ? (
-              <div className="py-20 text-center space-y-3">
-                <RefreshCw size={28} className="animate-spin text-nogal mx-auto" />
-                <p className="text-sm font-bold text-gray-600">Cargando comandas en vivo...</p>
+              <div className="py-24 flex flex-col items-center gap-3">
+                <RefreshCw size={24} className="animate-spin text-emerald-800" />
+                <p className="text-sm font-medium text-gray-500">Cargando comandas...</p>
               </div>
             ) : filteredOrders.length === 0 ? (
-              <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
-                <UtensilsCrossed size={36} className="text-gray-300 mx-auto mb-3" />
-                <h3 className="font-serif font-bold text-base text-gray-800">No hay comandas en este estado</h3>
-                <p className="text-xs text-gray-500 mt-1">Selecciona otro filtro o realiza una búsqueda diferente.</p>
+              <div className="py-24 flex flex-col items-center gap-3 bg-white rounded-2xl border border-black/5">
+                <UtensilsCrossed size={32} className="text-gray-300" />
+                <p className="font-semibold text-gray-500">Sin comandas en este filtro</p>
+                <p className="text-xs text-gray-400">Prueba otro estado o amplía el rango de fechas</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredOrders.map((order) => (
                   <CashierOrderCard
                     key={order.id}
                     order={order}
                     orderItems={orderItems}
                     onStatusChange={handleUpdateOrderStatus}
-                    onViewDetail={(ord) => {
-                      setSelectedOrder(ord);
-                      setIsDetailModalOpen(true);
-                    }}
+                    onViewDetail={(ord) => { setSelectedOrder(ord); setIsDetailModalOpen(true); }}
                   />
                 ))}
               </div>
@@ -833,221 +708,103 @@ function CashierDashboardRoute() {
           </>
         )}
 
-        {/* ==================================================================== */}
-        {/* VISTA 2: RESERVAS DE MESAS */}
-        {/* ==================================================================== */}
+        {/* ════════════════════════════════════════════════════════════════
+            VISTA RESERVAS
+        ════════════════════════════════════════════════════════════════ */}
         {viewMode === "reservations" && (
           <>
-            {/* Quick Filter Tabs for Reservations - Semantic Soft Pastel Tone Palette */}
+            {/* Métricas reservas */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              
-              <button
-                onClick={() => setReservationStatusFilter("today")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  reservationStatusFilter === "today"
-                    ? "bg-white text-nogal border-t-4 border-t-eucalipto shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-[#2A4237]">
-                    Reservas del Día
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "today" ? "bg-eucalipto text-white" : "bg-eucalipto/15 text-pacay"
-                  }`}>
-                    Hoy
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
-                  {todayReservationsCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-pacay">Programadas para HOY</p>
-              </button>
-
-              <button
-                onClick={() => setReservationStatusFilter("pendiente")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  reservationStatusFilter === "pendiente"
-                    ? "bg-white text-nogal border-t-4 border-t-chilca shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-amber-900">
-                    Pendientes
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "pendiente" ? "bg-amber-300 text-amber-950" : "bg-chilca/15 text-amber-800"
-                  }`}>
-                    Por Confirmar
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-amber-950">
-                  {pendingReservationsCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-amber-800">Por confirmar WhatsApp</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setReservationStatusFilter("confirmada");
-                  if (!resDateFrom && !resDateTo) setQuickDateRange("month");
-                }}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  reservationStatusFilter === "confirmada"
-                    ? "bg-white text-nogal border-t-4 border-t-cielo shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-blue-900">
-                    Confirmadas
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "confirmada" ? "bg-blue-300 text-blue-950" : "bg-cielo/15 text-blue-800"
-                  }`}>
-                    Confirmado
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-blue-950">
-                  {confirmedReservationsCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-blue-800">Listas para recibir</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setReservationStatusFilter("all");
-                  if (!resDateFrom && !resDateTo) setQuickDateRange("month");
-                }}
-                className={`p-4 rounded-2xl text-left transition-all font-sans ${
-                  reservationStatusFilter === "all"
-                    ? "bg-white text-nogal border-t-4 border-t-slate-400 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-slate-800">
-                    Todas / Historial
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "all" ? "bg-slate-300 text-slate-950" : "bg-gray-100 text-gray-700"
-                  }`}>
-                    Total
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-slate-950">
-                  {reservations.length}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-slate-600">Total de reservas</p>
-              </button>
-
-            </div>
-
-            {/* Search Bar & Optional Date Range Panel */}
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-3">
-              
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-3">
-                {/* Search input */}
-                <div className="relative w-full lg:w-80">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar cliente o teléfono..."
-                    className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-700"
-                  />
-                </div>
-
-                {/* Date Range Inputs (Desde - Hasta) - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
-                {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
-                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Desde:</span>
-                      <input
-                        type="date"
-                        value={resDateFrom}
-                        onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
-                      <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Hasta:</span>
-                      <input
-                        type="date"
-                        value={resDateTo}
-                        onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-gray-800 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Refresh Button */}
+              {[
+                { key: "today",     label: "Hoy",          count: todayReservationsCount,   emoji: "📅", accent: "#34D399", sub: "Programadas para hoy" },
+                { key: "pendiente", label: "Pendientes",   count: pendingReservationsCount, emoji: "⏳", accent: "#F0C060", sub: "Por confirmar" },
+                { key: "confirmada",label: "Confirmadas",  count: confirmedReservationsCount,emoji: "✅", accent: "#60A5FA", sub: "Listas para recibir" },
+                { key: "all",       label: "Historial",    count: reservations.length,       emoji: "📋", accent: "#94A3B8", sub: "Total de reservas" },
+              ].map(({ key, label, count, emoji, accent, sub }) => (
                 <button
-                  onClick={() => fetchData()}
-                  disabled={refreshing}
-                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
+                  key={key}
+                  onClick={() => {
+                    setReservationStatusFilter(key);
+                    if ((key === "confirmada" || key === "all") && !resDateFrom && !resDateTo) setQuickDateRange("month");
+                  }}
+                  className="p-4 rounded-2xl text-left transition-all"
+                  style={{
+                    background: reservationStatusFilter === key ? "#1C3528" : "#fff",
+                    boxShadow: reservationStatusFilter === key ? `0 4px 20px rgba(28,53,40,0.2), inset 3px 0 0 ${accent}` : "0 1px 4px rgba(0,0,0,0.06)",
+                    transform: reservationStatusFilter === key ? "translateY(-2px)" : "none",
+                  }}
                 >
-                  <RefreshCw size={14} className={refreshing ? "animate-spin text-emerald-700" : ""} />
-                  <span>Actualizar</span>
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="text-2xl">{emoji}</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      style={{ background: `${accent}22`, color: reservationStatusFilter === key ? accent : "#444" }}>
+                      {label}
+                    </span>
+                  </div>
+                  <p className="text-3xl font-black tabular-nums leading-none"
+                    style={{ color: reservationStatusFilter === key ? "#fff" : "#1a1a1a" }}>{count}</p>
+                  <p className="text-[11px] mt-1 font-medium"
+                    style={{ color: reservationStatusFilter === key ? "rgba(255,255,255,0.5)" : "#888" }}>{sub}</p>
                 </button>
-              </div>
-
-              {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
-              {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
-                <div className="flex items-center gap-2 pt-2.5 border-t border-gray-100 overflow-x-auto pb-0.5">
-                  <span className="text-[11px] font-sans font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                    Filtro Rápido de Calendario:
-                  </span>
-                  <button
-                    onClick={() => setQuickDateRange("today")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
-                  >
-                    Hoy
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("week")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
-                  >
-                    Esta Semana
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("month")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
-                  >
-                    Este Mes
-                  </button>
-                  {(resDateFrom || resDateTo) && (
-                    <button
-                      onClick={() => setQuickDateRange("all")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "all" ? "bg-red-500 text-white border-red-600" : "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"}`}
-                    >
-                      Limpiar Fechas
-                    </button>
-                  )}
-                </div>
-              )}
-
+              ))}
             </div>
 
-            {/* Reservations Cards Grid */}
+            {/* Barra búsqueda + fechas reservas */}
+            <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-3 flex flex-wrap items-center gap-3">
+              <div className="relative flex-1 min-w-48">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cliente, teléfono o fecha..."
+                  className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-800/20"
+                />
+              </div>
+              {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
+                <>
+                  <input type="date" value={resDateFrom}
+                    onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
+                    className="text-xs border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 focus:outline-none text-gray-700" />
+                  <input type="date" value={resDateTo}
+                    onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
+                    className="text-xs border border-gray-100 bg-gray-50 rounded-xl px-3 py-2 focus:outline-none text-gray-700" />
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {(["today","week","month","all"] as const).map((t) => {
+                      const labels = { today: "Hoy", week: "Semana", month: "Mes", all: "Todo" };
+                      return (
+                        <button key={t} onClick={() => setQuickDateRange(t)}
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors"
+                          style={activeDateFilter === t ? { background: "#1C3528", color: "#fff" } : { background: "#F0EFE9", color: "#555" }}>
+                          {labels[t]}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+              <button onClick={() => fetchData()} disabled={refreshing}
+                className="ml-auto flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors disabled:opacity-40"
+                style={{ background: "#F0EFE9", color: "#1C3528" }}>
+                <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
+                Actualizar
+              </button>
+            </div>
+
+            {/* Grid reservas */}
             {loading ? (
-              <div className="py-20 text-center space-y-3">
-                <RefreshCw size={28} className="animate-spin text-emerald-800 mx-auto" />
-                <p className="text-sm font-bold text-gray-600">Cargando reservas en vivo...</p>
+              <div className="py-24 flex flex-col items-center gap-3">
+                <RefreshCw size={24} className="animate-spin text-emerald-800" />
+                <p className="text-sm font-medium text-gray-500">Cargando reservas...</p>
               </div>
             ) : filteredReservations.length === 0 ? (
-              <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
-                <Calendar size={36} className="text-gray-300 mx-auto mb-3" />
-                <h3 className="font-serif font-bold text-base text-gray-800">No hay reservas registradas en este filtro</h3>
-                <p className="text-xs text-gray-500 mt-1">Selecciona otro filtro de reserva o realiza una búsqueda diferente.</p>
+              <div className="py-24 flex flex-col items-center gap-3 bg-white rounded-2xl border border-black/5">
+                <Calendar size={32} className="text-gray-300" />
+                <p className="font-semibold text-gray-500">Sin reservas en este filtro</p>
+                <p className="text-xs text-gray-400">Selecciona otro estado o amplía el rango de fechas</p>
               </div>
             ) : (
-              <div className="space-y-10">
+              <div className="space-y-8">
                 {Object.entries(
                   reservationStatusFilter === "pendiente"
                     ? { "ORDEN_LLEGADA": [...filteredReservations].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()) }
@@ -1058,37 +815,36 @@ function CashierDashboardRoute() {
                         return acc;
                       }, {} as Record<string, typeof filteredReservations>)
                 )
-                .sort(([dateA], [dateB]) => {
+                .sort(([a], [b]) => {
                   if (reservationStatusFilter === "pendiente") return 0;
-                  if (dateA === "Sin fecha") return 1;
-                  if (dateB === "Sin fecha") return -1;
-                  return new Date(dateA).getTime() - new Date(dateB).getTime();
+                  if (a === "Sin fecha") return 1;
+                  if (b === "Sin fecha") return -1;
+                  return new Date(a).getTime() - new Date(b).getTime();
                 })
                 .map(([dateStr, items]) => {
-                  let dateLabel = dateStr;
+                  let label = dateStr;
                   if (dateStr === "ORDEN_LLEGADA") {
-                    dateLabel = "Por orden de ingreso";
+                    label = "Por orden de ingreso";
                   } else if (dateStr !== "Sin fecha") {
-                    const [yyyy, mm, dd] = dateStr.split('-');
-                    const dateObj = new Date(Number(yyyy), Number(mm)-1, Number(dd));
+                    const [y, m, d] = dateStr.split("-");
+                    const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
                     const isToday = dateStr === getLocalYYYYMMDD(new Date());
-                    dateLabel = isToday 
-                      ? "HOY - " + dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
-                      : dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
+                    label = isToday
+                      ? "HOY — " + dateObj.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" })
+                      : dateObj.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" });
                   }
                   return (
-                    <div key={dateStr} className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <h3 className="font-serif font-black text-xl text-emerald-950 uppercase tracking-widest">{dateLabel}</h3>
-                        <div className="h-px bg-emerald-200/50 flex-1"></div>
+                    <div key={dateStr} className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-bold text-sm uppercase tracking-widest" style={{ color: "#1C3528" }}>{label}</h3>
+                        <div className="flex-1 h-px" style={{ background: "rgba(28,53,40,0.1)" }} />
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(28,53,40,0.08)", color: "#1C3528" }}>
+                          {(items as any[]).length} reservas
+                        </span>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {(items as any[]).map((reservation) => (
-                          <CashierReservationCard
-                            key={reservation.id}
-                            reservation={reservation}
-                            onStatusChange={handleUpdateReservationStatus}
-                          />
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {(items as any[]).map((res) => (
+                          <CashierReservationCard key={res.id} reservation={res} onStatusChange={handleUpdateReservationStatus} />
                         ))}
                       </div>
                     </div>
@@ -1101,7 +857,7 @@ function CashierDashboardRoute() {
 
       </main>
 
-      {/* Detail & Printable Ticket Modal */}
+      {/* Modal detalle pedido */}
       <AdminOrderDetailModal
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
@@ -1112,9 +868,3 @@ function CashierDashboardRoute() {
     </div>
   );
 }
-
-
-
-
-
-
