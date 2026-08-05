@@ -216,6 +216,15 @@ function ReservasPage() {
   const [blockedReasons, setBlockedReasons] = useState<Record<string, string>>({});
   const [allActiveBlackouts, setAllActiveBlackouts] = useState<any[]>([]);
 
+  // Custom Luxury Modal state for reserved slots (no browser alerts)
+  const [noticeModal, setNoticeModal] = useState<{
+    open: boolean;
+    zoneName: string;
+    date: string;
+    time?: string;
+    reason?: string;
+  }>({ open: false, zoneName: "", date: "", time: "", reason: "" });
+
   const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
 
   // Fetch all active blackouts for fast real-time checking
@@ -372,7 +381,12 @@ function ReservasPage() {
   const handleSelectZoneCard = (z: typeof ZONAS[0]) => {
     const blockReason = checkBlackoutForSlot(z.id, form.date || todayIso);
     if (blockReason) {
-      alert(`El salón "${z.nombre}" no está disponible para la fecha seleccionada.\nMotivo: ${blockReason}`);
+      setNoticeModal({
+        open: true,
+        zoneName: z.nombre,
+        date: form.date || todayIso,
+        reason: blockReason,
+      });
       return;
     }
     setSelectedZona(z);
@@ -398,7 +412,13 @@ function ReservasPage() {
 
     if (isBlocked) {
       const reason = (zoneId && liveCheck.reasons[zoneId]) || liveCheck.reasons["global"] || "Reserva de administración";
-      alert(`⛔ APAGADO DE RESERVAS ACTIVO\n\nEl salón "${selectedZona?.nombre || "restaurante"}" se encuentra bloqueado para el ${form.date} a las ${time}h.\n\nMotivo: ${reason}`);
+      setNoticeModal({
+        open: true,
+        zoneName: selectedZona?.nombre || "restaurante",
+        date: form.date,
+        time,
+        reason,
+      });
       return;
     }
 
@@ -645,13 +665,18 @@ function ReservasPage() {
                   key={z.id}
                   onClick={() => {
                     if (cardBlackout) {
-                      alert(`La zona "${z.nombre}" se encuentra bloqueada para la fecha seleccionada.\nMotivo: ${cardBlackout}`);
+                      setNoticeModal({
+                        open: true,
+                        zoneName: z.nombre,
+                        date: form.date || todayIso,
+                        reason: cardBlackout,
+                      });
                       return;
                     }
                     handleSelectZoneCard(z);
                   }}
                   className={`group flex flex-col justify-between transition-all duration-300 ${
-                    cardBlackout ? "cursor-not-allowed opacity-85" : "cursor-pointer"
+                    cardBlackout ? "cursor-pointer opacity-90" : "cursor-pointer"
                   }`}
                 >
                   <div>
@@ -661,18 +686,18 @@ function ReservasPage() {
                         src={z.imagen}
                         alt={z.nombre}
                         className={`w-full h-full object-cover object-center transition-transform duration-700 ${
-                          cardBlackout ? "grayscale-[40%]" : "group-hover:scale-108"
+                          cardBlackout ? "filter brightness-90" : "group-hover:scale-108"
                         }`}
                       />
                       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
                       
                       {cardBlackout ? (
-                        <div className="absolute inset-0 bg-red-950/75 backdrop-blur-xs flex items-center justify-center p-4 text-center z-20">
-                          <div className="bg-red-900/90 text-white p-3.5 rounded-xl border border-red-400/50 shadow-xl space-y-1">
-                            <span className="text-[11px] font-extrabold uppercase tracking-widest text-red-200 block">
-                              ⚡ ZONA BLOQUEADA
+                        <div className="absolute inset-0 bg-[#3b1f10]/75 backdrop-blur-xs flex items-center justify-center p-4 text-center z-20">
+                          <div className="bg-[#fdf8f0] text-[#3b1f10] p-4 rounded-2xl border border-[#d4a373]/40 shadow-xl space-y-1.5 max-w-[220px]">
+                            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#d4a373] block">
+                              🔒 AMBIENTE RESERVADO
                             </span>
-                            <p className="text-[10px] text-white/90 leading-tight">
+                            <p className="text-[10px] text-gray-700 leading-tight">
                               {cardBlackout}
                             </p>
                           </div>
@@ -699,22 +724,26 @@ function ReservasPage() {
                   <div className="text-center pt-2">
                     <button
                       type="button"
-                      disabled={!!cardBlackout}
                       onClick={(e) => {
                         e.stopPropagation();
                         if (cardBlackout) {
-                          alert(`La zona "${z.nombre}" se encuentra bloqueada para reservas online.\nMotivo: ${cardBlackout}`);
+                          setNoticeModal({
+                            open: true,
+                            zoneName: z.nombre,
+                            date: form.date || todayIso,
+                            reason: cardBlackout,
+                          });
                           return;
                         }
                         handleSelectZoneCard(z);
                       }}
                       className={`w-full rounded-full py-2.5 px-4 text-[11px] font-bold tracking-widest uppercase transition-all duration-300 shadow-2xs ${
                         cardBlackout
-                          ? "bg-red-100 text-red-700 border border-red-300 cursor-not-allowed"
+                          ? "bg-[#3b1f10]/10 text-[#3b1f10] border border-[#3b1f10]/30 hover:bg-[#3b1f10]/20"
                           : "border border-[#3b1f10] text-[#3b1f10] group-hover:bg-[#3b1f10] group-hover:text-white"
                       }`}
                     >
-                      {cardBlackout ? "Zona Bloqueada" : `Reservar ${z.nombre}`}
+                      {cardBlackout ? "Ambiente Reservado" : `Reservar ${z.nombre}`}
                     </button>
                   </div>
                 </div>
@@ -931,17 +960,17 @@ function ReservasPage() {
                         key={h}
                         type="button"
                         onClick={() => handleSelectTime(h, "desayuno")}
-                        className={`py-3 text-center text-xs font-bold rounded-xl transition-all shadow-2xs ${
+                        className={`py-2.5 text-center text-xs font-bold rounded-xl transition-all shadow-2xs ${
                           hourBlackout
-                            ? "bg-red-50 text-red-500 border border-red-200 line-through opacity-65 cursor-not-allowed"
+                            ? "bg-amber-50/90 text-amber-900/80 border border-amber-200/80 hover:bg-amber-100/90 cursor-pointer"
                             : isSelected
                             ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373] scale-102"
                             : "bg-[#2e5339] text-white hover:bg-[#23412c]"
                         }`}
-                        title={hourBlackout ? `Horario no disponible: ${hourBlackout}` : undefined}
+                        title={hourBlackout ? `Horario reservado: ${hourBlackout}` : undefined}
                       >
                         {h}
-                        {hourBlackout && <span className="block text-[8px] no-underline font-normal text-red-600">Bloqueado</span>}
+                        {hourBlackout && <span className="block text-[8px] uppercase tracking-wider font-extrabold text-amber-800/80 mt-0.5">Reservado</span>}
                       </button>
                     );
                   })}
@@ -962,17 +991,17 @@ function ReservasPage() {
                         key={h}
                         type="button"
                         onClick={() => handleSelectTime(h, "almuerzo")}
-                        className={`py-3 text-center text-xs font-bold rounded-xl transition-all shadow-2xs ${
+                        className={`py-2.5 text-center text-xs font-bold rounded-xl transition-all shadow-2xs ${
                           hourBlackout
-                            ? "bg-red-50 text-red-500 border border-red-200 line-through opacity-65 cursor-not-allowed"
+                            ? "bg-amber-50/90 text-amber-900/80 border border-amber-200/80 hover:bg-amber-100/90 cursor-pointer"
                             : isSelected
                             ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373] scale-102"
                             : "bg-[#2e5339] text-white hover:bg-[#23412c]"
                         }`}
-                        title={hourBlackout ? `Horario no disponible: ${hourBlackout}` : undefined}
+                        title={hourBlackout ? `Horario reservado: ${hourBlackout}` : undefined}
                       >
                         {h}
-                        {hourBlackout && <span className="block text-[8px] no-underline font-normal text-red-600">Bloqueado</span>}
+                        {hourBlackout && <span className="block text-[8px] uppercase tracking-wider font-extrabold text-amber-800/80 mt-0.5">Reservado</span>}
                       </button>
                     );
                   })}
@@ -1344,6 +1373,48 @@ function ReservasPage() {
           onFacebook={handleFacebookLogin}
           subtitle="Inicia sesión para continuar con tu reserva. Tus datos se completarán automáticamente."
         />
+      )}
+
+      {/* Modal de Aviso Elegante para Horarios Reservados (Reemplaza los alerts nativos) */}
+      {noticeModal.open && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#fdf8f0] rounded-3xl max-w-md w-full shadow-2xl p-6 md:p-8 border border-[#d4a373]/40 text-center space-y-5 relative">
+            <div className="w-14 h-14 rounded-full bg-[#3b1f10]/10 text-[#3b1f10] flex items-center justify-center mx-auto border border-[#d4a373]/30">
+              <Calendar size={26} />
+            </div>
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#d4a373] block mb-1">
+                Restaurante Las Flores
+              </span>
+              <h3 className="font-serif italic text-2xl md:text-3xl text-[#3b1f10] font-bold">
+                Horario Reservado
+              </h3>
+            </div>
+            <p className="text-xs text-gray-700 font-light leading-relaxed">
+              El salón <strong className="text-[#3b1f10]">{noticeModal.zoneName}</strong> se encuentra reservado para el día <strong className="text-[#3b1f10]">{noticeModal.date}</strong>
+              {noticeModal.time && <span> a las <strong className="text-[#3b1f10]">{noticeModal.time}h</strong></span>}.
+            </p>
+            {noticeModal.reason && (
+              <div className="bg-white/80 p-3.5 rounded-2xl border border-[#d4a373]/30 text-left space-y-1">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#d4a373] block">
+                  Información:
+                </span>
+                <p className="text-xs text-gray-800 font-medium">
+                  {noticeModal.reason}
+                </p>
+              </div>
+            )}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setNoticeModal({ open: false, zoneName: "", date: "", time: "", reason: "" })}
+                className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-md cursor-pointer"
+              >
+                Ver otros horarios disponibles
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
