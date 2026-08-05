@@ -7,7 +7,7 @@ import type { User } from "@supabase/supabase-js";
 import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
 import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
-import { getBlockedZonesForReservation } from "@/features/zones/api";
+import { getBlockedZonesForReservation, listRestaurantZones } from "@/features/zones/api";
 
 export const Route = createFileRoute("/reservas")({
   validateSearch: (search: Record<string, unknown>): { zona?: string } => {
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/reservas")({
   component: ReservasPage,
 });
 
-const ZONAS = [
+const FALLBACK_ZONES = [
   {
     id: "salon-principal",
     slug: "reservas-salon-principal",
@@ -152,6 +152,40 @@ function ReservasPage() {
   const [mainStep, setMainStep] = useState(1);
 
   // Form State
+  const [fetchedZones, setFetchedZones] = useState<typeof FALLBACK_ZONES>([]);
+
+  useEffect(() => {
+    listRestaurantZones().then((res) => {
+      if (res && res.length > 0) {
+        const mapped = res.map((z) => ({
+          id: z.id,
+          slug: `reservas-${z.id}`,
+          nombre: z.name,
+          maxCap: z.max_capacity_persons,
+          descripcion: z.description,
+          imagen: z.image_url,
+          capacidad: `Mesa para ${z.max_capacity_persons} personas`,
+        }));
+        setFetchedZones(mapped);
+      }
+    });
+  }, []);
+
+  const ZONAS = fetchedZones.length > 0 ? fetchedZones : FALLBACK_ZONES;
+
+  // Keep form.zona in sync when ZONAS array loads dynamically from DB
+  useEffect(() => {
+    if (fetchedZones.length > 0) {
+      setForm((f) => {
+        const currentMatch = fetchedZones.find((z) => z.id === f.zona?.id);
+        return {
+          ...f,
+          zona: currentMatch || fetchedZones[0],
+        };
+      });
+    }
+  }, [fetchedZones]);
+
   const [form, setForm] = useState({
     zona: ZONAS[0],
     guests: "2",
