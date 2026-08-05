@@ -145,28 +145,33 @@ export async function submitJobApplication(
   });
   throwIfError(uploadError);
 
-  const { data, error } = await client.rpc("submit_job_application", {
-    p_job_offer_id: offerId,
-    p_full_name: input.full_name,
-    p_phone: input.phone,
-    p_email: input.email,
-    p_city: input.city,
-    p_experience_summary: input.experience_summary,
-    p_availability: input.availability,
-    p_privacy_consent: input.privacy_consent,
-    p_cv_path: cvPath,
-  });
+  try {
+    const { data, error } = await client.rpc("submit_job_application", {
+      p_job_offer_id: offerId,
+      p_full_name: input.full_name,
+      p_phone: input.phone,
+      p_email: input.email,
+      p_city: input.city,
+      p_experience_summary: input.experience_summary,
+      p_availability: input.availability,
+      p_privacy_consent: input.privacy_consent,
+      p_cv_path: cvPath,
+    });
 
-  if (error) {
-    await storage.remove([cvPath]);
+    throwIfError(error);
+    if (!isJobApplication(data)) {
+      throw new Error("La RPC submit_job_application devolvió una respuesta inválida.");
+    }
+
+    return data;
+  } catch (error) {
+    try {
+      await storage.remove([cvPath]);
+    } catch {
+      // Cleanup is best-effort; preserve the application failure as the root cause.
+    }
     throw error;
   }
-
-  if (!isJobApplication(data)) {
-    throw new Error("La RPC submit_job_application devolvió una respuesta inválida.");
-  }
-
-  return data;
 }
 
 export async function updateJobApplication(

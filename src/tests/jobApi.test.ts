@@ -28,14 +28,22 @@ function createClient({
   uploadError = null,
   rpcError = null,
   rpcData = application,
+  rpcException,
+  cleanupException,
 }: {
   uploadError?: Error | null;
   rpcError?: Error | null;
   rpcData?: unknown;
+  rpcException?: Error;
+  cleanupException?: Error;
 } = {}) {
   const upload = vi.fn().mockResolvedValue({ error: uploadError });
-  const remove = vi.fn().mockResolvedValue({ error: null });
-  const rpc = vi.fn().mockResolvedValue({ data: rpcData, error: rpcError });
+  const remove = cleanupException
+    ? vi.fn().mockRejectedValue(cleanupException)
+    : vi.fn().mockResolvedValue({ error: null });
+  const rpc = rpcException
+    ? vi.fn().mockRejectedValue(rpcException)
+    : vi.fn().mockResolvedValue({ data: rpcData, error: rpcError });
   const from = vi.fn(() => ({ upload, remove }));
 
   return {
@@ -83,6 +91,18 @@ describe("submitJobApplication", () => {
     await expect(submitJobApplication("offer-1", input, cv, fake.client)).rejects.toThrow(
       "La RPC submit_job_application devolvió una respuesta inválida.",
     );
+    expect(fake.remove).toHaveBeenCalledWith([fake.upload.mock.calls[0][0]]);
+  });
+
+  it("elimina el CV si el RPC lanza una excepción", async () => {
+    const rpcException = new Error("RPC transport failed");
+    const fake = createClient({ rpcException });
+    const cv = new File(["pdf"], "cv.pdf", { type: "application/pdf" });
+
+    await expect(submitJobApplication("offer-1", input, cv, fake.client)).rejects.toBe(
+      rpcException,
+    );
+    expect(fake.remove).toHaveBeenCalledWith([fake.upload.mock.calls[0][0]]);
   });
 
   it("elimina el CV si falla el RPC", async () => {
@@ -92,6 +112,16 @@ describe("submitJobApplication", () => {
 
     await expect(submitJobApplication("offer-1", input, cv, fake.client)).rejects.toBe(rpcError);
 
+    expect(fake.remove).toHaveBeenCalledWith([fake.upload.mock.calls[0][0]]);
+  });
+
+  it("preserva el error RPC si también falla el cleanup", async () => {
+    const rpcError = new Error("RPC failed");
+    const cleanupException = new Error("Cleanup failed");
+    const fake = createClient({ rpcError, cleanupException });
+    const cv = new File(["pdf"], "cv.pdf", { type: "application/pdf" });
+
+    await expect(submitJobApplication("offer-1", input, cv, fake.client)).rejects.toBe(rpcError);
     expect(fake.remove).toHaveBeenCalledWith([fake.upload.mock.calls[0][0]]);
   });
 
