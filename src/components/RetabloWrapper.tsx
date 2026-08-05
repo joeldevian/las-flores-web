@@ -223,52 +223,62 @@ const RetabloWrapper = ({ children }: { children: ReactNode }) => {
         style={{ pointerEvents: "none" }}
       />
 
-      {/* CAPA 2: Frontón / Copete triangular con Marco de Madera caoba — z-50 */}
+      {/* CAPA 2: Frontón / Copete triangular con Marco de Madera caoba alineado a ras — z-50 */}
       <div
-        className="retablo-frame absolute top-0 left-0 right-0 z-50 h-16 lg:h-24 pointer-events-none overflow-hidden"
+        className="absolute top-0 left-0 right-0 z-50 h-16 lg:h-24 pointer-events-none overflow-hidden"
         aria-hidden="true"
-        style={{
-          clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
-        }}
       >
-        {/* Fondo de madera caoba (#3b1f10 con textura de retablo-frame) */}
-        <div className="absolute inset-0 bg-[#3b1f10] retablo-frame" />
-
-        {/* Panel blanco floral interior con margen de marco de madera idéntico al retablo central */}
-        <div
-          className="absolute inset-0 bg-white"
-          style={{
-            clipPath: "polygon(50% 12px, calc(100% - 16px) calc(100% - 8px), 16px calc(100% - 8px))",
-          }}
-        >
-          <img
-            src="/retablo-copete.png"
-            alt=""
-            className="w-full h-full object-fill"
-            draggable={false}
-          />
-        </div>
-
-        {/* Borde vectorial SVG perimetral con stroke de madera oscura #3b1f10 y bisel de pan de oro */}
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-20"
+          className="w-full h-full block"
           viewBox="0 0 1000 240"
           preserveAspectRatio="none"
         >
+          <defs>
+            {/* ClipPath para la ilustración floral recortada exactamente dentro del marco */}
+            <clipPath id="copeteFlowerClip">
+              <polygon points="500,38 946,224 54,224" />
+            </clipPath>
+          </defs>
+
+          {/* 1. Base triangular de madera caoba (#3b1f10) alineada 100% a ras (x: 0 a 1000) sin aleros */}
           <polygon
             points="500,0 1000,240 0,240"
+            fill="#3b1f10"
+          />
+
+          {/* 2. Fondo pergamino blanco interior para la ilustración floral */}
+          <polygon
+            points="500,36 948,226 52,226"
+            fill="#ffffff"
+          />
+
+          {/* 3. Ilustración floral interior recortada por el clipPath */}
+          <image
+            href="/retablo-copete.png"
+            x="0"
+            y="0"
+            width="1000"
+            height="240"
+            preserveAspectRatio="none"
+            clipPath="url(#copeteFlowerClip)"
+          />
+
+          {/* 4. Bisel interior de separación de madera (#3b1f10) */}
+          <polygon
+            points="500,36 948,226 52,226"
             fill="none"
             stroke="#3b1f10"
-            strokeWidth="22"
+            strokeWidth="3"
             strokeLinejoin="miter"
-            strokeMiterlimit="10"
           />
+
+          {/* 5. Filete en Pan de Oro interior (#d4a373) que enmarca artesanalmente las flores */}
           <polygon
-            points="500,20 962,226 38,226"
+            points="500,36 948,226 52,226"
             fill="none"
             stroke="#d4a373"
-            strokeWidth="2"
-            strokeOpacity="0.45"
+            strokeWidth="2.5"
+            strokeOpacity="0.75"
             strokeLinejoin="miter"
           />
         </svg>
