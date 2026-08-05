@@ -108,27 +108,91 @@ USING (public.is_admin())
 WITH CHECK (public.is_admin());
 
 DROP POLICY IF EXISTS "Public can submit job applications" ON public.job_applications;
-CREATE POLICY "Public can submit job applications"
-ON public.job_applications
-FOR INSERT
-TO anon, authenticated
-WITH CHECK (
-  privacy_consent = true
-  AND btrim(full_name) <> ''
-  AND btrim(phone) <> ''
-  AND btrim(email) <> ''
-  AND btrim(city) <> ''
-  AND btrim(experience_summary) <> ''
-  AND btrim(availability) <> ''
-  AND btrim(cv_path) <> ''
-  AND EXISTS (
+REVOKE INSERT ON TABLE public.job_applications FROM anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.submit_job_application(
+  p_job_offer_id UUID,
+  p_full_name TEXT,
+  p_phone TEXT,
+  p_email TEXT,
+  p_city TEXT,
+  p_experience_summary TEXT,
+  p_availability TEXT,
+  p_privacy_consent BOOLEAN,
+  p_cv_path TEXT
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  application_id UUID;
+BEGIN
+  IF p_privacy_consent IS DISTINCT FROM true
+    OR coalesce(btrim(p_full_name), '') = ''
+    OR coalesce(btrim(p_phone), '') = ''
+    OR coalesce(btrim(p_email), '') = ''
+    OR coalesce(btrim(p_city), '') = ''
+    OR coalesce(btrim(p_experience_summary), '') = ''
+    OR coalesce(btrim(p_availability), '') = ''
+    OR coalesce(btrim(p_cv_path), '') = '' THEN
+    RAISE EXCEPTION 'Application fields and privacy consent are required'
+      USING ERRCODE = 'check_violation';
+  END IF;
+
+  IF NOT EXISTS (
     SELECT 1
     FROM public.job_offers
-    WHERE id = job_offer_id
+    WHERE id = p_job_offer_id
       AND status = 'published'
       AND (application_deadline IS NULL OR application_deadline >= CURRENT_DATE)
+  ) THEN
+    RAISE EXCEPTION 'Job offer is not accepting applications'
+      USING ERRCODE = 'check_violation';
+  END IF;
+
+  INSERT INTO public.job_applications (
+    id,
+    job_offer_id,
+    full_name,
+    phone,
+    email,
+    city,
+    experience_summary,
+    availability,
+    privacy_consent,
+    cv_path,
+    status,
+    internal_notes,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    p_job_offer_id,
+    btrim(p_full_name),
+    btrim(p_phone),
+    btrim(p_email),
+    btrim(p_city),
+    btrim(p_experience_summary),
+    btrim(p_availability),
+    true,
+    btrim(p_cv_path),
+    'new',
+    NULL,
+    NOW(),
+    NOW()
   )
-);
+  RETURNING id INTO application_id;
+
+  RETURN application_id;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.submit_job_application(
+  UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, BOOLEAN, TEXT
+) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.submit_job_application(UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, BOOLEAN, TEXT) TO anon, authenticated;
 
 DROP POLICY IF EXISTS "Admins can view job applications" ON public.job_applications;
 CREATE POLICY "Admins can view job applications"
