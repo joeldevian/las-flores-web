@@ -83,20 +83,22 @@ const VinePattern = () => (
 const RetabloWrapper = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // Una vez abierto, nunca se vuelve a cerrar en esta sesión de página
+  const hasOpenedRef = useRef(false);
 
-  /* Scroll Trigger: 65% de visibilidad + delay de anticipación (0.4s) */
+  /* Scroll Trigger: se dispara una sola vez al entrar al viewport por primera vez */
   useEffect(() => {
     let openTimer: ReturnType<typeof setTimeout>;
-    let closeTimer: ReturnType<typeof setTimeout>;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        clearTimeout(openTimer);
-        clearTimeout(closeTimer);
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !hasOpenedRef.current) {
           /* 0.4s de retardo para apreciar la caja de madera cerrada antes de abrirse */
-          openTimer = setTimeout(() => setIsOpen(true), 400);
-        } else {
-          closeTimer = setTimeout(() => setIsOpen(false), 100);
+          openTimer = setTimeout(() => {
+            setIsOpen(true);
+            hasOpenedRef.current = true;
+            // Ya no necesitamos seguir observando
+            observer.disconnect();
+          }, 400);
         }
       },
       { threshold: 0.65 }
@@ -105,7 +107,6 @@ const RetabloWrapper = ({ children }: { children: ReactNode }) => {
     return () => {
       observer.disconnect();
       clearTimeout(openTimer);
-      clearTimeout(closeTimer);
     };
   }, []);
 
