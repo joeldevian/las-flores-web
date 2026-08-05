@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
 const retabloImg =
-  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/seccion-retablo.webp";
+  "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/LopezA.webp";
 const platoPucaImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/PUCA PICANTE/puca.webp"; // placeholder if needed
 const platoCuyImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/CUY FRITO/cuy.webp"; // placeholder
 const platoMondongoImg =
@@ -13,6 +13,9 @@ const platoMondongoImg =
 const platoMaizImg =
   "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/POSTRES Y BEBIDAS/CHAPLA/chapla.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
+import { LocationSelector } from "../components/LocationSelector";
+import RetabloWrapper, { AyacuchoFlowerInline } from "../components/RetabloWrapper";
+import { MenuModal } from "@/components/MenuModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -213,7 +216,7 @@ const lugares: Lugar[] = [
     numeral: "V",
     nombre: "Arte y Cultura Ayacuchana",
     categoria: "Artesanía",
-    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp",
+    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/RetabloR.webp",
     descripcion:
       "El retablo ayacuchano plasma magistralmente las costumbres andinas y religiosas mediante diminutas figuras en coloridas cajas de madera. Patrimonio Cultural de la Nación.",
     consejo:
@@ -588,6 +591,7 @@ function Index() {
   const [festividadActiva, setFestividadActiva] = useState<Festividad | null>(null);
   const [lugarActivo, setLugarActivo] = useState<Lugar | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -676,7 +680,17 @@ function Index() {
           />
         </Link>
         
-        <div className="flex-1 flex justify-end gap-8 text-[11px] md:text-sm uppercase tracking-[0.1em] font-semibold items-center">
+        <div className="flex-1 flex justify-end gap-4 md:gap-6 text-[11px] md:text-sm uppercase tracking-[0.15em] font-semibold items-center">
+          <Link
+            to="/reservas"
+            className={`pointer-events-auto px-4.5 py-1.5 md:px-5 md:py-2 text-[11px] md:text-xs font-bold uppercase tracking-widest transition-all rounded-full border ${
+              isScrolled
+                ? "border-nogal text-nogal hover:bg-nogal hover:text-white shadow-sm"
+                : "border-piedra/60 text-piedra hover:bg-piedra hover:text-nogal shadow-sm"
+            }`}
+          >
+            Reservar
+          </Link>
           {/* Language Selector Indicator (Visual Only) */}
           <div className="pointer-events-auto flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
             <img 
@@ -689,17 +703,27 @@ function Index() {
         </div>
       </nav>
 
-      {/* HERO */}
+      {/* HERO — Recorrido cinemático en Video por Ayacucho */}
       <header className="relative h-screen w-full overflow-hidden bg-eucalipto">
-        <img
-          src={ayacuchoHero}
-          alt="Vista panorámica de Ayacucho al atardecer con sus iglesias coloniales y los Andes"
-          width={1920}
-          height={1088}
-          fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover opacity-70 animate-hero"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-transparent to-ink/80" />
+        {/* Video cinemático de alta velocidad optimizado */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={ayacuchoHero}
+          className="absolute inset-0 w-full h-full object-cover opacity-75 scale-[1.02] pointer-events-none"
+        >
+          <source src="/inicio/videoweb.mp4" type="video/mp4" />
+          <source src="/inicio/videoweb.mov" type="video/quicktime" />
+          {/* Imagen de reserva si el navegador restringe video */}
+          <img
+            src={ayacuchoHero}
+            alt="Vista panorámica de Ayacucho al atardecer"
+            className="w-full h-full object-cover"
+          />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/20 to-ink/90" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
           <span className="text-chilca/90 uppercase tracking-[0.4em] text-xs md:text-sm mb-6 animate-reveal font-semibold">
             Huamanga · Perú
@@ -724,34 +748,127 @@ function Index() {
       </header>
 
       {/* CULTURA Y TRADICIÓN */}
-      <section className="py-24 md:py-40 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-          <div className="md:col-span-5">
-            <img
-              src={retabloImg}
-              alt="Retablo ayacuchano tallado a mano con figuras policromadas"
-              width={800}
-              height={1200}
-              loading="lazy"
-              decoding="async"
-              className="w-full aspect-[4/5] object-cover"
-            />
+      <section className="flex justify-center items-center w-full min-h-screen overflow-x-hidden relative pt-4 lg:pt-6 pb-12">
+        <RetabloWrapper>
+          {/* Layout Responsivo: Vertical en Móvil (<lg), Side-by-Side en Desktop (lg: >=1024px) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center p-5 lg:p-10 overflow-hidden">
+            
+            {/* Columna Izquierda: Foto del retablo */}
+            <div className="lg:col-span-5 w-full max-w-[220px] lg:max-w-none mx-auto shrink-0">
+              <div className="relative">
+                <div
+                  className="absolute -inset-2 z-0"
+                  style={{
+                    background: "linear-gradient(135deg, #5D2E0C 0%, #8B4513 50%, #5D2E0C 100%)",
+                    boxShadow: "0 6px 20px rgba(93,46,12,0.5)",
+                  }}
+                />
+                <img
+                  src={retabloImg}
+                  alt="Retablo ayacuchano tallado a mano con figuras policromadas"
+                  width={600}
+                  height={750}
+                  loading="lazy"
+                  decoding="async"
+                  className="relative z-10 w-full aspect-[4/5] object-cover shadow-lg"
+                  style={{ boxShadow: "inset 0 0 0 1px rgba(255,220,150,0.15)" }}
+                />
+              </div>
+            </div>
+
+            {/* Columna Derecha: Bloque Narrativo y CTAs */}
+            <div className="lg:col-span-7 flex flex-col gap-3 lg:gap-4 text-center lg:text-left">
+              
+              {/* Eyebrow label */}
+              <span
+                className="font-sans font-semibold uppercase tracking-[0.3em] text-[10px] lg:text-[11px]"
+                style={{ color: "#8B4513" }}
+              >
+                Cultura y Tradición
+              </span>
+
+              {/* Título Serif elegante */}
+              <h2
+                className="font-serif font-light leading-[1.08] text-balance"
+                style={{
+                  fontSize: "clamp(1.5rem, 2.8vw, 2.5rem)",
+                  color: "#2d1b15",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                El retablo, la <span className="italic">textilería</span> y el fogón
+              </h2>
+
+              {/* Separador ornamental */}
+              <div className="flex items-center gap-2 justify-center lg:justify-start my-0.5" aria-hidden="true">
+                <span className="block h-px w-8 bg-[#8B4513]/40" />
+                <AyacuchoFlowerInline />
+                <span className="block h-px w-8 bg-[#8B4513]/40" />
+              </div>
+
+              {/* Cuerpo de texto */}
+              <p
+                className="font-sans font-light leading-[1.65] text-pretty"
+                style={{
+                  fontSize: "clamp(0.8rem, 1.05vw, 0.95rem)",
+                  color: "#3d2010",
+                }}
+              >
+                En Ayacucho el arte y la comida comparten origen: manos que tallan
+                retablos, tejen mantas y avivan el fogón con la misma paciencia.
+                Cada grano de maíz morado, cada aroma a leña y cada textura de la
+                piedra volcánica cuentan la historia de una tierra que se niega a
+                olvidar su esencia.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-2">
+                <a
+                  href="/restaurante"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 font-sans font-semibold text-[10px] lg:text-[11px] uppercase tracking-[0.2em] transition-all duration-300"
+                  style={{
+                    background: "linear-gradient(135deg, #8B2500 0%, #C0392B 100%)",
+                    color: "#fdf8f0",
+                    boxShadow: "0 4px 14px rgba(139,37,0,0.35)",
+                    border: "1px solid #6B1A00",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  Descubrir la historia
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-1 transition-transform duration-300">
+                    <path d="M1 7H13M8 2L13 7L8 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </a>
+                <a
+                  href="/carta"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 font-sans font-semibold text-[10px] lg:text-[11px] uppercase tracking-[0.25em] transition-all duration-300"
+                  style={{
+                    background: "transparent",
+                    color: "#5D2E0C",
+                    border: "1px solid #8B4513",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#5D2E0C";
+                    e.currentTarget.style.color = "#fdf8f0";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "#5D2E0C";
+                  }}
+                >
+                  Ver el menú
+                </a>
+              </div>
+
+            </div>
+
           </div>
-          <div className="md:col-span-6 md:col-start-7">
-            <span className="text-eucalipto font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
-              Cultura y Tradición
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
-              El retablo, la textilería y el fogón
-            </h2>
-            <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-nogal/75">
-              En Ayacucho el arte y la comida comparten origen: manos que tallan retablos, tejen
-              mantas y avivan el fogón con la misma paciencia. Cada grano de maíz morado, cada aroma
-              a leña y cada textura de la piedra volcánica cuentan la historia de una tierra que se
-              niega a olvidar su esencia.
-            </p>
-          </div>
-        </div>
+        </RetabloWrapper>
       </section>
 
       {/* LUGARES PARA VISITAR */}
@@ -963,20 +1080,23 @@ function Index() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
             <Link
-              to="/restaurante"
+              to="/reservas"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 font-serif font-bold text-lg tracking-wide rounded-xl btn-yellow-hover"
             >
               <span>Reserva tu Mesa</span>
             </Link>
-            <Link
-              to="/restaurante"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/30 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm"
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-piedra/30 text-piedra text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-piedra/10 transition-colors rounded-sm cursor-pointer"
             >
               Pedir por Delivery
-            </Link>
+            </button>
           </div>
         </div>
       </section>
+
+      <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
       <SiteFooter />
     </div>

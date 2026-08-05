@@ -4,9 +4,9 @@ import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { categories as staticCategories } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
 import { useLiveMenuCategories, Dish } from "@/lib/liveProducts";
-import { useCart } from "@/context/CartContext";
 import { CartSidebar } from "@/components/CartSidebar";
-import { BreakfastCustomizationModal } from "@/components/BreakfastCustomizationModal";
+import { useCart } from "@/context/CartContext";
+import { ShoppingCart } from "lucide-react";
 
 export const Route = createFileRoute("/carta")({
   head: () => ({
@@ -25,42 +25,59 @@ export const Route = createFileRoute("/carta")({
 function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
-  const [selectedBreakfastDish, setSelectedBreakfastDish] = useState<Dish | null>(null);
-  const { addItem } = useCart();
+  const { totalItems, setIsOpen: setIsCartOpen } = useCart();
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
 
   return (
     <div className="min-h-screen bg-piedra text-nogal font-sans flex flex-col">
-      {/* Sleek Top Nav Bar - Premium Style (Centered Logo) */}
-      <nav className="bg-eucalipto text-piedra px-4 md:px-10 py-2 md:py-4 flex items-center justify-between shadow-md relative z-30">
-        <div className="flex-1 flex justify-start">
-          <SiteNavigationMenu isScrolled={false} />
+      {/* Unified Top Nav Bar - Premium Style (Matches Homepage & Reservas) */}
+      <nav className="bg-[#f8f4e6] text-nogal px-4 md:px-10 py-3 flex items-center justify-between shadow-xs border-b border-nogal/10 sticky top-0 z-50">
+        <div className="flex-1 flex justify-start items-center">
+          <SiteNavigationMenu isScrolled={true} />
         </div>
 
-        <div className="flex-none">
-          <div
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 overflow-hidden flex-shrink-0 bg-white shadow-sm flex items-center justify-center p-1"
-            style={{ borderColor: "var(--color-cream)" }}
+        <Link
+          to="/"
+          className="flex-none pointer-events-auto"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <img
+            src="/images.png"
+            alt="Las Flores Logo"
+            className="h-8 md:h-10 w-auto object-contain"
+          />
+        </Link>
+
+        <div className="flex-1 flex justify-end items-center gap-4 md:gap-6 text-[11px] md:text-xs uppercase tracking-widest font-semibold">
+          {totalItems > 0 && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative hover:opacity-70 transition-opacity text-nogal"
+            >
+              <ShoppingCart size={20} />
+              <span className="absolute -top-2 -right-2 bg-chilca text-nogal text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                {totalItems}
+              </span>
+            </button>
+          )}
+
+          <Link
+            to="/reservas"
+            className="px-4.5 py-1.5 md:px-5 md:py-2 text-[11px] md:text-xs font-bold uppercase tracking-widest transition-all rounded-full border border-nogal text-nogal hover:bg-nogal hover:text-white shadow-xs"
           >
-            <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain" />
+            Reservar
+          </Link>
+
+          <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <img
+              src="https://flagcdn.com/w40/pe.png"
+              alt="Peru Flag"
+              className="w-5 md:w-6 h-auto shadow-xs rounded-[2px]"
+            />
+            <span className="text-nogal font-bold text-xs">ES</span>
           </div>
-        </div>
-
-        <div className="flex-1 flex justify-end gap-6 md:gap-8">
-          <Link
-            to="/restaurante"
-            className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-chilca transition-colors"
-          >
-            RESERVAS
-          </Link>
-          <Link
-            to="/restaurante"
-            className="text-sm uppercase tracking-[0.15em] font-semibold hover:text-chilca transition-colors hidden sm:block"
-          >
-            DELIVERY
-          </Link>
         </div>
       </nav>
 
@@ -112,16 +129,10 @@ function CartaPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
             {active.dishes.map((dish, i) => {
-              const isCustomizable = dish.is_customizable || false;
               return (
                 <div
                   key={i}
-                  onClick={() => {
-                    if (isCustomizable) setSelectedBreakfastDish(dish);
-                  }}
-                  className={`bg-piedra border border-pacay/50 rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group hover:border-pacay ${
-                    isCustomizable ? "cursor-pointer" : ""
-                  }`}
+                  className="bg-piedra border border-pacay/50 rounded-md overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all duration-300 group hover:border-pacay"
                 >
                   {dish.image ? (
                     <div className="h-48 overflow-hidden relative">
@@ -151,25 +162,6 @@ function CartaPage() {
                     <p className="text-nogal/70 text-xs flex-1 mb-4 leading-relaxed font-light">
                       {dish.description}
                     </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isCustomizable) {
-                          setSelectedBreakfastDish(dish);
-                        } else {
-                          const priceNum = parseFloat(dish.price.replace("S/ ", ""));
-                          addItem({
-                            id: `${activeId}-${dish.name}`,
-                            name: dish.name,
-                            price: priceNum,
-                            image: dish.image,
-                          });
-                        }
-                      }}
-                      className="w-full py-2.5 bg-cochinilla text-piedra hover:bg-cochinilla/90 text-[11px] uppercase tracking-[0.15em] font-semibold transition-colors rounded-sm"
-                    >
-                      {isCustomizable ? "Personalizar y Agregar" : "Agregar al Carrito"}
-                    </button>
                   </div>
                 </div>
               );
@@ -181,11 +173,6 @@ function CartaPage() {
       <SiteFooter />
 
       <CartSidebar />
-      <BreakfastCustomizationModal
-        open={!!selectedBreakfastDish}
-        onClose={() => setSelectedBreakfastDish(null)}
-        dish={selectedBreakfastDish}
-      />
     </div>
   );
 }

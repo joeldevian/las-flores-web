@@ -4,6 +4,39 @@ import { categories as staticCategories, Category, Dish } from "../components/Me
 
 export type { Category, Dish };
 
+function normalizeText(value: string): string {
+  return (value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildSizeCustomizationSection(medioPrice: number, enteroPrice: number) {
+  return [
+    {
+      id: "tamano",
+      title: "1. Tamaño",
+      options: [
+        { id: "medio_cuy", name: "Medio cuy", price: medioPrice },
+        { id: "cuy_entero", name: "Cuy entero", price: enteroPrice },
+      ],
+    },
+  ];
+}
+
+function buildChoiceCustomizationSection(title: string, options: Array<{ id: string; name: string; price: number }>) {
+  return [
+    {
+      id: title.toLowerCase().replace(/\s+/g, "_"),
+      title,
+      options,
+    },
+  ];
+}
+
 /**
  * Normaliza nombres de categorías para emparejar slug/id
  */
@@ -99,13 +132,40 @@ export async function getLiveCategories(): Promise<Category[]> {
         normalizeCategorySlug(prod.categories?.name || "") ||
         "entradas";
 
+      const normalizedName = normalizeText(prod.name);
+      const isCuyLasFlores = normalizedName.includes("cuy las flores") && !normalizedName.includes("deshuesado");
+      const isCuyLasFloresDeshuesado =
+        normalizedName.includes("cuy las flores") && normalizedName.includes("deshuesado");
+      const isMixto = normalizedName.includes("mixto") && !normalizedName.includes("deshuesado");
+      const isMixtoDeshuesado = normalizedName.includes("mixto") && normalizedName.includes("deshuesado");
+
+      const customOptions = isCuyLasFlores
+        ? buildSizeCustomizationSection(38, 68)
+        : isCuyLasFloresDeshuesado
+          ? buildSizeCustomizationSection(42, 72)
+          : isMixto
+            ? buildChoiceCustomizationSection("1. Tamaño", [
+                { id: "mixto_clasico", name: "Mixto clásico", price: 52 },
+                { id: "mixto_deshuesado", name: "Mixto deshuesado", price: 58 },
+              ])
+            : isMixtoDeshuesado
+              ? buildChoiceCustomizationSection("1. Tamaño", [
+                  { id: "mixto_clasico", name: "Mixto clásico", price: 52 },
+                  { id: "mixto_deshuesado", name: "Mixto deshuesado", price: 58 },
+                ])
+          : undefined;
+
       const dish: Dish = {
         name: prod.name,
         description: prod.description || "",
         price: `S/ ${Number(prod.price || 0).toFixed(2)}`,
         image: prod.image_url || undefined,
-        is_customizable: prod.is_customizable ?? (prod.name.toLowerCase().includes("desayuno ayacuchano") || false),
-        custom_options: prod.custom_options || undefined,
+        is_customizable:
+          (customOptions && customOptions.length > 0) ||
+          prod.is_customizable === true ||
+          prod.name.toLowerCase().includes("desayuno ayacuchano") ||
+          false,
+        custom_options: customOptions || prod.custom_options || undefined,
       };
 
       if (!liveDishesByCat.has(catSlug)) {

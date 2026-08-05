@@ -133,10 +133,11 @@ interface SeatSelectorProps {
   onSelectTable: (tableId: string) => void;
   onSkip: () => void;
   guestCount?: number;
+  initialZone?: string;
 }
 
-export function SeatSelector({ onSelectTable, onSkip, guestCount = 2 }: SeatSelectorProps) {
-  const [selectedZone, setSelectedZone] = useState<string | null>(null);
+export function SeatSelector({ onSelectTable, onSkip, guestCount = 2, initialZone }: SeatSelectorProps) {
+  const [selectedZone, setSelectedZone] = useState<string | null>(initialZone ?? null);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [hoveredZone, setHoveredZone] = useState<string | null>(null);

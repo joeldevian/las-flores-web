@@ -5,7 +5,8 @@ import {
   BarChart3,
   UtensilsCrossed,
 } from "lucide-react";
-import { supabase, signInWithGoogle } from "../lib/supabase";
+import { supabase, signInWithGoogle, signInWithFacebook } from "../lib/supabase";
+import { LoginModal } from "./LoginModal";
 
 interface UserAuthButtonProps {
   textColorClass: string;
@@ -16,6 +17,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [signingIn, setSigningIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // ── Cargar sesión y perfil ──────────────────────────────────────────
   useEffect(() => {
@@ -27,25 +29,30 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     };
     init();
 
+    const handleAuthSync = async () => {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      setSession(s);
+      if (s) await fetchProfile(s.user.id);
+    };
+
+    window.addEventListener("message", handleAuthSync);
+    window.addEventListener("storage", handleAuthSync);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
       if (s) {
         const { data: p } = await supabase.from("profiles").select("role").eq("id", s.user.id).single();
         setProfile(p);
-        // Auto-redirect staff/admin ONLY on fresh login, not on every page load
-        if (event === "SIGNED_IN") {
-          if (p?.role === "admin") {
-            window.location.href = "/admin";
-          } else if (p?.role === "staff") {
-            window.location.href = "/caja";
-          }
-        }
       } else {
         setProfile(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener("message", handleAuthSync);
+      window.removeEventListener("storage", handleAuthSync);
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {
@@ -53,7 +60,11 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     setProfile(data);
   };
 
-  const handleLogin = async () => {
+  const handleLoginClick = () => {
+    setShowLoginModal(true);
+  };
+
+  const handleLoginGoogle = async () => {
     if (signingIn) return;
     setSigningIn(true);
     try {
@@ -62,12 +73,26 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
       console.error(e);
     } finally {
       setSigningIn(false);
+      setShowLoginModal(false);
+    }
+  };
+
+  const handleLoginFacebook = async () => {
+    if (signingIn) return;
+    setSigningIn(true);
+    try {
+      await signInWithFacebook();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSigningIn(false);
+      setShowLoginModal(false);
     }
   };
 
   const handleClick = () => {
     if (!session) {
-      handleLogin();
+      setShowLoginModal(true);
       return;
     }
     // Siempre abre el historial de cliente sin importar el rol (el pie de página ya tiene los links ocultos para admin/caja)
@@ -86,19 +111,30 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
   // ── Sin sesión ─────────────────────────────────────────────────────
   if (!session) {
     return (
-      <button
-        onClick={handleLogin}
-        disabled={signingIn}
-        className={`flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
-        aria-label="Iniciar sesión"
-        title="Iniciar sesión"
-      >
-        {signingIn ? (
-          <Loader2 size={26} className="animate-spin" />
-        ) : (
-          <User size={28} strokeWidth={2} />
+      <>
+        <button
+          onClick={handleLoginClick}
+          disabled={signingIn}
+          className={`flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
+          aria-label="Iniciar sesión"
+          title="Iniciar sesión"
+        >
+          {signingIn ? (
+            <Loader2 size={26} className="animate-spin" />
+          ) : (
+            <User size={28} strokeWidth={2} />
+          )}
+        </button>
+
+        {showLoginModal && (
+          <LoginModal
+            onClose={() => setShowLoginModal(false)}
+            onGoogle={handleLoginGoogle}
+            onFacebook={handleLoginFacebook}
+            loading={signingIn}
+          />
         )}
-      </button>
+      </>
     );
   }
 

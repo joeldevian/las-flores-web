@@ -68,6 +68,7 @@ function DishCard({ dish, categoryId, onSelectBreakfast }: DishCardProps) {
 
   const isCustomizable =
     dish.is_customizable === true ||
+    (dish.custom_options?.length || 0) > 0 ||
     dish.name.toLowerCase().includes("desayuno ayacuchano") ||
     dish.name.toLowerCase().includes("arma tu ronda");
 

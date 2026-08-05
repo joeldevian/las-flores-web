@@ -34,6 +34,7 @@ dist-ssr
 
 .vercel
 .env*
-
 # Local isolated worktrees
 .worktrees/
+*.mov
+
