@@ -84,16 +84,13 @@ const FALLBACK_ZONES = [
   },
 ];
 
-const ALMUERZO_HOURS = [
-  "12:15", "12:30", "12:45", "13:00", "13:15", "13:30",
-  "13:45", "14:00", "14:15", "14:30", "14:45", "15:00",
-  "15:15", "15:30", "15:45", "16:00", "16:15", "16:30", "16:45"
+const DESAYUNO_HOURS = [
+  "09:00", "09:30", "10:00", "10:30", "11:00"
 ];
 
-const CENA_HOURS = [
-  "18:00", "18:15", "18:30", "18:45", "19:00", "19:15",
-  "19:30", "19:45", "20:00", "20:15", "20:30", "20:45",
-  "21:00", "21:15", "21:30"
+const ALMUERZO_HOURS = [
+  "11:30", "12:00", "12:30", "13:00", "13:30", "14:00",
+  "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
 ];
 
 const COUNTRY_CODES = [
@@ -392,14 +389,19 @@ function ReservasPage() {
     navigate({ to: "/reservas", search: { zona: undefined } });
   };
 
-  // Handlers
-  const handleSelectTime = (time: string, serviceType: string) => {
+  const handleSelectTime = async (time: string, serviceType: string) => {
     const zoneId = selectedZona ? selectedZona.id : null;
-    const blockReason = checkBlackoutForSlot(zoneId, form.date, time);
-    if (blockReason) {
-      alert(`El horario ${time} se encuentra bloqueado para esta zona.\nMotivo: ${blockReason}`);
+    
+    // Live validation against Supabase before allowing time selection or step transition
+    const liveCheck = await getBlockedZonesForReservation(form.date, time);
+    const isBlocked = liveCheck.isRestaurantBlocked || (zoneId && liveCheck.blockedZoneIds.includes(zoneId));
+
+    if (isBlocked) {
+      const reason = (zoneId && liveCheck.reasons[zoneId]) || liveCheck.reasons["global"] || "Reserva de administración";
+      alert(`⛔ APAGADO DE RESERVAS ACTIVO\n\nEl salón "${selectedZona?.nombre || "restaurante"}" se encuentra bloqueado para el ${form.date} a las ${time}h.\n\nMotivo: ${reason}`);
       return;
     }
+
     setForm((f) => ({ ...f, time, serviceType }));
     
     // Si el usuario NO está autenticado, mostrar modal de login
@@ -913,12 +915,43 @@ function ReservasPage() {
               </div>
             </div>
 
-            {/* 4. Bloques de Horarios: ALMUERZO y CENA */}
+            {/* 4. Bloques de Horarios: DESAYUNO y ALMUERZO (Cada 30 minutos) */}
             <div className="space-y-8 pt-2">
-              {/* Bloque Almuerzo */}
+              {/* Bloque Desayuno (9:00 am - 11:00 am) */}
               <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#2e5339] mb-3 text-center border-b border-gray-200 pb-1">
-                  Almuerzo
+                <h4 className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#2e5339] mb-3 text-center border-b border-gray-200 pb-1 flex items-center justify-center gap-2">
+                  <span>☕ Desayuno (9:00 am - 11:00 am)</span>
+                </h4>
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+                  {DESAYUNO_HOURS.map((h) => {
+                    const isSelected = form.time === h && form.serviceType === "desayuno";
+                    const hourBlackout = selectedZona ? checkBlackoutForSlot(selectedZona.id, form.date, h) : checkBlackoutForSlot(null, form.date, h);
+                    return (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => handleSelectTime(h, "desayuno")}
+                        className={`py-3 text-center text-xs font-bold rounded-xl transition-all shadow-2xs ${
+                          hourBlackout
+                            ? "bg-red-50 text-red-500 border border-red-200 line-through opacity-65 cursor-not-allowed"
+                            : isSelected
+                            ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373] scale-102"
+                            : "bg-[#2e5339] text-white hover:bg-[#23412c]"
+                        }`}
+                        title={hourBlackout ? `Horario no disponible: ${hourBlackout}` : undefined}
+                      >
+                        {h}
+                        {hourBlackout && <span className="block text-[8px] no-underline font-normal text-red-600">Bloqueado</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bloque Almuerzo (11:30 am - 5:00 pm) */}
+              <div>
+                <h4 className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#2e5339] mb-3 text-center border-b border-gray-200 pb-1 flex items-center justify-center gap-2">
+                  <span>🍲 Almuerzo (11:30 am - 5:00 pm)</span>
                 </h4>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
                   {ALMUERZO_HOURS.map((h) => {
@@ -928,62 +961,21 @@ function ReservasPage() {
                       <button
                         key={h}
                         type="button"
-                        disabled={!!hourBlackout}
                         onClick={() => handleSelectTime(h, "almuerzo")}
-                        className={`py-2.5 text-center text-xs font-bold rounded-md transition-all ${
+                        className={`py-3 text-center text-xs font-bold rounded-xl transition-all shadow-2xs ${
                           hourBlackout
-                            ? "bg-red-100 text-red-700 border border-red-300 opacity-60 cursor-not-allowed line-through"
+                            ? "bg-red-50 text-red-500 border border-red-200 line-through opacity-65 cursor-not-allowed"
                             : isSelected
-                            ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373]"
+                            ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373] scale-102"
                             : "bg-[#2e5339] text-white hover:bg-[#23412c]"
                         }`}
-                        title={hourBlackout ? `Horario bloqueado: ${hourBlackout}` : undefined}
+                        title={hourBlackout ? `Horario no disponible: ${hourBlackout}` : undefined}
                       >
                         {h}
+                        {hourBlackout && <span className="block text-[8px] no-underline font-normal text-red-600">Bloqueado</span>}
                       </button>
                     );
                   })}
-                </div>
-                <div className="mt-3 text-center">
-                  <button type="button" className="text-xs text-[#2e5339] font-semibold underline underline-offset-2 hover:opacity-80">
-                    Lista de espera (Almuerzo)
-                  </button>
-                </div>
-              </div>
-
-              {/* Bloque Cena */}
-              <div>
-                <h4 className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#2e5339] mb-3 text-center border-b border-gray-200 pb-1">
-                  Cena
-                </h4>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-                  {CENA_HOURS.map((h) => {
-                    const isSelected = form.time === h && form.serviceType === "cena";
-                    const hourBlackout = selectedZona ? checkBlackoutForSlot(selectedZona.id, form.date, h) : checkBlackoutForSlot(null, form.date, h);
-                    return (
-                      <button
-                        key={h}
-                        type="button"
-                        disabled={!!hourBlackout}
-                        onClick={() => handleSelectTime(h, "cena")}
-                        className={`py-2.5 text-center text-xs font-bold rounded-md transition-all ${
-                          hourBlackout
-                            ? "bg-red-100 text-red-700 border border-red-300 opacity-60 cursor-not-allowed line-through"
-                            : isSelected
-                            ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373]"
-                            : "bg-[#2e5339] text-white hover:bg-[#23412c]"
-                        }`}
-                        title={hourBlackout ? `Horario bloqueado: ${hourBlackout}` : undefined}
-                      >
-                        {h}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="mt-3 text-center">
-                  <button type="button" className="text-xs text-[#2e5339] font-semibold underline underline-offset-2 hover:opacity-80">
-                    Lista de espera (Cena)
-                  </button>
                 </div>
               </div>
             </div>
