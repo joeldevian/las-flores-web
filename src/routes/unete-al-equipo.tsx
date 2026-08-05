@@ -118,8 +118,8 @@ function UneteAlEquipoPage() {
             alt="Equipo de Restaurante Las Flores"
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-nogal/60 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-piedra via-black/20 to-black/75" />
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/70" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10 pt-16">
