@@ -7,8 +7,8 @@ const NAV_LINKS = [
   { label: 'Nuestra Tierra',      to: '/',             hash: '' },
   { label: 'Nuestro Restaurante', to: '/restaurante',  hash: '' },
   { label: 'La Carta',            to: '/carta',        hash: '' },
-  { label: 'Eventos',             to: '/eventos',      hash: '' },
   { label: 'Reservas',            to: '/reservas',     hash: '' },
+  { label: 'Eventos',             to: '/eventos',      hash: '' },
   { label: 'Contacto',            to: '/contacto',     hash: '' },
 ];
 
