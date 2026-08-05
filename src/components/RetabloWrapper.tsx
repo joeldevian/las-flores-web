@@ -121,7 +121,7 @@ const RetabloWrapper = ({ children }: { children: ReactNode }) => {
        * - Puertas (50% cada una): 22vw (max 450px cada una)
        * - Retablo Abierto: 22vw + 44vw + 22vw = 88vw TOTAL (12vw de margen libre sin scrollbar)
        */
-      className="relative mx-auto my-auto w-[90vw] max-w-xl lg:w-[44vw] lg:max-w-[900px] flex flex-col justify-center"
+      className="relative mx-auto mt-8 lg:mt-12 mb-12 w-[90vw] max-w-xl lg:w-[44vw] lg:max-w-[900px] flex flex-col justify-center"
       style={{
         perspective: "1400px",
         perspectiveOrigin: "50% 40%",
@@ -223,14 +223,24 @@ const RetabloWrapper = ({ children }: { children: ReactNode }) => {
         style={{ pointerEvents: "none" }}
       />
 
-      {/* CAPA 2: Frontón / Copete triangular con Marco — z-50 */}
+      {/* CAPA 2: Frontón / Copete triangular con Marco de Madera caoba — z-50 */}
       <div
-        className="absolute top-0 left-0 right-0 z-50 h-16 lg:h-24 pointer-events-none bg-white border-b-4 border-[#3b1f10]"
+        className="retablo-frame absolute top-0 left-0 right-0 z-50 h-16 lg:h-24 pointer-events-none overflow-hidden"
         aria-hidden="true"
-        style={{ clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
+        style={{
+          clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
+        }}
       >
-        <div className="absolute inset-0 bg-[#3b1f10]" />
-        <div className="absolute inset-[4px] bg-white">
+        {/* Fondo de madera caoba (#3b1f10 con textura de retablo-frame) */}
+        <div className="absolute inset-0 bg-[#3b1f10] retablo-frame" />
+
+        {/* Panel blanco floral interior con margen de marco de madera idéntico al retablo central */}
+        <div
+          className="absolute inset-0 bg-white"
+          style={{
+            clipPath: "polygon(50% 12px, calc(100% - 16px) calc(100% - 8px), 16px calc(100% - 8px))",
+          }}
+        >
           <img
             src="/retablo-copete.png"
             alt=""
@@ -238,6 +248,30 @@ const RetabloWrapper = ({ children }: { children: ReactNode }) => {
             draggable={false}
           />
         </div>
+
+        {/* Borde vectorial SVG perimetral con stroke de madera oscura #3b1f10 y bisel de pan de oro */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none z-20"
+          viewBox="0 0 1000 240"
+          preserveAspectRatio="none"
+        >
+          <polygon
+            points="500,0 1000,240 0,240"
+            fill="none"
+            stroke="#3b1f10"
+            strokeWidth="22"
+            strokeLinejoin="miter"
+            strokeMiterlimit="10"
+          />
+          <polygon
+            points="500,20 962,226 38,226"
+            fill="none"
+            stroke="#d4a373"
+            strokeWidth="2"
+            strokeOpacity="0.45"
+            strokeLinejoin="miter"
+          />
+        </svg>
       </div>
 
       {/* CAPA 3: Contenido rectangular — z-10 (overflow-visible para despliegue 3D) */}

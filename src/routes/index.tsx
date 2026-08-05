@@ -747,8 +747,8 @@ function Index() {
         </div>
       </header>
 
-      {/* CULTURA Y TRADICI\u00d3N */}
-      <section className="flex justify-center items-center w-full min-h-screen overflow-x-hidden relative">
+      {/* CULTURA Y TRADICIÓN */}
+      <section className="flex justify-center items-center w-full min-h-screen overflow-x-hidden relative pt-4 lg:pt-6 pb-12">
         <RetabloWrapper>
           {/* Layout Responsivo: Vertical en Móvil (<lg), Side-by-Side en Desktop (lg: >=1024px) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center p-5 lg:p-10 overflow-hidden">
