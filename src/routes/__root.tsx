@@ -129,20 +129,79 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  // Mostrar spinner mientras Supabase procesa el callback OAuth (?code= o #access_token=)
-  // Supabase v2 detecta y procesa estos parámetros automáticamente — NO llamamos
-  // exchangeCodeForSession manualmente para evitar el error 400 (double exchange).
+
+  // ── Detectar si estamos dentro del popup de Google ─────────────────
+  const isPopup = typeof window !== "undefined" && (
+    window.name === "google_auth_popup" ||
+    (Boolean(window.opener) && (
+      window.location.hash.includes("access_token") ||
+      window.location.search.includes("code=")
+    ))
+  );
+
+  // ── Mostrar spinner mientras Supabase procesa el callback OAuth ─────
+  // Solo aplica a la ventana PRINCIPAL (no al popup) con ?code= o #access_token=
   const [oauthLoading, setOauthLoading] = useState(() => {
-    if (typeof window === "undefined") return false;
+    if (typeof window === "undefined" || isPopup) return false;
     const url = new URL(window.location.href);
     return url.searchParams.has("code") ||
            window.location.hash.includes("access_token");
   });
 
+  // ── Lógica para el POPUP: detectar sesión y cerrar automáticamente ──
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!isPopup) return;
 
-    // Limpiar parámetros de error OAuth de la URL
+    const close = () => {
+      try { window.close(); } catch {}
+      // Fallback si el navegador bloquea window.close()
+      setTimeout(() => { try { window.close(); } catch {} }, 300);
+    };
+
+    // Notificar al opener y cerrar
+    const notify = () => {
+      if (window.opener) {
+        try {
+          window.opener.postMessage({ type: "SUPABASE_AUTH_SUCCESS" }, "*");
+        } catch {}
+      }
+      close();
+    };
+
+    // Si la sesión ya existe (popup regresa con token), cerrar de inmediato
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) { notify(); return; }
+
+      // Si no hay sesión aún, esperar el evento SIGNED_IN
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+        if (event === "SIGNED_IN") {
+          subscription.unsubscribe();
+          notify();
+        }
+      });
+
+      // Timeout: si en 10s no cierra, mostrar botón manual
+      setTimeout(() => { subscription.unsubscribe(); }, 10000);
+    });
+  }, [isPopup]);
+
+  // ── Lógica para la ventana PRINCIPAL: escuchar mensaje del popup ────
+  useEffect(() => {
+    if (isPopup) return;
+
+    const handleMessage = async (e: MessageEvent) => {
+      if (e.data?.type === "SUPABASE_AUTH_SUCCESS") {
+        // Forzar refresco de sesión en la ventana principal
+        await supabase.auth.getSession();
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [isPopup]);
+
+  // ── Limpiar errores OAuth de la URL ────────────────────────────────
+  useEffect(() => {
+    if (typeof window === "undefined" || isPopup) return;
     const url = new URL(window.location.href);
     if (url.searchParams.has("error") || url.searchParams.has("error_code")) {
       url.searchParams.delete("error");
@@ -151,13 +210,14 @@ function RootComponent() {
       url.hash = "";
       window.history.replaceState({}, "", url.toString());
     }
+  }, [isPopup]);
 
+  // ── Lógica de loading para callback de Facebook (redirect) ─────────
+  useEffect(() => {
     if (!oauthLoading) return;
 
-    // Esperar a que Supabase dispare SIGNED_IN (lo hace automáticamente al detectar ?code=)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        // Limpiar URL de parámetros OAuth
         const cleanUrl = new URL(window.location.href);
         cleanUrl.searchParams.delete("code");
         cleanUrl.hash = "";
@@ -167,23 +227,36 @@ function RootComponent() {
       }
     });
 
-    // Timeout de seguridad: si después de 8 segundos no hubo SIGNED_IN, salir del loading
     const timeout = setTimeout(() => {
       setOauthLoading(false);
       subscription.unsubscribe();
-      // Limpiar URL de todos modos
       const cleanUrl = new URL(window.location.href);
       cleanUrl.searchParams.delete("code");
       cleanUrl.hash = "";
       window.history.replaceState({}, "", cleanUrl.toString());
     }, 8000);
 
-    return () => {
-      clearTimeout(timeout);
-      subscription.unsubscribe();
-    };
+    return () => { clearTimeout(timeout); subscription.unsubscribe(); };
   }, [oauthLoading]);
 
+  // ── Render del POPUP ───────────────────────────────────────────────
+  if (isPopup) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center gap-4 p-6 text-center">
+        <div className="w-10 h-10 border-[3px] border-[#2C4A3E] border-t-transparent rounded-full animate-spin" />
+        <p className="font-serif text-[#2C4A3E] font-semibold text-base">¡Autenticación exitosa!</p>
+        <p className="text-xs text-black/40">Cerrando ventana…</p>
+        <button
+          onClick={() => { try { window.close(); } catch {} }}
+          className="mt-2 text-xs px-5 py-2 bg-[#2C4A3E] text-[#FBF5E6] rounded-xl font-bold hover:opacity-90 transition-all"
+        >
+          Cerrar ventana
+        </button>
+      </div>
+    );
+  }
+
+  // ── Render loading de Facebook redirect ───────────────────────────
   if (oauthLoading) {
     return (
       <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center gap-4">
