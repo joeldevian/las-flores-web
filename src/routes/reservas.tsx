@@ -3,9 +3,10 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
-import { signInWithGoogle, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
+import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check } from "lucide-react";
+import { LoginModal } from "@/components/LoginModal";
 
 export const Route = createFileRoute("/reservas")({
   validateSearch: (search: Record<string, unknown>): { zona?: string } => {
@@ -174,6 +175,8 @@ function ReservasPage() {
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [pendingStepTransition, setPendingStepTransition] = useState<number | null>(null);
 
   const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
 
@@ -222,24 +225,42 @@ function ReservasPage() {
           lastName: f.lastName || lName,
           phone: f.phone || newUser.user_metadata?.phone || "",
         }));
+        
+        // Verificar si hay una transición pendiente guardada en localStorage
+        const savedStep = localStorage.getItem('reserva_pending_step');
+        if (savedStep) {
+          const stepNum = parseInt(savedStep);
+          localStorage.removeItem('reserva_pending_step');
+          setPendingStepTransition(stepNum);
+        }
       }
     };
     syncSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (isCancelled) return;
-      setActiveUser(session?.user || null);
-      if (session?.user) {
-        const metaName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+      const newUser = session?.user || null;
+      setActiveUser(newUser);
+      
+      if (newUser) {
+        const metaName = newUser.user_metadata?.full_name || newUser.user_metadata?.name || "";
         const parts = metaName.trim().split(" ");
         setForm((f) => ({
           ...f,
-          email: session.user.email || f.email,
-          repeatEmail: session.user.email || f.repeatEmail,
+          email: newUser.email || f.email,
+          repeatEmail: newUser.email || f.repeatEmail,
           firstName: f.firstName || parts[0] || "",
           lastName: f.lastName || parts.slice(1).join(" ") || "",
-          phone: f.phone || session.user.user_metadata?.phone || "",
+          phone: f.phone || newUser.user_metadata?.phone || "",
         }));
+        
+        // Verificar si hay una transición pendiente guardada en localStorage
+        const savedStep = localStorage.getItem('reserva_pending_step');
+        if (savedStep) {
+          const stepNum = parseInt(savedStep);
+          localStorage.removeItem('reserva_pending_step');
+          setPendingStepTransition(stepNum);
+        }
       }
     });
 
@@ -248,6 +269,19 @@ function ReservasPage() {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Efecto separado para manejar la transición después del login
+  useEffect(() => {
+    if (activeUser && pendingStepTransition) {
+      // El usuario acaba de loguearse y había una transición pendiente
+      setShowLoginModal(false);
+      setMainStep(pendingStepTransition);
+      setPendingStepTransition(null);
+      setTimeout(() => {
+        window.scrollTo({ top: 500, behavior: "smooth" });
+      }, 100);
+    }
+  }, [activeUser, pendingStepTransition]);
 
   // Handler when user selects a zone card
   const handleSelectZoneCard = (z: typeof ZONAS[0]) => {
@@ -268,7 +302,18 @@ function ReservasPage() {
   // Handlers
   const handleSelectTime = (time: string, serviceType: "almuerzo" | "cena") => {
     setForm((f) => ({ ...f, time, serviceType }));
-    setMainStep(2); // Advance to Information
+    
+    // Si el usuario NO está autenticado, mostrar modal de login
+    if (!activeUser) {
+      setPendingStepTransition(2); // Guardamos que queremos ir al paso 2
+      // Guardar en localStorage para persistir después del redirect de OAuth
+      localStorage.setItem('reserva_pending_step', '2');
+      setShowLoginModal(true);
+      return;
+    }
+    
+    // Si ya está autenticado, avanzar directamente al paso 2
+    setMainStep(2);
     window.scrollTo({ top: 500, behavior: "smooth" });
   };
 
@@ -333,6 +378,24 @@ function ReservasPage() {
       window.scrollTo({ top: 300, behavior: "smooth" });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handler para Google Login desde el modal
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Error al iniciar sesión con Google:", error);
+    }
+  };
+
+  // Handler para Facebook Login desde el modal
+  const handleFacebookLogin = async () => {
+    try {
+      await signInWithFacebook();
+    } catch (error) {
+      console.error("Error al iniciar sesión con Facebook:", error);
     }
   };
 
@@ -1127,6 +1190,19 @@ function ReservasPage() {
   )}
 
       <SiteFooter />
+
+      {/* Modal de Login (aparece automáticamente cuando se intenta pasar al paso 2 sin autenticación) */}
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => {
+            setShowLoginModal(false);
+            setPendingStepTransition(null);
+          }}
+          onGoogle={handleGoogleLogin}
+          onFacebook={handleFacebookLogin}
+          subtitle="Inicia sesión para continuar con tu reserva. Tus datos se completarán automáticamente."
+        />
+      )}
     </div>
   );
 }
