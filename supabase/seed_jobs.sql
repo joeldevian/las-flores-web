@@ -72,24 +72,28 @@ INSERT INTO public.job_offers (
   '2026-12-31',
   4
 )
-ON CONFLICT (id) DO UPDATE SET
+ON CONFLICT (slug) DO UPDATE SET
   title = EXCLUDED.title,
+  department = EXCLUDED.department,
+  location = EXCLUDED.location,
+  work_mode = EXCLUDED.work_mode,
   summary = EXCLUDED.summary,
   description = EXCLUDED.description,
   responsibilities = EXCLUDED.responsibilities,
   requirements = EXCLUDED.requirements,
   benefits = EXCLUDED.benefits,
   status = EXCLUDED.status,
-  application_deadline = EXCLUDED.application_deadline;
+  application_deadline = EXCLUDED.application_deadline,
+  sort_order = EXCLUDED.sort_order;
 
--- 2. Insertar Postulaciones de Muestra
+-- 2. Insertar Postulaciones de Muestra (Vincular mediante slug)
 INSERT INTO public.job_applications (
   id, job_offer_id, full_name, phone, email, city,
   experience_summary, availability, privacy_consent, cv_path, status, internal_notes
 ) VALUES
 (
   'b1111111-1111-1111-1111-111111111111',
-  'a1111111-1111-1111-1111-111111111111',
+  (SELECT id FROM public.job_offers WHERE slug = 'anfitrion-de-salon' LIMIT 1),
   'María Fernanda Morales Quispe',
   '+51 966 123 456',
   'maria.morales@gmail.com',
@@ -103,7 +107,7 @@ INSERT INTO public.job_applications (
 ),
 (
   'b2222222-2222-2222-2222-222222222222',
-  'a2222222-2222-2222-2222-222222222222',
+  (SELECT id FROM public.job_offers WHERE slug = 'cocinero-gastronomia-ayacuchana' LIMIT 1),
   'Carlos Alberto Huamán Mendoza',
   '+51 980 852 963',
   'carlos.huaman@hotmail.com',
@@ -117,7 +121,7 @@ INSERT INTO public.job_applications (
 ),
 (
   'b3333333-3333-3333-3333-333333333333',
-  'a3333333-3333-3333-3333-333333333333',
+  (SELECT id FROM public.job_offers WHERE slug = 'bartender-regional-cocteleria' LIMIT 1),
   'Lucía Valeria Flores Rojas',
   '+51 977 441 225',
   'lucia.flores@gmail.com',
