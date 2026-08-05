@@ -69,9 +69,9 @@ export function SiteFooter() {
               <a href="#" className="hover:text-chilca transition-colors">
                 Términos y Condiciones
               </a>
-              <a href="#" className="hover:text-chilca transition-colors font-semibold">
+              <Link to="/unete-al-equipo" className="hover:text-chilca transition-colors font-semibold">
                 Únete al Equipo
-              </a>
+              </Link>
             </div>
 
             <a

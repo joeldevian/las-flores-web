@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UneteAlEquipoRouteImport } from './routes/unete-al-equipo'
 import { Route as RestauranteRouteImport } from './routes/restaurante'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as EventosRouteImport } from './routes/eventos'
@@ -18,6 +19,11 @@ import { Route as CajaRouteImport } from './routes/caja'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UneteAlEquipoRoute = UneteAlEquipoRouteImport.update({
+  id: '/unete-al-equipo',
+  path: '/unete-al-equipo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RestauranteRoute = RestauranteRouteImport.update({
   id: '/restaurante',
   path: '/restaurante',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof EventosRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
+  '/unete-al-equipo': typeof UneteAlEquipoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
+  '/unete-al-equipo': typeof UneteAlEquipoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/eventos': typeof EventosRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
+  '/unete-al-equipo': typeof UneteAlEquipoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/reservas'
     | '/restaurante'
+    | '/unete-al-equipo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/reservas'
     | '/restaurante'
+    | '/unete-al-equipo'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/reservas'
     | '/restaurante'
+    | '/unete-al-equipo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,10 +144,18 @@ export interface RootRouteChildren {
   EventosRoute: typeof EventosRoute
   ReservasRoute: typeof ReservasRoute
   RestauranteRoute: typeof RestauranteRoute
+  UneteAlEquipoRoute: typeof UneteAlEquipoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unete-al-equipo': {
+      id: '/unete-al-equipo'
+      path: '/unete-al-equipo'
+      fullPath: '/unete-al-equipo'
+      preLoaderRoute: typeof UneteAlEquipoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/restaurante': {
       id: '/restaurante'
       path: '/restaurante'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventosRoute: EventosRoute,
   ReservasRoute: ReservasRoute,
   RestauranteRoute: RestauranteRoute,
+  UneteAlEquipoRoute: UneteAlEquipoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
