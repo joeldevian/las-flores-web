@@ -623,6 +623,7 @@ function AdminRoute() {
               {activeTab === "orders" && "Gestión de Pedidos & Comandas"}
               {activeTab === "menu" && "Gestión de Carta & Platos"}
               {activeTab === "coupons" && "Cupones & Promociones"}
+              {activeTab === "jobs" && "Convocatorias & Postulantes"}
             </h1>
           </div>
 
@@ -668,82 +669,84 @@ function AdminRoute() {
         {/* Main Content Body */}
         <main className="p-6 md:p-8 space-y-8 max-w-7xl">
           
-          {/* Executive KPI Metric Cards - Harmonized Clean Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            
-            {/* Facturación Acumulada */}
-            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
-                <span>Facturación Total</span>
-                <div className="w-9 h-9 rounded-xl bg-eucalipto text-chilca flex items-center justify-center">
-                  <DollarSign size={18} />
+          {/* Executive KPI Metric Cards - Harmonized Clean Grid (Only in Analytics BI tab) */}
+          {activeTab === "analytics" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              
+              {/* Facturación Acumulada */}
+              <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+                  <span>Facturación Total</span>
+                  <div className="w-9 h-9 rounded-xl bg-eucalipto text-chilca flex items-center justify-center">
+                    <DollarSign size={18} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
+                    S/ {totalSales.toFixed(2)}
+                  </span>
+                  <p className="text-[11px] text-pacay mt-1 font-semibold flex items-center gap-1">
+                    <TrendingUp size={12} /> Órdenes confirmadas
+                  </p>
                 </div>
               </div>
-              <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
-                  S/ {totalSales.toFixed(2)}
-                </span>
-                <p className="text-[11px] text-pacay mt-1 font-semibold flex items-center gap-1">
-                  <TrendingUp size={12} /> Órdenes confirmadas
-                </p>
-              </div>
-            </div>
 
-            {/* Pedidos en Proceso */}
-            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
-                <span>Pedidos Activos</span>
-                <div className="w-9 h-9 rounded-xl bg-cielo text-white flex items-center justify-center">
-                  <ShoppingBag size={18} />
+              {/* Pedidos en Proceso */}
+              <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+                  <span>Pedidos Activos</span>
+                  <div className="w-9 h-9 rounded-xl bg-cielo text-white flex items-center justify-center">
+                    <ShoppingBag size={18} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
+                    {activeOrdersCount}
+                  </span>
+                  <p className="text-[11px] text-cielo mt-1 font-semibold flex items-center gap-1">
+                    <Clock size={12} /> En cocina o despacho
+                  </p>
                 </div>
               </div>
-              <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
-                  {activeOrdersCount}
-                </span>
-                <p className="text-[11px] text-cielo mt-1 font-semibold flex items-center gap-1">
-                  <Clock size={12} /> En cocina o despacho
-                </p>
-              </div>
-            </div>
 
-            {/* Reservas Pendientes */}
-            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
-                <span>Reservas Pendientes</span>
-                <div className="w-9 h-9 rounded-xl bg-chilca text-cafe flex items-center justify-center">
-                  <Calendar size={18} />
+              {/* Reservas Pendientes */}
+              <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+                  <span>Reservas Pendientes</span>
+                  <div className="w-9 h-9 rounded-xl bg-chilca text-cafe flex items-center justify-center">
+                    <Calendar size={18} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
+                    {pendingReservationsCount}
+                  </span>
+                  <p className="text-[11px] text-chilca-dark mt-1 font-semibold flex items-center gap-1">
+                    <UserCheck size={12} /> Por confirmar horario
+                  </p>
                 </div>
               </div>
-              <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
-                  {pendingReservationsCount}
-                </span>
-                <p className="text-[11px] text-chilca mt-1 font-semibold flex items-center gap-1">
-                  <UserCheck size={12} /> Por confirmar horario
-                </p>
-              </div>
-            </div>
 
-            {/* Platos Disponibles */}
-            <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
-                <span>Carta Activa</span>
-                <div className="w-9 h-9 rounded-xl bg-eucalipto text-white flex items-center justify-center">
-                  <UtensilsCrossed size={18} />
+              {/* Carta Activa */}
+              <div className="bg-white p-5 rounded-2xl border border-eucalipto/8 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between text-nogal/50 text-[11px] font-sans font-bold uppercase tracking-wider">
+                  <span>Carta Activa</span>
+                  <div className="w-9 h-9 rounded-xl bg-eucalipto text-white flex items-center justify-center">
+                    <UtensilsCrossed size={18} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
+                    {availableProductsCount} <span className="text-base text-nogal/30 font-normal">/ {products.length}</span>
+                  </span>
+                  <p className="text-[11px] text-pacay mt-1 font-semibold flex items-center gap-1">
+                    <CheckCircle2 size={12} /> Platos disponibles en carta
+                  </p>
                 </div>
               </div>
-              <div className="mt-3">
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-nogal">
-                  {availableProductsCount} <span className="text-base text-nogal/30 font-normal">/ {products.length}</span>
-                </span>
-                <p className="text-[11px] text-pacay mt-1 font-semibold flex items-center gap-1">
-                  <CheckCircle2 size={12} /> Platos disponibles en carta
-                </p>
-              </div>
-            </div>
 
-          </div>
+            </div>
+          )}
 
           {/* Panel Tab Content Display */}
           <div className="bg-white rounded-2xl border border-eucalipto/8 shadow-sm overflow-hidden">
