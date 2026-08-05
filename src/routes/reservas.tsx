@@ -42,7 +42,7 @@ const ZONAS = [
     nombre: "Estrado",
     maxCap: 6,
     descripcion: "Ambiente elevado en el escenario tradicional del restaurante.",
-    imagen: "/imagenes-reales/Salones/Estrado%20.webp",
+    imagen: "/imagenes-reales/Salones/Estrado-.webp",
     capacidad: "Mesa para 6 personas",
   },
   {
