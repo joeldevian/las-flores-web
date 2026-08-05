@@ -99,35 +99,49 @@ export interface OrderPayload {
  * Iniciar sesión con Google OAuth mediante ventana emergente Popup (sin perder el carrito ni la página actual)
  */
 export async function signInWithGoogle() {
-  const currentUrl =
-    typeof window !== "undefined" && window.location.href
-      ? window.location.href
-      : "https://las-flores-web-0079.vercel.app/";
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://las-flores-web-0079.vercel.app";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: currentUrl,
+      skipBrowserRedirect: true,
+      redirectTo: `${currentOrigin}/`,
+      queryParams: { prompt: "select_account" },
     },
   });
 
   if (error) throw error;
+
+  if (data?.url) {
+    const width = 500, height = 650;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const popup = window.open(
+      data.url,
+      "google_auth_popup",
+      `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
+    );
+    if (!popup) window.location.href = data.url;
+  }
   return data;
 }
 
 /**
- * Iniciar sesión con Facebook OAuth
+ * Iniciar sesión con Facebook OAuth (redirect directo — Supabase maneja el PKCE automáticamente)
  */
 export async function signInWithFacebook() {
-  const currentUrl =
-    typeof window !== "undefined" && window.location.href
-      ? window.location.href
-      : "https://las-flores-web-0079.vercel.app/";
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://las-flores-web-0079.vercel.app";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "facebook",
     options: {
-      redirectTo: currentUrl,
+      redirectTo: `${currentOrigin}/`,
     },
   });
 

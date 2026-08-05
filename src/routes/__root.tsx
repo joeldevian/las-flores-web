@@ -129,48 +129,60 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const [oauthLoading, setOauthLoading] = useState(false);
+  // Mostrar spinner mientras Supabase procesa el callback OAuth (?code= o #access_token=)
+  // Supabase v2 detecta y procesa estos parámetros automáticamente — NO llamamos
+  // exchangeCodeForSession manualmente para evitar el error 400 (double exchange).
+  const [oauthLoading, setOauthLoading] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const url = new URL(window.location.href);
+    return url.searchParams.has("code") ||
+           window.location.hash.includes("access_token");
+  });
 
-  // ── Procesar callback OAuth de Facebook/Google en la URL ──────────────
-  // Cuando el proveedor redirige de vuelta con ?code=... o #access_token=...
-  // Supabase necesita procesar ese token antes de que los componentes lean la sesión.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Limpiar parámetros de error OAuth de la URL
     const url = new URL(window.location.href);
-    const hasCode = url.searchParams.has("code");
-    const hasAccessToken = window.location.hash.includes("access_token");
-    const hasError = url.searchParams.has("error");
-
-    if (hasError) {
-      // Limpiar parámetros de error de la URL sin recargar la página
+    if (url.searchParams.has("error") || url.searchParams.has("error_code")) {
       url.searchParams.delete("error");
+      url.searchParams.delete("error_code");
       url.searchParams.delete("error_description");
+      url.hash = "";
       window.history.replaceState({}, "", url.toString());
-      return;
     }
 
-    if (hasCode || hasAccessToken) {
-      setOauthLoading(true);
-      // Intercambiar el code por una sesión válida
-      supabase.auth.exchangeCodeForSession(window.location.href)
-        .then(({ error }) => {
-          if (error) {
-            // Fallback: intentar getSession directamente (para flujos implícitos con hash)
-            return supabase.auth.getSession();
-          }
-        })
-        .catch(() => supabase.auth.getSession())
-        .finally(() => {
-          // Limpiar los parámetros OAuth de la URL para que quede limpia
-          const cleanUrl = new URL(window.location.href);
-          cleanUrl.searchParams.delete("code");
-          cleanUrl.hash = "";
-          window.history.replaceState({}, "", cleanUrl.toString());
-          setOauthLoading(false);
-        });
-    }
-  }, []);
+    if (!oauthLoading) return;
+
+    // Esperar a que Supabase dispare SIGNED_IN (lo hace automáticamente al detectar ?code=)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        // Limpiar URL de parámetros OAuth
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete("code");
+        cleanUrl.hash = "";
+        window.history.replaceState({}, "", cleanUrl.toString());
+        setOauthLoading(false);
+        subscription.unsubscribe();
+      }
+    });
+
+    // Timeout de seguridad: si después de 8 segundos no hubo SIGNED_IN, salir del loading
+    const timeout = setTimeout(() => {
+      setOauthLoading(false);
+      subscription.unsubscribe();
+      // Limpiar URL de todos modos
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("code");
+      cleanUrl.hash = "";
+      window.history.replaceState({}, "", cleanUrl.toString());
+    }, 8000);
+
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
+  }, [oauthLoading]);
 
   if (oauthLoading) {
     return (
