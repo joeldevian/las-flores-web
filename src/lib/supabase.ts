@@ -99,79 +99,39 @@ export interface OrderPayload {
  * Iniciar sesión con Google OAuth mediante ventana emergente Popup (sin perder el carrito ni la página actual)
  */
 export async function signInWithGoogle() {
-  const currentOrigin =
-    typeof window !== "undefined" && window.location.origin
-      ? window.location.origin
-      : "https://las-flores-web-oo79.vercel.app";
+  const currentUrl =
+    typeof window !== "undefined" && window.location.href
+      ? window.location.href
+      : "https://las-flores-web-0079.vercel.app/";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      skipBrowserRedirect: true,
-      redirectTo: `${currentOrigin}/`,
+      redirectTo: currentUrl,
     },
   });
 
   if (error) throw error;
-
-  if (data?.url) {
-    const width = 500;
-    const height = 650;
-    const left = window.screenX + (window.outerWidth - width) / 2;
-    const top = window.screenY + (window.outerHeight - height) / 2;
-
-    const popup = window.open(
-      data.url,
-      "google_auth_popup",
-      `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
-    );
-
-    if (!popup) {
-      // Fallback si el navegador bloquea las ventanas emergentes
-      window.location.href = data.url;
-    }
-    // No usamos setInterval/polling — la sesión se detecta automáticamente
-    // mediante supabase.auth.onAuthStateChange() ya suscrito en los componentes.
-    // El popup se auto-cierra en __root.tsx y dispara eventos de sincronización.
-  }
   return data;
 }
 
 /**
- * Iniciar sesión con Facebook OAuth mediante ventana emergente Popup
+ * Iniciar sesión con Facebook OAuth
  */
 export async function signInWithFacebook() {
-  const currentOrigin =
-    typeof window !== "undefined" && window.location.origin
-      ? window.location.origin
-      : "https://las-flores-web-oo79.vercel.app";
+  const currentUrl =
+    typeof window !== "undefined" && window.location.href
+      ? window.location.href
+      : "https://las-flores-web-0079.vercel.app/";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "facebook",
     options: {
-      skipBrowserRedirect: true,
-      redirectTo: `${currentOrigin}/`,
+      redirectTo: currentUrl,
     },
   });
 
   if (error) throw error;
-
-  if (data?.url) {
-    const width = 500;
-    const height = 650;
-    const left = window.screenX + (window.outerWidth - width) / 2;
-    const top = window.screenY + (window.outerHeight - height) / 2;
-
-    const popup = window.open(
-      data.url,
-      "facebook_auth_popup",
-      `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
-    );
-
-    if (!popup) {
-      window.location.href = data.url;
-    }
-  }
   return data;
 }
 
