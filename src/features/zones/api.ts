@@ -183,13 +183,35 @@ export async function listZoneBlackouts(): Promise<ZoneBlackout[]> {
 export async function createZoneBlackout(
   input: ZoneBlackoutInput
 ): Promise<ZoneBlackout> {
+  // Ensure parent zone exists in restaurant_zones table to prevent Foreign Key constraint error
+  if (input.zone_id) {
+    try {
+      await updateRestaurantZone(input.zone_id, {});
+    } catch (e) {
+      console.warn("Auto-upsert parent zone warning:", e);
+    }
+  }
+
   const { data, error } = await supabase
     .from("zone_blackouts")
     .insert([{ ...input, is_active: input.is_active ?? true }])
     .select("*, restaurant_zones(id, name, short_name)")
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error("Error creating zone blackout with join:", error);
+    // Fallback: simple insert without join
+    const { data: fallbackData, error: fallbackError } = await supabase
+      .from("zone_blackouts")
+      .insert([{ ...input, is_active: input.is_active ?? true }])
+      .select("*")
+      .single();
+
+    if (fallbackError) {
+      throw fallbackError;
+    }
+    return fallbackData;
+  }
   return data;
 }
 

@@ -47,9 +47,10 @@ export function AdminBlackoutModal({ isOpen, onClose, zones, onCreated }: AdminB
       await createZoneBlackout(input);
       onCreated();
       onClose();
-    } catch (err) {
-      console.error(err);
-      alert("Error al registrar el apagado de reservas.");
+    } catch (err: any) {
+      console.error("Error al registrar apagado:", err);
+      const errMsg = err?.message || err?.details || "Asegúrate de haber ejecutado el script SQL (supabase/zones_and_blackouts.sql) en el editor SQL de Supabase.";
+      alert(`Error al registrar el apagado de reservas:\n\n${errMsg}`);
     } finally {
       setSaving(false);
     }
