@@ -10,6 +10,7 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 import { CartProvider } from "../context/CartContext";
 import { CartSidebar } from "../components/CartSidebar";
+import { supabase } from "../lib/supabase";
 
 import appCss from "../styles.css?url";
 
@@ -128,84 +129,63 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const [isPopup, setIsPopup] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
 
+  // ── Procesar callback OAuth de Facebook/Google en la URL ──────────────
+  // Cuando el proveedor redirige de vuelta con ?code=... o #access_token=...
+  // Supabase necesita procesar ese token antes de que los componentes lean la sesión.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isAuthPopup =
-        window.name === "google_auth_popup" ||
-        (Boolean(window.opener) && (
-          window.location.hash.includes("access_token") ||
-          window.location.hash.includes("error_description")
-        ));
+    if (typeof window === "undefined") return;
 
-      if (isAuthPopup) {
-        setIsPopup(true);
-      }
+    const url = new URL(window.location.href);
+    const hasCode = url.searchParams.has("code");
+    const hasAccessToken = window.location.hash.includes("access_token");
+    const hasError = url.searchParams.has("error");
+
+    if (hasError) {
+      // Limpiar parámetros de error de la URL sin recargar la página
+      url.searchParams.delete("error");
+      url.searchParams.delete("error_description");
+      window.history.replaceState({}, "", url.toString());
+      return;
+    }
+
+    if (hasCode || hasAccessToken) {
+      setOauthLoading(true);
+      // Intercambiar el code por una sesión válida
+      supabase.auth.exchangeCodeForSession(window.location.href)
+        .then(({ error }) => {
+          if (error) {
+            // Fallback: intentar getSession directamente (para flujos implícitos con hash)
+            return supabase.auth.getSession();
+          }
+        })
+        .catch(() => supabase.auth.getSession())
+        .finally(() => {
+          // Limpiar los parámetros OAuth de la URL para que quede limpia
+          const cleanUrl = new URL(window.location.href);
+          cleanUrl.searchParams.delete("code");
+          cleanUrl.hash = "";
+          window.history.replaceState({}, "", cleanUrl.toString());
+          setOauthLoading(false);
+        });
     }
   }, []);
 
-  // Auto-cerrar la ventana emergente de OAuth después de que Supabase procese la sesión
-  useEffect(() => {
-    if (isPopup) {
-      import("../lib/supabase").then(({ supabase }) => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          try {
-            localStorage.setItem("supabase_auth_sync", Date.now().toString());
-          } catch {}
-
-          if (window.opener) {
-            try {
-              window.opener.postMessage({ type: "SUPABASE_AUTH_SUCCESS" }, window.location.origin);
-            } catch (e) {
-              console.log("PostMessage error:", e);
-            }
-          }
-          // Intentar cerrar la ventana inmediatamente
-          try {
-            window.close();
-          } catch (e) {
-            console.log("Window close error:", e);
-          }
-          const timer = setTimeout(() => {
-            try {
-              window.close();
-            } catch (e) {
-              console.log("Window close fallback:", e);
-            }
-          }, 300);
-          return () => clearTimeout(timer);
-        });
-      });
-    }
-  }, [isPopup]);
+  if (oauthLoading) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center gap-4">
+        <div className="w-10 h-10 border-[3px] border-[#2C4A3E] border-t-transparent rounded-full animate-spin" />
+        <p className="font-serif text-[#2C4A3E] font-semibold text-base">Iniciando sesión…</p>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>
-        {isPopup ? (
-          <div className="fixed inset-0 z-[9999] bg-[#FBF5E6] flex flex-col items-center justify-center p-6 text-center">
-            <div className="w-10 h-10 border-3 border-[#2C4A3E] border-t-transparent rounded-full animate-spin mb-4" />
-            <h3 className="font-serif text-lg font-bold text-[#2C4A3E] mb-1">¡Autenticación Exitosa!</h3>
-            <p className="text-xs text-black/50 mb-4">Cerrando ventana de acceso...</p>
-            <button
-              type="button"
-              onClick={() => {
-                try {
-                  window.close();
-                } catch {}
-              }}
-              className="text-xs px-4 py-2 bg-[#2C4A3E] text-[#FBF5E6] rounded-xl font-bold hover:opacity-90 shadow-sm transition-all"
-            >
-              Cerrar ventana y continuar
-            </button>
-          </div>
-        ) : (
-          <>
-            <Outlet />
-            <CartSidebar />
-          </>
-        )}
+        <Outlet />
+        <CartSidebar />
       </CartProvider>
     </QueryClientProvider>
   );
