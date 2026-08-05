@@ -218,8 +218,10 @@ export function useLiveMenuCategories() {
     refreshMenu();
 
     // Suscripción Realtime a cambios en la tabla 'products' y 'categories'
+    // Usar un nombre de canal único con timestamp para evitar conflictos
+    const channelName = `live-menu-updates-${Date.now()}`;
     const channel = supabase
-      .channel("live-menu-updates")
+      .channel(channelName)
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => {
         refreshMenu();
       })

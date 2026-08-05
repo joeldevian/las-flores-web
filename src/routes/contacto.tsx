@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/site-footer";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
+import { LanguageSelector } from "../components/LanguageSelector";
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/contacto")({
@@ -59,8 +60,7 @@ function ContactoPage() {
             />
           </a>
 
-          {/* Spacer para equilibrar el header */}
-          <div className="w-8" />
+          <LanguageSelector isScrolled={isScrolled} />
         </div>
       </header>
 

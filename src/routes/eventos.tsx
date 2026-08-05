@@ -8,6 +8,7 @@ const retabloImg =
 import { SiteFooter } from "@/components/site-footer";
 import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2 } from "lucide-react";
 import { SiteNavigationMenu } from '../components/SiteNavigationMenu';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { useState, useTransition, useEffect } from 'react';
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
@@ -99,6 +100,7 @@ function EventosPage() {
               </span>
             </button>
           )}
+          <LanguageSelector isScrolled={isScrolled} />
         </div>
       </nav>
 

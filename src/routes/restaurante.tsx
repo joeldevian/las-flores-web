@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { useState, useTransition, useEffect, useRef } from "react";
 import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
+import { LanguageSelector } from "../components/LanguageSelector";
 import { useCart } from "@/context/CartContext";
 
 import { MenuModal } from "@/components/MenuModal";
@@ -379,6 +380,7 @@ function RestaurantePage() {
               </span>
             </button>
           )}
+          <LanguageSelector isScrolled={isScrolled} />
         </div>
       </nav>
 

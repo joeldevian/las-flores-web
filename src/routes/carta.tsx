@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
-import { categories as staticCategories } from "@/components/MenuModal";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { categories as staticCategories, MenuModal } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
 import { useLiveMenuCategories, Dish } from "@/lib/liveProducts";
 import { CartSidebar } from "@/components/CartSidebar";
@@ -26,6 +27,8 @@ function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
   const { totalItems, setIsOpen: setIsCartOpen } = useCart();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
@@ -65,19 +68,19 @@ function CartaPage() {
 
           <Link
             to="/reservas"
-            className="px-4.5 py-1.5 md:px-5 md:py-2 text-[11px] md:text-xs font-bold uppercase tracking-widest transition-all rounded-full border border-nogal text-nogal hover:bg-nogal hover:text-white shadow-xs"
+            className="hover:text-chilca transition-colors"
           >
-            Reservar
+            RESERVAR
           </Link>
 
-          <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-            <img
-              src="https://flagcdn.com/w40/pe.png"
-              alt="Peru Flag"
-              className="w-5 md:w-6 h-auto shadow-xs rounded-[2px]"
-            />
-            <span className="text-nogal font-bold text-xs">ES</span>
-          </div>
+          <button
+            onClick={() => startTransition(() => setIsMenuOpen(true))}
+            className="hover:text-chilca transition-colors"
+          >
+            DELIVERY
+          </button>
+
+          <LanguageSelector isScrolled={true} />
         </div>
       </nav>
 
@@ -173,6 +176,9 @@ function CartaPage() {
       <SiteFooter />
 
       <CartSidebar />
+      
+      {/* Modal de Delivery */}
+      {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
     </div>
   );
 }

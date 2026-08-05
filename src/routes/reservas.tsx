@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { useCart } from "@/context/CartContext";
 import type { User } from "@supabase/supabase-js";
 import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
@@ -508,6 +509,7 @@ function ReservasPage() {
               </span>
             </button>
           )}
+          <LanguageSelector isScrolled={isScrolled} />
         </div>
       </nav>
 

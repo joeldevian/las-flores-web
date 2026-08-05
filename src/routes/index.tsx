@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Star, MapPin, ChefHat, Info, ArrowRight, ArrowRightCircle } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
+import { LanguageSelector } from "../components/LanguageSelector";
 import { useState, useEffect, useRef } from "react";
 const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
@@ -691,15 +692,9 @@ function Index() {
           >
             Reservar
           </Link>
-          {/* Language Selector Indicator (Visual Only) */}
-          <div className="pointer-events-auto flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-            <img 
-              src="https://flagcdn.com/w40/pe.png" 
-              alt="Peru Flag" 
-              className="w-6 h-auto shadow-sm rounded-[2px]" 
-            />
-            <span className={isScrolled ? "text-nogal" : "text-piedra"}>ES</span>
-          </div>
+          
+          {/* Language Selector */}
+          <LanguageSelector isScrolled={isScrolled} />
         </div>
       </nav>
 
