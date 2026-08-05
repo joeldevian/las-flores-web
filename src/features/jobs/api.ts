@@ -44,6 +44,31 @@ function throwIfError(error: unknown): asserts error is null {
   if (error) throw error;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isJobApplication(value: unknown): value is JobApplication {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.id === "string" &&
+    typeof value.job_offer_id === "string" &&
+    typeof value.full_name === "string" &&
+    typeof value.phone === "string" &&
+    typeof value.email === "string" &&
+    typeof value.city === "string" &&
+    typeof value.experience_summary === "string" &&
+    typeof value.availability === "string" &&
+    value.privacy_consent === true &&
+    typeof value.cv_path === "string" &&
+    ["new", "reviewing", "shortlisted", "rejected", "hired"].includes(String(value.status)) &&
+    (typeof value.internal_notes === "string" || value.internal_notes === null) &&
+    typeof value.created_at === "string" &&
+    typeof value.updated_at === "string"
+  );
+}
+
 export async function listPublicJobOffers(): Promise<PublicJobOffer[]> {
   const today = new Date().toISOString().slice(0, 10);
   const { data, error } = await supabase
@@ -137,7 +162,11 @@ export async function submitJobApplication(
     throw error;
   }
 
-  return data as JobApplication;
+  if (!isJobApplication(data)) {
+    throw new Error("La RPC submit_job_application devolvió una respuesta inválida.");
+  }
+
+  return data;
 }
 
 export async function updateJobApplication(

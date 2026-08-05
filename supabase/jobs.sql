@@ -110,6 +110,7 @@ WITH CHECK (public.is_admin());
 DROP POLICY IF EXISTS "Public can submit job applications" ON public.job_applications;
 REVOKE INSERT ON TABLE public.job_applications FROM anon, authenticated;
 
+DROP FUNCTION IF EXISTS public.submit_job_application(UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, BOOLEAN, TEXT);
 CREATE OR REPLACE FUNCTION public.submit_job_application(
   p_job_offer_id UUID,
   p_full_name TEXT,
@@ -121,13 +122,13 @@ CREATE OR REPLACE FUNCTION public.submit_job_application(
   p_privacy_consent BOOLEAN,
   p_cv_path TEXT
 )
-RETURNS UUID
+RETURNS public.job_applications
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  application_id UUID;
+  application public.job_applications%ROWTYPE;
 BEGIN
   IF p_privacy_consent IS DISTINCT FROM true
     OR coalesce(btrim(p_full_name), '') = ''
@@ -183,9 +184,9 @@ BEGIN
     NOW(),
     NOW()
   )
-  RETURNING id INTO application_id;
+  RETURNING * INTO application;
 
-  RETURN application_id;
+  RETURN application;
 END;
 $$;
 

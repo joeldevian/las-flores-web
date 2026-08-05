@@ -27,13 +27,15 @@ const application = {
 function createClient({
   uploadError = null,
   rpcError = null,
+  rpcData = application,
 }: {
   uploadError?: Error | null;
   rpcError?: Error | null;
+  rpcData?: unknown;
 } = {}) {
   const upload = vi.fn().mockResolvedValue({ error: uploadError });
   const remove = vi.fn().mockResolvedValue({ error: null });
-  const rpc = vi.fn().mockResolvedValue({ data: application, error: rpcError });
+  const rpc = vi.fn().mockResolvedValue({ data: rpcData, error: rpcError });
   const from = vi.fn(() => ({ upload, remove }));
 
   return {
@@ -72,6 +74,15 @@ describe("submitJobApplication", () => {
       p_privacy_consent: input.privacy_consent,
       p_cv_path: cvPath,
     });
+  });
+
+  it("rechaza una respuesta RPC que no sea una postulación completa", async () => {
+    const fake = createClient({ rpcData: "application-1" });
+    const cv = new File(["pdf"], "cv.pdf", { type: "application/pdf" });
+
+    await expect(submitJobApplication("offer-1", input, cv, fake.client)).rejects.toThrow(
+      "La RPC submit_job_application devolvió una respuesta inválida.",
+    );
   });
 
   it("elimina el CV si falla el RPC", async () => {

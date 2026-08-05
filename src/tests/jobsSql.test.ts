@@ -7,9 +7,17 @@ const sql = readFileSync(sqlPath, "utf8");
 
 describe("jobs SQL security", () => {
   it("expone postulaciones públicas solo mediante una RPC de campos públicos", () => {
+    const dropFunction =
+      "DROP FUNCTION IF EXISTS public.submit_job_application(UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, BOOLEAN, TEXT);";
+    expect(sql).toContain(dropFunction);
+    expect(sql.indexOf(dropFunction)).toBeLessThan(
+      sql.indexOf("CREATE OR REPLACE FUNCTION public.submit_job_application("),
+    );
     expect(sql).toContain("CREATE OR REPLACE FUNCTION public.submit_job_application(");
     expect(sql).toMatch(/SECURITY DEFINER\s+SET search_path = public/);
-    expect(sql).toContain("REVOKE INSERT ON TABLE public.job_applications FROM anon, authenticated;");
+    expect(sql).toContain(
+      "REVOKE INSERT ON TABLE public.job_applications FROM anon, authenticated;",
+    );
     expect(sql).toContain(
       "GRANT EXECUTE ON FUNCTION public.submit_job_application(UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, BOOLEAN, TEXT) TO anon, authenticated;",
     );
@@ -19,6 +27,10 @@ describe("jobs SQL security", () => {
     )?.[0];
 
     expect(rpc).toBeDefined();
+    expect(rpc).toContain("RETURNS public.job_applications");
+    expect(rpc).toContain("application public.job_applications%ROWTYPE;");
+    expect(rpc).toMatch(/RETURNING \* INTO application;/);
+    expect(rpc).toMatch(/RETURN application;/);
     expect(rpc).not.toMatch(/p_(id|status|internal_notes|created_at|updated_at)\b/);
     expect(rpc).toContain("gen_random_uuid(),");
     expect(rpc).toContain("'new',");
