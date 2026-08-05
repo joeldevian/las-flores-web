@@ -129,7 +129,7 @@ export async function submitJobApplication(
   offerId: string,
   input: JobApplicationInput,
   cv: File,
-  client: JobSubmissionClient = supabase,
+  client: JobSubmissionClient = supabase as unknown as JobSubmissionClient,
 ): Promise<JobApplication> {
   const errors: ApplicationValidationErrors = {
     ...validateApplication(input),

@@ -25,6 +25,7 @@ import {
   ShieldCheck,
   Ticket,
   ListTree,
+  Briefcase,
 } from "lucide-react";
 
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
@@ -32,6 +33,7 @@ import { AdminProductModal } from "../components/AdminProductModal";
 import { AdminCouponModal } from "../components/AdminCouponModal";
 import { AdminCategoryListModal } from "../components/AdminCategoryListModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
+import { AdminJobsSection } from "../components/AdminJobsSection";
 import { removeProductById } from "../utils/adminProducts";
 
 const getLocalYYYYMMDD = (d = new Date()) => {
@@ -48,7 +50,7 @@ export const Route = createFileRoute("/admin")({
 function AdminRoute() {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"analytics" | "orders" | "reservations" | "menu" | "coupons">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "orders" | "reservations" | "menu" | "coupons" | "jobs">("analytics");
   const [refreshing, setRefreshing] = useState(false);
 
   // Data states
@@ -533,6 +535,26 @@ function AdminRoute() {
                 activeTab === "coupons" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
                 {coupons.length}
+              </span>
+            </button>
+
+            {/* Trabaja con Nosotros */}
+            <button
+              onClick={() => setActiveTab("jobs")}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
+                activeTab === "jobs"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
+                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Briefcase size={17} className={activeTab === "jobs" ? "text-chilca" : "text-white/40"} />
+                <span>Trabaja con Nosotros</span>
+              </div>
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
+                activeTab === "jobs" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
+              }`}>
+                NUEVO
               </span>
             </button>
 
@@ -1266,6 +1288,9 @@ function AdminRoute() {
               </div>
             </div>
           )}
+
+          {/* TRABAJA CON NOSOTROS (CONVOCATORIAS & CVS) */}
+          {activeTab === "jobs" && <AdminJobsSection />}
 
         </div>
       </main>

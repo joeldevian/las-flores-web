@@ -82,8 +82,8 @@ describe("job rules", () => {
   });
 
   it("genera una ruta privada sin conservar el nombre personal", () => {
-    expect(createCvPath("offer-1", "CV María Pérez.pdf", "token-fijo")).toBe(
-      "offer-1/token-fijo.pdf",
+    expect(createCvPath("offer-1", "CV María Pérez.pdf", "12345678-1234-1234-1234-1234567890ab")).toBe(
+      "offer-1/12345678-1234-1234-1234-1234567890ab.pdf",
     );
   });
 });

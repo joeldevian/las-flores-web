@@ -364,7 +364,7 @@ export function JobApplicationForm({ offer, onSuccess }: JobApplicationFormProps
       {/* Botón de Envío */}
       <button
         type="submit"
-        disabled={status === "submitting" || status === "success"}
+        disabled={status === "submitting"}
         className="w-full py-4 bg-eucalipto text-cream font-bold text-sm rounded-xl shadow-md hover:bg-eucalipto/90 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
       >
         {status === "submitting" ? (
