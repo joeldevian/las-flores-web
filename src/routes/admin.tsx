@@ -60,6 +60,7 @@ function AdminRoute() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
+  const [applicationsCount, setApplicationsCount] = useState<number>(0);
 
   // Search & Filter states
   const [resSearch, setResSearch] = useState("");
@@ -246,6 +247,14 @@ function AdminRoute() {
         .select("*")
         .order("created_at", { ascending: false });
       if (coupData) setCoupons(coupData);
+
+      // 7. Job Applications Count
+      const { count: jobAppsCount } = await supabase
+        .from("job_applications")
+        .select("*", { count: "exact", head: true });
+      if (jobAppsCount !== null && jobAppsCount !== undefined) {
+        setApplicationsCount(jobAppsCount);
+      }
 
     } catch (err) {
       console.error("Error fetching admin data:", err);
@@ -451,11 +460,6 @@ function AdminRoute() {
                 <BarChart3 size={17} className={activeTab === "analytics" ? "text-chilca" : "text-white/40"} />
                 <span>Analítica & BI</span>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-sans font-bold ${
-                activeTab === "analytics" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
-              }`}>
-                PRO
-              </span>
             </button>
 
             {/* Control de Reservas */}
@@ -551,10 +555,10 @@ function AdminRoute() {
                 <Briefcase size={17} className={activeTab === "jobs" ? "text-chilca" : "text-white/40"} />
                 <span>Trabaja con Nosotros</span>
               </div>
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold ${
+              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
                 activeTab === "jobs" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
               }`}>
-                NUEVO
+                {applicationsCount}
               </span>
             </button>
 
