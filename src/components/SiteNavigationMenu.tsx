@@ -55,9 +55,9 @@ export function SiteNavigationMenu({
         aria-hidden="true"
       />
 
-      {/* ── Drawer — diseño de una sola pantalla, sin scroll ── */}
+      {/* ── Drawer — diseño de una sola pantalla, sin scroll del documento ── */}
       <div
-        className={`fixed inset-y-0 left-0 w-[min(100vw,420px)] z-[100] bg-piedra flex flex-col shadow-2xl pointer-events-auto transition-transform duration-500 ease-in-out ${
+        className={`fixed inset-y-0 left-0 h-screen max-h-screen w-[min(100vw,420px)] z-[100] bg-piedra flex flex-col shadow-2xl pointer-events-auto transition-transform duration-500 ease-in-out overflow-hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -82,7 +82,7 @@ export function SiteNavigationMenu({
         <div className="mx-8 border-t border-nogal/10 shrink-0" />
 
         {/* ── Nav links — tamaño mejorado para llenar el espacio ── */}
-        <nav className="flex flex-col items-start justify-start flex-1 gap-0 px-4 pt-6 pb-4 overflow-y-auto w-full">
+        <nav className="flex flex-col items-start justify-start flex-1 min-h-0 gap-0 px-4 pt-6 pb-4 overflow-y-auto overscroll-contain w-full">
           {NAV_LINKS.map(({ label, to, hash }) => {
             return (
               <Link
@@ -128,10 +128,22 @@ export function SiteNavigationMenu({
           </div>
 
           <div className="flex gap-4 items-center">
-            <a href="#" aria-label="Instagram" className="text-nogal/50 hover:text-nogal transition-colors">
+            <a
+              href="https://www.instagram.com/restaurantelasflores/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="text-nogal/50 hover:text-nogal transition-colors"
+            >
               <Instagram size={20} strokeWidth={1.8} />
             </a>
-            <a href="#" aria-label="Facebook" className="text-nogal/50 hover:text-nogal transition-colors">
+            <a
+              href="https://www.facebook.com/restaurantelasfloressac?locale=es_LA"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="text-nogal/50 hover:text-nogal transition-colors"
+            >
               <Facebook size={20} strokeWidth={1.8} />
             </a>
             <a href="https://www.tiktok.com/@lasfloresayacucho" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="text-nogal/50 hover:text-nogal transition-colors">

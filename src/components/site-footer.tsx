@@ -115,14 +115,18 @@ export function SiteFooter() {
 
             <div className="flex gap-4 pt-4">
               <a
-                href="#"
+                href="https://www.facebook.com/restaurantelasfloressac?locale=es_LA"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 border border-cream/20 rounded-full hover:bg-piedra/10 hover:text-chilca transition-all"
                 aria-label="Facebook"
               >
                 <Facebook size={18} />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/restaurantelasflores/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 border border-cream/20 rounded-full hover:bg-piedra/10 hover:text-chilca transition-all"
                 aria-label="Instagram"
               >
