@@ -385,6 +385,89 @@ function AdminRoute() {
     return matchSearch && matchCategory;
   });
 
+  interface NavItem {
+    id: "analytics" | "orders" | "reservations" | "menu" | "coupons" | "jobs" | "zones";
+    label: string;
+    helper: string;
+    icon: any;
+    count?: number;
+  }
+
+  interface NavGroup {
+    title: string;
+    items: NavItem[];
+  }
+
+  const navGroups: NavGroup[] = [
+    {
+      title: "Dirección",
+      items: [
+        {
+          id: "analytics" as const,
+          label: "Analítica & BI",
+          helper: "Ventas, KPIs y reportes",
+          icon: BarChart3,
+        },
+      ],
+    },
+    {
+      title: "Operación",
+      items: [
+        {
+          id: "reservations" as const,
+          label: "Control de Reservas",
+          helper: "Reservas y lista de espera",
+          icon: Calendar,
+          count: pendingReservationsCount > 0 ? pendingReservationsCount : undefined,
+        },
+        {
+          id: "orders" as const,
+          label: "Gestión de Pedidos",
+          helper: "Órdenes y estados",
+          icon: ShoppingBag,
+          count: activeOrdersCount > 0 ? activeOrdersCount : undefined,
+        },
+        {
+          id: "zones" as const,
+          label: "Salones & Apagado",
+          helper: "Zonas, mesas y bloqueos",
+          icon: Store,
+        },
+      ],
+    },
+    {
+      title: "Comercial",
+      items: [
+        {
+          id: "menu" as const,
+          label: "Carta & Platos",
+          helper: "Menú digital y stock",
+          icon: MenuIcon,
+          count: products.length,
+        },
+        {
+          id: "coupons" as const,
+          label: "Cupones & Ofertas",
+          helper: "Promociones y descuentos",
+          icon: Ticket,
+          count: coupons.length,
+        },
+      ],
+    },
+    {
+      title: "Equipo & Local",
+      items: [
+        {
+          id: "jobs" as const,
+          label: "Trabaja con Nosotros",
+          helper: "Postulaciones y vacantes",
+          icon: Briefcase,
+          count: applicationsCount,
+        },
+      ],
+    },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-piedra flex items-center justify-center flex-col gap-4 text-nogal">
@@ -428,8 +511,8 @@ function AdminRoute() {
           </div>
 
           {/* User Profile Chip */}
-          <div className="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-cochinillahilca/20 border border-chilca/30 text-chilca font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
+          <div className="bg-white/[0.06] border border-white/10 p-3 rounded-2xl flex items-center gap-3 shadow-inner">
+            <div className="w-9 h-9 rounded-xl bg-cochinilla/15 border border-chilca/30 text-chilca font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
               AD
             </div>
             <div className="min-w-0 flex-1">
@@ -444,149 +527,69 @@ function AdminRoute() {
           </div>
 
           {/* Vertical Navigation Items */}
-          <nav className="space-y-1.5 pt-1">
-            <span className="text-[10px] font-sans uppercase tracking-widest text-white/60 font-bold px-2 block mb-1">
-              MENÚ PRINCIPAL
-            </span>
+          <nav className="space-y-4 pt-1">
+            {navGroups.map((group) => (
+              <div key={group.title} className="space-y-1.5">
+                <span className="text-[9px] font-sans uppercase tracking-[0.18em] text-white/[0.38] font-black px-2 block">
+                  {group.title}
+                </span>
 
-            {/* Analítica BI */}
-            <button
-              onClick={() => setActiveTab("analytics")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "analytics"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <BarChart3 size={17} className={activeTab === "analytics" ? "text-chilca" : "text-white/40"} />
-                <span>Analítica & BI</span>
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`group w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-left font-sans transition-all ${
+                        isActive
+                          ? "bg-white/[0.14] text-white ring-1 ring-white/[0.12] shadow-lg shadow-black/10"
+                          : "text-white/[0.62] hover:text-white hover:bg-white/8"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span
+                          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                            isActive
+                              ? "bg-chilca/15 text-chilca"
+                              : "bg-white/[0.04] text-white/36 group-hover:text-chilca"
+                          }`}
+                        >
+                          <Icon size={16} />
+                        </span>
+                        <span className="min-w-0">
+                          <span className={`block text-[12px] leading-4 truncate ${isActive ? "font-bold" : "font-semibold"}`}>
+                            {item.label}
+                          </span>
+                          <span className="block text-[10px] leading-3 text-white/38 truncate">
+                            {item.helper}
+                          </span>
+                        </span>
+                      </div>
+
+                      {typeof item.count === "number" && (
+                        <span
+                          className={`min-w-6 px-1.5 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums text-center shrink-0 ${
+                            isActive ? "bg-chilca text-cafe" : "bg-white/[0.09] text-white/[0.62]"
+                          }`}
+                        >
+                          {item.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-            </button>
-
-            {/* Control de Reservas */}
-            <button
-              onClick={() => setActiveTab("reservations")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "reservations"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Calendar size={17} className={activeTab === "reservations" ? "text-chilca" : "text-white/40"} />
-                <span>Control de Reservas</span>
-              </div>
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "reservations" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
-              }`}>
-                {reservations.length}
-              </span>
-            </button>
-
-            {/* Gestión de Pedidos */}
-            <button
-              onClick={() => setActiveTab("orders")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "orders"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <ShoppingBag size={17} className={activeTab === "orders" ? "text-chilca" : "text-white/40"} />
-                <span>Gestión de Pedidos</span>
-              </div>
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "orders" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
-              }`}>
-                {orders.length}
-              </span>
-            </button>
-
-            {/* Gestión de Carta */}
-            <button
-              onClick={() => setActiveTab("menu")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "menu"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <MenuIcon size={17} className={activeTab === "menu" ? "text-chilca" : "text-white/40"} />
-                <span>Gestión de Carta</span>
-              </div>
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "menu" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
-              }`}>
-                {products.length}
-              </span>
-            </button>
-
-            {/* Cupones & Promos */}
-            <button
-              onClick={() => setActiveTab("coupons")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "coupons"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Ticket size={17} className={activeTab === "coupons" ? "text-chilca" : "text-white/40"} />
-                <span>Cupones & Ofertas</span>
-              </div>
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "coupons" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
-              }`}>
-                {coupons.length}
-              </span>
-            </button>
-
-            {/* Trabaja con Nosotros */}
-            <button
-              onClick={() => setActiveTab("jobs")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "jobs"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Briefcase size={17} className={activeTab === "jobs" ? "text-chilca" : "text-white/40"} />
-                <span>Trabaja con Nosotros</span>
-              </div>
-              <span className={`px-2 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums ${
-                activeTab === "jobs" ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
-              }`}>
-                {applicationsCount}
-              </span>
-            </button>
-
-            {/* Salones & Apagado */}
-            <button
-              onClick={() => setActiveTab("zones")}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
-                activeTab === "zones"
-                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Store size={17} className={activeTab === "zones" ? "text-chilca" : "text-white/40"} />
-                <span>Salones & Apagado</span>
-              </div>
-            </button>
-
+            ))}
           </nav>
         </div>
 
         {/* Bottom Sidebar Action Quick Links - ALWAYS PINNED & VISIBLE */}
-        <div className="p-4 space-y-2 border-t border-white/8 bg-transparent shrink-0 font-sans">
+        <div className="p-4 space-y-2.5 border-t border-white/8 bg-black/[0.04] shrink-0 font-sans">
           <Link
             to="/caja"
-            className="w-full py-2.5 px-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98 border border-white/10"
+            className="w-full py-2.5 px-3.5 rounded-2xl bg-chilca/12 hover:bg-chilca/18 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98 border border-chilca/20"
           >
             <UtensilsCrossed size={15} className="text-chilca" />
             <span>Panel Caja / Cocina</span>
@@ -596,7 +599,7 @@ function AdminRoute() {
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="py-2 px-2 rounded-xl bg-white/8 hover:bg-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/8"
+              className="py-2 px-2 rounded-2xl bg-white/[0.07] hover:bg-white/[0.12] text-white/85 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors border border-white/8"
               title="Sincronizar Supabase"
             >
               <RefreshCw size={13} className={`text-chilca ${refreshing ? "animate-spin" : ""}`} />
