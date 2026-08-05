@@ -57,15 +57,25 @@ export function JobCard({ offer, isSelected = false, onSelect }: JobCardProps) {
 
         <button
           type="button"
-          aria-label={`Ver oferta ${offer.title}`}
+          aria-label={`Ver detalle de ${offer.title}`}
           onClick={() => onSelect(offer)}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
             isSelected
               ? "bg-eucalipto text-cream shadow-sm"
-              : "bg-black/5 text-ink hover:bg-eucalipto hover:text-cream"
+              : "bg-cream text-ink border border-black/10 hover:bg-eucalipto hover:text-cream hover:border-eucalipto"
           }`}
         >
-          {isSelected ? "Seleccionada" : "Ver vacante"}
+          {isSelected ? (
+            <>
+              <span>Viendo detalle</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-cream animate-pulse" />
+            </>
+          ) : (
+            <>
+              <span>Ver detalle</span>
+              <span>→</span>
+            </>
+          )}
         </button>
       </div>
     </article>

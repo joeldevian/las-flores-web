@@ -7,7 +7,7 @@ import { JobApplicationForm } from "../features/jobs/components/JobApplicationFo
 import { listPublicJobOffers } from "../features/jobs/api";
 import { sortPublicOffers } from "../features/jobs/rules";
 import type { PublicJobOffer } from "../features/jobs/types";
-import { Heart, Users, Award, Loader2, AlertCircle, Briefcase } from "lucide-react";
+import { Heart, Users, Award, Loader2, AlertCircle, Briefcase, FileText, Send, CheckCircle2, ListChecks, Gift } from "lucide-react";
 
 export const Route = createFileRoute("/unete-al-equipo")({
   head: () => ({
@@ -29,6 +29,7 @@ function UneteAlEquipoPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [offers, setOffers] = useState<PublicJobOffer[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<PublicJobOffer | null>(null);
+  const [activeDetailTab, setActiveDetailTab] = useState<"details" | "apply">("details");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -257,86 +258,166 @@ function UneteAlEquipoPage() {
               </div>
             )}
 
-            {/* Layout en 2 columnas: Lista de Ofertas y Formulario Lateral */}
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_26rem] gap-8 items-start">
-              {/* Columna Izquierda: Tarjetas de Ofertas y Detalle */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Layout Master-Detail: Lista de Vacantes (Izq) y Panel Interactivo con 2 Tabs (Der) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Columna Izquierda (Master): Tarjetas de Ofertas */}
+              <div className="lg:col-span-5 space-y-4">
+                <div className="grid grid-cols-1 gap-4">
                   {filteredOffers.map((offer) => (
                     <JobCard
                       key={offer.id}
                       offer={offer}
                       isSelected={selectedOffer?.id === offer.id}
-                      onSelect={(o) => setSelectedOffer(o)}
+                      onSelect={(o) => {
+                        setSelectedOffer(o);
+                        setActiveDetailTab("details");
+                      }}
                     />
                   ))}
                 </div>
+              </div>
 
-                {/* Detalle extendido de la oferta seleccionada */}
-                {selectedOffer && (
-                  <div className="p-6 lg:p-8 rounded-2xl bg-white border border-black/10 shadow-sm space-y-6 animate-in fade-in">
-                    <div>
-                      <span className="text-xs font-bold uppercase tracking-wider text-eucalipto">
-                        {selectedOffer.department} • {selectedOffer.location}
-                      </span>
-                      <h3 className="font-serif font-bold text-2xl lg:text-3xl text-ink mt-1">
+              {/* Columna Derecha (Detail Panel): Detalle & Formulario en 2 Pestañas */}
+              <div className="lg:col-span-7 sticky top-28">
+                {selectedOffer ? (
+                  <div className="rounded-3xl bg-white border border-black/10 shadow-xl overflow-hidden transition-all">
+                    {/* Encabezado del Panel */}
+                    <div className="p-6 lg:p-8 bg-[#fcfaf5] border-b border-black/10">
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-eucalipto bg-eucalipto/10 px-3.5 py-1 rounded-full">
+                          {selectedOffer.department} • {selectedOffer.location}
+                        </span>
+                        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/5 text-ink/80 border border-black/5">
+                          {selectedOffer.work_mode === "onsite"
+                            ? "Presencial"
+                            : selectedOffer.work_mode === "hybrid"
+                            ? "Híbrido"
+                            : "Remoto"}
+                        </span>
+                      </div>
+                      <h3 className="font-serif font-bold text-2xl lg:text-3xl text-ink leading-tight">
                         {selectedOffer.title}
                       </h3>
                     </div>
 
-                    <div className="prose prose-sm max-w-none text-ink/80 leading-relaxed">
-                      <p>{selectedOffer.description || selectedOffer.summary}</p>
+                    {/* Barra de Pestañas (Tabs) */}
+                    <div className="flex border-b border-black/10 bg-white">
+                      <button
+                        type="button"
+                        onClick={() => setActiveDetailTab("details")}
+                        className={`flex-1 py-3.5 px-4 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border-b-2 ${
+                          activeDetailTab === "details"
+                            ? "border-eucalipto text-eucalipto bg-eucalipto/5"
+                            : "border-transparent text-ink/60 hover:text-ink hover:bg-black/5"
+                        }`}
+                      >
+                        <FileText size={16} />
+                        <span>1. Detalles y Requisitos</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveDetailTab("apply")}
+                        className={`flex-1 py-3.5 px-4 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border-b-2 ${
+                          activeDetailTab === "apply"
+                            ? "border-eucalipto text-eucalipto bg-eucalipto/5"
+                            : "border-transparent text-ink/60 hover:text-ink hover:bg-black/5"
+                        }`}
+                      >
+                        <Send size={16} />
+                        <span>2. Postular Ahora</span>
+                      </button>
+                    </div>
 
-                      {selectedOffer.responsibilities?.length > 0 && (
-                        <div className="mt-4">
-                          <h4 className="font-bold text-sm text-ink uppercase tracking-wider mb-2">
-                            Responsabilidades
-                          </h4>
-                          <ul className="list-disc pl-5 space-y-1 text-xs">
-                            {selectedOffer.responsibilities.map((resp, i) => (
-                              <li key={i}>{resp}</li>
-                            ))}
-                          </ul>
+                    {/* Cuerpo de la Pestaña Activa */}
+                    <div className="p-6 lg:p-8">
+                      {activeDetailTab === "details" ? (
+                        <div className="space-y-6 text-xs text-ink/80 leading-relaxed animate-in fade-in">
+                          <div>
+                            <h4 className="font-bold text-ink uppercase tracking-wider mb-2 text-[11px] text-eucalipto">
+                              Descripción del Puesto
+                            </h4>
+                            <p className="text-sm text-ink/90 leading-relaxed font-sans">
+                              {selectedOffer.description || selectedOffer.summary}
+                            </p>
+                          </div>
+
+                          {selectedOffer.responsibilities?.length > 0 && (
+                            <div>
+                              <h4 className="font-bold text-ink uppercase tracking-wider mb-3 text-[11px] flex items-center gap-1.5 text-eucalipto">
+                                <CheckCircle2 size={16} />
+                                <span>Responsabilidades Principales</span>
+                              </h4>
+                              <ul className="space-y-2">
+                                {selectedOffer.responsibilities.map((resp, i) => (
+                                  <li key={i} className="flex items-start gap-2.5 bg-cream/50 p-3 rounded-xl border border-black/5 text-ink/90">
+                                    <span className="text-eucalipto font-bold mt-0.5">•</span>
+                                    <span className="flex-1">{resp}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {selectedOffer.requirements?.length > 0 && (
+                            <div>
+                              <h4 className="font-bold text-ink uppercase tracking-wider mb-3 text-[11px] flex items-center gap-1.5 text-eucalipto">
+                                <ListChecks size={16} />
+                                <span>Requisitos del Candidato</span>
+                              </h4>
+                              <ul className="space-y-2">
+                                {selectedOffer.requirements.map((req, i) => (
+                                  <li key={i} className="flex items-start gap-2.5 bg-cream/50 p-3 rounded-xl border border-black/5 text-ink/90">
+                                    <span className="text-eucalipto font-bold mt-0.5">•</span>
+                                    <span className="flex-1">{req}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {selectedOffer.benefits?.length > 0 && (
+                            <div>
+                              <h4 className="font-bold text-ink uppercase tracking-wider mb-3 text-[11px] flex items-center gap-1.5 text-eucalipto">
+                                <Gift size={16} />
+                                <span>Beneficios & Ofrecimiento</span>
+                              </h4>
+                              <ul className="space-y-2">
+                                {selectedOffer.benefits.map((ben, i) => (
+                                  <li key={i} className="flex items-start gap-2.5 bg-green-50/60 p-3 rounded-xl border border-green-200/50 text-green-900">
+                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                                    <span className="flex-1 font-medium">{ben}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Botón de Postulación al final del detalle */}
+                          <div className="pt-4 border-t border-black/10">
+                            <button
+                              type="button"
+                              onClick={() => setActiveDetailTab("apply")}
+                              className="w-full py-4 bg-eucalipto text-cream font-bold text-sm rounded-xl shadow-md hover:bg-eucalipto/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                            >
+                              <span>Postular a esta vacante</span>
+                              <Send size={16} />
+                            </button>
+                          </div>
                         </div>
-                      )}
-
-                      {selectedOffer.requirements?.length > 0 && (
-                        <div className="mt-4">
-                          <h4 className="font-bold text-sm text-ink uppercase tracking-wider mb-2">
-                            Requisitos
-                          </h4>
-                          <ul className="list-disc pl-5 space-y-1 text-xs">
-                            {selectedOffer.requirements.map((req, i) => (
-                              <li key={i}>{req}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {selectedOffer.benefits?.length > 0 && (
-                        <div className="mt-4">
-                          <h4 className="font-bold text-sm text-ink uppercase tracking-wider mb-2">
-                            Beneficios
-                          </h4>
-                          <ul className="list-disc pl-5 space-y-1 text-xs">
-                            {selectedOffer.benefits.map((ben, i) => (
-                              <li key={i}>{ben}</li>
-                            ))}
-                          </ul>
+                      ) : (
+                        <div className="animate-in fade-in">
+                          <JobApplicationForm offer={selectedOffer} />
                         </div>
                       )}
                     </div>
                   </div>
-                )}
-              </div>
-
-              {/* Columna Derecha: Formulario de Postulación */}
-              <div className="sticky top-28">
-                {selectedOffer ? (
-                  <JobApplicationForm offer={selectedOffer} />
                 ) : (
-                  <div className="p-8 rounded-2xl bg-white border border-black/10 text-center text-ink/50">
-                    <p className="text-sm">Selecciona una vacante de la lista para completar tu postulación.</p>
+                  <div className="p-12 rounded-3xl bg-white border border-black/10 text-center text-ink/50 shadow-sm space-y-4">
+                    <Briefcase size={44} className="mx-auto text-ink/30" />
+                    <h3 className="font-serif font-bold text-xl text-ink">Explora las vacantes</h3>
+                    <p className="text-sm text-ink/60 max-w-sm mx-auto">
+                      Haz clic en cualquier vacante de la lista para explorar sus detalles, requisitos y enviar tu postulación.
+                    </p>
                   </div>
                 )}
               </div>
