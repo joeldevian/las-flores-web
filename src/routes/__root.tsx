@@ -134,9 +134,12 @@ function RootComponent() {
     if (typeof window !== "undefined") {
       const isAuthPopup =
         window.name === "google_auth_popup" ||
+        window.name === "facebook_auth_popup" ||
         (Boolean(window.opener) && (
           window.location.hash.includes("access_token") ||
-          window.location.hash.includes("error_description")
+          window.location.hash.includes("error_description") ||
+          window.location.search.includes("code=") ||
+          window.location.search.includes("error=")
         ));
 
       if (isAuthPopup) {

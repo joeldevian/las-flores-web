@@ -28,18 +28,30 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     };
     init();
 
+    const handleAuthSync = async () => {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      setSession(s);
+      if (s) await fetchProfile(s.user.id);
+    };
+
+    window.addEventListener("message", handleAuthSync);
+    window.addEventListener("storage", handleAuthSync);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
       if (s) {
         const { data: p } = await supabase.from("profiles").select("role").eq("id", s.user.id).single();
         setProfile(p);
-        // Sin redirect automático — el usuario navega a /admin o /caja cuando él quiera
       } else {
         setProfile(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener("message", handleAuthSync);
+      window.removeEventListener("storage", handleAuthSync);
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {
