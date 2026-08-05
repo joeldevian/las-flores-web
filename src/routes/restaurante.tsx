@@ -387,8 +387,8 @@ function RestaurantePage() {
         className="relative min-h-[100svh] w-full overflow-hidden bg-eucalipto flex items-center pt-32 pb-24"
       >
         <img
-          src={cocinaImg}
-          alt="Cocina de Las Flores con ambiente cálido y tonalidades terracota"
+          src={casaImg}
+          alt="Equipo de Las Flores - Restaurante ayacuchano"
           width={1920}
           fetchPriority="high"
           height={800}
