@@ -110,28 +110,34 @@ function UneteAlEquipoPage() {
         </div>
       </header>
 
-      {/* ── HERO ── */}
-      <section className="relative pt-40 pb-24 md:pt-48 md:pb-32 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center min-h-[500px]">
+      {/* ── HERO PORTADA COMPLETA (FULLSCREEN 100VH) ── */}
+      <section className="relative min-h-screen w-full overflow-hidden flex flex-col justify-center items-center px-6 md:px-12 lg:px-20">
         <div className="absolute inset-0 z-0">
           <img
             src={heroImg}
             alt="Equipo de Restaurante Las Flores"
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-nogal/65 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-piedra via-black/30 to-black/80" />
+          <div className="absolute inset-0 bg-nogal/60 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-t from-piedra via-black/20 to-black/75" />
         </div>
 
-        <div className="max-w-4xl mx-auto text-center relative z-10 mt-8">
-          <span className="inline-block text-xs uppercase tracking-[0.3em] font-bold text-cream/90 bg-eucalipto/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/20">
+        <div className="max-w-4xl mx-auto text-center relative z-10 pt-16">
+          <span className="inline-block text-xs uppercase tracking-[0.3em] font-bold text-cream/90 bg-eucalipto/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/20 shadow-md">
             Trabaja con nosotros
           </span>
-          <h1 className="font-serif font-medium text-5xl md:text-7xl text-piedra mb-6 tracking-tight drop-shadow-xl">
+          <h1 className="font-serif font-medium text-5xl md:text-7xl lg:text-8xl text-piedra mb-6 tracking-tight drop-shadow-2xl">
             Crece con nosotros
           </h1>
-          <p className="font-sans text-piedra/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+          <p className="font-sans text-piedra/90 text-lg md:text-2xl max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
             Forma parte de la tradición gastronómica y cultural de Ayacucho. Construye tu futuro laboral en la familia de Restaurante Las Flores.
           </p>
+        </div>
+
+        {/* Indicador de scroll "Desliza" */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-piedra/70 text-[10px] uppercase tracking-[0.4em] font-bold animate-bounce">
+          <span>Desliza</span>
+          <div className="w-1 h-3 rounded-full border border-piedra/50" />
         </div>
       </section>
 
