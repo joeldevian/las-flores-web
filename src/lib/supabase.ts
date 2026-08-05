@@ -183,7 +183,46 @@ export async function signOut() {
 /**
  * Guardar una nueva reserva en Supabase
  */
-export async function createReservation(payload: ReservationPayload) {
+export async function createReservation(payload: any) {
+  const { reservation_date, reservation_time, zone_id } = payload;
+
+  // Hard backend validation: check if date/time/zone is in blackout
+  if (reservation_date) {
+    try {
+      const { data: blackouts } = await supabase
+        .from("zone_blackouts")
+        .select("*")
+        .eq("is_active", true)
+        .lte("start_date", reservation_date);
+
+      if (blackouts && blackouts.length > 0) {
+        const matching = blackouts.find((b) => {
+          if (b.zone_id !== null && zone_id && b.zone_id !== zone_id) return false;
+          if (b.blackout_type !== "indefinite") {
+            const endDate = b.end_date || b.start_date;
+            if (reservation_date > endDate) return false;
+          }
+          if (b.blackout_type === "time_slot" && reservation_time && b.start_time && b.end_time) {
+            const slotTime = reservation_time.length === 5 ? `${reservation_time}:00` : reservation_time;
+            const startTime = b.start_time.length === 5 ? `${b.start_time}:00` : b.start_time;
+            const endTime = b.end_time.length === 5 ? `${b.end_time}:00` : b.end_time;
+            if (slotTime < startTime || slotTime > endTime) return false;
+          }
+          return true;
+        });
+
+        if (matching) {
+          throw new Error(`La fecha u horario seleccionado no está disponible: ${matching.reason}`);
+        }
+      }
+    } catch (err: any) {
+      if (err.message && err.message.includes("no está disponible")) {
+        throw err;
+      }
+      console.warn("Soft warning checking blackout:", err);
+    }
+  }
+
   const reservationData = { ...payload };
 
   // Asociar el id del usuario autenticado si existe en la sesión

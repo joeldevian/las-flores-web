@@ -183,8 +183,46 @@ function ReservasPage() {
   const [blockedZoneIds, setBlockedZoneIds] = useState<string[]>([]);
   const [isRestaurantBlocked, setIsRestaurantBlocked] = useState<boolean>(false);
   const [blockedReasons, setBlockedReasons] = useState<Record<string, string>>({});
+  const [allActiveBlackouts, setAllActiveBlackouts] = useState<any[]>([]);
 
   const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
+
+  // Fetch all active blackouts for fast real-time checking
+  useEffect(() => {
+    supabase
+      .from("zone_blackouts")
+      .select("*")
+      .eq("is_active", true)
+      .then(({ data, error }) => {
+        if (data && !error) setAllActiveBlackouts(data);
+      });
+  }, []);
+
+  const checkBlackoutForSlot = (zoneId: string | null, date: string, time?: string) => {
+    if (!date) return null;
+    const matching = allActiveBlackouts.find((b) => {
+      if (!b.is_active) return false;
+      if (b.zone_id !== null && zoneId !== null && b.zone_id !== zoneId) return false;
+
+      if (b.blackout_type === "indefinite") {
+        if (date < b.start_date) return false;
+      } else {
+        const endDate = b.end_date || b.start_date;
+        if (date < b.start_date || date > endDate) return false;
+      }
+
+      if (b.blackout_type === "time_slot" && time && b.start_time && b.end_time) {
+        const slotTime = time.length === 5 ? `${time}:00` : time;
+        const startTime = b.start_time.length === 5 ? `${b.start_time}:00` : b.start_time;
+        const endTime = b.end_time.length === 5 ? `${b.end_time}:00` : b.end_time;
+        if (slotTime < startTime || slotTime > endTime) return false;
+      }
+
+      return true;
+    });
+
+    return matching ? matching.reason : null;
+  };
 
   // Fetch blocked zones for selected date/time
   useEffect(() => {
@@ -301,6 +339,11 @@ function ReservasPage() {
 
   // Handler when user selects a zone card
   const handleSelectZoneCard = (z: typeof ZONAS[0]) => {
+    const blockReason = checkBlackoutForSlot(z.id, form.date || todayIso);
+    if (blockReason) {
+      alert(`El salón "${z.nombre}" no está disponible para la fecha seleccionada.\nMotivo: ${blockReason}`);
+      return;
+    }
     setSelectedZona(z);
     setForm((f) => ({ ...f, zona: z }));
     setMainStep(1);
@@ -316,7 +359,13 @@ function ReservasPage() {
   };
 
   // Handlers
-  const handleSelectTime = (time: string, serviceType: "almuerzo" | "cena") => {
+  const handleSelectTime = (time: string, serviceType: string) => {
+    const zoneId = selectedZona ? selectedZona.id : null;
+    const blockReason = checkBlackoutForSlot(zoneId, form.date, time);
+    if (blockReason) {
+      alert(`El horario ${time} se encuentra bloqueado para esta zona.\nMotivo: ${blockReason}`);
+      return;
+    }
     setForm((f) => ({ ...f, time, serviceType }));
     
     // Si el usuario NO está autenticado, mostrar modal de login
@@ -387,7 +436,12 @@ function ReservasPage() {
       setForm((f) => ({ ...f, reservationCode: resCode }));
       setMainStep(4); // Advance to Confirmation
       window.scrollTo({ top: 300, behavior: "smooth" });
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.message && err.message.includes("no está disponible")) {
+        alert(err.message);
+        setIsSubmitting(false);
+        return;
+      }
       console.warn("Reservation saved locally:", err);
       setForm((f) => ({ ...f, reservationCode: code }));
       setMainStep(4);
@@ -548,52 +602,88 @@ function ReservasPage() {
 
           {/* Grid de Tarjetas Elegantes (Estilo La Rosa Náutica: Fotos altas y prominentes) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-            {ZONAS.map((z) => (
-              <div
-                key={z.id}
-                onClick={() => handleSelectZoneCard(z)}
-                className="group flex flex-col justify-between cursor-pointer transition-all duration-300"
-              >
-                <div>
-                  {/* Foto Vertical Estilo La Rosa Náutica (Altura uniforme fija h-[580px]) */}
-                  <div className="w-full h-[500px] sm:h-[540px] lg:h-[580px] overflow-hidden relative rounded-xs shadow-md">
-                    <img
-                      src={z.imagen}
-                      alt={z.nombre}
-                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-108"
-                    />
-                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
-                    <span className="absolute bottom-3 left-3 bg-black/65 backdrop-blur-xs text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-xs">
-                      {z.capacidad}
-                    </span>
+            {ZONAS.map((z) => {
+              const cardBlackout = checkBlackoutForSlot(z.id, form.date || todayIso);
+              return (
+                <div
+                  key={z.id}
+                  onClick={() => {
+                    if (cardBlackout) {
+                      alert(`La zona "${z.nombre}" se encuentra bloqueada para la fecha seleccionada.\nMotivo: ${cardBlackout}`);
+                      return;
+                    }
+                    handleSelectZoneCard(z);
+                  }}
+                  className={`group flex flex-col justify-between transition-all duration-300 ${
+                    cardBlackout ? "cursor-not-allowed opacity-85" : "cursor-pointer"
+                  }`}
+                >
+                  <div>
+                    {/* Foto Vertical Estilo La Rosa Náutica (Altura uniforme fija h-[580px]) */}
+                    <div className="w-full h-[500px] sm:h-[540px] lg:h-[580px] overflow-hidden relative rounded-xs shadow-md">
+                      <img
+                        src={z.imagen}
+                        alt={z.nombre}
+                        className={`w-full h-full object-cover object-center transition-transform duration-700 ${
+                          cardBlackout ? "grayscale-[40%]" : "group-hover:scale-108"
+                        }`}
+                      />
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
+                      
+                      {cardBlackout ? (
+                        <div className="absolute inset-0 bg-red-950/75 backdrop-blur-xs flex items-center justify-center p-4 text-center z-20">
+                          <div className="bg-red-900/90 text-white p-3.5 rounded-xl border border-red-400/50 shadow-xl space-y-1">
+                            <span className="text-[11px] font-extrabold uppercase tracking-widest text-red-200 block">
+                              ⚡ ZONA BLOQUEADA
+                            </span>
+                            <p className="text-[10px] text-white/90 leading-tight">
+                              {cardBlackout}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="absolute bottom-3 left-3 bg-black/65 backdrop-blur-xs text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-xs">
+                          {z.capacidad}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Texto e Información */}
+                    <div className="pt-5 text-center px-1">
+                      <h3 className="font-serif text-2xl text-[#2c2a29] font-medium tracking-wide mb-2 group-hover:text-[#2e5339] transition-colors">
+                        {z.nombre}
+                      </h3>
+                      <p className="text-xs text-gray-600 font-light leading-relaxed mb-6 line-clamp-3">
+                        {z.descripcion}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Texto e Información */}
-                  <div className="pt-5 text-center px-1">
-                    <h3 className="font-serif text-2xl text-[#2c2a29] font-medium tracking-wide mb-2 group-hover:text-[#2e5339] transition-colors">
-                      {z.nombre}
-                    </h3>
-                    <p className="text-xs text-gray-600 font-light leading-relaxed mb-6 line-clamp-3">
-                      {z.descripcion}
-                    </p>
+                  {/* Botón Ovalado de Contorno (Estilo La Rosa Náutica) */}
+                  <div className="text-center pt-2">
+                    <button
+                      type="button"
+                      disabled={!!cardBlackout}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (cardBlackout) {
+                          alert(`La zona "${z.nombre}" se encuentra bloqueada para reservas online.\nMotivo: ${cardBlackout}`);
+                          return;
+                        }
+                        handleSelectZoneCard(z);
+                      }}
+                      className={`w-full rounded-full py-2.5 px-4 text-[11px] font-bold tracking-widest uppercase transition-all duration-300 shadow-2xs ${
+                        cardBlackout
+                          ? "bg-red-100 text-red-700 border border-red-300 cursor-not-allowed"
+                          : "border border-[#3b1f10] text-[#3b1f10] group-hover:bg-[#3b1f10] group-hover:text-white"
+                      }`}
+                    >
+                      {cardBlackout ? "Zona Bloqueada" : `Reservar ${z.nombre}`}
+                    </button>
                   </div>
                 </div>
-
-                {/* Botón Ovalado de Contorno (Estilo La Rosa Náutica) */}
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectZoneCard(z);
-                    }}
-                    className="w-full border border-[#3b1f10] text-[#3b1f10] group-hover:bg-[#3b1f10] group-hover:text-white rounded-full py-2.5 px-4 text-[11px] font-bold tracking-widest uppercase transition-all duration-300 shadow-2xs"
-                  >
-                    Reservar {z.nombre}
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </main>
       )}
@@ -799,16 +889,21 @@ function ReservasPage() {
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
                   {ALMUERZO_HOURS.map((h) => {
                     const isSelected = form.time === h && form.serviceType === "almuerzo";
+                    const hourBlackout = selectedZona ? checkBlackoutForSlot(selectedZona.id, form.date, h) : checkBlackoutForSlot(null, form.date, h);
                     return (
                       <button
                         key={h}
                         type="button"
+                        disabled={!!hourBlackout}
                         onClick={() => handleSelectTime(h, "almuerzo")}
                         className={`py-2.5 text-center text-xs font-bold rounded-md transition-all ${
-                          isSelected
+                          hourBlackout
+                            ? "bg-red-100 text-red-700 border border-red-300 opacity-60 cursor-not-allowed line-through"
+                            : isSelected
                             ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373]"
                             : "bg-[#2e5339] text-white hover:bg-[#23412c]"
                         }`}
+                        title={hourBlackout ? `Horario bloqueado: ${hourBlackout}` : undefined}
                       >
                         {h}
                       </button>
@@ -830,16 +925,21 @@ function ReservasPage() {
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
                   {CENA_HOURS.map((h) => {
                     const isSelected = form.time === h && form.serviceType === "cena";
+                    const hourBlackout = selectedZona ? checkBlackoutForSlot(selectedZona.id, form.date, h) : checkBlackoutForSlot(null, form.date, h);
                     return (
                       <button
                         key={h}
                         type="button"
+                        disabled={!!hourBlackout}
                         onClick={() => handleSelectTime(h, "cena")}
                         className={`py-2.5 text-center text-xs font-bold rounded-md transition-all ${
-                          isSelected
+                          hourBlackout
+                            ? "bg-red-100 text-red-700 border border-red-300 opacity-60 cursor-not-allowed line-through"
+                            : isSelected
                             ? "bg-[#3b1f10] text-white shadow-md ring-2 ring-[#d4a373]"
                             : "bg-[#2e5339] text-white hover:bg-[#23412c]"
                         }`}
+                        title={hourBlackout ? `Horario bloqueado: ${hourBlackout}` : undefined}
                       >
                         {h}
                       </button>
