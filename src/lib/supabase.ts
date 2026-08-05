@@ -394,3 +394,102 @@ export async function getUserReservations(userId?: string, email?: string) {
     return [];
   }
 }
+
+// ====================================================================
+// FUNCIONES DEL PANEL ADMIN — CRUD DE PRODUCTOS
+// ====================================================================
+
+export async function getProducts() {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, categories(name, slug)")
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getCategories() {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createProduct(payload: Omit<Product, "id" | "created_at">) {
+  const { data, error } = await supabase
+    .from("products")
+    .insert([payload])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateProduct(
+  id: string,
+  payload: Partial<Omit<Product, "id" | "created_at">>
+) {
+  const { data, error } = await supabase
+    .from("products")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Soft delete — marca el plato como inactivo (is_active = false).
+ * NUNCA se elimina el registro de la base de datos.
+ */
+export async function archiveProduct(id: string) {
+  const { data, error } = await supabase
+    .from("products")
+    .update({ is_active: false })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Restaura un plato archivado (is_active = true).
+ */
+export async function restoreProduct(id: string) {
+  const { data, error } = await supabase
+    .from("products")
+    .update({ is_active: true })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function toggleProductAvailability(id: string, is_available: boolean) {
+  const { data, error } = await supabase
+    .from("products")
+    .update({ is_available })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getUserRole(
+  userId: string
+): Promise<"client" | "staff" | "admin" | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+  if (error) return null;
+  return (data?.role as "client" | "staff" | "admin") ?? null;
+}

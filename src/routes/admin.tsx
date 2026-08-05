@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase, signOut } from "../lib/supabase";
+import { supabase, signOut, archiveProduct, restoreProduct } from "../lib/supabase";
 import {
   Calendar,
   ShoppingBag,
@@ -36,8 +36,6 @@ import { AdminCategoryListModal } from "../components/AdminCategoryListModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
 import { AdminJobsSection } from "../components/AdminJobsSection";
 import { AdminZonesSection } from "../components/AdminZonesSection";
-import { removeProductById } from "../utils/adminProducts";
-
 const getLocalYYYYMMDD = (d = new Date()) => {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -310,30 +308,29 @@ function AdminRoute() {
     }
   };
 
-  const handleDeleteProduct = async (productId: string) => {
-    const productToDelete = products.find((product) => product.id === productId);
-    if (!productToDelete) return;
-
-    const confirmed = window.confirm(
-      `¿Estás seguro de eliminar permanentemente el plato "${productToDelete.name}" de la carta?`
-    );
-    if (!confirmed) return;
-
+  const handleArchiveProduct = async (productId: string) => {
     try {
-      const { error } = await supabase.from("products").delete().eq("id", productId);
-      if (error) throw error;
-
-      setProducts((prev) => removeProductById(prev, productId));
-
-      if (selectedProduct?.id === productId) {
-        setSelectedProduct(null);
-      }
-      if (isProductModalOpen) {
-        setIsProductModalOpen(false);
-      }
+      await archiveProduct(productId);
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? { ...p, is_active: false } : p))
+      );
+      if (selectedProduct?.id === productId) setSelectedProduct(null);
+      if (isProductModalOpen) setIsProductModalOpen(false);
     } catch (err) {
       console.error(err);
-      alert("Error al eliminar el plato.");
+      alert("Error al archivar el plato.");
+    }
+  };
+
+  const handleRestoreProduct = async (productId: string) => {
+    try {
+      await restoreProduct(productId);
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? { ...p, is_active: true } : p))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error al restaurar el plato.");
     }
   };
 
@@ -473,7 +470,7 @@ function AdminRoute() {
       <div className="min-h-screen bg-piedra flex items-center justify-center flex-col gap-4 text-nogal">
         <Loader2 className="w-10 h-10 animate-spin text-chilca" />
         <p className="font-serif text-sm font-bold tracking-widest uppercase text-nogal">
-          Restaurante Las Flores | Cargas de Panel...
+          Restaurante Las Flores | Carga de Panel...
         </p>
       </div>
     );
@@ -482,7 +479,7 @@ function AdminRoute() {
   if (!isAuthorized) return null;
 
   return (
-    <div className="min-h-screen bg-piedra text-nogal font-sans selection:bg-cochinillahilca selection:text-nogal flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#f7f5ef] text-nogal font-sans selection:bg-cochinillahilca selection:text-nogal flex flex-col md:flex-row">
       
       {/* ==================================================================== */}
       {/* LEFT VERTICAL NAVIGATION SIDEBAR (Eucalyptus Green #5F8575)          */}
@@ -621,6 +618,7 @@ function AdminRoute() {
           >
             <LogOut size={13} />
             <span>Cerrar Sesión</span>
+          </button>
         </div>
 
       </aside>
@@ -628,15 +626,15 @@ function AdminRoute() {
       {/* ==================================================================== */}
       {/* RIGHT MAIN CONTENT CANVAS AREA                                        */}
       {/* ==================================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20">
+      <div className="flex-1 flex flex-col min-w-0 pb-20 bg-[#f7f5ef]">
         
         {/* Top Header Bar */}
-        <header className="bg-white border-b border-eucalipto/8 px-6 py-4 sticky top-0 z-30 shadow-sm flex items-center justify-between">
+        <header className="bg-white/80 backdrop-blur-md border-b border-[#d4a373]/20 px-6 py-4 sticky top-0 z-30 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-pacay/70 block">
+            <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#d4a373] block">
               Panel Administrativo • Restaurante Las Flores
             </span>
-            <h1 className="font-sans text-xl font-bold text-nogal flex items-center gap-2">
+            <h1 className="font-serif italic text-2xl text-[#3b1f10] font-bold flex items-center gap-2">
               {activeTab === "analytics" && "Analítica & Inteligencia de Negocios (BI)"}
               {activeTab === "reservations" && "Control de Reservas de Mesas"}
               {activeTab === "orders" && "Gestión de Pedidos & Comandas"}
@@ -653,9 +651,9 @@ function AdminRoute() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsCategoryModalOpen(true)}
-                  className="px-4 py-2.5 rounded-xl bg-white border border-eucalipto/20 hover:bg-eucalipto/5 text-nogal font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                  className="px-4 py-2.5 rounded-2xl bg-white border border-[#d4a373]/30 hover:bg-[#fdf8f0] text-[#3b1f10] font-sans font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
                 >
-                  <ListTree size={15} className="text-chilca" />
+                  <ListTree size={15} className="text-[#2e5339]" />
                   Categorías
                 </button>
                 <button
@@ -663,7 +661,7 @@ function AdminRoute() {
                     setSelectedProduct(null);
                     setIsProductModalOpen(true);
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                  className="px-4 py-2.5 rounded-2xl bg-[#2e5339] hover:bg-[#23412c] text-white font-sans font-bold text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer"
                 >
                   <Plus size={15} />
                   Nuevo Plato
@@ -677,7 +675,7 @@ function AdminRoute() {
                   setSelectedCoupon(null);
                   setIsCouponModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca font-sans font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+                className="px-4 py-2.5 rounded-2xl bg-[#2e5339] hover:bg-[#23412c] text-white font-sans font-bold text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer"
               >
                 <Plus size={15} />
                 Crear Cupón
@@ -769,7 +767,7 @@ function AdminRoute() {
           )}
 
           {/* Panel Tab Content Display */}
-          <div className="bg-white rounded-2xl border border-eucalipto/8 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-3xl border border-[#d4a373]/25 shadow-sm overflow-hidden">
             
             {/* ================= ANALYTICS TAB ================= */}
             {activeTab === "analytics" && (
@@ -781,550 +779,575 @@ function AdminRoute() {
               />
             )}
 
-          {/* ================= RESERVATIONS TAB ================= */}
-          {activeTab === "reservations" && (
-            <div>
-              <div className="p-4 bg-piedra border-b border-eucalipto/8 space-y-3">
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-                  {/* Search bar */}
-                  <div className="relative w-full lg:w-80">
-                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-nogal/30" />
-                    <input
-                      type="text"
-                      value={resSearch}
-                      onChange={(e) => setResSearch(e.target.value)}
-                      placeholder="Buscar cliente o teléfono..."
-                      className="w-full text-xs bg-white border border-eucalipto/12 rounded-xl pl-9 pr-4 py-2.5 text-nogal focus:outline-none focus:ring-2 focus:ring-cafe/20"
-                    />
+            {/* ================= RESERVATIONS TAB ================= */}
+            {activeTab === "reservations" && (
+              <div>
+                <div className="p-5 bg-white border-b border-[#d4a373]/20 space-y-4">
+                  <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+                    {/* Search bar */}
+                    <div className="relative w-full lg:w-80">
+                      <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#2e5339]" />
+                      <input
+                        type="text"
+                        value={resSearch}
+                        onChange={(e) => setResSearch(e.target.value)}
+                        placeholder="Buscar cliente o teléfono..."
+                        className="w-full text-xs bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl pl-9 pr-4 py-2.5 text-[#3b1f10] focus:outline-none focus:ring-2 focus:ring-[#2e5339]/30"
+                      />
+                    </div>
+
+                    {/* Date Range Inputs - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
+                    {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
+                      <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                        <div className="flex items-center gap-1.5 bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl px-3 py-1.5 shadow-2xs">
+                          <span className="text-[10px] font-serif font-bold text-[#3b1f10]/60 uppercase">Desde:</span>
+                          <input
+                            type="date"
+                            value={resDateFrom}
+                            onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
+                            className="text-xs bg-transparent font-semibold text-[#3b1f10] focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-1.5 bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl px-3 py-1.5 shadow-2xs">
+                          <span className="text-[10px] font-serif font-bold text-[#3b1f10]/60 uppercase">Hasta:</span>
+                          <input
+                            type="date"
+                            value={resDateTo}
+                            onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
+                            className="text-xs bg-transparent font-semibold text-[#3b1f10] focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Status buttons */}
+                    <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto">
+                      <span className="text-xs font-serif font-bold text-[#3b1f10]/60 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                      {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
+                        <button
+                          key={st}
+                          onClick={() => setResStatusFilter(st)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold capitalize transition-all whitespace-nowrap cursor-pointer ${
+                            resStatusFilter === st
+                              ? "bg-[#2e5339] text-white shadow-xs"
+                              : "bg-[#f7f5ef] border border-[#d4a373]/25 text-[#3b1f10]/70 hover:bg-white"
+                          }`}
+                        >
+                          {st === "all" ? "Todas" : st === "pending" ? "Pendientes" : st === "confirmed" ? "Confirmadas" : st === "completed" ? "Completadas" : "Canceladas"}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Date Range Inputs - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
+                  {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
                   {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
+                    <div className="flex items-center gap-2 pt-3 border-t border-[#d4a373]/15 overflow-x-auto">
+                      <span className="text-[11px] font-serif font-bold text-[#3b1f10]/60 uppercase tracking-wider shrink-0">
+                        Filtro Rápido:
+                      </span>
+                      <button
+                        onClick={() => setQuickDateRange("today")}
+                        className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeDateFilter === "today" ? "bg-[#2e5339] text-white" : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10]/70 border border-[#d4a373]/25"}`}
+                      >
+                        Hoy
+                      </button>
+                      <button
+                        onClick={() => setQuickDateRange("week")}
+                        className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeDateFilter === "week" ? "bg-[#2e5339] text-white" : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10]/70 border border-[#d4a373]/25"}`}
+                      >
+                        Esta Semana
+                      </button>
+                      <button
+                        onClick={() => setQuickDateRange("month")}
+                        className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeDateFilter === "month" ? "bg-[#2e5339] text-white" : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10]/70 border border-[#d4a373]/25"}`}
+                      >
+                        Este Mes
+                      </button>
+                      <button
+                        onClick={() => setQuickDateRange("all")}
+                        className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeDateFilter === "all" ? "bg-[#8C1D40] text-white" : "bg-[#8C1D40]/10 hover:bg-[#8C1D40] hover:text-white text-[#8C1D40] border border-[#8C1D40]/20"}`}
+                      >
+                        Limpiar Fechas (Ver Histórico)
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#3b1f10]/60 bg-[#f7f5ef] border-b border-[#d4a373]/20">
+                      <tr>
+                        <th className="px-6 py-4">Cliente</th>
+                        <th className="px-6 py-4">Fecha y Hora</th>
+                        <th className="px-6 py-4">Personas</th>
+                        <th className="px-6 py-4">Servicio</th>
+                        <th className="px-6 py-4">Estado</th>
+                        <th className="px-6 py-4 text-right">Contacto</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#d4a373]/15">
+                      {filteredReservations.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-12 text-center text-[#3b1f10]/40">
+                            No hay reservas para mostrar.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredReservations.map((res) => {
+                          const rawPhone = res.client_phone ? res.client_phone.replace(/\D/g, "") : "";
+                          const fullPhone = rawPhone.length === 9 ? `51${rawPhone}` : rawPhone;
+                          const whatsappUrl = `https://wa.me/${fullPhone}?text=Hola%20${encodeURIComponent(res.client_name)},%20te%20contactamos%20de%20Restaurante%20Las%20Flores%20sobre%20tu%20reserva%20para%20el%20dia%20${encodeURIComponent(res.reservation_date)}.`;
+
+                          return (
+                            <tr key={res.id} className="hover:bg-[#fdf8f0]/80 transition-colors">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-xl bg-[#2e5339]/10 text-[#2e5339] font-bold text-xs flex items-center justify-center shrink-0 border border-[#2e5339]/20">
+                                    {(res.client_name || "C").charAt(0).toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <div className="font-bold text-[#3b1f10] text-sm">{res.client_name}</div>
+                                    <div className="text-[#3b1f10]/50 text-[11px] font-mono">{res.client_phone || "Sin teléfono"}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="font-bold text-[#3b1f10]">{res.reservation_date}</div>
+                                <div className="text-[#2e5339] font-semibold">{res.reservation_time}</div>
+                              </td>
+                              <td className="px-6 py-4 font-bold text-[#3b1f10]">
+                                {res.guest_count} personas
+                              </td>
+                              <td className="px-6 py-4 capitalize text-[#3b1f10]/70 font-medium">
+                                {res.service_type || "Almuerzo"}
+                              </td>
+                              <td className="px-6 py-4">
+                                <select
+                                  value={res.status || "pending"}
+                                  onChange={(e) => handleUpdateReservationStatus(res.id, e.target.value)}
+                                  className={`border font-bold rounded-xl px-3 py-1.5 focus:outline-none text-xs cursor-pointer transition-colors shadow-2xs ${
+                                    res.status === "confirmed"
+                                      ? "bg-emerald-50 text-emerald-900 border-emerald-300/70 hover:bg-emerald-100"
+                                      : res.status === "completed"
+                                      ? "bg-sky-50 text-sky-900 border-sky-300/70 hover:bg-sky-100"
+                                      : res.status === "cancelled"
+                                      ? "bg-rose-50 text-rose-900 border-rose-300/70 hover:bg-rose-100"
+                                      : "bg-amber-50 text-amber-900 border-amber-300/70 hover:bg-amber-100"
+                                  }`}
+                                >
+                                  <option value="pending" className="bg-white text-[#3b1f10]">Pendiente</option>
+                                  <option value="confirmed" className="bg-white text-[#3b1f10]">Confirmada</option>
+                                  <option value="completed" className="bg-white text-[#3b1f10]">Completada</option>
+                                  <option value="cancelled" className="bg-white text-[#3b1f10]">Cancelada</option>
+                                </select>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                {res.client_phone && (
+                                  <a
+                                    href={whatsappUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#2e5339] bg-[#2e5339]/10 hover:bg-[#2e5339] hover:text-white border border-[#2e5339]/25 rounded-xl shadow-2xs transition-all"
+                                  >
+                                    WhatsApp <ExternalLink size={12} />
+                                  </a>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* ================= ORDERS TAB ================= */}
+            {activeTab === "orders" && (
+              <div>
+                <div className="p-5 bg-white border-b border-[#d4a373]/20 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex flex-col gap-3 w-full md:w-auto">
+                    <div className="relative w-full md:w-80">
+                      <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#2e5339]" />
+                      <input
+                        type="text"
+                        value={orderSearch}
+                        onChange={(e) => setOrderSearch(e.target.value)}
+                        placeholder="Buscar pedido #, cliente..."
+                        className="w-full text-xs bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl pl-9 pr-4 py-2.5 text-[#3b1f10] focus:outline-none focus:ring-2 focus:ring-[#2e5339]/30"
+                      />
+                    </div>
                     <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                      <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                        <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Desde:</span>
+                      <div className="flex items-center gap-1.5 bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl px-3 py-1.5 shadow-2xs">
+                        <span className="text-[10px] font-serif font-bold text-[#3b1f10]/60 uppercase">Desde:</span>
                         <input
                           type="date"
-                          value={resDateFrom}
-                          onChange={(e) => { setResDateFrom(e.target.value); setActiveDateFilter("custom"); }}
-                          className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
+                          value={orderDateFrom}
+                          onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
+                          className="text-xs bg-transparent font-semibold text-[#3b1f10] focus:outline-none"
                         />
                       </div>
-
-                      <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                        <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Hasta:</span>
+                      <div className="flex items-center gap-1.5 bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl px-3 py-1.5 shadow-2xs">
+                        <span className="text-[10px] font-serif font-bold text-[#3b1f10]/60 uppercase">Hasta:</span>
                         <input
                           type="date"
-                          value={resDateTo}
-                          onChange={(e) => { setResDateTo(e.target.value); setActiveDateFilter("custom"); }}
-                          className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
+                          value={orderDateTo}
+                          onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
+                          className="text-xs bg-transparent font-semibold text-[#3b1f10] focus:outline-none"
                         />
                       </div>
                     </div>
-                  )}
+                  </div>
 
-                  {/* Status buttons */}
-                  <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto">
-                    <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Estado:</span>
-                    {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
-                      <button
-                        key={st}
-                        onClick={() => setResStatusFilter(st)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all whitespace-nowrap ${
-                          resStatusFilter === st
-                            ? "bg-eucalipto text-white shadow-sm"
-                            : "bg-white border border-eucalipto/12 text-nogal/60 hover:bg-eucalipto/5"
-                        }`}
-                      >
-                        {st === "all" ? "Todas" : st === "pending" ? "Pendientes" : st === "confirmed" ? "Confirmadas" : st === "completed" ? "Completadas" : "Canceladas"}
-                      </button>
-                    ))}
+                  <div className="flex flex-col gap-4 w-full md:w-auto items-start md:items-end">
+                    <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
+                      <span className="text-xs font-serif font-bold text-[#3b1f10]/60 uppercase tracking-wider whitespace-nowrap">Estado:</span>
+                      {[
+                        { id: "all", label: "Todos" },
+                        { id: "received", label: "Recibidos" },
+                        { id: "preparing", label: "En Preparación" },
+                        { id: "on_the_way", label: "En Camino" },
+                        { id: "delivered", label: "Entregados" },
+                        { id: "cancelled", label: "Cancelados" },
+                      ].map((st) => (
+                        <button
+                          key={st.id}
+                          onClick={() => setOrderStatusFilter(st.id)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                            orderStatusFilter === st.id
+                              ? "bg-[#2e5339] text-white shadow-xs"
+                              : "bg-[#f7f5ef] border border-[#d4a373]/25 text-[#3b1f10]/70 hover:bg-white"
+                          }`}
+                        >
+                          {st.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
-                {(resStatusFilter === "all" || resStatusFilter === "confirmed") && (
-                  <div className="flex items-center gap-2 pt-2 border-t border-eucalipto/8 overflow-x-auto">
-                    <span className="text-[11px] font-serif font-bold text-nogal/40 uppercase tracking-wider shrink-0">
-                      Filtro Rápido de Calendario:
-                    </span>
-                    <button
-                      onClick={() => setQuickDateRange("today")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}
-                    >
-                      Hoy
-                    </button>
-                    <button
-                      onClick={() => setQuickDateRange("week")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}
-                    >
-                      Esta Semana
-                    </button>
-                    <button
-                      onClick={() => setQuickDateRange("month")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}
-                    >
-                      Este Mes
-                    </button>
-                    <button
-                      onClick={() => setQuickDateRange("all")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "all" ? "bg-red-600 text-white" : "bg-white hover:bg-red-50 text-red-700 border border-red-200"}`}
-                    >
-                      Limpiar Fechas (Ver Histórico Completo)
-                    </button>
-                  </div>
-                )}
-              </div>
+                {/* Quick Date Range Shortcuts */}
+                <div className="px-5 pb-4 pt-3 bg-white border-b border-[#d4a373]/20 flex items-center gap-2 overflow-x-auto">
+                  <span className="text-[11px] font-serif font-bold text-[#3b1f10]/60 uppercase tracking-wider shrink-0">
+                    Filtro Rápido:
+                  </span>
+                  <button onClick={() => setQuickOrderDateRange("today")} className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeOrderDateFilter === "today" ? "bg-[#2e5339] text-white" : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10]/70 border border-[#d4a373]/25"}`}>Hoy</button>
+                  <button onClick={() => setQuickOrderDateRange("week")} className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeOrderDateFilter === "week" ? "bg-[#2e5339] text-white" : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10]/70 border border-[#d4a373]/25"}`}>Esta Semana</button>
+                  <button onClick={() => setQuickOrderDateRange("month")} className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeOrderDateFilter === "month" ? "bg-[#2e5339] text-white" : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10]/70 border border-[#d4a373]/25"}`}>Este Mes</button>
+                  <button onClick={() => setQuickOrderDateRange("all")} className={`px-3 py-1 font-bold text-xs rounded-xl transition-colors shrink-0 cursor-pointer ${activeOrderDateFilter === "all" ? "bg-[#8C1D40] text-white" : "bg-[#8C1D40]/10 hover:bg-[#8C1D40] hover:text-white text-[#8C1D40] border border-[#8C1D40]/20"}`}>Limpiar Fechas (Ver Histórico)</button>
+                </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
-                    <tr>
-                      <th className="px-6 py-4">Cliente</th>
-                      <th className="px-6 py-4">Fecha y Hora</th>
-                      <th className="px-6 py-4">Personas</th>
-                      <th className="px-6 py-4">Servicio</th>
-                      <th className="px-6 py-4">Estado</th>
-                      <th className="px-6 py-4 text-right">Contacto</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#14231D]/5">
-                    {filteredReservations.length === 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#3b1f10]/60 bg-[#f7f5ef] border-b border-[#d4a373]/20">
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
-                          No hay reservas para mostrar.
-                        </td>
+                        <th className="px-6 py-4">N° Orden</th>
+                        <th className="px-6 py-4">Cliente</th>
+                        <th className="px-6 py-4">Modalidad</th>
+                        <th className="px-6 py-4">Total</th>
+                        <th className="px-6 py-4">Estado</th>
+                        <th className="px-6 py-4 text-right">Acciones</th>
                       </tr>
-                    ) : (
-                      filteredReservations.map((res) => {
-                        const rawPhone = res.client_phone ? res.client_phone.replace(/\D/g, "") : "";
-                        const fullPhone = rawPhone.length === 9 ? `51${rawPhone}` : rawPhone;
-                        const whatsappUrl = `https://wa.me/${fullPhone}?text=Hola%20${encodeURIComponent(res.client_name)},%20te%20contactamos%20de%20Restaurante%20Las%20Flores%20sobre%20tu%20reserva%20para%20el%20dia%20${encodeURIComponent(res.reservation_date)}.`;
-
-                        return (
-                          <tr key={res.id} className="hover:bg-piedra/60 transition-colors">
-                            <td className="px-6 py-4">
-                              <div className="font-bold text-nogal">{res.client_name}</div>
-                              <div className="text-nogal/40">{res.client_phone || "Sin teléfono"}</div>
+                    </thead>
+                    <tbody className="divide-y divide-[#d4a373]/15">
+                      {filteredOrders.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-12 text-center text-[#3b1f10]/40">
+                            No hay pedidos registrados.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredOrders.map((ord) => (
+                          <tr key={ord.id} className="hover:bg-[#fdf8f0]/80 transition-colors">
+                            <td className="px-6 py-4 font-mono font-bold text-[#3b1f10] text-sm">
+                              #{ord.order_number}
                             </td>
                             <td className="px-6 py-4">
-                              <div className="font-bold text-nogal">{res.reservation_date}</div>
-                              <div className="text-pacay font-semibold">{res.reservation_time}</div>
+                              <div className="font-bold text-[#3b1f10]">{ord.client_name || "Anónimo"}</div>
+                              <div className="text-[#3b1f10]/50 text-[11px] font-mono">{ord.client_phone}</div>
                             </td>
-                            <td className="px-6 py-4 font-bold text-nogal">
-                              {res.guest_count} personas
+                            <td className="px-6 py-4">
+                              <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#f7f5ef] text-[#3b1f10]/80 border border-[#d4a373]/25">
+                                {ord.order_type === "delivery" ? "Delivery" : "Recojo"}
+                              </span>
                             </td>
-                            <td className="px-6 py-4 capitalize text-nogal/60 font-medium">
-                              {res.service_type || "Almuerzo"}
+                            <td className="px-6 py-4 font-serif font-extrabold text-[#2e5339] text-base">
+                              S/ {Number(ord.total).toFixed(2)}
                             </td>
                             <td className="px-6 py-4">
                               <select
-                                value={res.status || "pending"}
-                                onChange={(e) => handleUpdateReservationStatus(res.id, e.target.value)}
-                                className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cafe/20"
+                                value={ord.status || "received"}
+                                onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
+                                className={`border font-bold rounded-xl px-3 py-1.5 focus:outline-none text-xs cursor-pointer transition-colors shadow-2xs ${
+                                  ord.status === "preparing"
+                                    ? "bg-indigo-50 text-indigo-900 border-indigo-300/70 hover:bg-indigo-100"
+                                    : ord.status === "on_the_way"
+                                    ? "bg-sky-50 text-sky-900 border-sky-300/70 hover:bg-sky-100"
+                                    : ord.status === "delivered"
+                                    ? "bg-emerald-50 text-emerald-900 border-emerald-300/70 hover:bg-emerald-100"
+                                    : ord.status === "cancelled"
+                                    ? "bg-rose-50 text-rose-900 border-rose-300/70 hover:bg-rose-100"
+                                    : "bg-amber-50 text-amber-900 border-amber-300/70 hover:bg-amber-100"
+                                }`}
                               >
-                                <option value="pending">Pendiente</option>
-                                <option value="confirmed">Confirmada</option>
-                                <option value="completed">Completada</option>
-                                <option value="cancelled">Cancelada</option>
+                                <option value="received" className="bg-white text-[#3b1f10]">Recibido</option>
+                                <option value="preparing" className="bg-white text-[#3b1f10]">En Preparación</option>
+                                <option value="on_the_way" className="bg-white text-[#3b1f10]">En Camino</option>
+                                <option value="delivered" className="bg-white text-[#3b1f10]">Entregado</option>
+                                <option value="cancelled" className="bg-white text-[#3b1f10]">Cancelado</option>
                               </select>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              {res.client_phone && (
-                                <a
-                                  href={whatsappUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors"
-                                >
-                                  WhatsApp <ExternalLink size={12} />
-                                </a>
-                              )}
+                              <button
+                                onClick={() => {
+                                  setSelectedOrder(ord);
+                                  setIsOrderModalOpen(true);
+                                }}
+                                className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#2e5339] hover:text-white text-[#3b1f10] font-bold border border-[#d4a373]/30 text-xs inline-flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                              >
+                                <Eye size={13} /> Detalle
+                              </button>
                             </td>
                           </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* ================= ORDERS TAB ================= */}
-          {activeTab === "orders" && (
-            <div>
-              <div className="p-4 bg-piedra border-b border-eucalipto/8 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex flex-col gap-4 w-full md:w-auto">
+            {/* ================= MENU TAB ================= */}
+            {activeTab === "menu" && (
+              <div>
+                <div className="p-4 bg-piedra border-b border-eucalipto/8 flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="relative w-full md:w-80">
                     <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-nogal/30" />
                     <input
                       type="text"
-                      value={orderSearch}
-                      onChange={(e) => setOrderSearch(e.target.value)}
-                      placeholder="Buscar pedido #, cliente..."
+                      value={menuSearch}
+                      onChange={(e) => setMenuSearch(e.target.value)}
+                      placeholder="Buscar plato por nombre..."
                       className="w-full text-xs bg-white border border-eucalipto/12 rounded-xl pl-9 pr-4 py-2.5 text-nogal focus:outline-none focus:ring-2 focus:ring-cafe/20"
                     />
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                    <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                      <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Desde:</span>
-                      <input
-                        type="date"
-                        value={orderDateFrom}
-                        onChange={(e) => { setOrderDateFrom(e.target.value); setActiveOrderDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
-                      />
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-white border border-eucalipto/12 rounded-xl px-3 py-1.5 shadow-2xs">
-                      <span className="text-[10px] font-serif font-bold text-nogal/40 uppercase">Hasta:</span>
-                      <input
-                        type="date"
-                        value={orderDateTo}
-                        onChange={(e) => { setOrderDateTo(e.target.value); setActiveOrderDateFilter("custom"); }}
-                        className="text-xs bg-transparent font-semibold text-nogal focus:outline-none"
-                      />
-                    </div>
+
+                  <div className="flex items-center gap-2 w-full md:w-auto">
+                    <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Categoría:</span>
+                    <select
+                      value={menuCategoryFilter}
+                      onChange={(e) => setMenuCategoryFilter(e.target.value)}
+                      className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cafe/20"
+                    >
+                      <option value="all">Todas ({categories.length})</option>
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 w-full md:w-auto items-start md:items-end">
-                  <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto">
-                    <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Estado:</span>
-                    {[
-                      { id: "all", label: "Todos" },
-                      { id: "received", label: "Recibidos" },
-                      { id: "preparing", label: "En Preparación" },
-                      { id: "on_the_way", label: "En Camino" },
-                      { id: "delivered", label: "Entregados" },
-                      { id: "cancelled", label: "Cancelados" },
-                    ].map((st) => (
-                      <button
-                        key={st.id}
-                        onClick={() => setOrderStatusFilter(st.id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                          orderStatusFilter === st.id
-                            ? "bg-eucalipto text-white shadow-sm"
-                            : "bg-white border border-eucalipto/12 text-nogal/60 hover:bg-eucalipto/5"
-                        }`}
-                      >
-                        {st.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Date Range Shortcuts */}
-              <div className="px-4 pb-4 pt-3 bg-piedra border-b border-eucalipto/8 flex items-center gap-2 overflow-x-auto">
-                <span className="text-[11px] font-serif font-bold text-nogal/40 uppercase tracking-wider shrink-0">
-                  Filtro Rápido de Calendario:
-                </span>
-                <button onClick={() => setQuickOrderDateRange("today")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}>Hoy</button>
-                <button onClick={() => setQuickOrderDateRange("week")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}>Esta Semana</button>
-                <button onClick={() => setQuickOrderDateRange("month")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-eucalipto/5 text-nogal/70 border border-eucalipto/15"}`}>Este Mes</button>
-                <button onClick={() => setQuickOrderDateRange("all")} className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-600 text-white" : "bg-white hover:bg-red-50 text-red-700 border border-red-200"}`}>Limpiar Fechas (Ver Histórico Completo)</button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
-                    <tr>
-                      <th className="px-6 py-4">N° Orden</th>
-                      <th className="px-6 py-4">Cliente</th>
-                      <th className="px-6 py-4">Modalidad</th>
-                      <th className="px-6 py-4">Total</th>
-                      <th className="px-6 py-4">Estado</th>
-                      <th className="px-6 py-4 text-right">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#14231D]/5">
-                    {filteredOrders.length === 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
                       <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
-                          No hay pedidos registrados.
-                        </td>
+                        <th className="px-6 py-4 w-20">Imagen</th>
+                        <th className="px-6 py-4">Producto</th>
+                        <th className="px-6 py-4">Categoría</th>
+                        <th className="px-6 py-4">Precio</th>
+                        <th className="px-6 py-4">Disponibilidad</th>
+                        <th className="px-6 py-4 text-right">Acciones</th>
                       </tr>
-                    ) : (
-                      filteredOrders.map((ord) => (
-                        <tr key={ord.id} className="hover:bg-piedra/60 transition-colors">
-                          <td className="px-6 py-4 font-serif font-bold text-nogal text-sm">
-                            #{ord.order_number}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="font-bold text-nogal">{ord.client_name || "Anónimo"}</div>
-                            <div className="text-nogal/40">{ord.client_phone}</div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-eucalipto/5 text-nogal/70 border border-eucalipto/10">
-                              {ord.order_type === "delivery" ? "Delivery" : "Recojo"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 font-serif font-black text-pacay text-sm">
-                            S/ {Number(ord.total).toFixed(2)}
-                          </td>
-                          <td className="px-6 py-4">
-                            <select
-                              value={ord.status || "received"}
-                              onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
-                              className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cafe/20"
-                            >
-                              <option value="received">Recibido</option>
-                              <option value="preparing">En Preparación</option>
-                              <option value="on_the_way">En Camino</option>
-                              <option value="delivered">Entregado</option>
-                              <option value="cancelled">Cancelado</option>
-                            </select>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <button
-                              onClick={() => {
-                                setSelectedOrder(ord);
-                                setIsOrderModalOpen(true);
-                              }}
-                              className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
-                            >
-                              <Eye size={13} /> Detalle
-                            </button>
+                    </thead>
+                    <tbody className="divide-y divide-[#14231D]/5">
+                      {filteredProducts.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
+                            No hay platos registrados.
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= MENU TAB ================= */}
-          {activeTab === "menu" && (
-            <div>
-              <div className="p-4 bg-piedra border-b border-eucalipto/8 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="relative w-full md:w-80">
-                  <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-nogal/30" />
-                  <input
-                    type="text"
-                    value={menuSearch}
-                    onChange={(e) => setMenuSearch(e.target.value)}
-                    placeholder="Buscar plato por nombre..."
-                    className="w-full text-xs bg-white border border-eucalipto/12 rounded-xl pl-9 pr-4 py-2.5 text-nogal focus:outline-none focus:ring-2 focus:ring-cafe/20"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                  <span className="text-xs font-serif font-bold text-nogal/40 uppercase tracking-wider whitespace-nowrap">Categoría:</span>
-                  <select
-                    value={menuCategoryFilter}
-                    onChange={(e) => setMenuCategoryFilter(e.target.value)}
-                    className="bg-white border border-eucalipto/12 text-nogal font-bold rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cafe/20"
-                  >
-                    <option value="all">Todas ({categories.length})</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
-                    <tr>
-                      <th className="px-6 py-4 w-20">Imagen</th>
-                      <th className="px-6 py-4">Producto</th>
-                      <th className="px-6 py-4">Categoría</th>
-                      <th className="px-6 py-4">Precio</th>
-                      <th className="px-6 py-4">Disponibilidad</th>
-                      <th className="px-6 py-4 text-right">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#14231D]/5">
-                    {filteredProducts.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
-                          No hay platos registrados.
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredProducts.map((prod) => (
-                        <tr key={prod.id} className="hover:bg-piedra/60 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-eucalipto/5 border border-eucalipto/8 shrink-0">
-                              {prod.image_url ? (
-                                <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-nogal/30">
-                                  <UtensilsCrossed size={16} />
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="font-serif font-bold text-nogal text-sm">{prod.name}</div>
-                            {prod.description && <p className="text-nogal/40 text-xs line-clamp-1">{prod.description}</p>}
-                          </td>
-                          <td className="px-6 py-4 text-nogal/60 font-medium">
-                            {prod.categories?.name || "General"}
-                          </td>
-                          <td className="px-6 py-4 font-serif font-bold text-pacay text-sm">
-                            S/ {Number(prod.price).toFixed(2)}
-                          </td>
-                          <td className="px-6 py-4">
-                            <button
-                              onClick={() => handleToggleProductAvailability(prod.id, prod.is_available)}
-                              className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${
-                                prod.is_available
-                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                                  : "bg-red-50 text-red-800 border-red-200"
-                              }`}
-                            >
-                              {prod.is_available ? "Disponible" : "Agotado"}
-                            </button>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => {
-                                  setSelectedProduct(prod);
-                                  setIsProductModalOpen(true);
-                                }}
-                                className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
-                              >
-                                <Edit2 size={12} /> Editar
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= COUPONS TAB ================= */}
-          {activeTab === "coupons" && (
-            <div>
-              <div className="p-4 bg-piedra border-b border-eucalipto/8 flex items-center justify-between">
-                <div>
-                  <h3 className="font-serif font-bold text-sm text-nogal flex items-center gap-2">
-                    <Ticket size={16} className="text-nogal" />
-                    Gestión de Cupones & Códigos Promocionales
-                  </h3>
-                  <p className="text-xs text-nogal/40">Configuración de límites de uso, descuentos en % o S/ y restricciones</p>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setSelectedCoupon(null);
-                    setIsCouponModalOpen(true);
-                  }}
-                  className="px-4 py-2 rounded-xl bg-eucalipto hover:bg-[#1E322A] text-chilca text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
-                >
-                  <Plus size={14} /> Crear Nuevo Cupón
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-nogal/40 bg-piedra border-b border-eucalipto/8">
-                    <tr>
-                      <th className="px-6 py-4">Código del Cupón</th>
-                      <th className="px-6 py-4">Descuento</th>
-                      <th className="px-6 py-4">Límite de Usos & Progreso</th>
-                      <th className="px-6 py-4">Modalidad Válida</th>
-                      <th className="px-6 py-4">Estado</th>
-                      <th className="px-6 py-4 text-right">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#14231D]/5">
-                    {coupons.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-nogal/30">
-                          No hay cupones creados aún. Haz clic en "Crear Nuevo Cupón" para comenzar (ej: FLORES).
-                        </td>
-                      </tr>
-                    ) : (
-                      coupons.map((c) => {
-                        const usedPercent = Math.min(Math.round(((c.used_count || 0) / (c.max_uses || 1)) * 100), 100);
-                        const isExpired = (c.used_count || 0) >= (c.max_uses || 1);
-
-                        return (
-                          <tr key={c.id} className="hover:bg-piedra/60 transition-colors">
+                      ) : (
+                        filteredProducts.map((prod) => (
+                          <tr key={prod.id} className="hover:bg-piedra/60 transition-colors">
                             <td className="px-6 py-4">
-                              <span className="font-mono font-black text-sm px-3 py-1 bg-cochinillahilca/10 text-nogal border border-chilca/30 rounded-lg tracking-wider">
-                                {c.code}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className="font-serif font-extrabold text-sm text-pacay">
-                                {c.discount_type === "percent" ? `${c.discount_value}% OFF` : `S/ ${Number(c.discount_value).toFixed(2)} OFF`}
-                              </span>
-                              {c.min_order_total > 0 && (
-                                <p className="text-[10px] text-nogal/40 mt-0.5">Min: S/ {c.min_order_total}</p>
-                              )}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="space-y-1">
-                                <div className="flex justify-between text-xs font-bold">
-                                  <span className={isExpired ? "text-red-700" : "text-nogal"}>
-                                    {c.used_count || 0} / {c.max_uses} usos
-                                  </span>
-                                  <span className="text-nogal/30 font-mono text-[11px]">{usedPercent}%</span>
-                                </div>
-                                <div className="w-48 bg-eucalipto/8 h-2 rounded-full overflow-hidden border border-eucalipto/8">
-                                  <div
-                                    style={{ width: `${usedPercent}%` }}
-                                    className={`h-full transition-all ${isExpired ? "bg-red-500" : "bg-eucalipto"}`}
-                                  />
-                                </div>
+                              <div className="w-12 h-12 rounded-xl overflow-hidden bg-eucalipto/5 border border-eucalipto/8 shrink-0">
+                                {prod.image_url ? (
+                                  <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-nogal/30">
+                                    <UtensilsCrossed size={16} />
+                                  </div>
+                                )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 font-semibold text-nogal/60 capitalize">
-                              {c.order_type_restriction === "delivery" ? "Solo Delivery" : c.order_type_restriction === "pickup" ? "Solo Recojo" : "Todas las Modalidades"}
+                            <td className="px-6 py-4">
+                              <div className="font-serif font-bold text-nogal text-sm">{prod.name}</div>
+                              {prod.description && <p className="text-nogal/40 text-xs line-clamp-1">{prod.description}</p>}
+                            </td>
+                            <td className="px-6 py-4 text-nogal/60 font-medium">
+                              {prod.categories?.name || "General"}
+                            </td>
+                            <td className="px-6 py-4 font-serif font-bold text-pacay text-sm">
+                              S/ {Number(prod.price).toFixed(2)}
                             </td>
                             <td className="px-6 py-4">
-                              <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
-                                c.is_active && !isExpired
-                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                                  : "bg-red-50 text-red-800 border-red-200"
-                              }`}>
-                                {isExpired ? "Agotado (100 usos)" : c.is_active ? "Activo" : "Inactivo"}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-right">
                               <button
-                                onClick={() => {
-                                  setSelectedCoupon(c);
-                                  setIsCouponModalOpen(true);
-                                }}
-                                className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                onClick={() => handleToggleProductAvailability(prod.id, prod.is_available)}
+                                className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${
+                                  prod.is_available
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                    : "bg-red-50 text-red-800 border-red-200"
+                                }`}
                               >
-                                <Edit2 size={12} /> Editar
+                                {prod.is_available ? "Disponible" : "Agotado"}
                               </button>
                             </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedProduct(prod);
+                                    setIsProductModalOpen(true);
+                                  }}
+                                  className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                >
+                                  <Edit2 size={12} /> Editar
+                                </button>
+                              </div>
+                            </td>
                           </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* TRABAJA CON NOSOTROS (CONVOCATORIAS & CVS) */}
-          {activeTab === "jobs" && <AdminJobsSection />}
+            {/* ================= COUPONS TAB ================= */}
+            {activeTab === "coupons" && (
+              <div>
+                <div className="p-5 bg-white border-b border-[#d4a373]/20 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-serif font-bold text-base text-[#3b1f10] flex items-center gap-2">
+                      <Ticket size={18} className="text-[#2e5339]" />
+                      Gestión de Cupones & Códigos Promocionales
+                    </h3>
+                    <p className="text-xs text-[#3b1f10]/60">Configuración de límites de uso, descuentos en % o S/ y restricciones</p>
+                  </div>
 
-          {/* SALONES & APAGADO DE RESERVAS */}
-          {activeTab === "zones" && <AdminZonesSection />}
+                  <button
+                    onClick={() => {
+                      setSelectedCoupon(null);
+                      setIsCouponModalOpen(true);
+                    }}
+                    className="px-4 py-2.5 rounded-2xl bg-[#2e5339] hover:bg-[#23412c] text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                  >
+                    <Plus size={14} /> Crear Nuevo Cupón
+                  </button>
+                </div>
 
-        </div>
-      </main>
-    </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#3b1f10]/60 bg-[#f7f5ef] border-b border-[#d4a373]/20">
+                      <tr>
+                        <th className="px-6 py-4">Código del Cupón</th>
+                        <th className="px-6 py-4">Descuento</th>
+                        <th className="px-6 py-4">Límite de Usos & Progreso</th>
+                        <th className="px-6 py-4">Modalidad Válida</th>
+                        <th className="px-6 py-4">Estado</th>
+                        <th className="px-6 py-4 text-right">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#d4a373]/15">
+                      {coupons.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-12 text-center text-[#3b1f10]/40">
+                            No hay cupones creados aún. Haz clic en "Crear Nuevo Cupón" para comenzar (ej: FLORES2026).
+                          </td>
+                        </tr>
+                      ) : (
+                        coupons.map((c) => {
+                          const usedPercent = Math.min(Math.round(((c.used_count || 0) / (c.max_uses || 1)) * 100), 100);
+                          const isExpired = (c.used_count || 0) >= (c.max_uses || 1);
+
+                          return (
+                            <tr key={c.id} className="hover:bg-[#fdf8f0]/80 transition-colors">
+                              <td className="px-6 py-4">
+                                <span className="font-mono font-black text-sm px-3.5 py-1.5 bg-[#f7f5ef] text-[#3b1f10] border border-dashed border-[#d4a373]/50 rounded-xl tracking-wider shadow-2xs">
+                                  {c.code}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="font-serif font-extrabold text-base text-[#2e5339]">
+                                  {c.discount_type === "percent" ? `${c.discount_value}% OFF` : `S/ ${Number(c.discount_value).toFixed(2)} OFF`}
+                                </span>
+                                {c.min_order_total > 0 && (
+                                  <p className="text-[10px] text-[#3b1f10]/50 font-semibold mt-0.5">Mínimo: S/ {c.min_order_total}</p>
+                                )}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="space-y-1.5">
+                                  <div className="flex justify-between text-xs font-bold">
+                                    <span className={isExpired ? "text-[#8C1D40]" : "text-[#3b1f10]"}>
+                                      {c.used_count || 0} / {c.max_uses} usos
+                                    </span>
+                                    <span className="text-[#3b1f10]/50 font-mono text-[11px]">{usedPercent}%</span>
+                                  </div>
+                                  <div className="w-48 bg-[#f7f5ef] h-2.5 rounded-full overflow-hidden border border-[#d4a373]/25">
+                                    <div
+                                      style={{ width: `${usedPercent}%` }}
+                                      className={`h-full transition-all ${isExpired ? "bg-[#8C1D40]" : "bg-[#2e5339]"}`}
+                                    />
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 font-semibold text-[#3b1f10]/70 capitalize">
+                                {c.order_type_restriction === "delivery" ? "Solo Delivery" : c.order_type_restriction === "pickup" ? "Solo Recojo" : "Todas las Modalidades"}
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                                  c.is_active && !isExpired
+                                    ? "bg-emerald-50 text-[#2e5339] border-emerald-200"
+                                    : "bg-red-50 text-[#8C1D40] border-red-200"
+                                }`}>
+                                  {isExpired ? "Agotado (100% usos)" : c.is_active ? "Activo" : "Inactivo"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <button
+                                  onClick={() => {
+                                    setSelectedCoupon(c);
+                                    setIsCouponModalOpen(true);
+                                  }}
+                                  className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#2e5339] hover:text-white text-[#3b1f10] font-bold border border-[#d4a373]/30 text-xs inline-flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                                >
+                                  <Edit2 size={12} /> Editar
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* TRABAJA CON NOSOTROS (CONVOCATORIAS & CVS) */}
+            {activeTab === "jobs" && <AdminJobsSection />}
+
+            {/* SALONES & APAGADO DE RESERVAS */}
+            {activeTab === "zones" && <AdminZonesSection />}
+
+          </div>
+        </main>
+      </div>
 
       {/* Modals */}
       <AdminOrderDetailModal
@@ -1340,7 +1363,7 @@ function AdminRoute() {
         product={selectedProduct}
         categories={categories}
         onSave={fetchData}
-        onDelete={handleDeleteProduct}
+        onDelete={handleArchiveProduct}
       />
 
       <AdminCouponModal
@@ -1377,9 +1400,3 @@ if (typeof document !== "undefined") {
   styleSheet.innerText = hideScrollbarStyles;
   document.head.appendChild(styleSheet);
 }
-
-
-
-
-
-
