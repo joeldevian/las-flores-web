@@ -3,10 +3,11 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
-import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
-import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check } from "lucide-react";
+import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
+import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
+import { getBlockedZonesForReservation } from "@/features/zones/api";
 
 export const Route = createFileRoute("/reservas")({
   validateSearch: (search: Record<string, unknown>): { zona?: string } => {
@@ -178,7 +179,22 @@ function ReservasPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [pendingStepTransition, setPendingStepTransition] = useState<number | null>(null);
 
+  // Blackout & Zone Status State
+  const [blockedZoneIds, setBlockedZoneIds] = useState<string[]>([]);
+  const [isRestaurantBlocked, setIsRestaurantBlocked] = useState<boolean>(false);
+  const [blockedReasons, setBlockedReasons] = useState<Record<string, string>>({});
+
   const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
+
+  // Fetch blocked zones for selected date/time
+  useEffect(() => {
+    if (!form.date) return;
+    getBlockedZonesForReservation(form.date, form.time).then((res) => {
+      setIsRestaurantBlocked(res.isRestaurantBlocked);
+      setBlockedZoneIds(res.blockedZoneIds);
+      setBlockedReasons(res.reasons);
+    });
+  }, [form.date, form.time]);
 
   // Generate next 14 days calendar carousel
   const DAYS_CAROUSEL = useMemo(() => {

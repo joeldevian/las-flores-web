@@ -26,6 +26,7 @@ import {
   Ticket,
   ListTree,
   Briefcase,
+  Store,
 } from "lucide-react";
 
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
@@ -34,6 +35,7 @@ import { AdminCouponModal } from "../components/AdminCouponModal";
 import { AdminCategoryListModal } from "../components/AdminCategoryListModal";
 import { AdminAnalyticsSection } from "../components/AdminAnalyticsSection";
 import { AdminJobsSection } from "../components/AdminJobsSection";
+import { AdminZonesSection } from "../components/AdminZonesSection";
 import { removeProductById } from "../utils/adminProducts";
 
 const getLocalYYYYMMDD = (d = new Date()) => {
@@ -50,7 +52,7 @@ export const Route = createFileRoute("/admin")({
 function AdminRoute() {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"analytics" | "orders" | "reservations" | "menu" | "coupons" | "jobs">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "orders" | "reservations" | "menu" | "coupons" | "jobs" | "zones">("analytics");
   const [refreshing, setRefreshing] = useState(false);
 
   // Data states
@@ -562,6 +564,21 @@ function AdminRoute() {
               </span>
             </button>
 
+            {/* Salones & Apagado */}
+            <button
+              onClick={() => setActiveTab("zones")}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-sans transition-all ${
+                activeTab === "zones"
+                  ? "bg-white/15 text-white border-l-[3px] border-chilca font-bold shadow-sm"
+                  : "text-white/60 hover:text-white hover:bg-white/8 font-semibold"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Store size={17} className={activeTab === "zones" ? "text-chilca" : "text-white/40"} />
+                <span>Salones & Apagado</span>
+              </div>
+            </button>
+
           </nav>
         </div>
 
@@ -624,6 +641,7 @@ function AdminRoute() {
               {activeTab === "menu" && "Gestión de Carta & Platos"}
               {activeTab === "coupons" && "Cupones & Promociones"}
               {activeTab === "jobs" && "Convocatorias & Postulantes"}
+              {activeTab === "zones" && "Salones del Local & Apagado de Reservas"}
             </h1>
           </div>
 
@@ -1298,6 +1316,9 @@ function AdminRoute() {
 
           {/* TRABAJA CON NOSOTROS (CONVOCATORIAS & CVS) */}
           {activeTab === "jobs" && <AdminJobsSection />}
+
+          {/* SALONES & APAGADO DE RESERVAS */}
+          {activeTab === "zones" && <AdminZonesSection />}
 
         </div>
       </main>

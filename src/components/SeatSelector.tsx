@@ -134,9 +134,20 @@ interface SeatSelectorProps {
   onSkip: () => void;
   guestCount?: number;
   initialZone?: string;
+  blockedZoneIds?: string[];
+  isRestaurantBlocked?: boolean;
+  blockedReasons?: Record<string, string>;
 }
 
-export function SeatSelector({ onSelectTable, onSkip, guestCount = 2, initialZone }: SeatSelectorProps) {
+export function SeatSelector({
+  onSelectTable,
+  onSkip,
+  guestCount = 2,
+  initialZone,
+  blockedZoneIds = [],
+  isRestaurantBlocked = false,
+  blockedReasons = {},
+}: SeatSelectorProps) {
   const [selectedZone, setSelectedZone] = useState<string | null>(initialZone ?? null);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
@@ -380,17 +391,25 @@ export function SeatSelector({ onSelectTable, onSkip, guestCount = 2, initialZon
 
               {/* ── ZONAS SELECCIONABLES ── */}
               {ZONES.map((z) => {
-                const compatible = z.tables.filter((t) => t.capacity >= guestCount).length;
+                const isBlocked = isRestaurantBlocked || blockedZoneIds.includes(z.id);
+                const compatible = isBlocked ? 0 : z.tables.filter((t) => t.capacity >= guestCount).length;
                 const isHovered = hoveredZone === z.id;
-                const opacity = compatible === 0 ? 0.4 : 1;
+                const opacity = isBlocked ? 0.35 : compatible === 0 ? 0.4 : 1;
 
                 const commonProps = {
-                  fill: isHovered ? z.color : z.colorLight,
-                  stroke: z.color,
-                  strokeWidth: isHovered ? "2" : "1",
+                  fill: isBlocked ? "#fee2e2" : isHovered ? z.color : z.colorLight,
+                  stroke: isBlocked ? "#ef4444" : z.color,
+                  strokeWidth: isBlocked ? "1.5" : isHovered ? "2" : "1",
                   opacity,
-                  style: { cursor: compatible > 0 ? "pointer" : "not-allowed", transition: "all 0.15s" },
-                  onClick: () => compatible > 0 && setSelectedZone(z.id),
+                  style: { cursor: isBlocked ? "not-allowed" : compatible > 0 ? "pointer" : "not-allowed", transition: "all 0.15s" },
+                  onClick: () => {
+                    if (isBlocked) {
+                      const reason = blockedReasons[z.id] || blockedReasons["global"] || "Reservada / Apagada por administración";
+                      alert(`La zona "${z.name}" se encuentra temporalmente bloqueada para reservas en línea.\nMotivo: ${reason}`);
+                    } else if (compatible > 0) {
+                      setSelectedZone(z.id);
+                    }
+                  },
                   onMouseEnter: () => setHoveredZone(z.id),
                   onMouseLeave: () => setHoveredZone(null),
                 };
@@ -409,21 +428,22 @@ export function SeatSelector({ onSelectTable, onSkip, guestCount = 2, initialZon
                       fontSize="9"
                       textAnchor="middle"
                       fontWeight="bold"
-                      fill={isHovered ? "#ffffff" : z.color}
+                      fill={isBlocked ? "#dc2626" : isHovered ? "#ffffff" : z.color}
                       style={{ pointerEvents: "none", transition: "fill 0.15s" }}
                     >
                       {z.shortName}
                     </text>
-                    {/* Contador de mesas */}
+                    {/* Contador de mesas / Estado Bloqueado */}
                     <text
                       x={z.labelX} y={z.labelY + 7}
                       fontSize="6.5"
                       textAnchor="middle"
-                      fill={isHovered ? "#ffffff" : z.color}
-                      opacity="0.85"
+                      fill={isBlocked ? "#dc2626" : isHovered ? "#ffffff" : z.color}
+                      fontWeight={isBlocked ? "bold" : "normal"}
+                      opacity="0.9"
                       style={{ pointerEvents: "none", transition: "fill 0.15s" }}
                     >
-                      {compatible} mesa{compatible !== 1 ? "s" : ""}
+                      {isBlocked ? "BLOQUEADA" : `${compatible} mesa${compatible !== 1 ? "s" : ""}`}
                     </text>
                   </g>
                 );
