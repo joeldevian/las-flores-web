@@ -490,47 +490,47 @@ function AdminRoute() {
       <aside className="w-full md:w-64 lg:w-72 bg-eucalipto text-white border-r border-white/5 shrink-0 flex flex-col justify-between md:h-screen md:sticky md:top-0 z-40 shadow-2xl overflow-hidden font-sans">
         
         {/* Top Scrollable Navigation Container */}
-        <div className="p-5 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
+        <div className="p-3.5 space-y-3 overflow-y-auto flex-1 hide-scrollbar min-h-0">
           {/* Brand Logo & Name */}
-          <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1.5 flex items-center justify-center border border-white/20 shadow-md shrink-0">
+          <div className="flex items-center gap-2.5 border-b border-white/10 pb-2.5">
+            <div className="w-9 h-9 rounded-xl bg-white/10 p-1 flex items-center justify-center border border-white/20 shadow-md shrink-0">
               <img
                 src="/favicon.png"
                 alt="Las Flores Logo"
-                className="w-full h-full object-contain rounded-xl"
+                className="w-full h-full object-contain rounded-lg"
               />
             </div>
             <div className="min-w-0">
-              <h2 className="font-sans text-sm font-bold tracking-tight text-white truncate">
+              <h2 className="font-sans text-xs font-bold tracking-tight text-white truncate">
                 Restaurante Las Flores
               </h2>
-              <p className="text-[10px] text-white/50 font-sans tracking-wide truncate font-medium">
+              <p className="text-[9.5px] text-white/50 font-sans tracking-wide truncate font-medium">
                 Panel Ejecutivo BI & Gestión
               </p>
             </div>
           </div>
 
           {/* User Profile Chip */}
-          <div className="bg-white/[0.06] border border-white/10 p-3 rounded-2xl flex items-center gap-3 shadow-inner">
-            <div className="w-9 h-9 rounded-xl bg-cochinilla/15 border border-chilca/30 text-chilca font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
+          <div className="bg-white/[0.06] border border-white/10 p-2.5 rounded-xl flex items-center gap-2.5 shadow-inner">
+            <div className="w-8 h-8 rounded-lg bg-cochinilla/15 border border-chilca/30 text-chilca font-sans font-black flex items-center justify-center text-xs shrink-0 shadow-xs">
               AD
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-[10px] uppercase font-bold text-white/40 block tracking-wider">
+              <span className="text-[9px] uppercase font-bold text-white/40 block tracking-wider">
                 Administrador
               </span>
               <span className="text-xs font-bold text-white truncate block">
                 Gerencia General
               </span>
             </div>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Realtime Activo" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Realtime Activo" />
           </div>
 
           {/* Vertical Navigation Items */}
-          <nav className="space-y-4 pt-1">
+          <nav className="space-y-2.5 pt-0.5">
             {navGroups.map((group) => (
-              <div key={group.title} className="space-y-1.5">
-                <span className="text-[9px] font-sans uppercase tracking-[0.18em] text-white/[0.38] font-black px-2 block">
+              <div key={group.title} className="space-y-1">
+                <span className="text-[8.5px] font-sans uppercase tracking-[0.2em] text-white/40 font-black px-2 block">
                   {group.title}
                 </span>
 
@@ -542,27 +542,27 @@ function AdminRoute() {
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`group w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-left font-sans transition-all ${
+                      className={`group w-full flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-xl text-left font-sans transition-all ${
                         isActive
-                          ? "bg-white/[0.14] text-white ring-1 ring-white/[0.12] shadow-lg shadow-black/10"
-                          : "text-white/[0.62] hover:text-white hover:bg-white/8"
+                          ? "bg-white/[0.16] text-white ring-1 ring-white/20 shadow-md"
+                          : "text-white/70 hover:text-white hover:bg-white/10"
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <span
-                          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                             isActive
-                              ? "bg-chilca/15 text-chilca"
-                              : "bg-white/[0.04] text-white/36 group-hover:text-chilca"
+                              ? "bg-chilca/20 text-chilca"
+                              : "bg-white/[0.05] text-white/40 group-hover:text-chilca"
                           }`}
                         >
-                          <Icon size={16} />
+                          <Icon size={14} />
                         </span>
                         <span className="min-w-0">
-                          <span className={`block text-[12px] leading-4 truncate ${isActive ? "font-bold" : "font-semibold"}`}>
+                          <span className={`block text-[11.5px] leading-3.5 truncate ${isActive ? "font-bold" : "font-semibold"}`}>
                             {item.label}
                           </span>
-                          <span className="block text-[10px] leading-3 text-white/38 truncate">
+                          <span className="block text-[9.5px] leading-3 text-white/40 truncate">
                             {item.helper}
                           </span>
                         </span>
@@ -570,8 +570,8 @@ function AdminRoute() {
 
                       {typeof item.count === "number" && (
                         <span
-                          className={`min-w-6 px-1.5 py-0.5 text-[10px] rounded-full font-sans font-bold tabular-nums text-center shrink-0 ${
-                            isActive ? "bg-chilca text-cafe" : "bg-white/[0.09] text-white/[0.62]"
+                          className={`min-w-5 px-1.5 py-0.5 text-[9.5px] rounded-full font-sans font-bold tabular-nums text-center shrink-0 ${
+                            isActive ? "bg-chilca text-cafe" : "bg-white/10 text-white/70"
                           }`}
                         >
                           {item.count}
@@ -586,42 +586,41 @@ function AdminRoute() {
         </div>
 
         {/* Bottom Sidebar Action Quick Links - ALWAYS PINNED & VISIBLE */}
-        <div className="p-4 space-y-2.5 border-t border-white/8 bg-black/[0.04] shrink-0 font-sans">
+        <div className="p-3 space-y-2 border-t border-white/10 bg-black/10 shrink-0 font-sans">
           <Link
             to="/caja"
-            className="w-full py-2.5 px-3.5 rounded-2xl bg-chilca/12 hover:bg-chilca/18 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98 border border-chilca/20"
+            className="w-full py-2 px-3 rounded-xl bg-chilca/15 hover:bg-chilca/25 text-white text-[11.5px] font-bold flex items-center justify-center gap-2 transition-all shadow-xs border border-chilca/25"
           >
-            <UtensilsCrossed size={15} className="text-chilca" />
+            <UtensilsCrossed size={14} className="text-chilca" />
             <span>Panel Caja / Cocina</span>
           </Link>
 
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="grid grid-cols-2 gap-1.5 pt-0.5">
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="py-2 px-2 rounded-2xl bg-white/[0.07] hover:bg-white/[0.12] text-white/85 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors border border-white/8"
+              className="py-1.5 px-2 rounded-xl bg-white/8 hover:bg-white/15 text-white/85 text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/10"
               title="Sincronizar Supabase"
             >
-              <RefreshCw size={13} className={`text-chilca ${refreshing ? "animate-spin" : ""}`} />
+              <RefreshCw size={12} className={`text-chilca ${refreshing ? "animate-spin" : ""}`} />
               <span>Sincronizar</span>
             </button>
 
             <button
               onClick={() => { window.location.href = "/restaurante"; }}
-              className="py-2 px-2 rounded-xl bg-white/8 hover:bg-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/8"
+              className="py-1.5 px-2 rounded-xl bg-white/8 hover:bg-white/15 text-white/85 text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors border border-white/10"
             >
-              <ArrowLeft size={13} className="text-chilca" />
+              <ArrowLeft size={12} className="text-chilca" />
               <span>Ver Web</span>
             </button>
           </div>
 
           <button
             onClick={handleSignOut}
-            className="w-full py-2 px-3 rounded-xl bg-cochinilla hover:bg-cochinilla/90 text-white border border-transparent shadow-sm text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-1"
+            className="w-full py-2 px-3 rounded-xl bg-cochinilla hover:bg-cochinilla/90 text-white border border-transparent shadow-xs text-[11.5px] font-semibold flex items-center justify-center gap-1.5 transition-all"
           >
-            <LogOut size={14} />
+            <LogOut size={13} />
             <span>Cerrar Sesión</span>
-          </button>
         </div>
 
       </aside>
@@ -1359,6 +1358,24 @@ function AdminRoute() {
 
     </div>
   );
+}
+
+// Inject CSS rule to completely hide browser scrollbars on the admin sidebar
+const hideScrollbarStyles = `
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+`;
+if (typeof document !== "undefined") {
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = hideScrollbarStyles;
+  document.head.appendChild(styleSheet);
 }
 
 
