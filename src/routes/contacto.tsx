@@ -32,27 +32,27 @@ export const Route = createFileRoute("/contacto")({
 
 const heroImg = "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
 
-// FAQS de atención de lujo
+// FAQS reales del Restaurante Las Flores Ayacucho
 const FAQS = [
   {
-    q: "¿Cuentan con estacionamiento privado?",
-    a: "Sí, disponemos de estacionamiento privado vigilado las 24 horas y servicio de Valet Parking para la comodidad de todos nuestros comensales.",
+    q: "¿Cuáles son sus horarios de atención?",
+    a: "Atendemos de Lunes a Domingo de 7:00 a.m. a 5:30 p.m. Servimos desayunos tradicionales ayacuchanos desde temprano y almuerzos típicos hasta la tarde.",
   },
   {
-    q: "¿Existe algún código de vestimenta?",
-    a: "Nuestro código es Casual Elegante. Recomendamos un atuendo cómodo pero distinguido para disfrutar la atmósfera de nuestras salas y terrazas.",
+    q: "¿Con cuánta anticipación debo realizar una reserva?",
+    a: "Recomendamos reservar con al menos 24 horas de anticipación para fines de semana, días festivos (como Semana Santa o Fiestas Patrias) o para grupos mayores a 6 personas.",
   },
   {
-    q: "¿Tienen opciones para eventos privados y corporativos?",
-    a: "Contamos con salones privados con Pan de Oro y áreas exclusivas reservables para banquetes, aniversarios y reuniones corporativas.",
+    q: "¿Realizan envíos a domicilio (Delivery)?",
+    a: "Sí, realizamos delivery a todo Huamanga y también puedes hacer tu pedido para llevar directamente en el restaurante o por WhatsApp.",
   },
   {
-    q: "¿Se permiten mascotas en las instalaciones?",
-    a: "Nuestra Zona de Terraza Abierta es 100% Pet Friendly. Tu mascota es bienvenida en las áreas al aire libre.",
+    q: "¿Cuáles son las especialidades tradicionales de la casa?",
+    a: "Nuestros platos estrella son el Chicharrón con Chapla Ayacuchana, Cuy Chactado, Puca Picante, Mondongo Ayacuchano y nuestro tradicional Ponche Ayacuchano.",
   },
   {
     q: "¿Cuáles son los métodos de pago aceptados?",
-    a: "Aceptamos todas las tarjetas de crédito y débito (Visa, Mastercard, Amex), transferencias bancarias, Yape, Plin y efectivo.",
+    a: "Aceptamos pagos con Yape, Plin, tarjetas de crédito y débito (Visa, Mastercard, Amex), transferencias bancarias y efectivo.",
   },
 ];
 
@@ -211,19 +211,19 @@ function ContactoPage() {
           <div className="lg:col-span-5 space-y-6">
             
             {/* Tarjeta 1: Estado en Vivo & Ubicación */}
-            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-[#d4a373]/30 space-y-6 relative overflow-hidden">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+            <div className="bg-[#fdf8f0] p-6 md:p-8 rounded-3xl shadow-xl border border-[#d4a373]/30 space-y-6 relative overflow-hidden">
+              <div className="flex items-center justify-between border-b border-[#d4a373]/20 pb-4">
                 <span className="font-serif text-xl font-bold text-[#2e5339]">
                   Nuestra Casa Colonial
                 </span>
                 <span
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider ${
                     isOpenNow
-                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                      : "bg-amber-100 text-amber-800 border border-amber-300"
+                      ? "bg-emerald-100/80 text-emerald-900 border border-emerald-300"
+                      : "bg-amber-100/80 text-amber-900 border border-amber-300"
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${isOpenNow ? "bg-emerald-500 animate-ping" : "bg-amber-500"}`} />
+                  <span className={`w-2 h-2 rounded-full ${isOpenNow ? "bg-emerald-600 animate-ping" : "bg-amber-600"}`} />
                   {isOpenNow ? "Abierto Ahora" : "Atención por WhatsApp"}
                 </span>
               </div>
@@ -240,7 +240,7 @@ function ContactoPage() {
                   <p className="font-serif text-base font-bold text-[#2c2a29]">
                     Jr. José Olaya 106
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">
+                  <p className="text-xs text-gray-600 font-medium">
                     Huamanga — Ayacucho, Perú (A 2 cuadras de la Plaza Mayor).
                   </p>
                   <div className="pt-2 flex flex-wrap gap-2">
@@ -248,7 +248,7 @@ function ContactoPage() {
                       href="https://www.google.com/maps?q=-13.162825034398038,-74.21792188690533"
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-[#2e5339] hover:text-white text-[#2c2a29] rounded-xl text-[11px] font-bold transition-all"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#f8f4e6] hover:bg-[#2e5339] hover:text-white text-[#2c2a29] border border-[#d4a373]/30 rounded-xl text-[11px] font-bold transition-all shadow-xs"
                     >
                       <Compass size={12} />
                       <span>Google Maps</span>
@@ -259,7 +259,7 @@ function ContactoPage() {
               </div>
 
               {/* Ítem: Horario */}
-              <div className="flex items-start gap-4 pt-2 border-t border-gray-100">
+              <div className="flex items-start gap-4 pt-2 border-t border-[#d4a373]/20">
                 <div className="w-12 h-12 bg-[#2e5339]/10 text-[#2e5339] rounded-2xl flex items-center justify-center shrink-0 border border-[#2e5339]/20 shadow-xs">
                   <Clock size={22} strokeWidth={2.5} />
                 </div>
@@ -281,16 +281,16 @@ function ContactoPage() {
               </div>
 
               {/* Ítem: Teléfonos & Direct WhatsApp */}
-              <div className="flex items-start gap-4 pt-2 border-t border-gray-100">
+              <div className="flex items-start gap-4 pt-2 border-t border-[#d4a373]/20">
                 <div className="w-12 h-12 bg-[#25D366]/15 text-[#125e2e] rounded-2xl flex items-center justify-center shrink-0 border border-[#25D366]/30 shadow-xs">
                   <MessageSquare size={22} strokeWidth={2.5} />
                 </div>
                 <div className="space-y-1 flex-1">
                   <h4 className="font-bold text-xs uppercase tracking-widest text-[#d4a373]">
-                    Concierge Directo
+                    Atención Directa
                   </h4>
                   <p className="text-xs text-gray-600 font-medium">
-                    Reservas & Consultas al instante:
+                    Consultas & Envíos a Domicilio:
                   </p>
                   <a
                     href="https://wa.me/51980723422?text=Hola%20Restaurante%20Las%20Flores,%20deseo%20realizar%20una%20consulta"
@@ -306,7 +306,7 @@ function ContactoPage() {
             </div>
 
             {/* Mapa Interactivo con Borde Dorado */}
-            <div className="bg-white p-2 rounded-3xl shadow-xl border border-[#d4a373]/30 overflow-hidden relative group">
+            <div className="bg-[#fdf8f0] p-2 rounded-3xl shadow-xl border border-[#d4a373]/30 overflow-hidden relative group">
               <div className="w-full h-64 rounded-2xl overflow-hidden relative">
                 <iframe 
                   title="Mapa de Restaurante Las Flores"
@@ -326,7 +326,7 @@ function ContactoPage() {
 
           {/* COLUMNA DERECHA: Formulario de Mensaje Elegante (7 cols) */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-[#d4a373]/30 relative overflow-hidden">
+            <div className="bg-[#fdf8f0] rounded-3xl p-8 md:p-12 shadow-2xl border border-[#d4a373]/30 relative overflow-hidden">
               {/* Decoración de Pan de Oro */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4a373]/10 rounded-bl-full pointer-events-none" />
 
@@ -344,7 +344,7 @@ function ContactoPage() {
                     </h3>
                   </div>
                   <p className="text-gray-600 text-sm max-w-md mx-auto leading-relaxed">
-                    Nuestro equipo de Concierge revisará tu mensaje y se pondrá en contacto contigo por teléfono o WhatsApp a la brevedad.
+                    Nuestro equipo revisará tu mensaje y se pondrá en contacto contigo a la brevedad.
                   </p>
                   <div className="pt-4">
                     <button
@@ -379,7 +379,7 @@ function ContactoPage() {
                           required
                           type="text" 
                           id="name" 
-                          className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
+                          className="w-full px-4 py-3.5 bg-[#f8f4e6] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
                           placeholder="Ej. Juan Pérez"
                         />
                       </div>
@@ -391,7 +391,7 @@ function ContactoPage() {
                           required
                           type="tel" 
                           id="phone" 
-                          className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
+                          className="w-full px-4 py-3.5 bg-[#f8f4e6] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
                           placeholder="Ej. 987 654 321"
                         />
                       </div>
@@ -405,7 +405,7 @@ function ContactoPage() {
                         required
                         type="email" 
                         id="email" 
-                        className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
+                        className="w-full px-4 py-3.5 bg-[#f8f4e6] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
                         placeholder="tucorreo@ejemplo.com"
                       />
                     </div>
@@ -418,11 +418,12 @@ function ContactoPage() {
                         required
                         defaultValue=""
                         id="subject" 
-                        className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm text-gray-800 font-medium cursor-pointer"
+                        className="w-full px-4 py-3.5 bg-[#f8f4e6] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm text-gray-800 font-medium cursor-pointer"
                       >
                         <option value="" disabled>Selecciona el motivo de tu consulta</option>
                         <option value="reserva">Reserva de Mesa o Zona Especial</option>
-                        <option value="eventos">Eventos Privados & Banquetes Corporativos</option>
+                        <option value="delivery">Consulta de Delivery / Pedidos para Llevar</option>
+                        <option value="eventos">Eventos Privados & Reuniones Familiares</option>
                         <option value="facturacion">Consultas de Facturación & Comprobantes</option>
                         <option value="sugerencia">Sugerencias o Comentarios</option>
                         <option value="otro">Otras Consultas</option>
@@ -437,8 +438,8 @@ function ContactoPage() {
                         required
                         id="message" 
                         rows={4}
-                        className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 resize-none font-medium"
-                        placeholder="Describe las fechas de tu interés, número de invitados o requerimiento especial..."
+                        className="w-full px-4 py-3.5 bg-[#f8f4e6] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 resize-none font-medium"
+                        placeholder="Escribe tu mensaje, sugerencia o detalle del pedido aquí..."
                       />
                     </div>
 
@@ -454,7 +455,7 @@ function ContactoPage() {
                         </span>
                       ) : (
                         <>
-                          <span>Enviar Mensaje al Concierge</span>
+                          <span>Enviar Mensaje</span>
                           <Send size={16} strokeWidth={2.5} />
                         </>
                       )}
@@ -467,17 +468,17 @@ function ContactoPage() {
 
         </div>
 
-        {/* ── SECCIÓN PREGUNTAS FRECUENTES (FAQS ELEGANTES) ── */}
+        {/* ── SECCIÓN PREGUNTAS FRECUENTES (FAQS ELEGANTES & REALES) ── */}
         <div className="max-w-5xl mx-auto pt-20">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
             <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block">
-              Respuestas Clave
+              Información Útil
             </span>
             <h2 className="font-serif text-3xl md:text-4xl text-[#2e5339] font-bold">
               Preguntas Frecuentes
             </h2>
             <p className="text-xs text-gray-600">
-              Resolvemos tus dudas principales para asegurar una visita impecable en Restaurante Las Flores.
+              Resolvemos tus dudas sobre nuestros horarios, delivery, reservas y especialidades.
             </p>
           </div>
 
@@ -487,12 +488,12 @@ function ContactoPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl border border-[#d4a373]/30 overflow-hidden shadow-xs transition-all duration-300"
+                  className="bg-[#fdf8f0] rounded-2xl border border-[#d4a373]/30 overflow-hidden shadow-xs hover:border-[#d4a373]/60 transition-all duration-300"
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full p-5 text-left flex justify-between items-center gap-4 cursor-pointer hover:bg-[#fdf8f0]/60 transition-colors"
+                    className="w-full p-5 text-left flex justify-between items-center gap-4 cursor-pointer hover:bg-[#f8f4e6]/70 transition-colors"
                   >
                     <span className="font-serif font-bold text-base text-[#2c2a29] flex items-center gap-3">
                       <HelpCircle size={18} className="text-[#d4a373] shrink-0" />
@@ -507,7 +508,7 @@ function ContactoPage() {
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 animate-in fade-in duration-200">
+                    <div className="px-5 pb-5 pt-2 text-xs text-gray-700 leading-relaxed border-t border-[#d4a373]/20 bg-[#f8f4e6]/50 animate-in fade-in duration-200">
                       {faq.a}
                     </div>
                   )}
