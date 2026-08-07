@@ -155,16 +155,16 @@ function ContactoPage() {
         </div>
       </header>
 
-      {/* ── HERO LIMPIO Y SOBRIO ── */}
-      <section className="relative pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center min-h-[380px] bg-[#1a120b]">
-        <div className="absolute inset-0 z-0 opacity-40">
+      {/* ── HERO LIMPIO Y SOBRIO SIN FOG BLANCO ── */}
+      <section className="relative pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center min-h-[360px] bg-[#1a120b]">
+        <div className="absolute inset-0 z-0 opacity-50">
           <img
             src={heroImg}
             alt="Ambiente de Restaurante Las Flores Ayacucho"
             className="w-full h-full object-cover object-center"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#f8f4e6]" />
+        <div className="absolute inset-0 bg-black/60" />
 
         <div className="max-w-3xl mx-auto text-center relative z-10 space-y-3">
           <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block">
@@ -180,7 +180,7 @@ function ContactoPage() {
       </section>
 
       {/* ── MAIN LAYOUT SOBRIO (2 COLUMNAS LIMPIAS) ── */}
-      <section className="px-4 md:px-12 lg:px-20 pb-20 flex-1 -mt-8 relative z-20">
+      <section className="px-4 md:px-12 lg:px-20 pt-12 pb-20 flex-1 relative z-20">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* COLUMNA IZQUIERDA: Información Directa (5 cols) */}
