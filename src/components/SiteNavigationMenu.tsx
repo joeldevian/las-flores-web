@@ -6,6 +6,7 @@ import { UserAuthButton } from './UserAuthButton';
 const NAV_LINKS = [
   { label: 'Cultura Ayacuchana',  to: '/',             hash: '' },
   { label: 'Nuestro Restaurante', to: '/restaurante',  hash: '' },
+  { label: 'Familia Las Flores',  to: '/restaurante',  hash: 'familia-las-flores' },
   { label: 'La Carta',            to: '/carta',        hash: '' },
   { label: 'Reservas',            to: '/reservas',     hash: '' },
   { label: 'Eventos',             to: '/eventos',      hash: '' },

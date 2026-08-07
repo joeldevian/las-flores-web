@@ -56,7 +56,7 @@ export function FamiliaLasFloresSection({
   subtitle?: string;
 }) {
   return (
-    <section className="py-16 px-4 bg-[#F9F8F3] relative overflow-hidden font-sans border-y border-[#D4AF37]/20">
+    <section id="familia-las-flores" className="py-16 px-4 bg-[#F9F8F3] relative overflow-hidden font-sans border-y border-[#D4AF37]/20">
       {/* Decorative background glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#2D473C]/10 rounded-full blur-3xl pointer-events-none" />
