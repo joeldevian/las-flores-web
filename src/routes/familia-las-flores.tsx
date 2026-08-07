@@ -131,56 +131,75 @@ function FamiliaLasFloresPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F9F8F3] font-sans text-gray-900 selection:bg-[#D4AF37] selection:text-[#2D473C]">
-      {/* Top Header Navigation */}
-      <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src="/images.png"
-              alt="Las Flores Logo"
-              className="h-10 md:h-12 w-auto object-contain"
-              style={{ filter: "brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)" }}
+    <div className="min-h-screen bg-piedra flex flex-col font-sans text-nogal selection:bg-chilca/20">
+      {/* ── HEADER FIJO ── */}
+      <header
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b ${
+          isScrolled ? "bg-piedra/90 backdrop-blur-md shadow-sm border-nogal/10 py-3" : "bg-transparent border-transparent py-5"
+        }`}
+      >
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 flex justify-between items-center relative">
+          <SiteNavigationMenu isScrolled={isScrolled} />
+          
+          <a href="/" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center group">
+            <img 
+              src="/images.png" 
+              alt="Las Flores" 
+              className={`transition-all duration-300 origin-center ${isScrolled ? "h-8 opacity-100" : "h-10 md:h-12 opacity-100 invert brightness-0"}`}
+              style={isScrolled ? { filter: "brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)" } : {}}
             />
-          </Link>
+          </a>
 
-          <SiteNavigationMenu isScrolled={isScrolled} isAlwaysDark={true} />
+          <div className="flex items-center gap-4">
+            <Link
+              to="/reservas"
+              className={`hidden sm:inline-flex px-5 py-2 text-xs font-serif uppercase tracking-widest border transition-all rounded-sm ${
+                isScrolled
+                  ? "border-nogal/30 text-nogal hover:bg-nogal hover:text-piedra"
+                  : "border-piedra/40 text-piedra hover:bg-piedra hover:text-nogal"
+              }`}
+            >
+              Reservar
+            </Link>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 bg-[#2D473C] text-[#F9F8F3] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-full opacity-15 pointer-events-none">
+      {/* Hero Section Completa */}
+      <section className="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
             src="/imagenes-reales/EQUIPO/02042026-DSC05038.webp"
             alt="Familia Las Flores"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover opacity-25 filter brightness-90"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-eucalipto-dark via-eucalipto-dark/70 to-black/60" />
         </div>
 
-        <div className="max-w-5xl mx-auto text-center relative z-10 space-y-6">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs uppercase font-extrabold tracking-widest">
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
             <Sparkles size={14} />
             Nuestra Gente · Nuestro Orgullo
+            <Sparkles size={14} />
           </span>
 
-          <h1 className="font-serif font-black text-4xl md:text-6xl tracking-tight leading-tight text-white">
+          <h1 className="font-serif font-black text-5xl md:text-7xl leading-[1.05] tracking-tight text-white">
             Familia Las Flores
           </h1>
 
-          <p className="text-base md:text-lg text-emerald-100/90 font-serif italic max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-piedra/90 font-serif italic max-w-2xl mx-auto leading-relaxed">
             "Detrás de cada plato sabroso y cada sonrisa en mesa hay hombres y mujeres ayacuchanos que trabajan con dignidad, pasión y profundo amor por nuestras raíces."
           </p>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-emerald-200 font-bold uppercase tracking-wider">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck size={16} className="text-[#D4AF37]" /> Trato Digno y Justo
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-piedra/80 font-bold uppercase tracking-widest">
+            <span className="flex items-center gap-2">
+              <ShieldCheck size={16} className="text-chilca" /> Trato Digno y Justo
             </span>
-            <span className="flex items-center gap-1.5">
-              <Heart size={16} className="text-[#D4AF37]" /> Tradición Familiar
+            <span className="flex items-center gap-2">
+              <Heart size={16} className="text-chilca" /> Tradición Familiar
             </span>
-            <span className="flex items-center gap-1.5">
-              <Award size={16} className="text-[#D4AF37]" /> Excelencia Ayacuchana
+            <span className="flex items-center gap-2">
+              <Award size={16} className="text-chilca" /> Excelencia Ayacuchana
             </span>
           </div>
         </div>
