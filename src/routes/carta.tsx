@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { categories as staticCategories } from "@/components/MenuModal";
+import { MenuModal } from "@/components/MenuModal";
 import { SiteFooter } from "@/components/site-footer";
 import { useLiveMenuCategories, Dish } from "@/lib/liveProducts";
 import { CartSidebar } from "@/components/CartSidebar";
@@ -26,6 +27,9 @@ function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
   const { totalItems, setIsOpen: setIsCartOpen } = useCart();
+  const [language, setLanguage] = useState<"ES" | "EN">("ES");
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
   const active = currentCategories.find((c) => c.id === activeId) || currentCategories[0];
@@ -50,11 +54,11 @@ function CartaPage() {
           />
         </Link>
 
-        <div className="flex-1 flex justify-end items-center gap-4 md:gap-6 text-[11px] md:text-xs uppercase tracking-widest font-semibold">
+        <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold">
           {totalItems > 0 && (
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative hover:opacity-70 transition-opacity text-nogal"
+              className="relative hover:text-chilca transition-colors text-nogal"
             >
               <ShoppingCart size={20} />
               <span className="absolute -top-2 -right-2 bg-chilca text-nogal text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
@@ -65,18 +69,80 @@ function CartaPage() {
 
           <Link
             to="/reservas"
-            className="px-4.5 py-1.5 md:px-5 md:py-2 text-[11px] md:text-xs font-bold uppercase tracking-widest transition-all rounded-full border border-nogal text-nogal hover:bg-nogal hover:text-white shadow-xs"
+            className="hover:text-chilca transition-colors text-nogal"
           >
-            Reservar
+            RESERVAS
           </Link>
 
-          <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-            <img
-              src="https://flagcdn.com/w40/pe.png"
-              alt="Peru Flag"
-              className="w-5 md:w-6 h-auto shadow-xs rounded-[2px]"
-            />
-            <span className="text-nogal font-bold text-xs">ES</span>
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="hover:text-chilca transition-colors text-nogal"
+          >
+            DELIVERY
+          </button>
+
+          {/* Language Selector with Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              className="flex items-center gap-2 px-2 py-1.5 transition-all text-nogal"
+            >
+              <img
+                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
+                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
+                className="w-5 h-auto rounded-[2px]"
+              />
+              <span className="text-xs font-bold">{language}</span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            {isLangDropdownOpen && (
+              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
+                {language === "ES" ? (
+                  <button
+                    onClick={() => {
+                      setLanguage("EN");
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
+                  >
+                    <img
+                      src="https://flagcdn.com/w40/us.png"
+                      alt="USA Flag"
+                      className="w-5 h-auto rounded-[2px]"
+                    />
+                    <span className="text-xs font-bold text-nogal">EN</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setLanguage("ES");
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
+                  >
+                    <img
+                      src="https://flagcdn.com/w40/pe.png"
+                      alt="Peru Flag"
+                      className="w-5 h-auto rounded-[2px]"
+                    />
+                    <span className="text-xs font-bold text-nogal">ES</span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </nav>
@@ -173,6 +239,8 @@ function CartaPage() {
       <SiteFooter />
 
       <CartSidebar />
+      
+      {isMenuOpen && <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
     </div>
   );
 }

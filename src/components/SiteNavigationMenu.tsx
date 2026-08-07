@@ -4,11 +4,12 @@ import { Link } from '@tanstack/react-router';
 import { UserAuthButton } from './UserAuthButton';
 
 const NAV_LINKS = [
-  { label: 'Nuestra Tierra',      to: '/',             hash: '' },
+  { label: 'Cultura Ayacuchana',  to: '/',             hash: '' },
   { label: 'Nuestro Restaurante', to: '/restaurante',  hash: '' },
   { label: 'La Carta',            to: '/carta',        hash: '' },
   { label: 'Reservas',            to: '/reservas',     hash: '' },
   { label: 'Eventos',             to: '/eventos',      hash: '' },
+  { label: 'Galería',             to: '/galeria',      hash: '' },
   { label: 'Contacto',            to: '/contacto',     hash: '' },
 ];
 
