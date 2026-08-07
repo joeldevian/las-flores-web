@@ -39,10 +39,10 @@ export function AdminSidebar({
   ];
 
   return (
-    <aside className="w-64 bg-[#2D473C] text-[#F9F8F3] flex flex-col justify-between min-h-screen border-r border-[#D4AF37]/30 shrink-0 font-sans shadow-xl">
-      {/* Brand Header */}
-      <div>
-        <div className="p-5 border-b border-emerald-900/60 flex items-center gap-3">
+    <aside className="w-64 bg-[#2D473C] text-[#F9F8F3] flex flex-col justify-between h-screen sticky top-0 border-r border-[#D4AF37]/30 shrink-0 font-sans shadow-xl z-40">
+      {/* Brand Header & Nav Scroll Area */}
+      <div className="flex-1 overflow-y-auto no-scrollbar [scrollbar-width:none]">
+        <div className="p-5 border-b border-emerald-900/60 flex items-center gap-3 sticky top-0 bg-[#2D473C] z-10">
           <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border-2 border-[#D4AF37] shadow-md shrink-0">
             <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain rounded-lg" />
           </div>
@@ -98,12 +98,12 @@ export function AdminSidebar({
         </nav>
       </div>
 
-      {/* Footer Profile & Logout */}
-      <div className="p-4 border-t border-emerald-900/60 bg-black/15 space-y-3">
+      {/* Footer Profile & Logout (Pinned to bottom of viewport) */}
+      <div className="p-4 border-t border-emerald-900/60 bg-black/25 space-y-3 shrink-0">
         <div className="flex items-center justify-between text-xs">
           <div className="min-w-0 pr-2">
-            <span className="text-[10px] uppercase font-bold text-emerald-300/70 block">Sesión Activa</span>
-            <p className="font-bold text-white truncate">{userEmail || "Administrador"}</p>
+            <span className="text-[10px] uppercase font-extrabold text-emerald-300/80 block">Sesión Activa</span>
+            <p className="font-bold text-white truncate text-xs">{userEmail || "Administrador"}</p>
           </div>
         </div>
 
