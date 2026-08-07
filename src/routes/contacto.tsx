@@ -1,14 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/site-footer";
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
+import { 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Clock, 
+  Send, 
+  CheckCircle2, 
+  MessageSquare, 
+  Car, 
+  ShieldCheck, 
+  Sparkles, 
+  ChevronDown, 
+  Compass, 
+  CreditCard, 
+  HelpCircle, 
+  ExternalLink 
+} from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
-      { title: "Contacto | Restaurante Las Flores" },
-      { name: "description", content: "Póngase en contacto con Restaurante Las Flores. Estamos listos para atender sus dudas, sugerencias o reservas especiales." },
+      { title: "Contacto & Concierge | Restaurante Las Flores Ayacucho" },
+      { name: "description", content: "Póngase en contacto con Restaurante Las Flores en Ayacucho. Atención al cliente, reservas corporativas, concierge por WhatsApp y ubicación." },
     ],
   }),
   component: ContactoPage,
@@ -16,37 +32,70 @@ export const Route = createFileRoute("/contacto")({
 
 const heroImg = "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
 
+// FAQS de atención de lujo
+const FAQS = [
+  {
+    q: "¿Cuentan con estacionamiento privado?",
+    a: "Sí, disponemos de estacionamiento privado vigilado las 24 horas y servicio de Valet Parking para la comodidad de todos nuestros comensales.",
+  },
+  {
+    q: "¿Existe algún código de vestimenta?",
+    a: "Nuestro código es Casual Elegante. Recomendamos un atuendo cómodo pero distinguido para disfrutar la atmósfera de nuestras salas y terrazas.",
+  },
+  {
+    q: "¿Tienen opciones para eventos privados y corporativos?",
+    a: "Contamos con salones privados con Pan de Oro y áreas exclusivas reservables para banquetes, aniversarios y reuniones corporativas.",
+  },
+  {
+    q: "¿Se permiten mascotas en las instalaciones?",
+    a: "Nuestra Zona de Terraza Abierta es 100% Pet Friendly. Tu mascota es bienvenida en las áreas al aire libre.",
+  },
+  {
+    q: "¿Cuáles son los métodos de pago aceptados?",
+    a: "Aceptamos todas las tarjetas de crédito y débito (Visa, Mastercard, Amex), transferencias bancarias, Yape, Plin y efectivo.",
+  },
+];
+
 function ContactoPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [language, setLanguage] = useState<"ES" | "EN">("ES");
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  // Detección de horario de atención en vivo
+  const [isOpenNow, setIsOpenNow] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
+
+    // Calcular si está abierto
+    const now = new Date();
+    const hours = now.getHours();
+    setIsOpenNow(hours >= 7 && hours < 18);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulación de envío
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
-    }, 1500);
+    }, 1200);
   };
 
   return (
-    <div className="min-h-screen bg-piedra flex flex-col font-sans text-nogal selection:bg-chilca/20">
+    <div className="min-h-screen bg-[#f8f4e6] flex flex-col font-sans text-[#2c2a29] selection:bg-[#2e5339]/20">
       {/* ── HEADER FIJO ── */}
       <header
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b ${
-          isScrolled ? "bg-piedra/90 backdrop-blur-md shadow-sm border-nogal/10 py-3" : "bg-transparent border-transparent py-5"
+          isScrolled ? "bg-[#f8f4e6]/95 backdrop-blur-md shadow-sm border-nogal/10 py-3" : "bg-transparent border-transparent py-5"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 flex justify-between items-center">
@@ -61,297 +110,417 @@ function ContactoPage() {
             />
           </a>
 
-          {/* Language Selector with Dropdown */}
+          {/* Language Selector */}
           <div className="relative">
             <button
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-full border transition-all ${
+                isScrolled ? "text-nogal border-nogal/20 hover:bg-black/5" : "text-white border-white/30 hover:bg-white/10"
               }`}
             >
               <img
                 src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
                 alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
+                className="w-4 h-auto rounded-[2px]"
               />
               <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+              <ChevronDown
+                size={12}
+                className={`transition-transform duration-200 ${isLangDropdownOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
+              <div className="absolute top-full right-0 mt-2 py-1.5 bg-white border border-[#d4a373]/30 rounded-xl shadow-xl min-w-[110px] z-50 animate-in fade-in duration-150">
+                <button
+                  onClick={() => {
+                    setLanguage("ES");
+                    setIsLangDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-bold transition-colors ${
+                    language === "ES" ? "bg-[#2e5339]/10 text-[#2e5339]" : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <img src="https://flagcdn.com/w40/pe.png" alt="Peru Flag" className="w-4 h-auto rounded-[2px]" />
+                  <span>ES (Español)</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setLanguage("EN");
+                    setIsLangDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-bold transition-colors ${
+                    language === "EN" ? "bg-[#2e5339]/10 text-[#2e5339]" : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <img src="https://flagcdn.com/w40/us.png" alt="USA Flag" className="w-4 h-auto rounded-[2px]" />
+                  <span>EN (English)</span>
+                </button>
               </div>
             )}
           </div>
         </div>
       </header>
 
-      {/* ── HERO CON IMAGEN ── */}
-      <section className="relative pt-40 pb-24 md:pt-48 md:pb-32 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center min-h-[500px]">
-        {/* Imagen de fondo */}
+      {/* ── HERO DE LUJO CON IMAGEN & MEDALLA DORADA ── */}
+      <section className="relative pt-40 pb-28 md:pt-48 md:pb-36 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center min-h-[540px]">
         <div className="absolute inset-0 z-0">
           <img
             src={heroImg}
-            alt="Ambiente de Restaurante Las Flores"
-            className="w-full h-full object-cover object-center"
+            alt="Ambiente de Restaurante Las Flores Ayacucho"
+            className="w-full h-full object-cover object-center scale-105 animate-pulse duration-10000"
           />
-          {/* Overlay oscuro para legibilidad */}
-          <div className="absolute inset-0 bg-nogal/60 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-piedra via-black/20 to-black/80" />
+          <div className="absolute inset-0 bg-[#1a120b]/70 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#f8f4e6] via-[#1a120b]/40 to-[#1a120b]/80" />
         </div>
 
-        <div className="max-w-5xl mx-auto text-center relative z-10 mt-10">
-          <h1 className="font-serif font-medium text-5xl md:text-7xl text-piedra mb-6 tracking-tight drop-shadow-xl">
-            Contacto
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+          <div className="inline-flex items-center gap-2 bg-[#d4a373]/20 border border-[#d4a373]/50 backdrop-blur-md px-4 py-1.5 rounded-full text-white text-xs font-bold tracking-[0.25em] uppercase shadow-lg">
+            <Sparkles size={14} className="text-[#d4a373]" />
+            <span>Concierge & Atención al Cliente</span>
+          </div>
+
+          <h1 className="font-serif font-bold text-4xl sm:text-6xl md:text-7xl text-white tracking-tight drop-shadow-xl leading-tight">
+            Estamos a tu Servicio
           </h1>
-          <p className="font-sans text-piedra/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-            Estaremos encantados de escucharte. Ya sea que desees reservar para una ocasión especial, tengas dudas sobre nuestra carta o simplemente quieras dejarnos tus comentarios.
+
+          <p className="font-sans text-white/90 text-base md:text-xl max-w-2xl mx-auto leading-relaxed drop-shadow-md font-light">
+            Ya sea para coordinar una reserva de mesa especial, organizar un banquete privado o realizar consultas sobre nuestra propuesta gastronómica.
           </p>
+
+          {/* Bar de Beneficios Rápidos */}
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-white/90">
+            <span className="flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-white/10">
+              <Phone size={14} className="text-[#d4a373]" /> Respuesta Inmediata
+            </span>
+            <span className="flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-white/10">
+              <Car size={14} className="text-[#d4a373]" /> Estacionamiento Privado & Valet
+            </span>
+            <span className="flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-white/10">
+              <ShieldCheck size={14} className="text-[#d4a373]" /> Atención VIP Personalizada
+            </span>
+          </div>
         </div>
       </section>
 
-      {/* ── MAIN LAYOUT (2 COLUMNAS) ── */}
-      <section className="px-6 md:px-12 lg:px-20 pb-24 flex-1 -mt-10 relative z-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+      {/* ── MAIN LAYOUT (2 COLUMNAS DE LUJO) ── */}
+      <section className="px-4 md:px-12 lg:px-20 pb-24 flex-1 -mt-14 relative z-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* COLUMNA IZQUIERDA: Información */}
-          <div className="flex flex-col justify-start space-y-12">
-            <div>
-              <h2 className="font-serif text-3xl mb-8">Información de Contacto</h2>
-              <div className="space-y-6">
-                
-                {/* Ítem: Dirección */}
-                <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 border border-nogal/10 group-hover:border-chilca/30 group-hover:bg-chilca/5 transition-colors">
-                    <MapPin className="text-chilca" size={20} strokeWidth={2} />
-                  </div>
-                  <div className="pt-0.5">
-                    <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Nuestra Ubicación</h3>
-                    <p className="text-nogal/70 leading-relaxed text-sm">
-                      Jr. José Olaya 106,<br/>
-                      Ayacucho, Perú.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Ítem: Teléfonos */}
-                <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 border border-nogal/10 group-hover:border-chilca/30 group-hover:bg-chilca/5 transition-colors">
-                    <Phone className="text-chilca" size={20} strokeWidth={2} />
-                  </div>
-                  <div className="pt-0.5">
-                    <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Llámanos</h3>
-                    <p className="text-nogal/70 leading-relaxed text-sm">
-                      Reservas: (066) 31 1234<br/>
-                      WhatsApp: +51 980 723 422
-                    </p>
-                  </div>
-                </div>
-
-                {/* Ítem: Correo */}
-                <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 border border-nogal/10 group-hover:border-chilca/30 group-hover:bg-chilca/5 transition-colors">
-                    <Mail className="text-chilca" size={20} strokeWidth={2} />
-                  </div>
-                  <div className="pt-0.5">
-                    <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Escríbenos</h3>
-                    <p className="text-nogal/70 leading-relaxed text-sm">
-                      restaurantelasfloresperu@gmail.com
-                    </p>
-                  </div>
-                </div>
-
-                {/* Ítem: Horario */}
-                <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shrink-0 border border-nogal/10 group-hover:border-chilca/30 group-hover:bg-chilca/5 transition-colors">
-                    <Clock className="text-chilca" size={20} strokeWidth={2} />
-                  </div>
-                  <div className="pt-0.5">
-                    <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Horario de Atención</h3>
-                    <p className="text-nogal/70 leading-relaxed text-sm">
-                      Lunes a Viernes<br/>
-                      7:00 a. m. - 5:00 p. m.<br/>
-                      Sábado y Domingo<br/>
-                      7:00 a. m. - 5:30 p. m.
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
+          {/* COLUMNA IZQUIERDA: Información de Contacto (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
             
-            {/* Espacio para mapa */}
-            <div className="w-full h-64 bg-white/50 border border-nogal/10 rounded-2xl overflow-hidden relative group">
-              <div className="absolute inset-0 bg-black/5 flex items-center justify-center group-hover:bg-black/0 transition-colors">
-                 <span className="text-nogal/50 font-semibold tracking-widest uppercase text-xs">Mapa de Ubicación</span>
+            {/* Tarjeta 1: Estado en Vivo & Ubicación */}
+            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-[#d4a373]/30 space-y-6 relative overflow-hidden">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                <span className="font-serif text-xl font-bold text-[#2e5339]">
+                  Nuestra Casa Colonial
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider ${
+                    isOpenNow
+                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                      : "bg-amber-100 text-amber-800 border border-amber-300"
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${isOpenNow ? "bg-emerald-500 animate-ping" : "bg-amber-500"}`} />
+                  {isOpenNow ? "Abierto Ahora" : "Atención por WhatsApp"}
+                </span>
               </div>
-              <iframe 
-                title="Mapa de Restaurante Las Flores"
-                src="https://www.google.com/maps?q=-13.162825034398038,-74.21792188690533&z=17&output=embed"
-                width="100%" 
-                height="100%" 
-                style={{ border: 0, opacity: 0.8 }} 
-                allowFullScreen={false} 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                className="relative z-10 grayscale-[0.2] contrast-[1.1] transition-all hover:grayscale-0"
-              />
+
+              {/* Ítem: Dirección */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-[#2e5339]/10 text-[#2e5339] rounded-2xl flex items-center justify-center shrink-0 border border-[#2e5339]/20 shadow-xs">
+                  <MapPin size={22} strokeWidth={2.5} />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-xs uppercase tracking-widest text-[#d4a373]">
+                    Ubicación Estratégica
+                  </h4>
+                  <p className="font-serif text-base font-bold text-[#2c2a29]">
+                    Jr. José Olaya 106
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    Huamanga — Ayacucho, Perú (A 2 cuadras de la Plaza Mayor).
+                  </p>
+                  <div className="pt-2 flex flex-wrap gap-2">
+                    <a
+                      href="https://www.google.com/maps?q=-13.162825034398038,-74.21792188690533"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-[#2e5339] hover:text-white text-[#2c2a29] rounded-xl text-[11px] font-bold transition-all"
+                    >
+                      <Compass size={12} />
+                      <span>Google Maps</span>
+                      <ExternalLink size={10} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ítem: Horario */}
+              <div className="flex items-start gap-4 pt-2 border-t border-gray-100">
+                <div className="w-12 h-12 bg-[#2e5339]/10 text-[#2e5339] rounded-2xl flex items-center justify-center shrink-0 border border-[#2e5339]/20 shadow-xs">
+                  <Clock size={22} strokeWidth={2.5} />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-xs uppercase tracking-widest text-[#d4a373]">
+                    Horario de Atención
+                  </h4>
+                  <div className="text-xs text-gray-700 space-y-1 font-medium">
+                    <p className="flex justify-between gap-4">
+                      <span>Lunes a Viernes:</span>
+                      <strong className="text-[#2e5339]">07:00 am – 05:00 pm</strong>
+                    </p>
+                    <p className="flex justify-between gap-4">
+                      <span>Sábados y Domingos:</span>
+                      <strong className="text-[#2e5339]">07:00 am – 05:30 pm</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ítem: Teléfonos & Direct WhatsApp */}
+              <div className="flex items-start gap-4 pt-2 border-t border-gray-100">
+                <div className="w-12 h-12 bg-[#25D366]/15 text-[#125e2e] rounded-2xl flex items-center justify-center shrink-0 border border-[#25D366]/30 shadow-xs">
+                  <MessageSquare size={22} strokeWidth={2.5} />
+                </div>
+                <div className="space-y-1 flex-1">
+                  <h4 className="font-bold text-xs uppercase tracking-widest text-[#d4a373]">
+                    Concierge Directo
+                  </h4>
+                  <p className="text-xs text-gray-600 font-medium">
+                    Reservas & Consultas al instante:
+                  </p>
+                  <a
+                    href="https://wa.me/51980723422?text=Hola%20Restaurante%20Las%20Flores,%20deseo%20realizar%20una%20consulta"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 w-full py-3 px-4 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                  >
+                    <MessageSquare size={16} />
+                    <span>Chatear por WhatsApp (+51 980 723 422)</span>
+                  </a>
+                </div>
+              </div>
             </div>
+
+            {/* Mapa Interactivo con Borde Dorado */}
+            <div className="bg-white p-2 rounded-3xl shadow-xl border border-[#d4a373]/30 overflow-hidden relative group">
+              <div className="w-full h-64 rounded-2xl overflow-hidden relative">
+                <iframe 
+                  title="Mapa de Restaurante Las Flores"
+                  src="https://www.google.com/maps?q=-13.162825034398038,-74.21792188690533&z=17&output=embed"
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={false} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="relative z-10 grayscale-[0.1] contrast-[1.05] transition-all group-hover:grayscale-0"
+                />
+              </div>
+            </div>
+
           </div>
 
-          {/* COLUMNA DERECHA: Formulario */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-[0_20px_60px_-15px_rgba(44,74,62,0.1)] border border-white flex flex-col justify-center h-fit">
-            {submitted ? (
-              <div className="text-center py-12 animate-in fade-in zoom-in duration-500">
-                <div className="w-20 h-20 bg-eucalipto/10 text-eucalipto rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 size={40} strokeWidth={2} />
-                </div>
-                <h3 className="font-serif text-3xl text-nogal mb-4">¡Mensaje Enviado!</h3>
-                <p className="text-nogal/70 mb-8 max-w-sm mx-auto">
-                  Gracias por escribirnos. Hemos recibido tu mensaje y nos pondremos en contacto contigo a la brevedad posible.
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="px-8 py-3.5 bg-nogal text-piedra rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-chilca transition-colors"
-                >
-                  Enviar otro mensaje
-                </button>
-              </div>
-            ) : (
-              <>
-                <h2 className="font-serif text-3xl mb-8">Envíanos un Mensaje</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-nogal/60 ml-1">Nombre Completo</label>
-                      <input 
-                        required
-                        type="text" 
-                        id="name" 
-                        className="w-full px-4 py-3.5 bg-piedra/30 border border-nogal/10 rounded-xl focus:outline-none focus:border-chilca focus:bg-white transition-all text-sm placeholder:text-nogal/30"
-                        placeholder="Ej. Juan Pérez"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="phone" className="text-[10px] font-bold uppercase tracking-wider text-nogal/60 ml-1">Teléfono</label>
-                      <input 
-                        required
-                        type="tel" 
-                        id="phone" 
-                        className="w-full px-4 py-3.5 bg-piedra/30 border border-nogal/10 rounded-xl focus:outline-none focus:border-chilca focus:bg-white transition-all text-sm placeholder:text-nogal/30"
-                        placeholder="Ej. 987 654 321"
-                      />
-                    </div>
-                  </div>
+          {/* COLUMNA DERECHA: Formulario de Mensaje Elegante (7 cols) */}
+          <div className="lg:col-span-7">
+            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-[#d4a373]/30 relative overflow-hidden">
+              {/* Decoración de Pan de Oro */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4a373]/10 rounded-bl-full pointer-events-none" />
 
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-[10px] font-bold uppercase tracking-wider text-nogal/60 ml-1">Correo Electrónico</label>
-                    <input 
-                      required
-                      type="email" 
-                      id="email" 
-                      className="w-full px-4 py-3.5 bg-piedra/30 border border-nogal/10 rounded-xl focus:outline-none focus:border-chilca focus:bg-white transition-all text-sm placeholder:text-nogal/30"
-                      placeholder="tucorreo@ejemplo.com"
-                    />
+              {submitted ? (
+                <div className="text-center py-16 animate-in fade-in zoom-in duration-500 space-y-6">
+                  <div className="w-20 h-20 bg-[#2e5339] text-white rounded-full flex items-center justify-center mx-auto shadow-xl ring-4 ring-[#2e5339]/20">
+                    <CheckCircle2 size={44} strokeWidth={2.5} />
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="subject" className="text-[10px] font-bold uppercase tracking-wider text-nogal/60 ml-1">Asunto</label>
-                    <select 
-                      required
-                      defaultValue=""
-                      id="subject" 
-                      className="w-full px-4 py-3.5 bg-piedra/30 border border-nogal/10 rounded-xl focus:outline-none focus:border-chilca focus:bg-white transition-all text-sm text-nogal appearance-none cursor-pointer"
+                    <span className="text-xs uppercase tracking-[0.25em] font-extrabold text-[#d4a373] block">
+                      Solicitud Recibida
+                    </span>
+                    <h3 className="font-serif text-3xl md:text-4xl text-[#2e5339] font-bold">
+                      ¡Gracias por Escribirnos!
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 text-sm max-w-md mx-auto leading-relaxed">
+                    Nuestro equipo de Concierge revisará tu mensaje y se pondrá en contacto contigo por teléfono o WhatsApp a la brevedad.
+                  </p>
+                  <div className="pt-4">
+                    <button
+                      onClick={() => setSubmitted(false)}
+                      className="px-8 py-3.5 bg-[#2e5339] hover:bg-[#23412c] text-white rounded-2xl font-bold uppercase tracking-wider text-xs transition-all shadow-md active:scale-[0.99] cursor-pointer"
                     >
-                      <option value="" disabled>Selecciona el motivo</option>
-                      <option value="reserva">Reservas Generales</option>
-                      <option value="eventos">Eventos y Recepciones</option>
-                      <option value="facturacion">Consultas de Facturación</option>
-                      <option value="sugerencia">Sugerencia o Reclamo</option>
-                      <option value="otro">Otras Consultas</option>
-                    </select>
+                      Enviar otro mensaje
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-8 space-y-2">
+                    <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block">
+                      Atención Personalizada
+                    </span>
+                    <h2 className="font-serif text-3xl md:text-4xl text-[#2e5339] font-bold">
+                      Envíanos un Mensaje
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      Completa el siguiente formulario y nos comunicaremos contigo de forma prioritaria.
+                    </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-[10px] font-bold uppercase tracking-wider text-nogal/60 ml-1">Tu Mensaje</label>
-                    <textarea 
-                      required
-                      id="message" 
-                      rows={4}
-                      className="w-full px-4 py-3.5 bg-piedra/30 border border-nogal/10 rounded-xl focus:outline-none focus:border-chilca focus:bg-white transition-all text-sm placeholder:text-nogal/30 resize-none"
-                      placeholder="Escribe los detalles aquí..."
-                    />
-                  </div>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1.5">
+                        <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1">
+                          Nombre Completo *
+                        </label>
+                        <input 
+                          required
+                          type="text" 
+                          id="name" 
+                          className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
+                          placeholder="Ej. Juan Pérez"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1">
+                          Teléfono / WhatsApp *
+                        </label>
+                        <input 
+                          required
+                          type="tel" 
+                          id="phone" 
+                          className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
+                          placeholder="Ej. 987 654 321"
+                        />
+                      </div>
+                    </div>
 
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full py-4 bg-eucalipto text-piedra rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-[#1e3329] hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 mt-2 shadow-md shadow-eucalipto/20"
-                  >
-                    {isSubmitting ? (
-                      <span className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Enviando...
-                      </span>
-                    ) : (
-                      <>
-                        Enviar Mensaje
-                        <Send size={16} strokeWidth={2.5} />
-                      </>
-                    )}
-                  </button>
-                </form>
-              </>
-            )}
+                    <div className="space-y-1.5">
+                      <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1">
+                        Correo Electrónico *
+                      </label>
+                      <input 
+                        required
+                        type="email" 
+                        id="email" 
+                        className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 font-medium"
+                        placeholder="tucorreo@ejemplo.com"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="subject" className="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1">
+                        Motivo de Consulta *
+                      </label>
+                      <select 
+                        required
+                        defaultValue=""
+                        id="subject" 
+                        className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm text-gray-800 font-medium cursor-pointer"
+                      >
+                        <option value="" disabled>Selecciona el motivo de tu consulta</option>
+                        <option value="reserva">Reserva de Mesa o Zona Especial</option>
+                        <option value="eventos">Eventos Privados & Banquetes Corporativos</option>
+                        <option value="facturacion">Consultas de Facturación & Comprobantes</option>
+                        <option value="sugerencia">Sugerencias o Comentarios</option>
+                        <option value="otro">Otras Consultas</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider text-gray-700 ml-1">
+                        Detalle de tu Mensaje *
+                      </label>
+                      <textarea 
+                        required
+                        id="message" 
+                        rows={4}
+                        className="w-full px-4 py-3.5 bg-[#fdf8f0] border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2e5339] focus:bg-white transition-all text-sm placeholder:text-gray-400 resize-none font-medium"
+                        placeholder="Describe las fechas de tu interés, número de invitados o requerimiento especial..."
+                      />
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="w-full py-4 bg-[#2e5339] hover:bg-[#23412c] text-white rounded-2xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg hover:shadow-xl active:scale-[0.99] cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <span className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Enviando Mensaje...
+                        </span>
+                      ) : (
+                        <>
+                          <span>Enviar Mensaje al Concierge</span>
+                          <Send size={16} strokeWidth={2.5} />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
           </div>
 
         </div>
+
+        {/* ── SECCIÓN PREGUNTAS FRECUENTES (FAQS ELEGANTES) ── */}
+        <div className="max-w-5xl mx-auto pt-20">
+          <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block">
+              Respuestas Clave
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl text-[#2e5339] font-bold">
+              Preguntas Frecuentes
+            </h2>
+            <p className="text-xs text-gray-600">
+              Resolvemos tus dudas principales para asegurar una visita impecable en Restaurante Las Flores.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {FAQS.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl border border-[#d4a373]/30 overflow-hidden shadow-xs transition-all duration-300"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="w-full p-5 text-left flex justify-between items-center gap-4 cursor-pointer hover:bg-[#fdf8f0]/60 transition-colors"
+                  >
+                    <span className="font-serif font-bold text-base text-[#2c2a29] flex items-center gap-3">
+                      <HelpCircle size={18} className="text-[#d4a373] shrink-0" />
+                      {faq.q}
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-[#2e5339] shrink-0 transition-transform duration-300 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-5 pb-5 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 animate-in fade-in duration-200">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
       </section>
 
       <SiteFooter />
     </div>
   );
 }
+
