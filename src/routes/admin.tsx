@@ -145,6 +145,7 @@ function AdminRoute() {
 
   const [menuSearch, setMenuSearch] = useState("");
   const [menuCategoryFilter, setMenuCategoryFilter] = useState("all");
+  const [showArchived, setShowArchived] = useState(false);
 
   // Modal states
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
@@ -379,7 +380,9 @@ function AdminRoute() {
   const filteredProducts = products.filter((prod) => {
     const matchSearch = (prod.name || "").toLowerCase().includes(menuSearch.toLowerCase());
     const matchCategory = menuCategoryFilter === "all" || prod.category_id === menuCategoryFilter;
-    return matchSearch && matchCategory;
+    // Soft-delete: por defecto solo activos, con toggle muestra archivados
+    const matchActive = showArchived ? prod.is_active === false : prod.is_active !== false;
+    return matchSearch && matchCategory && matchActive;
   });
 
   interface NavItem {
@@ -1148,8 +1151,20 @@ function AdminRoute() {
                         </option>
                       ))}
                     </select>
-                  </div>
-                </div>
+
+                    {/* Toggle archivados */}
+                    <button
+                      onClick={() => setShowArchived(!showArchived)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
+                        showArchived
+                          ? "bg-amber-50 text-amber-800 border-amber-300"
+                          : "bg-white text-nogal/50 border-eucalipto/12 hover:bg-eucalipto/5"
+                      }`}
+                    >
+                      <span>{showArchived ? "📦" : "🗂️"}</span>
+                      {showArchived ? "Archivados" : "Activos"}
+                    </button>
+                  </div>                </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left">
@@ -1208,15 +1223,32 @@ function AdminRoute() {
                             </td>
                             <td className="px-6 py-4 text-right">
                               <div className="flex items-center justify-end gap-2">
-                                <button
-                                  onClick={() => {
-                                    setSelectedProduct(prod);
-                                    setIsProductModalOpen(true);
-                                  }}
-                                  className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
-                                >
-                                  <Edit2 size={12} /> Editar
-                                </button>
+                                {!showArchived ? (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        setSelectedProduct(prod);
+                                        setIsProductModalOpen(true);
+                                      }}
+                                      className="px-3.5 py-1.5 rounded-lg bg-eucalipto/5 hover:bg-eucalipto/10 text-nogal font-bold border border-eucalipto/10 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                    >
+                                      <Edit2 size={12} /> Editar
+                                    </button>
+                                    <button
+                                      onClick={() => handleArchiveProduct(prod.id)}
+                                      className="px-3.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold border border-amber-200 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                    >
+                                      📦 Archivar
+                                    </button>
+                                  </>
+                                ) : (
+                                  <button
+                                    onClick={() => handleRestoreProduct(prod.id)}
+                                    className="px-3.5 py-1.5 rounded-lg bg-eucalipto/10 hover:bg-eucalipto/20 text-eucalipto font-bold border border-eucalipto/20 text-xs inline-flex items-center gap-1.5 transition-colors"
+                                  >
+                                    ↩ Restaurar
+                                  </button>
+                                )}
                               </div>
                             </td>
                           </tr>
