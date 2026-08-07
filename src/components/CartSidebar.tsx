@@ -440,6 +440,7 @@ export function CartSidebar() {
       }
 
       setCreatedOrderNumber(orderNum);
+      clearCart();
       setStep("success");
     } catch (err) {
       console.error("Order creation error:", err);
@@ -1328,13 +1329,24 @@ export function CartSidebar() {
           )}
 
           {step === "success" && (
-            <button
-              onClick={handleClose}
-              className="w-full py-4 rounded-xl font-serif font-bold text-lg tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-              style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
-            >
-              Volver a la carta
-            </button>
+            <div className="flex flex-col gap-2.5 w-full">
+              <button
+                onClick={handleClose}
+                className="w-full py-3.5 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99] flex items-center justify-center gap-2"
+                style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
+              >
+                <Plus size={18} />
+                <span>Hacer otro Pedido</span>
+              </button>
+
+              <button
+                onClick={() => setStep("profile")}
+                className="w-full py-2.5 rounded-xl font-serif font-bold text-xs tracking-wide transition-all border border-nogal/20 text-nogal hover:bg-nogal/5 flex items-center justify-center gap-2"
+              >
+                <Clock size={16} />
+                <span>Ver Estado de mis Pedidos</span>
+              </button>
+            </div>
           )}
         </div>
         </>
