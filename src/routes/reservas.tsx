@@ -5,7 +5,7 @@ import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 import type { User } from "@supabase/supabase-js";
 import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
-import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle } from "lucide-react";
+import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle, Sparkles, Sun, Wine, Utensils, Users, Award, Share2, CalendarPlus, QrCode, Heart, Coffee } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
 import { getBlockedZonesForReservation, listRestaurantZones } from "@/features/zones/api";
 
@@ -24,63 +24,77 @@ const FALLBACK_ZONES = [
     slug: "reservas-salon-principal",
     nombre: "Salón Principal",
     maxCap: 13,
-    descripcion: "El corazón de Las Flores. Vista a los retablos andinos en pan de oro.",
+    category: "familias",
+    descripcion: "El corazón de Las Flores. Vista a los retablos andinos en pan de oro y carpintería artesanal.",
     imagen: "/imagenes-reales/Salones/Salonprincipal.webp",
     capacidad: "Mesa para 13 personas",
+    badge: "Retablos Pan de Oro",
   },
   {
     id: "salon-ventana",
     slug: "reservas-salon-ventana",
     nombre: "Salón Ventana",
     maxCap: 10,
-    descripcion: "Luz natural y vistas a las casonas coloniales de Huamanga.",
+    category: "parejas",
+    descripcion: "Luz natural envolvente y vistas a las casonas coloniales de Huamanga.",
     imagen: "/imagenes-reales/Salones/Ventana.webp",
     capacidad: "Mesa para 10 personas",
+    badge: "Luz Natural Colonial",
   },
   {
     id: "estrado",
     slug: "reservas-estrado",
     nombre: "Estrado",
     maxCap: 6,
-    descripcion: "Ambiente elevado en el escenario tradicional del restaurante.",
+    category: "parejas",
+    descripcion: "Ambiente privado elevado en el escenario tradicional del restaurante.",
     imagen: "/imagenes-reales/Salones/Estrado.webp",
     capacidad: "Mesa para 6 personas",
+    badge: "Escenario Privado",
   },
   {
     id: "salon-entrada",
     slug: "reservas-salon-entrada",
     maxCap: 6,
+    category: "parejas",
     nombre: "Salón Entrada",
-    descripcion: "Cálida bienvenida rodeada de carpintería y artesanía ayacuchana.",
+    descripcion: "Cálida bienvenida rodeada de tallados en madera y artesanía viva ayacuchana.",
     imagen: "/imagenes-reales/Salones/entrada.webp",
     capacidad: "Mesa para 6 personas",
+    badge: "Cálida Tradición",
   },
   {
     id: "terraza",
     slug: "reservas-terraza",
     nombre: "Terraza",
     maxCap: 6,
-    descripcion: "Vista abierta al cielo andino de Ayacucho y aire puro.",
+    category: "exterior",
+    descripcion: "Vista abierta al cielo andino de Ayacucho y brisa pura de montaña.",
     imagen: "/imagenes-reales/Salones/Terraza.webp",
     capacidad: "Mesa para 6 personas",
+    badge: "Cielo Andino Abierto",
   },
   {
     id: "pasillo",
     slug: "reservas-pasillo",
     nombre: "Pasillo",
     maxCap: 4,
-    descripcion: "Espacio acogedor y reservado a lo largo del corredor de madera.",
+    category: "parejas",
+    descripcion: "Espacio íntimo y acogedor a lo largo del histórico corredor de madera.",
     imagen: "/imagenes-reales/Salones/pasillo.webp",
     capacidad: "Mesa para 4 personas",
+    badge: "Intimidad & Madera",
   },
   {
     id: "jardin",
     slug: "reservas-jardin",
     nombre: "Jardín",
     maxCap: 4,
-    descripcion: "Rodeado de flores autóctonas y serenidad andina.",
+    category: "exterior",
+    descripcion: "Rodeado de flores autóctonas y serenidad andina bajo la sombra de la naturaleza.",
     imagen: "/imagenes-reales/Salones/jardin.webp",
     capacidad: "Mesa para 4 personas",
+    badge: "Jardín Vivo & Flores",
   },
 ];
 
@@ -109,6 +123,13 @@ function ReservasPage() {
   const { totalItems, setIsOpen: setCartOpen } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const wizardRef = useRef<HTMLDivElement>(null);
+  const [activeFilter, setActiveFilter] = useState<"all" | "parejas" | "familias" | "exterior">("all");
+  const [addons, setAddons] = useState({
+    brindis: false,
+    decoracion: false,
+    sillaBebe: false,
+    ubicacionTranquila: false,
+  });
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -703,19 +724,55 @@ function ReservasPage() {
       {/* PHASE 1: GALERÍA DE AMBIENTES (Estilo La Rosa Náutica: Tarjetas limpias, fotos verticales y botones ovalados) */}
       {!selectedZona && (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
-          <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block mb-2">
+              Reserva tu Mesa Especial
+            </span>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-balance text-[#2e5339] mb-4">
               Nuestros Ambientes y Salones
             </h2>
             <p className="text-base md:text-lg text-gray-600 leading-relaxed">
-              Elige cómo quieres vivir la experiencia: desde la calidez del Salón Principal, la vista abierta de la Terraza o la intimidad del Jardín. Cada espacio propone una forma única de disfrutar nuestra gastronomía.
+              Elige cómo quieres vivir la experiencia: desde la calidez del Salón Principal con Pan de Oro, la vista abierta de la Terraza o la intimidad del Jardín.
             </p>
+
+            {/* Filtros de Ambientes por Categoria */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 mt-8">
+              {[
+                { id: "all", label: "Todos los Ambientes", count: ZONAS.length },
+                { id: "parejas", label: "Parejas & Íntimo (2-6 personas)", count: ZONAS.filter((z) => z.maxCap <= 6).length },
+                { id: "familias", label: "Familias & Grupos (8+ personas)", count: ZONAS.filter((z) => z.maxCap >= 8).length },
+                { id: "exterior", label: "Al Aire Libre & Jardín", count: ZONAS.filter((z: any) => z.category === "exterior").length },
+              ].map((filter) => {
+                const isActive = activeFilter === filter.id;
+                return (
+                  <button
+                    key={filter.id}
+                    type="button"
+                    onClick={() => setActiveFilter(filter.id as any)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                      isActive
+                        ? "bg-[#2e5339] text-white shadow-md scale-105 ring-2 ring-[#d4a373]/50"
+                        : "bg-white text-[#2c2a29] border border-black/10 hover:border-[#2e5339]/40 hover:bg-[#2e5339]/5 shadow-2xs"
+                    }`}
+                  >
+                    {filter.label} <span className="opacity-75">({filter.count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="w-24 h-[2px] bg-[#d4a373] mx-auto mt-6" />
           </div>
 
-          {/* Grid de Tarjetas Elegantes (Estilo La Rosa Náutica: Fotos altas y prominentes) */}
+          {/* Grid de Tarjetas Elegantes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {ZONAS.map((z) => {
+            {ZONAS.filter((z: any) => {
+              if (activeFilter === "all") return true;
+              if (activeFilter === "parejas") return z.maxCap <= 6;
+              if (activeFilter === "familias") return z.maxCap >= 8;
+              if (activeFilter === "exterior") return z.category === "exterior";
+              return true;
+            }).map((z) => {
               const cardBlackout = checkBlackoutForSlot(z.id, form.date || todayIso);
               return (
                 <div
@@ -1266,16 +1323,16 @@ function ReservasPage() {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-4 rounded-lg font-bold uppercase tracking-widest text-sm transition-all shadow-md"
+                  className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all shadow-md active:scale-[0.99] cursor-pointer"
                 >
-                  Reservar →
+                  Continuar a Experiencia →
                 </button>
               </div>
             </form>
           </div>
         )}
 
-        {/* ── STEP 3: ADICIONAL (Preguntas de Experiencia) ── */}
+        {/* ── STEP 3: ADICIONAL (Experiencias de Lujo & Requerimientos) ── */}
         {mainStep === 3 && (
           <div className="bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-[#d4a373]/20 animate-in fade-in duration-400 space-y-8">
             {/* Top Back Link */}
@@ -1285,56 +1342,127 @@ function ReservasPage() {
                 onClick={() => setMainStep(2)}
                 className="text-xs uppercase tracking-widest font-bold text-[#2e5339] flex items-center gap-1 hover:opacity-80"
               >
-                ‹ VOLVER
+                ‹ VOLVER A DATOS
               </button>
             </div>
 
             <div className="space-y-6">
-              <p className="text-sm font-semibold text-gray-700">
-                Por favor, responda a las siguientes preguntas para mejorar su experiencia en nuestro restaurante:
-              </p>
-
-              {/* Pregunta 1: Discapacidad / Accesibilidad */}
               <div>
-                <label className="block text-xs uppercase tracking-wider font-bold text-[#2e5339] mb-2">
-                  ¿Alguno de los comensales tiene alguna discapacidad o requerimiento especial?
-                </label>
-                <textarea
-                  rows={3}
-                  value={form.disability}
-                  onChange={(e) => setForm({ ...form, disability: e.target.value })}
-                  placeholder="Detallar requerimientos de silla de ruedas, rampa, etc."
-                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:border-[#2e5339]"
-                />
+                <span className="text-xs uppercase tracking-[0.25em] font-extrabold text-[#d4a373] block mb-1">
+                  Personaliza tu Visita
+                </span>
+                <h3 className="font-serif text-2xl text-[#2e5339] font-bold">
+                  Experiencias Adicionales & Ocasión
+                </h3>
+                <p className="text-xs text-gray-600 mt-1">
+                  Selecciona los detalles opcionales para que tu mesa esté preparada según tus preferencias.
+                </p>
               </div>
 
-              {/* Pregunta 2: Cumpleaños */}
+              {/* Experiencias y Atenciones Especiales */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {[
+                  {
+                    id: "brindis",
+                    title: "Brindis de Bienvenida",
+                    desc: "Chicha de Jora artesanal o Macerado Andino de autor",
+                    icon: Wine,
+                  },
+                  {
+                    id: "decoracion",
+                    title: "Decoración de Celebración",
+                    desc: "Detalle especial en mesa para cumpleaños o aniversario",
+                    icon: Sparkles,
+                  },
+                  {
+                    id: "sillaBebe",
+                    title: "Silla Alta para Niños",
+                    desc: "Comodidad preferencial para los más pequeños",
+                    icon: Users,
+                  },
+                  {
+                    id: "ubicacionTranquila",
+                    title: "Ubicación Preferencial",
+                    desc: "Mesa reservada en zona tranquila con mejor vista",
+                    icon: Sun,
+                  },
+                ].map((item) => {
+                  const isChecked = (addons as any)[item.id];
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() =>
+                        setAddons((prev) => ({ ...prev, [item.id]: !(prev as any)[item.id] }))
+                      }
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 flex items-start gap-3.5 ${
+                        isChecked
+                          ? "bg-[#2e5339]/5 border-[#2e5339] text-[#2e5339] shadow-xs"
+                          : "bg-white border-gray-200 hover:border-[#2e5339]/30 hover:bg-gray-50"
+                      }`}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                          isChecked ? "bg-[#2e5339] border-[#2e5339] text-white" : "border-gray-300 bg-white"
+                        }`}
+                      >
+                        {isChecked && <Check size={12} strokeWidth={3} />}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5 font-bold text-xs text-[#2c2a29]">
+                          <Icon size={14} className="text-[#d4a373]" />
+                          <span>{item.title}</span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{item.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pregunta: Ocasión Especial */}
+              <div className="pt-2">
+                <label className="block text-xs uppercase tracking-wider font-bold text-[#2e5339] mb-2">
+                  ¿Nos visitas por alguna ocasión en particular?
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  {["Cumpleaños", "Aniversario", "Reunión Familiar", "Cita Romántica"].map((ocasion) => {
+                    const isSelected = form.isBirthday === ocasion;
+                    return (
+                      <button
+                        key={ocasion}
+                        type="button"
+                        onClick={() =>
+                          setForm((f) => ({
+                            ...f,
+                            isBirthday: isSelected ? "No" : ocasion,
+                          }))
+                        }
+                        className={`py-2.5 px-3 rounded-xl border text-center font-bold transition-all ${
+                          isSelected
+                            ? "bg-[#2e5339] text-white border-[#2e5339] shadow-sm"
+                            : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                        }`}
+                      >
+                        {ocasion}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Pregunta: Accesibilidad / Requerimientos */}
               <div>
                 <label className="block text-xs uppercase tracking-wider font-bold text-[#2e5339] mb-2">
-                  ¿Nos visitas por cumpleaños o aniversario?
+                  ¿Comensales con requerimientos de accesibilidad o movilidad? (Opcional)
                 </label>
-                <div className="flex items-center gap-6 text-sm">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="isBirthday"
-                      value="Sí"
-                      checked={form.isBirthday === "Sí"}
-                      onChange={(e) => setForm({ ...form, isBirthday: e.target.value })}
-                    />
-                    <span>Sí</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="isBirthday"
-                      value="No"
-                      checked={form.isBirthday === "No"}
-                      onChange={(e) => setForm({ ...form, isBirthday: e.target.value })}
-                    />
-                    <span>No</span>
-                  </label>
-                </div>
+                <textarea
+                  rows={2}
+                  value={form.disability}
+                  onChange={(e) => setForm({ ...form, disability: e.target.value })}
+                  placeholder="Ej. Silla de ruedas, rampa de acceso preferencial..."
+                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:border-[#2e5339]"
+                />
               </div>
 
               {/* Botón Finalizar */}
@@ -1343,72 +1471,154 @@ function ReservasPage() {
                   type="button"
                   onClick={handleFinalizeReservation}
                   disabled={isSubmitting}
-                  className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-4 rounded-lg font-bold uppercase tracking-widest text-sm transition-all shadow-md disabled:opacity-50"
+                  className="w-full bg-[#2e5339] hover:bg-[#23412c] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all shadow-md active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? "Procesando Reserva..." : "CONFIRMAR RESERVA"}
+                  <Award size={18} />
+                  <span>{isSubmitting ? "Generando Pase de Reserva..." : "CONFIRMAR Y OBTENER PASE DIGITAL"}</span>
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* ── STEP 4: CONFIRMACIÓN (Resumen de Solicitud Confirmada) ── */}
+        {/* ── STEP 4: CONFIRMACIÓN (Pase Digital de Reserva de Lujo) ── */}
         {mainStep === 4 && (
-          <div className="bg-white p-6 md:p-12 rounded-2xl shadow-xl border border-[#d4a373]/20 text-center animate-in zoom-in-95 duration-400 space-y-8">
-            <div className="w-16 h-16 bg-[#2e5339] text-white rounded-full flex items-center justify-center mx-auto shadow-lg">
+          <div className="bg-white p-6 md:p-12 rounded-3xl shadow-2xl border border-[#d4a373]/30 text-center animate-in zoom-in-95 duration-400 space-y-8 max-w-3xl mx-auto">
+            <div className="w-16 h-16 bg-[#2e5339] text-white rounded-full flex items-center justify-center mx-auto shadow-lg ring-4 ring-[#2e5339]/20">
               <Check size={36} strokeWidth={3} />
             </div>
 
             <div className="space-y-2">
-              <h2 className="font-serif italic text-3xl md:text-4xl text-[#2e5339] font-bold">
-                Solicitud confirmada
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#d4a373] block">
+                ¡Mesa Reservada con Éxito!
+              </span>
+              <h2 className="font-serif italic text-3xl md:text-5xl text-[#2e5339] font-bold">
+                Tu Experiencia en Las Flores
               </h2>
-              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
-                Código de Reserva: <span className="text-[#3b1f10] font-bold">{form.reservationCode || "RES-FLORES-88219"}</span>
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold pt-1">
+                Código de Confirmación: <span className="text-[#3b1f10] font-black text-sm">{form.reservationCode || "RES-FLORES-88219"}</span>
               </p>
             </div>
 
-            {/* Visual Card Summary (Estilo Las Flores Ayacucho) */}
-            <div className="max-w-lg mx-auto bg-[#fdf8f0] border border-[#d4a373]/30 p-6 rounded-2xl text-left space-y-3 text-sm text-gray-700">
-              <div className="flex items-center gap-2">
-                <Calendar size={18} className="text-[#2e5339] shrink-0" />
-                <span className="font-bold text-[#2e5339]">{form.date}, {form.time}h.</span>
+            {/* PASE DIGITAL DE RESERVA (Tarjeta de Lujo estilo BoletoVIP) */}
+            <div className="max-w-md mx-auto bg-gradient-to-b from-[#fdf8f0] to-[#f7eedc] border-2 border-[#d4a373]/50 p-6 md:p-8 rounded-3xl text-left space-y-5 relative overflow-hidden shadow-xl">
+              {/* Sello Dorado de Garantía */}
+              <div className="absolute -top-3 -right-3 w-20 h-20 bg-[#d4a373]/15 rounded-full flex items-center justify-center pointer-events-none">
+                <Award size={36} className="text-[#d4a373] opacity-40" />
               </div>
-              <div className="flex items-center gap-2">
-                <UserIcon size={18} className="text-[#2e5339] shrink-0" />
-                <span className="font-bold text-[#2e5339]">{form.guests} personas.</span>
+
+              {/* Header del Pase */}
+              <div className="border-b border-[#d4a373]/40 pb-4 flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#d4a373] block">
+                    Pase Digital de Reserva
+                  </span>
+                  <span className="font-serif font-bold text-lg text-[#2e5339]">
+                    Restaurante Las Flores
+                  </span>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-[#2e5339] text-white flex items-center justify-center shadow-xs">
+                  <Utensils size={18} />
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin size={18} className="text-[#2e5339] shrink-0" />
-                <span className="font-bold text-[#2e5339]">Las Flores Ayacucho — {form.zona.nombre}.</span>
+
+              {/* Detalles Principales */}
+              <div className="space-y-3 text-xs text-gray-800 font-medium">
+                <div className="flex items-center gap-3">
+                  <Calendar size={18} className="text-[#2e5339] shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase block font-semibold">Fecha & Hora</span>
+                    <span className="font-bold text-[#2e5339] text-sm">{form.date} — {form.time}h.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <UserIcon size={18} className="text-[#2e5339] shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase block font-semibold">Comensales & Zona</span>
+                    <span className="font-bold text-[#2e5339] text-sm">{form.guests} personas · {form.zona.nombre}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <MapPin size={18} className="text-[#2e5339] shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase block font-semibold">Ubicación</span>
+                    <span className="font-bold text-gray-800">Jr. Las Flores 123, Huamanga — Ayacucho</span>
+                  </div>
+                </div>
               </div>
-              <div className="pt-2 border-t border-[#d4a373]/30">
-                <span className="text-xs text-gray-500 uppercase font-semibold block mb-0.5">
-                  Solicitud de reserva a nombre de:
-                </span>
-                <span className="font-serif text-lg font-bold text-[#3b1f10]">
-                  {form.firstName.toUpperCase()} {form.lastName.toUpperCase()}
-                </span>
+
+              {/* Titular de la Reserva */}
+              <div className="pt-3 border-t border-[#d4a373]/30 flex justify-between items-end">
+                <div>
+                  <span className="text-[10px] text-gray-500 uppercase font-bold block mb-0.5">
+                    Titular de la Reserva:
+                  </span>
+                  <span className="font-serif text-base font-bold text-[#3b1f10] block">
+                    {form.firstName.toUpperCase()} {form.lastName.toUpperCase()}
+                  </span>
+                  <span className="text-[10px] text-gray-500 font-medium block">
+                    {form.phoneCountry} {form.phone}
+                  </span>
+                </div>
+
+                {/* Simulación QR Code */}
+                <div className="w-16 h-16 bg-white p-1.5 rounded-xl border border-[#d4a373]/40 shadow-xs flex flex-col items-center justify-center shrink-0">
+                  <QrCode size={40} className="text-[#2e5339]" />
+                  <span className="text-[7px] font-mono text-gray-500 mt-0.5">VALID</span>
+                </div>
               </div>
             </div>
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+            {/* Enlaces de Acción Rápida (Calendar & WhatsApp & Nueva Reserva) */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+              <a
+                href={
+                  `https://calendar.google.com/calendar/render?action=TEMPLATE&text=` +
+                  encodeURIComponent(`Reserva en Restaurante Las Flores — ${form.zona.nombre}`) +
+                  `&dates=` +
+                  encodeURIComponent(form.date.replace(/-/g, "") + "T" + form.time.replace(":", "") + "00Z/" + form.date.replace(/-/g, "") + "T" + form.time.replace(":", "") + "00Z") +
+                  `&details=` +
+                  encodeURIComponent(`Reserva a nombre de ${form.firstName} ${form.lastName} para ${form.guests} personas. Código: ${form.reservationCode}`) +
+                  `&location=` +
+                  encodeURIComponent(`Restaurante Las Flores, Ayacucho`)
+                }
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 py-3 px-4 bg-[#4285F4] hover:bg-[#3367D6] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+              >
+                <CalendarPlus size={16} />
+                <span>Google Calendar</span>
+              </a>
+
+              <a
+                href={
+                  "https://wa.me/51966543210?text=" +
+                  encodeURIComponent(
+                    `Hola Las Flores, confirmo mi reserva #${form.reservationCode || "RES-88219"} a nombre de ${form.firstName} ${form.lastName} para el ${form.date} a las ${form.time}h en el ${form.zona.nombre}.`
+                  )
+                }
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 py-3 px-4 bg-[#25D366] hover:bg-[#20bd5a] text-gray-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+              >
+                <Share2 size={16} />
+                <span>Confirmar por WhatsApp</span>
+              </a>
+            </div>
+
+            <div className="pt-2">
               <button
                 type="button"
                 onClick={() => {
                   setMainStep(1);
+                  setSelectedZona(null);
                   window.scrollTo({ top: 300, behavior: "smooth" });
                 }}
-                className="px-8 py-3.5 bg-[#2e5339] hover:bg-[#23412c] text-white font-bold uppercase tracking-widest text-xs rounded-lg transition-all shadow-md"
+                className="px-8 py-3.5 bg-[#2e5339] hover:bg-[#23412c] text-white font-bold uppercase tracking-widest text-xs rounded-xl transition-all shadow-md"
               >
                 Hacer otra reserva
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/" })}
-                className="px-8 py-3.5 border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold uppercase tracking-widest text-xs rounded-lg transition-all"
-              >
-                Volver al Inicio
               </button>
             </div>
           </div>
