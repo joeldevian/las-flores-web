@@ -425,17 +425,6 @@ function ReservasPage() {
     }
 
     setForm((f) => ({ ...f, time, serviceType }));
-    
-    // Si el usuario NO está autenticado, mostrar modal de login
-    if (!activeUser) {
-      setPendingStepTransition(2); // Guardamos que queremos ir al paso 2
-      // Guardar en localStorage para persistir después del redirect de OAuth
-      localStorage.setItem('reserva_pending_step', '2');
-      setShowLoginModal(true);
-      return;
-    }
-    
-    // Si ya está autenticado, avanzar directamente al paso 2
     setMainStep(2);
     window.scrollTo({ top: 500, behavior: "smooth" });
   };
