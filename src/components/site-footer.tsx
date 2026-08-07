@@ -63,8 +63,8 @@ export function SiteFooter() {
             </Link>
 
             <div className="flex flex-col space-y-2 text-sm">
-              <Link to="/familia-las-flores" className="hover:text-chilca transition-colors font-semibold text-[#D4AF37]">
-                Familia Las Flores (Nuestra Gente)
+              <Link to="/familia-las-flores" className="hover:text-chilca transition-colors">
+                Familia Las Flores
               </Link>
               <a href="#" className="hover:text-chilca transition-colors">
                 Política de Privacidad
