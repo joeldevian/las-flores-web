@@ -64,27 +64,27 @@ export function SiteNavigationMenu({
         }`}
       >
         {/* ── Header con logo + cerrar ── */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-3 shrink-0">
+        <div className="flex items-center justify-between px-8 pt-6 pb-4 shrink-0">
           <img
             src="/images.png"
             alt="Restaurante Las Flores"
-            className="h-9 md:h-10 w-auto object-contain"
+            className="h-10 md:h-12 w-auto object-contain"
             style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)' }}
           />
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1.5 border border-nogal/20 text-nogal hover:bg-nogal/8 transition-colors rounded-md"
+            className="p-2 border border-nogal/20 text-nogal hover:bg-nogal/8 transition-colors rounded-md"
             aria-label="Cerrar menú"
           >
-            <X size={20} />
+            <X size={22} />
           </button>
         </div>
 
         {/* ── Separador ── */}
-        <div className="mx-6 border-t border-nogal/10 shrink-0" />
+        <div className="mx-8 border-t border-nogal/10 shrink-0" />
 
-        {/* ── Nav links — ajustados para encaje perfecto sin scroll ── */}
-        <nav className="flex flex-col items-start justify-center flex-1 min-h-0 px-2 py-2 overflow-y-auto no-scrollbar [scrollbar-width:none] w-full">
+        {/* ── Nav links — distribución proporcional justify-evenly ── */}
+        <nav className="flex flex-col justify-evenly flex-1 min-h-0 px-8 py-2 w-full overflow-hidden">
           {NAV_LINKS.map(({ label, to, hash }) => {
             return (
               <Link
@@ -92,7 +92,7 @@ export function SiteNavigationMenu({
                 to={to}
                 hash={hash || undefined}
                 onClick={() => setIsOpen(false)}
-                className="w-full py-2.5 md:py-3 px-5 font-sans text-xs md:text-sm tracking-[0.08em] transition-all duration-200 font-extrabold leading-none uppercase border-b border-nogal/10 last:border-b-0 text-nogal hover:text-pacay hover:translate-x-1"
+                className="w-full py-2.5 font-serif text-base md:text-lg tracking-[0.08em] transition-all duration-300 font-bold leading-none uppercase border-b border-nogal/10 last:border-b-0 text-nogal hover:text-pacay hover:translate-x-2"
               >
                 {label}
               </Link>
@@ -101,7 +101,7 @@ export function SiteNavigationMenu({
         </nav>
 
         {/* ── Footer de contacto y redes ── */}
-        <div className="px-6 pb-5 pt-3 shrink-0 border-t border-nogal/10">
+        <div className="px-8 pb-6 pt-4 shrink-0 border-t border-nogal/10">
           <div className="flex flex-col gap-2.5 mb-5">
             <a
               href="tel:967456230"
