@@ -1050,7 +1050,7 @@ function Index() {
               Excelencia Reconocida
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl leading-[1.05] text-balance mb-8">
-              Nuestra devoción <span className="italic">premiada</span>
+              Reconocidos por nuestro compromiso con la calidad.
             </h2>
             <p className="text-base sm:text-lg leading-[1.7] text-pretty max-w-[48ch] text-nogal/75 mb-10">
               Ser el mejor restaurante de Ayacucho no es solo un título, es una responsabilidad.
@@ -1063,9 +1063,19 @@ function Index() {
                   <h4 className="font-serif text-xl font-semibold mb-0.5">
                     Mejor Restaurante Regional
                   </h4>
-                  <p className="text-sm text-nogal/50 uppercase tracking-[0.2em]">
-                    Premios Summum 2024
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-10 h-10 flex-none text-nogal/70" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2v6h6" />
+                    </svg>
+                    <div>
+                      <div className="text-sm font-semibold">resolucion_andres_avelino.pdf</div>
+                      <div className="text-xs text-nogal/50">Municipalidad distrital de Andres Avelino Cáceres Dorregaray</div>
+                    </div>
+                    <a href="/docs/resolucion_andres_avelino.pdf" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
+                      Ver documento
+                    </a>
+                  </div>
                 </div>
               </li>
               <li className="flex items-start gap-5">
@@ -1074,18 +1084,38 @@ function Index() {
                   <h4 className="font-serif text-xl font-semibold mb-0.5">
                     Guardianes de la Tradición
                   </h4>
-                  <p className="text-sm text-nogal/50 uppercase tracking-[0.2em]">
-                    Ministerio de Cultura
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-10 h-10 flex-none text-nogal/70" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2v6h6" />
+                    </svg>
+                    <div>
+                      <div className="text-sm font-semibold">documento_camara_comercio.pdf</div>
+                      <div className="text-xs text-nogal/50">Camara de Comercio</div>
+                    </div>
+                    <a href="/docs/documento_camara_comercio.pdf" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
+                      Ver documento
+                    </a>
+                  </div>
                 </div>
               </li>
               <li className="flex items-start gap-5">
                 <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
                 <div>
                   <h4 className="font-serif text-xl font-semibold mb-0.5">Ayacucho Emprende</h4>
-                  <p className="text-sm text-nogal/50 uppercase tracking-[0.2em]">
-                    Municipalidad de Huamanga
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-10 h-10 flex-none text-nogal/70" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2v6h6" />
+                    </svg>
+                    <div>
+                      <div className="text-sm font-semibold">resolucion_andres_avelino.pdf</div>
+                      <div className="text-xs text-nogal/50">Municipalidad distrital de Andres Avelino Cáceres Dorregaray</div>
+                    </div>
+                    <a href="/docs/resolucion_andres_avelino.pdf" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
+                      Ver documento
+                    </a>
+                  </div>
                 </div>
               </li>
             </ul>
