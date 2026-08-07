@@ -102,8 +102,8 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
   // ── Loading ────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <button className={`flex items-center justify-center p-2 rounded-md pointer-events-auto ${textColorClass}`}>
-        <Loader2 size={26} className="animate-spin opacity-60" />
+      <button className={`flex items-center justify-center p-1 rounded-md pointer-events-auto ${textColorClass}`}>
+        <Loader2 size={24} className="animate-spin opacity-60" />
       </button>
     );
   }
@@ -115,14 +115,14 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
         <button
           onClick={handleLoginClick}
           disabled={signingIn}
-          className={`flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
+          className={`flex items-center justify-center p-1 rounded-md hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
           aria-label="Iniciar sesión"
           title="Iniciar sesión"
         >
           {signingIn ? (
-            <Loader2 size={26} className="animate-spin" />
+            <Loader2 size={24} className="animate-spin" />
           ) : (
-            <User size={28} strokeWidth={2} />
+            <User size={26} strokeWidth={2} />
           )}
         </button>
 
@@ -159,7 +159,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
   return (
     <button
       onClick={handleClick}
-      className={`relative flex items-center justify-center p-1.5 rounded-full hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
+      className={`relative flex items-center justify-center p-1 rounded-full hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
       aria-label="Mi cuenta y pedidos"
       title="Ver mis pedidos y reservas"
     >
@@ -174,7 +174,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
           {initials}
         </div>
       )}
-      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-400 border border-white" />
+      <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border border-white shadow-xs" />
     </button>
   );
 }

@@ -37,13 +37,13 @@ export function SiteNavigationMenu({
   return (
     <>
       {/* ── Trigger buttons ── */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5">
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center p-2 rounded-md hover:bg-black/10 transition-colors pointer-events-auto"
+          className="flex items-center justify-center p-1 rounded-md hover:bg-black/10 transition-colors pointer-events-auto"
           aria-label="Menú principal"
         >
-          <Menu size={32} className={textColor} />
+          <Menu size={28} className={textColor} />
         </button>
         <UserAuthButton textColorClass={textColor} />
       </div>
