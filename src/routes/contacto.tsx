@@ -84,7 +84,7 @@ function ContactoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f4e6] flex flex-col font-sans text-[#2c2a29]">
+    <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scroll-smooth bg-[#f8f4e6] flex flex-col font-sans text-[#2c2a29]">
       {/* ── HEADER FIJO SIN BLUR ── */}
       <header
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
@@ -155,8 +155,8 @@ function ContactoPage() {
         </div>
       </header>
 
-      {/* ── HERO LIMPIO Y SOBRIO SIN FOG BLANCO ── */}
-      <section className="relative pt-36 pb-20 md:pt-44 md:pb-28 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center min-h-[360px] bg-[#1a120b]">
+      {/* ── HERO PANTALLA COMPLETA (100VH + SNAP MANDATORY) ── */}
+      <section className="h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-[#1a120b] snap-start snap-always shrink-0">
         <div className="absolute inset-0 z-0 opacity-50">
           <img
             src={heroImg}
@@ -166,21 +166,32 @@ function ContactoPage() {
         </div>
         <div className="absolute inset-0 bg-black/60" />
 
-        <div className="max-w-3xl mx-auto text-center relative z-10 space-y-3">
+        <div className="max-w-3xl mx-auto text-center relative z-10 space-y-4 pt-12">
           <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block">
             Restaurante Las Flores · Ayacucho
           </span>
-          <h1 className="font-serif font-bold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight">
+          <h1 className="font-serif font-bold text-4xl sm:text-6xl md:text-7xl text-white tracking-tight leading-tight">
             Contáctanos
           </h1>
-          <p className="font-sans text-white/90 text-sm md:text-base max-w-xl mx-auto leading-relaxed font-light pt-1">
+          <p className="font-sans text-white/90 text-base md:text-lg max-w-xl mx-auto leading-relaxed font-light">
             Estamos listos para atender tus reservas, consultas de la carta o pedidos a domicilio.
           </p>
         </div>
+
+        {/* Indicador de Desplazamiento Suave a la Siguiente Sección */}
+        <a
+          href="#contacto-detalles"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-white/80 hover:text-white transition-all group cursor-pointer"
+        >
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#d4a373]">
+            Desliza para Ver Contacto
+          </span>
+          <ChevronDown size={22} className="animate-bounce text-white" />
+        </a>
       </section>
 
-      {/* ── MAIN LAYOUT SOBRIO (2 COLUMNAS LIMPIAS) ── */}
-      <section className="px-4 md:px-12 lg:px-20 pt-12 pb-20 flex-1 relative z-20">
+      {/* ── MAIN LAYOUT (SECCIÓN CON SNAP Y ESPACIADO PERFECTO) ── */}
+      <section id="contacto-detalles" className="min-h-screen w-full snap-start snap-always px-4 md:px-12 lg:px-20 pt-24 pb-20 flex-1 relative z-20 shrink-0">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* COLUMNA IZQUIERDA: Información Directa (5 cols) */}
