@@ -824,8 +824,8 @@ function ReservasPage() {
       {/* PHASE 2: HERO DEL AMBIENTE ELEGIDO (Pantalla completa sin márgenes / 100vh Full Viewport Height) */}
       {selectedZona && (
         <div ref={wizardRef} className="animate-in fade-in duration-500">
-          {/* Edge-to-Edge Split Hero Banner (Ocupa el 100% de la ventana de pantalla h-screen) */}
-          <div className="w-full h-screen min-h-[680px] grid grid-cols-1 lg:grid-cols-2 bg-[#fdf8f0] border-b border-[#d4a373]/30 shadow-md overflow-hidden">
+          {/* Edge-to-Edge Split Hero Banner (Altura reducida para mostrar formulario abajo) */}
+          <div className="w-full h-[50vh] min-h-[420px] max-h-[520px] grid grid-cols-1 lg:grid-cols-2 bg-[#fdf8f0] border-b border-[#d4a373]/30 shadow-md overflow-hidden">
             {/* Foto a la izquierda a pantalla completa */}
             <div className="h-[400px] lg:h-full w-full relative overflow-hidden">
               <img
