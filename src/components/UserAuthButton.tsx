@@ -159,7 +159,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
   return (
     <button
       onClick={handleClick}
-      className={`relative flex items-center justify-center p-1 rounded-full hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
+      className={`relative flex items-center justify-center p-0.5 rounded-full hover:bg-black/10 transition-colors pointer-events-auto ${textColorClass}`}
       aria-label="Mi cuenta y pedidos"
       title="Ver mis pedidos y reservas"
     >
