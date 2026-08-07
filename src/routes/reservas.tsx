@@ -633,10 +633,10 @@ function ReservasPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
           </div>
           <div className="relative z-10 text-center text-white px-6 pt-12">
-            <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-2 block">
+            <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
               Las Flores · Ayacucho
             </span>
-            <h1 className="font-serif italic text-4xl md:text-6xl text-piedra font-semibold drop-shadow-md">
+            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight drop-shadow-md">
               Reserva tu Experiencia
             </h1>
           </div>
@@ -647,10 +647,10 @@ function ReservasPage() {
       {!selectedZona && (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
           <div className="text-center max-w-3xl mx-auto mb-14">
-            <h2 className="font-serif italic text-3xl md:text-5xl text-[#2e5339] font-bold mb-4">
-              Nuestros Ambientes & Salones
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-balance text-[#2e5339] mb-4">
+              Nuestros Ambientes y Salones
             </h2>
-            <p className="text-sm md:text-base text-gray-600 font-light leading-relaxed">
+            <p className="text-base md:text-lg text-gray-600 leading-relaxed">
               Elige cómo quieres vivir la experiencia: desde la calidez del Salón Principal, la vista abierta de la Terraza o la intimidad del Jardín. Cada espacio propone una forma única de disfrutar nuestra gastronomía.
             </p>
             <div className="w-24 h-[2px] bg-[#d4a373] mx-auto mt-6" />

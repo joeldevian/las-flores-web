@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UneteAlEquipoRouteImport } from './routes/unete-al-equipo'
 import { Route as RestauranteRouteImport } from './routes/restaurante'
 import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as CartaRouteImport } from './routes/carta'
@@ -32,6 +33,11 @@ const RestauranteRoute = RestauranteRouteImport.update({
 const ReservasRoute = ReservasRouteImport.update({
   id: '/reservas',
   path: '/reservas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosRoute = EventosRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
+  '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
+  '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
+  '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/carta'
     | '/contacto'
     | '/eventos'
+    | '/galeria'
     | '/reservas'
     | '/restaurante'
     | '/unete-al-equipo'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/carta'
     | '/contacto'
     | '/eventos'
+    | '/galeria'
     | '/reservas'
     | '/restaurante'
     | '/unete-al-equipo'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/carta'
     | '/contacto'
     | '/eventos'
+    | '/galeria'
     | '/reservas'
     | '/restaurante'
     | '/unete-al-equipo'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   CartaRoute: typeof CartaRoute
   ContactoRoute: typeof ContactoRoute
   EventosRoute: typeof EventosRoute
+  GaleriaRoute: typeof GaleriaRoute
   ReservasRoute: typeof ReservasRoute
   RestauranteRoute: typeof RestauranteRoute
   UneteAlEquipoRoute: typeof UneteAlEquipoRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/reservas'
       fullPath: '/reservas'
       preLoaderRoute: typeof ReservasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventos': {
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartaRoute: CartaRoute,
   ContactoRoute: ContactoRoute,
   EventosRoute: EventosRoute,
+  GaleriaRoute: GaleriaRoute,
   ReservasRoute: ReservasRoute,
   RestauranteRoute: RestauranteRoute,
   UneteAlEquipoRoute: UneteAlEquipoRoute,
