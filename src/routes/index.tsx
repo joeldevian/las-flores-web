@@ -1161,9 +1161,6 @@ function Index() {
         </div>
       </section>
 
-      {/* Sección Familia Las Flores - Reseñas de Colaboradores */}
-      <FamiliaLasFloresSection />
-
       <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
       <SiteFooter />

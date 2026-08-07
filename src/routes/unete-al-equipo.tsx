@@ -453,31 +453,6 @@ function UneteAlEquipoPage() {
         </div>
       </section>
 
-      {/* Banner de Invitación - Familia Las Flores */}
-      <section className="py-16 px-6 bg-[#2D473C] text-white relative overflow-hidden font-sans border-y border-[#D4AF37]/30">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-          <div className="space-y-3 text-center md:text-left max-w-2xl">
-            <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37] flex items-center justify-center md:justify-start gap-2">
-              Nuestra Gente · Nuestro Orgullo
-            </span>
-            <h2 className="font-serif font-black text-3xl md:text-4xl text-white">
-              Historias de Nuestra Familia
-            </h2>
-            <p className="text-sm text-emerald-100/90 font-serif italic leading-relaxed">
-              Conoce los testimonios reales de quienes integran nuestro equipo y descubre por qué se sienten orgullosos de crecer profesionalmente en Las Flores.
-            </p>
-          </div>
-
-          <Link
-            to="/familia-las-flores"
-            className="px-8 py-4 rounded-2xl bg-[#D4AF37] hover:bg-[#c29e2f] text-[#2D473C] font-black text-xs md:text-sm tracking-wide transition-all shadow-lg shrink-0 flex items-center gap-2 active:scale-95"
-          >
-            <span>Conoce a Nuestra Familia</span>
-            <Send size={16} />
-          </Link>
-        </div>
-      </section>
-
       <SiteFooter />
     </div>
   );
