@@ -6,13 +6,15 @@ import { AdminCategoryFormModal } from "./AdminCategoryFormModal";
 interface AdminCategoryListModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCategoryChanged: () => Promise<void>;
+  onCategoryChanged?: () => Promise<void>;
+  onSave?: () => Promise<void>;
 }
 
 export function AdminCategoryListModal({
   isOpen,
   onClose,
   onCategoryChanged,
+  onSave,
 }: AdminCategoryListModalProps) {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,8 @@ export function AdminCategoryListModal({
       ));
       
       // Notificar cambio
-      await onCategoryChanged();
+      await onCategoryChanged?.();
+      await onSave?.();
     } catch (err: any) {
       console.error("Error toggling category:", err);
       alert("No se pudo actualizar el estado de la categoría.");
@@ -191,12 +194,14 @@ export function AdminCategoryListModal({
         category={selectedCategory}
         onSave={async () => {
           await fetchCategories();
-          await onCategoryChanged();
+          await onCategoryChanged?.();
+          await onSave?.();
           setIsFormOpen(false);
         }}
         onDelete={async () => {
           await fetchCategories();
-          await onCategoryChanged();
+          await onCategoryChanged?.();
+          await onSave?.();
           setIsFormOpen(false);
         }}
       />

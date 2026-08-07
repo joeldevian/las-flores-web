@@ -800,20 +800,20 @@ function AdminRoute() {
         onClose={() => setIsProductModalOpen(false)}
         product={selectedProduct}
         categories={categories}
-        onSaved={fetchData}
+        onSave={fetchData}
       />
 
       <AdminCouponModal
         isOpen={isCouponModalOpen}
         onClose={() => setIsCouponModalOpen(false)}
         coupon={selectedCoupon}
-        onSaved={fetchData}
+        onSave={fetchData}
       />
 
       <AdminCategoryListModal
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
-        onSaved={fetchData}
+        onSave={fetchData}
       />
 
     </div>
