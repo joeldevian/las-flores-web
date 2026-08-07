@@ -39,7 +39,7 @@ const COLLABORATORS: Collaborator[] = [
     role: "Maestra Repostera & Bebidas Tradicionales",
     category: "reposteria",
     years: "6 años en Las Flores",
-    photo: "/imagenes-reales/EQUIPO/02042026-DSC04926.webp",
+    photo: "/imagenes-reales/EQUIPO/02042026-DSC04926-opt.webp",
     quote:
       "En Las Flores no solo servimos recetas, compartimos las memorias vivas de nuestras abuelas. Mi mayor orgullo es ver la cara de sorpresa y felicidad de los clientes cuando prueban la mazamorra y las bebidas artesanales hechas a fuego lento.",
     recommendedDish: "Mazamorra de Llipta & Chapla Tradicional",
@@ -65,7 +65,7 @@ const COLLABORATORS: Collaborator[] = [
     role: "Chef de Fuegos & Carnes Andinas",
     category: "cocina",
     years: "5 años en Las Flores",
-    photo: "/imagenes-reales/EQUIPO/encantados-de-atenderlos.webp",
+    photo: "/imagenes-reales/EQUIPO/encantados-de-atenderlos-opt.webp",
     quote:
       "El fuego ayacuchano requiere técnica, paciencia y sobre todo mucho orgullo. Me llena el alma saber que el Cuy Chactado que sale de mi parrilla deja un recuerdo imborrable en las familias que nos visitan.",
     recommendedDish: "Cuy Chactado Crujiente Tradicional",
@@ -78,7 +78,7 @@ const COLLABORATORS: Collaborator[] = [
     role: "Jefa de Cocina & Sazones Típicas",
     category: "cocina",
     years: "8 años en Las Flores",
-    photo: "/imagenes-reales/EQUIPO/02042026-DSC05069.webp",
+    photo: "/imagenes-reales/EQUIPO/02042026-DSC05069-opt.webp",
     quote:
       "Para mí la cocina ayacuchana es sagrada. Mantener el aderezo exacto de la Puca Picante y la panceta dorada en su punto es mi forma de rendir homenaje a nuestras raíces y a cada comensal.",
     recommendedDish: "Puca Picante Tradicional con Chicharrón",
@@ -91,7 +91,7 @@ const COLLABORATORS: Collaborator[] = [
     role: "Sommelier & Barman de Macerados",
     category: "reposteria",
     years: "3 años en Las Flores",
-    photo: "/imagenes-reales/EQUIPO/02042026-DSC05038.webp",
+    photo: "/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp",
     quote:
       "Me fascina crear coctelería de autor con insumos andinos como la pantiwayta, la airampo y el tumbo. Cada trago cuenta una historia de las alturas de Ayacucho.",
     recommendedDish: "Cóctel Macerado Pantiwayta Sour",
@@ -104,7 +104,7 @@ const COLLABORATORS: Collaborator[] = [
     role: "Supervisora de Calidad & Protocolo",
     category: "salon",
     years: "7 años en Las Flores",
-    photo: "/imagenes-reales/EQUIPO/02042026-DSC04926.webp",
+    photo: "/imagenes-reales/EQUIPO/02042026-DSC04926-opt.webp",
     quote:
       "Ver crecer a nuestra familia laboral durante todos estos años me llena de satisfacción. Nos aseguramos de que cada detalle en mesa transmita la elegancia y calidez que nos caracteriza.",
     recommendedDish: "Chorizo Ayacuchano Artesanal",
@@ -169,11 +169,13 @@ function FamiliaLasFloresPage() {
       <section className="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="/imagenes-reales/EQUIPO/02042026-DSC05038.webp"
+            src="/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp"
             alt="Familia Las Flores"
-            className="w-full h-full object-cover opacity-25 filter brightness-90"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-eucalipto-dark via-eucalipto-dark/70 to-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
