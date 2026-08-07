@@ -209,6 +209,8 @@ function ReservasPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [pendingStepTransition, setPendingStepTransition] = useState<number | null>(null);
+  const [language, setLanguage] = useState<"ES" | "EN">("ES");
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   // Blackout & Zone Status State
   const [blockedZoneIds, setBlockedZoneIds] = useState<string[]>([]);
@@ -618,6 +620,72 @@ function ReservasPage() {
               </span>
             </button>
           )}
+
+          {/* Language Selector with Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
+                isScrolled ? "text-nogal" : "text-piedra"
+              }`}
+            >
+              <img
+                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
+                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
+                className="w-5 h-auto rounded-[2px]"
+              />
+              <span className="text-xs font-bold">{language}</span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            {isLangDropdownOpen && (
+              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
+                {language === "ES" ? (
+                  <button
+                    onClick={() => {
+                      setLanguage("EN");
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
+                  >
+                    <img
+                      src="https://flagcdn.com/w40/us.png"
+                      alt="USA Flag"
+                      className="w-5 h-auto rounded-[2px]"
+                    />
+                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setLanguage("ES");
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
+                  >
+                    <img
+                      src="https://flagcdn.com/w40/pe.png"
+                      alt="Peru Flag"
+                      className="w-5 h-auto rounded-[2px]"
+                    />
+                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -657,7 +725,7 @@ function ReservasPage() {
           </div>
 
           {/* Grid de Tarjetas Elegantes (Estilo La Rosa Náutica: Fotos altas y prominentes) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {ZONAS.map((z) => {
               const cardBlackout = checkBlackoutForSlot(z.id, form.date || todayIso);
               return (
