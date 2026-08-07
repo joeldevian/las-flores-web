@@ -13,6 +13,7 @@ import { Route as UneteAlEquipoRouteImport } from './routes/unete-al-equipo'
 import { Route as RestauranteRouteImport } from './routes/restaurante'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as FamiliaLasFloresRouteImport } from './routes/familia-las-flores'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as CartaRouteImport } from './routes/carta'
@@ -38,6 +39,11 @@ const ReservasRoute = ReservasRouteImport.update({
 const GaleriaRoute = GaleriaRouteImport.update({
   id: '/galeria',
   path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FamiliaLasFloresRoute = FamiliaLasFloresRouteImport.update({
+  id: '/familia-las-flores',
+  path: '/familia-las-flores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosRoute = EventosRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
+  '/familia-las-flores': typeof FamiliaLasFloresRoute
   '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
+  '/familia-las-flores': typeof FamiliaLasFloresRoute
   '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
+  '/familia-las-flores': typeof FamiliaLasFloresRoute
   '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/carta'
     | '/contacto'
     | '/eventos'
+    | '/familia-las-flores'
     | '/galeria'
     | '/reservas'
     | '/restaurante'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/carta'
     | '/contacto'
     | '/eventos'
+    | '/familia-las-flores'
     | '/galeria'
     | '/reservas'
     | '/restaurante'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/carta'
     | '/contacto'
     | '/eventos'
+    | '/familia-las-flores'
     | '/galeria'
     | '/reservas'
     | '/restaurante'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   CartaRoute: typeof CartaRoute
   ContactoRoute: typeof ContactoRoute
   EventosRoute: typeof EventosRoute
+  FamiliaLasFloresRoute: typeof FamiliaLasFloresRoute
   GaleriaRoute: typeof GaleriaRoute
   ReservasRoute: typeof ReservasRoute
   RestauranteRoute: typeof RestauranteRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/galeria'
       fullPath: '/galeria'
       preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/familia-las-flores': {
+      id: '/familia-las-flores'
+      path: '/familia-las-flores'
+      fullPath: '/familia-las-flores'
+      preLoaderRoute: typeof FamiliaLasFloresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventos': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartaRoute: CartaRoute,
   ContactoRoute: ContactoRoute,
   EventosRoute: EventosRoute,
+  FamiliaLasFloresRoute: FamiliaLasFloresRoute,
   GaleriaRoute: GaleriaRoute,
   ReservasRoute: ReservasRoute,
   RestauranteRoute: RestauranteRoute,

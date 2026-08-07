@@ -4,14 +4,14 @@ import { Link } from '@tanstack/react-router';
 import { UserAuthButton } from './UserAuthButton';
 
 const NAV_LINKS = [
-  { label: 'Cultura Ayacuchana',  to: '/',             hash: '' },
-  { label: 'Nuestro Restaurante', to: '/restaurante',  hash: '' },
-  { label: 'Familia Las Flores',  to: '/restaurante',  hash: 'familia-las-flores' },
-  { label: 'La Carta',            to: '/carta',        hash: '' },
-  { label: 'Reservas',            to: '/reservas',     hash: '' },
-  { label: 'Eventos',             to: '/eventos',      hash: '' },
-  { label: 'Galería',             to: '/galeria',      hash: '' },
-  { label: 'Contacto',            to: '/contacto',     hash: '' },
+  { label: 'Cultura Ayacuchana',  to: '/',                    hash: '' },
+  { label: 'Nuestro Restaurante', to: '/restaurante',         hash: '' },
+  { label: 'Familia Las Flores',  to: '/familia-las-flores',  hash: '' },
+  { label: 'La Carta',            to: '/carta',               hash: '' },
+  { label: 'Reservas',            to: '/reservas',            hash: '' },
+  { label: 'Eventos',             to: '/eventos',             hash: '' },
+  { label: 'Galería',             to: '/galeria',             hash: '' },
+  { label: 'Contacto',            to: '/contacto',            hash: '' },
 ];
 
 export function SiteNavigationMenu({
