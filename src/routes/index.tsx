@@ -16,6 +16,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { LocationSelector } from "../components/LocationSelector";
 import RetabloWrapper, { AyacuchoFlowerInline } from "../components/RetabloWrapper";
 import { MenuModal } from "@/components/MenuModal";
+import { FamiliaLasFloresSection } from "../components/FamiliaLasFloresSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1159,6 +1160,9 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {/* Sección Familia Las Flores - Reseñas de Colaboradores */}
+      <FamiliaLasFloresSection />
 
       <MenuModal open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 

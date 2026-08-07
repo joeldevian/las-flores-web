@@ -12,6 +12,7 @@ import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 
 import { MenuModal } from "@/components/MenuModal";
+import { FamiliaLasFloresSection } from "../components/FamiliaLasFloresSection";
 
 export const Route = createFileRoute("/restaurante")({
   head: () => ({
@@ -520,6 +521,9 @@ function RestaurantePage() {
           </div>
         </div>
       </section>
+
+      {/* Sección Familia Las Flores - Reseñas de Colaboradores */}
+      <FamiliaLasFloresSection />
 
       {/* CTA Reservas y Delivery */}
       <section id="reservas" className="bg-piedra py-24 md:py-32 px-6">

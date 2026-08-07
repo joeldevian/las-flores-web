@@ -8,6 +8,7 @@ import { listPublicJobOffers } from "../features/jobs/api";
 import { sortPublicOffers } from "../features/jobs/rules";
 import type { PublicJobOffer } from "../features/jobs/types";
 import { Heart, Users, Award, Loader2, AlertCircle, Briefcase, FileText, Send, CheckCircle2, ListChecks, Gift } from "lucide-react";
+import { FamiliaLasFloresSection } from "../components/FamiliaLasFloresSection";
 
 export const Route = createFileRoute("/unete-al-equipo")({
   head: () => ({
@@ -451,6 +452,9 @@ function UneteAlEquipoPage() {
           </div>
         </div>
       </section>
+
+      {/* Reseñas de Colaboradores - Familia Las Flores */}
+      <FamiliaLasFloresSection title="Testimonios de Nuestra Familia" subtitle="Orgullo & Pasión en Las Flores" />
 
       <SiteFooter />
     </div>
