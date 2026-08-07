@@ -1,31 +1,23 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { playOrderChime } from "../utils/audioAlert";
 import { CashierOrderCard } from "../components/CashierOrderCard";
 import { CashierReservationCard } from "../components/CashierReservationCard";
 import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
+import { CashierKPIHeader } from "../components/CashierKPIHeader";
+import { CashierKanbanView } from "../components/CashierKanbanView";
+import { CashierListView } from "../components/CashierListView";
 import {
-  Bell,
-  BellOff,
   Search,
   RefreshCw,
   UtensilsCrossed,
-  Filter,
-  CheckCircle2,
-  Clock,
-  Truck,
-  Store,
-  ShieldCheck,
-  ArrowLeft,
   X,
-  Volume2,
   Calendar,
-  Users,
-  MessageCircle,
-  Sparkles,
-  Layers,
   ShoppingBag,
+  Columns3,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 
 const getLocalYYYYMMDD = (d = new Date()) => {
@@ -45,6 +37,9 @@ function CashierDashboardRoute() {
   
   // View mode switcher: 'orders' vs 'reservations'
   const [viewMode, setViewMode] = useState<"orders" | "reservations">("orders");
+
+  // Layout layout mode switcher for orders: 'kanban' | 'grid' | 'list'
+  const [layoutMode, setLayoutMode] = useState<"kanban" | "grid" | "list">("kanban");
 
   // Orders state
   const [orders, setOrders] = useState<any[]>([]);
@@ -78,10 +73,8 @@ function CashierDashboardRoute() {
     } else if (type === "month") {
       const year = today.getFullYear();
       const month = today.getMonth();
-      const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
 
-      // Simple YYYY-MM-DD formatting to avoid timezone offset shifts
       const fMonth = String(month + 1).padStart(2, "0");
       const lDay = String(lastDay.getDate()).padStart(2, "0");
 
@@ -117,7 +110,6 @@ function CashierDashboardRoute() {
     } else if (type === "month") {
       const year = today.getFullYear();
       const month = today.getMonth();
-      const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
       const fMonth = String(month + 1).padStart(2, "0");
       const lDay = String(lastDay.getDate()).padStart(2, "0");
@@ -156,7 +148,6 @@ function CashierDashboardRoute() {
         .single();
 
       const userRole = profile?.role?.toLowerCase();
-      // Permitir acceso a admin, cashier y staff
       if (userRole !== "admin" && userRole !== "cashier" && userRole !== "staff") {
         console.warn("Acceso denegado a caja. Rol insuficiente:", userRole);
         window.location.href = "/restaurante";
@@ -210,7 +201,6 @@ function CashierDashboardRoute() {
         .order("created_at", { ascending: false });
 
       if (!resErr && resData) {
-        // Auto-cancel past unfulfilled reservations
         const todayStr = getLocalYYYYMMDD(new Date());
         const pastUnfulfilled = resData.filter(res => 
           (res.status === "pending" || res.status === "confirmed") && 
@@ -220,7 +210,7 @@ function CashierDashboardRoute() {
         if (pastUnfulfilled.length > 0) {
           pastUnfulfilled.forEach(res => {
             supabase.from("reservations").update({ status: "cancelled" }).eq("id", res.id).then();
-            res.status = "cancelled"; // Actualización optimista local
+            res.status = "cancelled";
           });
         }
 
@@ -246,12 +236,10 @@ function CashierDashboardRoute() {
   useEffect(() => {
     checkAuth();
 
-    // 1. Automatic 3-second Silent Background Auto-Polling
     const pollInterval = setInterval(() => {
       fetchData(true);
     }, 3000);
 
-    // 2. Supabase Realtime Listener for Orders & Reservations with Sound Alert
     const channel = supabase
       .channel("cashier-realtime-all")
       .on(
@@ -284,7 +272,6 @@ function CashierDashboardRoute() {
     };
   }, [soundEnabled]);
 
-  // Handle status update from order card
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -300,7 +287,6 @@ function CashierDashboardRoute() {
     }
   };
 
-  // Handle status update from reservation card
   const handleUpdateReservationStatus = async (reservationId: string, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -326,12 +312,19 @@ function CashierDashboardRoute() {
     return "pendiente";
   };
 
+  const todayStr = getLocalYYYYMMDD(new Date());
+
   // Filtered orders list
   const filteredOrders = orders.filter((ord) => {
     const matchSearch =
       (ord.order_number || "").toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
       (ord.client_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (ord.client_phone || "").includes(searchQuery);
+
+    // En modo Kanban, pasamos todas las comandas que coincidan con la búsqueda (el filtrado por fecha solo aplica a entregados dentro del Kanban)
+    if (layoutMode === "kanban") {
+      return matchSearch;
+    }
 
     const normStatus = getNormalizedStatus(ord.status);
     let matchStatus = false;
@@ -350,7 +343,6 @@ function CashierDashboardRoute() {
     let matchDate = true;
     
     if (statusFilter === "entregado") {
-      const todayStr = getLocalYYYYMMDD(new Date());
       matchDate = ordDateStr === todayStr;
     } else if (statusFilter === "all") {
       matchDate = (!orderDateFrom || ordDateStr >= orderDateFrom) &&
@@ -361,8 +353,6 @@ function CashierDashboardRoute() {
   });
 
   // Filtered reservations list
-  const todayStr = getLocalYYYYMMDD(new Date());
-
   const filteredReservations = reservations.filter((res) => {
     const matchSearch =
       (res.client_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -370,10 +360,12 @@ function CashierDashboardRoute() {
       (res.reservation_date || "").includes(searchQuery);
 
     const resStatus = (res.status || "pending").toLowerCase().trim();
+    const isCancelled = resStatus === "cancelled" || resStatus === "cancelada";
     
     let matchStatus = true;
     if (reservationStatusFilter === "today") {
-      matchStatus = res.reservation_date === todayStr;
+      // Reservas del día ignora canceladas
+      matchStatus = res.reservation_date === todayStr && !isCancelled;
     } else if (reservationStatusFilter === "pendiente") {
       matchStatus = resStatus === "pending" || resStatus === "pendiente";
     } else if (reservationStatusFilter === "confirmada") {
@@ -389,18 +381,36 @@ function CashierDashboardRoute() {
     return matchSearch && matchStatus && matchDateRange;
   });
 
-  // Counts by status (Orders)
-  const pendingCount = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente").length;
-  const inKitchenCount = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion").length;
-  const onWayCount = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino").length;
-  const completedCount = orders.filter((o) => {
-    if (getNormalizedStatus(o.status) !== "entregado") return false;
-    const ordDateStr = o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) : "";
-    return ordDateStr === todayStr;
-  }).length;
+  // KPI Calculations
+  const todayRevenue = orders
+    .filter((o) => {
+      if (getNormalizedStatus(o.status) !== "entregado") return false;
+      const ordDateStr = o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) : "";
+      return ordDateStr === todayStr;
+    })
+    .reduce((sum, o) => sum + Number(o.total || 0), 0);
 
-  // Counts by status (Reservations)
-  const todayReservationsCount = reservations.filter((r) => r.reservation_date === todayStr).length;
+  const pendingOrders = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente");
+  const inKitchenOrders = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion");
+  const onWayOrders = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino");
+  const activeOrdersCount = pendingOrders.length + inKitchenOrders.length + onWayOrders.length;
+
+  const avgWaitMins = (() => {
+    const active = [...pendingOrders, ...inKitchenOrders];
+    if (active.length === 0) return 0;
+    const now = Date.now();
+    const totalMins = active.reduce((sum, o) => {
+      if (!o.created_at) return sum;
+      const created = new Date(o.created_at).getTime();
+      return sum + Math.max(0, Math.floor((now - created) / (1000 * 60)));
+    }, 0);
+    return Math.round(totalMins / active.length);
+  })();
+
+  const todayReservationsCount = reservations.filter((r) => {
+    const s = (r.status || "").toLowerCase();
+    return r.reservation_date === todayStr && s !== "cancelled" && s !== "cancelada";
+  }).length;
   const pendingReservationsCount = reservations.filter((r) => {
     const s = (r.status || "pending").toLowerCase();
     return s === "pending" || s === "pendiente";
@@ -411,37 +421,37 @@ function CashierDashboardRoute() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-piedra text-nogal pb-20 font-sans selection:bg-chilca selection:text-nogal">
+    <div className="min-h-screen bg-[#F9F8F3] text-[#231A14] pb-20 font-sans selection:bg-[#D4AF37] selection:text-[#2D473C]">
       
       {/* Realtime Floating Banner Toast for Orders */}
       {newOrderNotification && (
-        <div className="fixed top-4 right-4 z-50 bg-eucalipto text-piedra p-4 rounded-2xl shadow-2xl border-2 border-chilca flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md">
+        <div className="fixed top-4 right-4 z-50 bg-[#2D473C] text-white p-4 rounded-2xl shadow-2xl border-2 border-[#D4AF37] flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md">
           <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex border-2 border-white/20 items-center justify-center font-bold shrink-0 animate-bounce">
-            🛎️
+            <ShoppingBag size={22} className="text-[#D4AF37]" />
           </div>
 
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-chilca block">
+            <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#D4AF37] block">
               ¡NUEVO PEDIDO RECIBIDO!
             </span>
-            <h4 className="font-mono font-black text-base text-white">
+            <h4 className="font-sans font-black text-base text-white">
               #{newOrderNotification.order_number || "LF-NUEVO"}
             </h4>
-            <p className="text-xs text-gray-300 truncate">
+            <p className="text-xs text-emerald-100 truncate font-medium">
               {newOrderNotification.client_name || "Cliente"} — S/ {Number(newOrderNotification.total || 0).toFixed(2)}
             </p>
           </div>
 
           <button
             onClick={() => setNewOrderNotification(null)}
-            className="p-1 text-gray-400 hover:text-white rounded-full hover:bg-white/10"
+            className="p-1 text-gray-300 hover:text-white rounded-full hover:bg-white/10"
           >
             <X size={18} />
           </button>
         </div>
       )}
 
-      {/* Realtime Floating Banner Toast for Reservations (Tono Verde Eucalipto) */}
+      {/* Realtime Floating Banner Toast for Reservations */}
       {newReservationNotification && (
         <div
           onClick={() => {
@@ -449,21 +459,21 @@ function CashierDashboardRoute() {
             setReservationStatusFilter("pendiente");
             setNewReservationNotification(null);
           }}
-          className="fixed top-20 right-4 z-50 bg-eucalipto text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-eucalipto transition-all"
+          className="fixed top-20 right-4 z-50 bg-[#2D473C] text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-[#243B31] transition-all"
         >
           <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce overflow-hidden p-1.5">
             <img src="/LOGO.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert" />
           </div>
 
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-emerald-300 block">
-              ¡NUEVA RESERVA RECIBIDA (VER PENDIENTES)!
+            <span className="text-[10px] font-sans font-black uppercase tracking-wider text-emerald-300 block">
+              ¡NUEVA RESERVA RECIBIDA!
             </span>
             <h4 className="font-serif font-bold text-base text-white">
               {newReservationNotification.client_name || "Cliente Reserva"}
             </h4>
-            <p className="text-xs text-emerald-100 truncate">
-              📅 {newReservationNotification.reservation_date} • 👥 {newReservationNotification.guest_count || 1} personas
+            <p className="text-xs text-emerald-100 truncate font-medium">
+              {newReservationNotification.reservation_date} • {newReservationNotification.guest_count || 1} personas
             </p>
           </div>
 
@@ -472,97 +482,104 @@ function CashierDashboardRoute() {
               e.stopPropagation();
               setNewReservationNotification(null);
             }}
-            className="p-1 text-gray-400 hover:text-white rounded-full hover:bg-white/10"
+            className="p-1 text-gray-300 hover:text-white rounded-full hover:bg-white/10"
           >
             <X size={18} />
           </button>
         </div>
       )}
 
-      {/* Header Operator Bar - Eucalyptus Green Palette #5F8575 */}
-      <header className="bg-eucalipto text-piedra sticky top-0 z-40 border-b border-chilca/40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center border border-chilca shadow-md shrink-0">
-              <img src="/favicon.png" alt="Las Flores" className="w-full h-full object-contain rounded-lg" />
-            </div>
-            <div>
-              <h1 className="font-serif text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                Panel de Caja & Recepción
-                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-emerald-300/20 text-emerald-100 border border-emerald-300/40 font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                  TIMBRE EN VIVO
-                </span>
-              </h1>
-              <p className="text-[11px] text-piedra/90 font-serif italic">
-                Procesamiento Rápido de Comandas & Reservas — Restaurante Las Flores
-              </p>
-            </div>
-          </div>
-
-          {/* Header Controls */}
-          <div className="flex items-center gap-3">
-            
-            {/* Sound Toggle Button */}
-            <button
-              onClick={() => {
-                const next = !soundEnabled;
-                setSoundEnabled(next);
-                if (next) playOrderChime();
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
-                soundEnabled
-                  ? "bg-emerald-300/20 text-emerald-100 border-emerald-300/40 hover:bg-emerald-300/30"
-                  : "bg-red-500/20 text-red-200 border-red-500/40 hover:bg-red-500/30"
-              }`}
-              title="Activar / Silenciar Timbre"
-            >
-              {soundEnabled ? <Volume2 size={14} className="text-emerald-300" /> : <BellOff size={14} className="text-red-300" />}
-              <span className="hidden sm:inline">{soundEnabled ? "Alerta Sonora Activa" : "Alerta Silenciada"}</span>
-            </button>
-
-            <Link
-              to="/admin"
-              className="px-3.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 text-white text-xs font-bold flex items-center gap-1.5 transition-colors border border-white/20"
-            >
-              <ShieldCheck size={14} className="text-chilca" />
-              <span className="hidden md:inline">Volver a Admin</span>
-            </Link>
-
-          </div>
-
-        </div>
-      </header>
-
-      {/* Main Content */}
+      {/* Main Content Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         
-        {/* View Mode Switcher Header Bar */}
-        <div className="bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-2 max-w-xl">
-          <button
-            onClick={() => setViewMode("orders")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
-              viewMode === "orders"
-                ? "bg-white text-eucalipto shadow-md font-extrabold border border-white"
-                : "text-eucalipto/70 hover:text-eucalipto hover:bg-white/50 font-bold"
-            }`}
-          >
-            <ShoppingBag size={15} className={viewMode === "orders" ? "text-chilca" : "text-gray-500"} />
-            <span>Comandas & Pedidos ({pendingCount} Pendientes)</span>
-          </button>
+        {/* Executive KPI Header */}
+        <CashierKPIHeader
+          soundEnabled={soundEnabled}
+          onToggleSound={() => {
+            const next = !soundEnabled;
+            setSoundEnabled(next);
+            if (next) playOrderChime();
+          }}
+          todayRevenue={todayRevenue}
+          activeOrdersCount={activeOrdersCount}
+          avgWaitMins={avgWaitMins}
+          todayReservationsCount={todayReservationsCount}
+        />
 
-          <button
-            onClick={() => setViewMode("reservations")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
-              viewMode === "reservations"
-                ? "bg-white text-eucalipto shadow-md font-extrabold border border-white"
-                : "text-eucalipto/70 hover:text-eucalipto hover:bg-white/50 font-bold"
-            }`}
-          >
-            <Calendar size={15} className={viewMode === "reservations" ? "text-chilca" : "text-gray-500"} />
-            <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
-          </button>
+        {/* View Mode Switcher Header Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-2 rounded-2xl border border-gray-200 shadow-2xs">
+          
+          {/* Main Module Switcher (Comandas vs Reservas) */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => setViewMode("orders")}
+              className={`flex-1 sm:flex-none py-2.5 px-5 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
+                viewMode === "orders"
+                  ? "bg-[#2D473C] text-white shadow-md font-black border border-[#2D473C]"
+                  : "text-gray-600 hover:text-[#2D473C] hover:bg-gray-100 font-bold"
+              }`}
+            >
+              <ShoppingBag size={16} className={viewMode === "orders" ? "text-[#D4AF37]" : "text-gray-400"} />
+              <span>Comandas & Pedidos ({pendingOrders.length} Pendientes)</span>
+            </button>
+
+            <button
+              onClick={() => setViewMode("reservations")}
+              className={`flex-1 sm:flex-none py-2.5 px-5 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
+                viewMode === "reservations"
+                  ? "bg-[#2D473C] text-white shadow-md font-black border border-[#2D473C]"
+                  : "text-gray-600 hover:text-[#2D473C] hover:bg-gray-100 font-bold"
+              }`}
+            >
+              <Calendar size={16} className={viewMode === "reservations" ? "text-[#D4AF37]" : "text-gray-400"} />
+              <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
+            </button>
+          </div>
+
+          {/* Layout Switcher (Kanban vs Grid vs List) — Only in Orders view */}
+          {viewMode === "orders" && (
+            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl border border-gray-200/80 w-full sm:w-auto justify-center">
+              <button
+                onClick={() => setLayoutMode("kanban")}
+                className={`py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center gap-1.5 transition-all ${
+                  layoutMode === "kanban"
+                    ? "bg-white text-[#2D473C] shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                title="Vista Kanban por Columnas"
+              >
+                <Columns3 size={15} className="text-[#D4AF37]" />
+                <span>Kanban</span>
+              </button>
+
+              <button
+                onClick={() => setLayoutMode("grid")}
+                className={`py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center gap-1.5 transition-all ${
+                  layoutMode === "grid"
+                    ? "bg-white text-[#2D473C] shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                title="Vista Cuadrícula Táctil"
+              >
+                <LayoutGrid size={15} className="text-[#5F8575]" />
+                <span>Grid</span>
+              </button>
+
+              <button
+                onClick={() => setLayoutMode("list")}
+                className={`py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center gap-1.5 transition-all ${
+                  layoutMode === "list"
+                    ? "bg-white text-[#2D473C] shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                title="Vista Lista Compacta"
+              >
+                <List size={15} className="text-gray-600" />
+                <span>Lista</span>
+              </button>
+            </div>
+          )}
+
         </div>
 
         {/* ==================================================================== */}
@@ -570,140 +587,136 @@ function CashierDashboardRoute() {
         {/* ==================================================================== */}
         {viewMode === "orders" && (
           <>
-            {/* Quick Filter Status Tabs for Orders - Semantic Soft Pastel Tone Palette */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              
-              {/* 1. PENDIENTES (Ámbar Pastel) */}
-              <button
-                onClick={() => setStatusFilter("pendiente")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "pendiente"
-                    ? "bg-white text-nogal border-t-4 border-t-chilca shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    Pendientes
+            {/* Quick Filter Status Tabs for Orders (Shown in Grid / List mode) */}
+            {layoutMode !== "kanban" && (
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                
+                <button
+                  onClick={() => setStatusFilter("pendiente")}
+                  className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
+                    statusFilter === "pendiente"
+                      ? "bg-white text-gray-900 border-t-4 border-t-[#D4AF37] shadow-md font-extrabold scale-[1.01]"
+                      : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-gray-500">
+                      Pendientes
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      statusFilter === "pendiente" ? "bg-[#D4AF37] text-[#2D473C]" : "bg-amber-100 text-amber-900"
+                    }`}>
+                      Acción
+                    </span>
+                  </div>
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-gray-900">
+                    {pendingOrders.length}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "pendiente" ? "bg-chilca text-cafe" : "bg-chilca/15 text-nogal/60"
-                  }`}>
-                    Acción
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {pendingCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Requieren atención</p>
-              </button>
+                  <p className="text-[10px] mt-0.5 font-medium text-gray-500">Por enviar a cocina</p>
+                </button>
 
-              {/* 2. EN COCINA (Azul Pastel) */}
-              <button
-                onClick={() => setStatusFilter("en_preparacion")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "en_preparacion"
-                    ? "bg-white text-nogal border-t-4 border-t-cielo shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    En Cocina
+                <button
+                  onClick={() => setStatusFilter("en_preparacion")}
+                  className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
+                    statusFilter === "en_preparacion"
+                      ? "bg-white text-gray-900 border-t-4 border-t-blue-500 shadow-md font-extrabold scale-[1.01]"
+                      : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-gray-500">
+                      En Cocina
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      statusFilter === "en_preparacion" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-900"
+                    }`}>
+                      Cocina
+                    </span>
+                  </div>
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-gray-900">
+                    {inKitchenOrders.length}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "en_preparacion" ? "bg-cielo text-white" : "bg-cielo/15 text-nogal/60"
-                  }`}>
-                    Cocina
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {inKitchenCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">En preparación</p>
-              </button>
+                  <p className="text-[10px] mt-0.5 font-medium text-gray-500">En preparación</p>
+                </button>
 
-              {/* 3. EN CAMINO / LISTO (Morado / Púrpura Pastel) */}
-              <button
-                onClick={() => setStatusFilter("en_camino")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "en_camino"
-                    ? "bg-white text-nogal border-t-4 border-t-purple-500 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    En Camino / Listo
+                <button
+                  onClick={() => setStatusFilter("en_camino")}
+                  className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
+                    statusFilter === "en_camino"
+                      ? "bg-white text-gray-900 border-t-4 border-t-purple-500 shadow-md font-extrabold scale-[1.01]"
+                      : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-gray-500">
+                      Despacho / Recojo
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      statusFilter === "en_camino" ? "bg-purple-600 text-white" : "bg-purple-100 text-purple-900"
+                    }`}>
+                      Despacho
+                    </span>
+                  </div>
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-gray-900">
+                    {onWayOrders.length}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "en_camino" ? "bg-adobe-new text-white" : "bg-adobe-new/15 text-nogal/60"
-                  }`}>
-                    Despacho
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {onWayCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Delivery / Recojo</p>
-              </button>
+                  <p className="text-[10px] mt-0.5 font-medium text-gray-500">Delivery / Recojo</p>
+                </button>
 
-              {/* 4. ENTREGADOS (Esmeralda Pastel) */}
-              <button
-                onClick={() => setStatusFilter("entregado")}
-                className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
-                  statusFilter === "entregado"
-                    ? "bg-white text-nogal border-t-4 border-t-pacay shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-nogal/60">
-                    Entregados
+                <button
+                  onClick={() => setStatusFilter("entregado")}
+                  className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
+                    statusFilter === "entregado"
+                      ? "bg-white text-gray-900 border-t-4 border-t-emerald-500 shadow-md font-extrabold scale-[1.01]"
+                      : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-gray-500">
+                      Entregados Hoy
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      statusFilter === "entregado" ? "bg-emerald-600 text-white" : "bg-emerald-100 text-emerald-900"
+                    }`}>
+                      Completado
+                    </span>
+                  </div>
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-gray-900">
+                    {orders.filter((o) => getNormalizedStatus(o.status) === "entregado" && (o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) === todayStr : false)).length}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "entregado" ? "bg-pacay text-white" : "bg-pacay/15 text-nogal/60"
-                  }`}>
-                    Listo
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-nogal">
-                  {completedCount}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-nogal/50">Completados</p>
-              </button>
+                  <p className="text-[10px] mt-0.5 font-medium text-gray-500">Total completados hoy</p>
+                </button>
 
-              {/* 5. TODOS LOS PEDIDOS (Eucalipto Pastel de Marca) */}
-              <button
-                onClick={() => setStatusFilter("all")}
-                className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 font-sans ${
-                  statusFilter === "all"
-                    ? "bg-white text-nogal border-t-4 border-t-eucalipto shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-[#2A4237]">
-                    Todos los Pedidos
+                <button
+                  onClick={() => setStatusFilter("all")}
+                  className={`p-4 rounded-2xl text-left transition-all col-span-2 sm:col-span-1 font-sans ${
+                    statusFilter === "all"
+                      ? "bg-white text-gray-900 border-t-4 border-t-[#2D473C] shadow-md font-extrabold scale-[1.01]"
+                      : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-[#2D473C]">
+                      Todos los Pedidos
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      statusFilter === "all" ? "bg-[#2D473C] text-white" : "bg-gray-200 text-gray-700"
+                    }`}>
+                      Total
+                    </span>
+                  </div>
+                  <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2D473C]">
+                    {orders.length}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    statusFilter === "all" ? "bg-eucalipto text-white" : "bg-gray-100 text-gray-700"
-                  }`}>
-                    Total
-                  </span>
-                </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
-                  {orders.length}
-                </span>
-                <p className="text-[10px] mt-0.5 font-medium text-pacay">Total de comandas</p>
-              </button>
+                  <p className="text-[10px] mt-0.5 font-medium text-[#5F8575]">Total registrado</p>
+                </button>
 
-            </div>
+              </div>
+            )}
 
-            {/* Filter controls wrapper */}
+            {/* Filter Controls Wrapper */}
             <div className="flex flex-col gap-3">
-              {/* Search Bar & Manual Refresh */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-2xs">
                 <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                   <div className="relative w-full md:w-80">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
@@ -712,12 +725,11 @@ function CashierDashboardRoute() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Buscar por # de orden, cliente o teléfono..."
-                      className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cafe"
+                      className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#2D473C]"
                     />
                   </div>
                   
-                  {/* Date Range & Status Inputs */}
-                  {statusFilter === "all" && (
+                  {statusFilter === "all" && layoutMode !== "kanban" && (
                     <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                       <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
                         <span className="text-[10px] font-serif font-bold text-gray-500 uppercase">Estado:</span>
@@ -760,75 +772,65 @@ function CashierDashboardRoute() {
                   <button
                     onClick={() => fetchData()}
                     disabled={refreshing}
-                    className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 whitespace-nowrap"
+                    className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 whitespace-nowrap"
                   >
-                    <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-                    Actualizar Tabla
+                    <RefreshCw size={14} className={refreshing ? "animate-spin text-[#2D473C]" : ""} />
+                    Actualizar Datos
                   </button>
                 </div>
               </div>
-
-              {/* Quick Date Range Shortcuts */}
-              {statusFilter === "all" && (
-                <div className="px-4 pb-2 pt-1 flex items-center gap-2 overflow-x-auto">
-                  <span className="text-[11px] font-serif font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                    Filtro Rápido de Fecha:
-                  </span>
-                  <button
-                    onClick={() => setQuickOrderDateRange("today")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "today" ? "bg-eucalipto text-white" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border border-emerald-300"}`}
-                  >
-                    Hoy
-                  </button>
-                  <button
-                    onClick={() => setQuickOrderDateRange("week")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "week" ? "bg-eucalipto text-white" : "bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200"}`}
-                  >
-                    Esta Semana
-                  </button>
-                  <button
-                    onClick={() => setQuickOrderDateRange("month")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "month" ? "bg-eucalipto text-white" : "bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200"}`}
-                  >
-                    Este Mes
-                  </button>
-                  <button
-                    onClick={() => setQuickOrderDateRange("all")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeOrderDateFilter === "all" ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"}`}
-                  >
-                    Limpiar Fechas (Ver Histórico Completo)
-                  </button>
-                </div>
-              )}
             </div>
 
-            {/* Orders Cards Grid */}
+            {/* Display according to layoutMode */}
             {loading ? (
               <div className="py-20 text-center space-y-3">
-                <RefreshCw size={28} className="animate-spin text-nogal mx-auto" />
-                <p className="text-sm font-bold text-gray-600">Cargando comandas en vivo...</p>
+                <RefreshCw size={28} className="animate-spin text-[#2D473C] mx-auto" />
+                <p className="text-sm font-bold text-gray-600">Cargando comandas en tiempo real...</p>
               </div>
-            ) : filteredOrders.length === 0 ? (
-              <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
-                <UtensilsCrossed size={36} className="text-gray-300 mx-auto mb-3" />
-                <h3 className="font-serif font-bold text-base text-gray-800">No hay comandas en este estado</h3>
-                <p className="text-xs text-gray-500 mt-1">Selecciona otro filtro o realiza una búsqueda diferente.</p>
-              </div>
+            ) : layoutMode === "kanban" ? (
+              <CashierKanbanView
+                orders={filteredOrders}
+                orderItems={orderItems}
+                onStatusChange={handleUpdateOrderStatus}
+                onViewDetail={(ord) => {
+                  setSelectedOrder(ord);
+                  setIsDetailModalOpen(true);
+                }}
+              />
+            ) : layoutMode === "list" ? (
+              <CashierListView
+                orders={filteredOrders}
+                orderItems={orderItems}
+                onStatusChange={handleUpdateOrderStatus}
+                onViewDetail={(ord) => {
+                  setSelectedOrder(ord);
+                  setIsDetailModalOpen(true);
+                }}
+              />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filteredOrders.map((order) => (
-                  <CashierOrderCard
-                    key={order.id}
-                    order={order}
-                    orderItems={orderItems}
-                    onStatusChange={handleUpdateOrderStatus}
-                    onViewDetail={(ord) => {
-                      setSelectedOrder(ord);
-                      setIsDetailModalOpen(true);
-                    }}
-                  />
-                ))}
-              </div>
+              /* Grid Layout Mode */
+              filteredOrders.length === 0 ? (
+                <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
+                  <UtensilsCrossed size={36} className="text-gray-300 mx-auto mb-3" />
+                  <h3 className="font-serif font-bold text-base text-gray-800">No hay comandas en este estado</h3>
+                  <p className="text-xs text-gray-500 mt-1">Selecciona otro filtro o realiza una búsqueda diferente.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filteredOrders.map((order) => (
+                    <CashierOrderCard
+                      key={order.id}
+                      order={order}
+                      orderItems={orderItems}
+                      onStatusChange={handleUpdateOrderStatus}
+                      onViewDetail={(ord) => {
+                        setSelectedOrder(ord);
+                        setIsDetailModalOpen(true);
+                      }}
+                    />
+                  ))}
+                </div>
+              )
             )}
           </>
         )}
@@ -838,39 +840,38 @@ function CashierDashboardRoute() {
         {/* ==================================================================== */}
         {viewMode === "reservations" && (
           <>
-            {/* Quick Filter Tabs for Reservations - Semantic Soft Pastel Tone Palette */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               
               <button
                 onClick={() => setReservationStatusFilter("today")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "today"
-                    ? "bg-white text-nogal border-t-4 border-t-eucalipto shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
+                    ? "bg-white text-gray-900 border-t-4 border-t-[#2D473C] shadow-md font-extrabold scale-[1.01]"
+                    : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-[#2A4237]">
+                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-[#2D473C]">
                     Reservas del Día
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "today" ? "bg-eucalipto text-white" : "bg-eucalipto/15 text-pacay"
+                    reservationStatusFilter === "today" ? "bg-[#2D473C] text-white" : "bg-emerald-100 text-emerald-900"
                   }`}>
                     Hoy
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2A4237]">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-[#2D473C]">
                   {todayReservationsCount}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-pacay">Programadas para HOY</p>
+                <p className="text-[10px] mt-0.5 font-medium text-[#5F8575]">Programadas para HOY</p>
               </button>
 
               <button
                 onClick={() => setReservationStatusFilter("pendiente")}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "pendiente"
-                    ? "bg-white text-nogal border-t-4 border-t-chilca shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
+                    ? "bg-white text-gray-900 border-t-4 border-t-[#D4AF37] shadow-md font-extrabold scale-[1.01]"
+                    : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -878,7 +879,7 @@ function CashierDashboardRoute() {
                     Pendientes
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "pendiente" ? "bg-amber-300 text-amber-950" : "bg-chilca/15 text-amber-800"
+                    reservationStatusFilter === "pendiente" ? "bg-[#D4AF37] text-[#2D473C]" : "bg-amber-100 text-amber-900"
                   }`}>
                     Por Confirmar
                   </span>
@@ -896,8 +897,8 @@ function CashierDashboardRoute() {
                 }}
                 className={`p-4 rounded-2xl text-left transition-all relative overflow-hidden font-sans ${
                   reservationStatusFilter === "confirmada"
-                    ? "bg-white text-nogal border-t-4 border-t-cielo shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
+                    ? "bg-white text-gray-900 border-t-4 border-t-blue-500 shadow-md font-extrabold scale-[1.01]"
+                    : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -905,7 +906,7 @@ function CashierDashboardRoute() {
                     Confirmadas
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "confirmada" ? "bg-blue-300 text-blue-950" : "bg-cielo/15 text-blue-800"
+                    reservationStatusFilter === "confirmada" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-900"
                   }`}>
                     Confirmado
                   </span>
@@ -923,33 +924,31 @@ function CashierDashboardRoute() {
                 }}
                 className={`p-4 rounded-2xl text-left transition-all font-sans ${
                   reservationStatusFilter === "all"
-                    ? "bg-white text-nogal border-t-4 border-t-slate-400 shadow-md font-extrabold scale-[1.02]"
-                    : "bg-white/60 text-nogal/70 border border-transparent hover:bg-white shadow-2xs"
+                    ? "bg-white text-gray-900 border-t-4 border-t-gray-500 shadow-md font-extrabold scale-[1.01]"
+                    : "bg-white/70 text-gray-600 border border-transparent hover:bg-white shadow-2xs"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-slate-800">
+                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider text-gray-700">
                     Todas / Historial
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    reservationStatusFilter === "all" ? "bg-slate-300 text-slate-950" : "bg-gray-100 text-gray-700"
+                    reservationStatusFilter === "all" ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-700"
                   }`}>
                     Total
                   </span>
                 </div>
-                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-slate-950">
+                <span className="font-sans text-3xl font-black tracking-tight tabular-nums block mt-2 text-gray-900">
                   {reservations.length}
                 </span>
-                <p className="text-[10px] mt-0.5 font-medium text-slate-600">Total de reservas</p>
+                <p className="text-[10px] mt-0.5 font-medium text-gray-600">Total de reservas</p>
               </button>
 
             </div>
 
             {/* Search Bar & Optional Date Range Panel */}
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-3">
-              
+            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-2xs space-y-3">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-3">
-                {/* Search input */}
                 <div className="relative w-full lg:w-80">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                   <input
@@ -957,11 +956,10 @@ function CashierDashboardRoute() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Buscar cliente o teléfono..."
-                    className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                    className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#2D473C]"
                   />
                 </div>
 
-                {/* Date Range Inputs (Desde - Hasta) - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
                 {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
                   <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                     <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
@@ -986,58 +984,21 @@ function CashierDashboardRoute() {
                   </div>
                 )}
 
-                {/* Refresh Button */}
                 <button
                   onClick={() => fetchData()}
                   disabled={refreshing}
-                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-white shadow-sm border-l-4 border-l-pacay text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
+                  className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold flex items-center gap-2 transition-colors disabled:opacity-50 shrink-0 w-full lg:w-auto justify-center"
                 >
-                  <RefreshCw size={14} className={refreshing ? "animate-spin text-emerald-700" : ""} />
-                  <span>Actualizar</span>
+                  <RefreshCw size={14} className={refreshing ? "animate-spin text-[#2D473C]" : ""} />
+                  <span>Actualizar Datos</span>
                 </button>
               </div>
-
-              {/* Quick Date Range Shortcuts - SOLO VISIBLES EN "TODAS" O "CONFIRMADAS" */}
-              {(reservationStatusFilter === "all" || reservationStatusFilter === "confirmada") && (
-                <div className="flex items-center gap-2 pt-2.5 border-t border-gray-100 overflow-x-auto pb-0.5">
-                  <span className="text-[11px] font-sans font-bold text-gray-400 uppercase tracking-wider shrink-0">
-                    Filtro Rápido de Calendario:
-                  </span>
-                  <button
-                    onClick={() => setQuickDateRange("today")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "today" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
-                  >
-                    Hoy
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("week")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "week" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
-                  >
-                    Esta Semana
-                  </button>
-                  <button
-                    onClick={() => setQuickDateRange("month")}
-                    className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "month" ? "bg-eucalipto text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200"}`}
-                  >
-                    Este Mes
-                  </button>
-                  {(resDateFrom || resDateTo) && (
-                    <button
-                      onClick={() => setQuickDateRange("all")}
-                      className={`px-3 py-1 font-bold text-xs rounded-lg transition-colors shrink-0 ${activeDateFilter === "all" ? "bg-red-500 text-white border-red-600" : "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"}`}
-                    >
-                      Limpiar Fechas
-                    </button>
-                  )}
-                </div>
-              )}
-
             </div>
 
-            {/* Reservations Cards Grid */}
+            {/* Reservations Grid */}
             {loading ? (
               <div className="py-20 text-center space-y-3">
-                <RefreshCw size={28} className="animate-spin text-emerald-800 mx-auto" />
+                <RefreshCw size={28} className="animate-spin text-[#2D473C] mx-auto" />
                 <p className="text-sm font-bold text-gray-600">Cargando reservas en vivo...</p>
               </div>
             ) : filteredReservations.length === 0 ? (
@@ -1073,13 +1034,13 @@ function CashierDashboardRoute() {
                     const dateObj = new Date(Number(yyyy), Number(mm)-1, Number(dd));
                     const isToday = dateStr === getLocalYYYYMMDD(new Date());
                     dateLabel = isToday 
-                      ? "HOY - " + dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
+                      ? "HOY — " + dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
                       : dateObj.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
                   }
                   return (
                     <div key={dateStr} className="space-y-4">
                       <div className="flex items-center gap-4">
-                        <h3 className="font-serif font-black text-xl text-emerald-950 uppercase tracking-widest">{dateLabel}</h3>
+                        <h3 className="font-serif font-black text-xl text-[#2D473C] uppercase tracking-widest">{dateLabel}</h3>
                         <div className="h-px bg-emerald-200/50 flex-1"></div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1112,9 +1073,3 @@ function CashierDashboardRoute() {
     </div>
   );
 }
-
-
-
-
-
-

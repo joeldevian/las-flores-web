@@ -1,0 +1,136 @@
+import { CashierOrderCard } from "./CashierOrderCard";
+import { Utensils, Clock, Truck, CheckCircle2 } from "lucide-react";
+
+interface CashierKanbanViewProps {
+  orders: any[];
+  orderItems: any[];
+  onStatusChange: (orderId: string, newStatus: string) => Promise<void>;
+  onViewDetail: (order: any) => void;
+}
+
+export function CashierKanbanView({
+  orders,
+  orderItems,
+  onStatusChange,
+  onViewDetail,
+}: CashierKanbanViewProps) {
+  const getNormalizedStatus = (status: string | null | undefined) => {
+    if (!status) return "pendiente";
+    const s = status.toLowerCase().trim();
+    if (s.includes("cocina") || s.includes("preparac") || s.includes("kitchen")) return "en_preparacion";
+    if (s.includes("camino") || s.includes("listo") || s.includes("way") || s.includes("pickup")) return "en_camino";
+    if (s.includes("entregad") || s.includes("complet") || s.includes("delivered")) return "entregado";
+    if (s.includes("cancel") || s.includes("rechaz")) return "cancelado";
+    return "pendiente";
+  };
+
+  const getLocalYYYYMMDD = (d = new Date()) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  const todayStr = getLocalYYYYMMDD(new Date());
+
+  const pending = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente");
+  const inKitchen = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion");
+  const onWay = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino");
+  const completed = orders.filter((o) => {
+    if (getNormalizedStatus(o.status) !== "entregado") return false;
+    const ordDateStr = o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) : "";
+    return ordDateStr === todayStr;
+  });
+
+  const columns = [
+    {
+      id: "pendiente",
+      title: "1. Pendientes",
+      count: pending.length,
+      icon: Clock,
+      bgColor: "bg-amber-500/10",
+      borderColor: "border-amber-400",
+      textColor: "text-amber-950",
+      badgeColor: "bg-amber-500 text-white",
+      items: pending,
+    },
+    {
+      id: "en_preparacion",
+      title: "2. En Cocina",
+      count: inKitchen.length,
+      icon: Utensils,
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-400",
+      textColor: "text-blue-950",
+      badgeColor: "bg-blue-600 text-white",
+      items: inKitchen,
+    },
+    {
+      id: "en_camino",
+      title: "3. Listos / Despacho",
+      count: onWay.length,
+      icon: Truck,
+      bgColor: "bg-purple-500/10",
+      borderColor: "border-purple-400",
+      textColor: "text-purple-950",
+      badgeColor: "bg-purple-600 text-white",
+      items: onWay,
+    },
+    {
+      id: "entregado",
+      title: "4. Entregados Hoy",
+      count: completed.length,
+      icon: CheckCircle2,
+      bgColor: "bg-emerald-500/10",
+      borderColor: "border-emerald-400",
+      textColor: "text-emerald-950",
+      badgeColor: "bg-emerald-600 text-white",
+      items: completed,
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start font-sans">
+      {columns.map((col) => {
+        const Icon = col.icon;
+        return (
+          <div
+            key={col.id}
+            className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden flex flex-col"
+          >
+            {/* Header Column */}
+            <div className={`p-3.5 border-b flex items-center justify-between ${col.bgColor} ${col.borderColor}`}>
+              <div className="flex items-center gap-2">
+                <Icon size={18} className={col.textColor} />
+                <h3 className={`font-serif font-black text-sm uppercase tracking-wide ${col.textColor}`}>
+                  {col.title}
+                </h3>
+              </div>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-black shadow-2xs ${col.badgeColor}`}>
+                {col.count}
+              </span>
+            </div>
+
+            {/* Column Cards Feed */}
+            <div className="p-3 space-y-3 flex-1 bg-gray-50/40">
+              {col.items.length === 0 ? (
+                <div className="py-12 text-center text-xs text-gray-400 font-medium italic border-2 border-dashed border-gray-200 rounded-xl">
+                  Sin comandas en esta columna
+                </div>
+              ) : (
+                col.items.map((order) => (
+                  <CashierOrderCard
+                    key={order.id}
+                    order={order}
+                    orderItems={orderItems}
+                    onStatusChange={onStatusChange}
+                    onViewDetail={onViewDetail}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

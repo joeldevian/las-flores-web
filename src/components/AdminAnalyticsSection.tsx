@@ -332,24 +332,24 @@ export function AdminAnalyticsSection({
       </div>
 
       {/* Timeframe & Controls Header */}
-      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 bg-[#F5F3EE] p-5 rounded-2xl border border-[#14231D]/8 print:hidden">
+      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 bg-white/90 backdrop-blur-md p-5 rounded-3xl border border-[#d4a373]/25 shadow-sm print:hidden">
         <div>
-          <h2 className="font-serif text-base font-bold text-[#14231D] flex items-center gap-2.5">
-            <BarChart3 size={20} className="text-[#5F8575]" />
+          <h2 className="font-serif text-lg font-bold text-[#3b1f10] flex items-center gap-2.5">
+            <BarChart3 size={20} className="text-[#2e5339]" />
             Inteligencia de Negocios & Analítica Avanzada
-            <span className="font-sans text-[10px] px-2.5 py-0.5 rounded-full bg-[#14231D]/8 text-[#14231D] font-bold uppercase tracking-wider border border-[#14231D]/12">
-              Corporativo
+            <span className="font-sans text-[10px] px-2.5 py-0.5 rounded-full bg-[#2e5339]/10 text-[#2e5339] font-bold uppercase tracking-wider border border-[#2e5339]/20">
+              Corporativo BI
             </span>
           </h2>
-          <p className="text-xs text-[#14231D]/50 mt-0.5 font-sans">
-            Analizando {validOrders.length} pedidos efectivos por un monto total de <strong className="text-[#14231D]">S/ {totalRevenue.toFixed(2)}</strong> <span className="font-medium text-[#5F8575]">{dateRangeString}</span>
+          <p className="text-xs text-[#3b1f10]/60 mt-0.5 font-sans">
+            Analizando {validOrders.length} pedidos efectivos por un monto total de <strong className="text-[#3b1f10]">S/ {totalRevenue.toFixed(2)}</strong> <span className="font-medium text-[#2e5339]">{dateRangeString}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-3 w-full xl:w-auto flex-wrap">
           
           {/* Timeframe Selector Pills */}
-          <div className="bg-white border border-[#14231D]/10 rounded-xl p-1 flex items-center shadow-sm text-xs font-bold font-serif overflow-x-auto">
+          <div className="bg-[#f7f5ef] border border-[#d4a373]/25 rounded-2xl p-1 flex items-center shadow-inner text-xs font-bold font-serif overflow-x-auto">
             {[
               { id: "today", label: "Hoy" },
               { id: "week", label: "7 Días" },
@@ -359,10 +359,10 @@ export function AdminAnalyticsSection({
               <button
                 key={tf.id}
                 onClick={() => handleTimeframeChange(tf.id as any)}
-                className={`px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap ${
+                className={`px-4 py-1.5 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
                   timeframe === tf.id
-                    ? "bg-[#14231D] text-white font-bold shadow-sm"
-                    : "text-[#14231D]/50 hover:text-[#14231D] hover:bg-[#14231D]/5"
+                    ? "bg-[#2e5339] text-white font-bold shadow-sm"
+                    : "text-[#3b1f10]/60 hover:text-[#3b1f10] hover:bg-white/60"
                 }`}
               >
                 {tf.label}
@@ -371,20 +371,20 @@ export function AdminAnalyticsSection({
           </div>
 
           {/* Custom Date Pickers */}
-          <div className="flex items-center gap-2 bg-white border border-[#14231D]/10 p-1.5 rounded-xl shadow-sm">
-            <span className="text-[11px] font-bold text-[#14231D]/40 pl-1 font-serif">Desde:</span>
+          <div className="flex items-center gap-2 bg-[#f7f5ef] border border-[#d4a373]/25 p-1.5 rounded-2xl shadow-inner">
+            <span className="text-[11px] font-bold text-[#3b1f10]/60 pl-1 font-serif">Desde:</span>
             <input
               type="date"
               value={customStartDate}
               onChange={(e) => { setCustomStartDate(e.target.value); setTimeframe("custom"); }}
-              className="text-xs bg-[#F5F3EE] border border-[#14231D]/10 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+              className="text-xs bg-white border border-[#d4a373]/20 rounded-xl px-2.5 py-1 text-[#3b1f10] font-sans focus:outline-none focus:ring-2 focus:ring-[#2e5339]/30"
             />
-            <span className="text-[11px] font-bold text-[#14231D]/40 font-serif">Hasta:</span>
+            <span className="text-[11px] font-bold text-[#3b1f10]/60 font-serif">Hasta:</span>
             <input
               type="date"
               value={customEndDate}
               onChange={(e) => { setCustomEndDate(e.target.value); setTimeframe("custom"); }}
-              className="text-xs bg-[#F5F3EE] border border-[#14231D]/10 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#14231D]/20"
+              className="text-xs bg-white border border-[#d4a373]/20 rounded-xl px-2.5 py-1 text-[#3b1f10] font-sans focus:outline-none focus:ring-2 focus:ring-[#2e5339]/30"
             />
           </div>
 
@@ -392,7 +392,7 @@ export function AdminAnalyticsSection({
           <div className="flex items-center gap-2">
             <button
               onClick={exportToCSV}
-              className="px-3.5 py-2 rounded-xl bg-[#14231D] hover:bg-[#1E322A] text-[#D4AF37] text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
+              className="px-4 py-2 rounded-2xl bg-[#2e5339] hover:bg-[#23412c] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
               title="Descargar reporte en Excel / CSV"
             >
               <Download size={14} />
@@ -401,7 +401,7 @@ export function AdminAnalyticsSection({
 
             <button
               onClick={() => window.print()}
-              className="px-3.5 py-2 rounded-xl bg-[#14231D]/8 hover:bg-[#14231D]/15 text-[#14231D] text-xs font-bold flex items-center gap-1.5 transition-colors border border-[#14231D]/10"
+              className="px-4 py-2 rounded-2xl bg-white hover:bg-[#fdf8f0] text-[#3b1f10] text-xs font-bold flex items-center gap-1.5 transition-colors border border-[#d4a373]/30 cursor-pointer shadow-xs"
               title="Imprimir reporte ejecutivo"
             >
               <Printer size={14} />
@@ -416,84 +416,84 @@ export function AdminAnalyticsSection({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Total Revenue Card */}
-        <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-[#14231D]/40 text-[11px] font-sans font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-3xl border border-[#d4a373]/25 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-[#3b1f10]/60 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Facturación Total</span>
-            <div className="w-9 h-9 rounded-xl bg-[#14231D] text-[#D4AF37] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-[#d4a373]/15 text-[#8C1D40] flex items-center justify-center border border-[#d4a373]/30">
               <DollarSign size={18} />
             </div>
           </div>
           <div className="mt-3">
-            <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#14231D]">S/ {totalRevenue.toFixed(2)}</span>
-            <p className="text-[11px] text-[#5F8575] mt-1 font-semibold flex items-center gap-1">
+            <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#3b1f10]">S/ {totalRevenue.toFixed(2)}</span>
+            <p className="text-[11px] text-[#2e5339] mt-1 font-semibold flex items-center gap-1">
               <TrendingUp size={12} /> {validOrders.length} pedidos efectivos
             </p>
           </div>
         </div>
 
         {/* Average Ticket Size */}
-        <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-[#14231D]/40 text-[11px] font-sans font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-3xl border border-[#d4a373]/25 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-[#3b1f10]/60 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Ticket Promedio (AOV)</span>
-            <div className="w-9 h-9 rounded-xl bg-[#5F8575] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-[#2e5339]/10 text-[#2e5339] flex items-center justify-center border border-[#2e5339]/20">
               <ShoppingBag size={18} />
             </div>
           </div>
           <div className="mt-3">
-            <span className="font-sans text-2xl font-black tracking-tight tabular-nums text-[#14231D]">S/ {averageTicket.toFixed(2)}</span>
-            <p className="text-[11px] text-[#14231D]/40 mt-1 font-medium">Gasto medio por orden</p>
+            <span className="font-sans text-2xl font-black tracking-tight tabular-nums text-[#3b1f10]">S/ {averageTicket.toFixed(2)}</span>
+            <p className="text-[11px] text-[#3b1f10]/50 mt-1 font-medium">Gasto medio por orden</p>
           </div>
         </div>
 
         {/* Completion Rate */}
-        <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-[#14231D]/40 text-[11px] font-sans font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-3xl border border-[#d4a373]/25 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-[#3b1f10]/60 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Efectividad de Venta</span>
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200">
               <Percent size={18} />
             </div>
           </div>
           <div className="mt-3">
-            <span className="font-sans text-2xl font-black tracking-tight tabular-nums text-[#14231D]">{completionRate.toFixed(1)}%</span>
-            <p className="text-[11px] text-[#5F8575] mt-1 font-semibold flex items-center gap-1">
-              <CheckCircle2 size={12} /> {validOrders.length} de {filteredOrders.length} pedidos entregados
+            <span className="font-sans text-2xl font-black tracking-tight tabular-nums text-[#3b1f10]">{completionRate.toFixed(1)}%</span>
+            <p className="text-[11px] text-[#2e5339] mt-1 font-semibold flex items-center gap-1">
+              <CheckCircle2 size={12} /> {validOrders.length} de {filteredOrders.length} entregados
             </p>
           </div>
         </div>
 
         {/* Top Product Star */}
-        <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-[#14231D]/40 text-[11px] font-sans font-bold uppercase tracking-wider">
+        <div className="bg-white p-5 rounded-3xl border border-[#d4a373]/25 shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center justify-between text-[#3b1f10]/60 text-[11px] font-sans font-bold uppercase tracking-wider">
             <span>Plato Estrella</span>
-            <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200">
               <Award size={18} />
             </div>
           </div>
           <div className="mt-3">
-            <span className="font-serif text-base font-extrabold text-[#14231D] line-clamp-1">
+            <span className="font-serif text-base font-extrabold text-[#3b1f10] line-clamp-1">
               {topProducts[0]?.name || "Sin ventas aún"}
             </span>
-            <p className="text-[11px] text-amber-600 font-semibold mt-1">
+            <p className="text-[11px] text-amber-700 font-semibold mt-1">
               {topProducts[0] ? `${topProducts[0].quantity} unidades (S/ ${topProducts[0].revenue.toFixed(2)})` : "Esperando pedidos"}
             </p>
           </div>
         </div>
 
         {/* Total Discounts Given KPI Card */}
-        <div className="bg-white p-5 rounded-2xl border border-[#14231D]/8 shadow-sm hover:shadow-md transition-all sm:col-span-2 lg:col-span-4">
-          <div className="flex items-center justify-between text-[#14231D]/50 text-[11px] font-sans font-bold uppercase tracking-wider">
-            <span className="flex items-center gap-1.5">
-              <Percent size={16} className="text-[#5F8575]" />
+        <div className="bg-white p-5 rounded-3xl border border-[#d4a373]/25 shadow-sm hover:shadow-md transition-all sm:col-span-2 lg:col-span-4">
+          <div className="flex items-center justify-between text-[#3b1f10]/60 text-[11px] font-sans font-bold uppercase tracking-wider">
+            <span className="flex items-center gap-1.5 text-[#3b1f10] font-bold">
+              <Percent size={16} className="text-[#2e5339]" />
               Impacto de Promociones & Descuentos Otorgados (BI)
             </span>
-            <span className="text-[#14231D] bg-[#14231D]/5 px-2.5 py-0.5 rounded-full border border-[#14231D]/10 font-sans font-bold">
+            <span className="text-[#3b1f10] bg-[#f7f5ef] px-3 py-1 rounded-full border border-[#d4a373]/30 font-sans font-bold text-xs">
               {ordersWithCouponCount} pedidos con cupón
             </span>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
             <div>
-              <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#14231D]">S/ {totalDiscountGiven.toFixed(2)}</span>
-              <p className="text-xs text-[#14231D]/40 mt-0.5 font-medium">Inversión total otorgada en códigos promocionales y descuentos a clientes</p>
+              <span className="font-sans text-3xl font-black tracking-tight tabular-nums text-[#3b1f10]">S/ {totalDiscountGiven.toFixed(2)}</span>
+              <p className="text-xs text-[#3b1f10]/50 mt-0.5 font-medium">Inversión total otorgada en códigos promocionales y descuentos a clientes</p>
             </div>
           </div>
         </div>

@@ -65,13 +65,13 @@ export function AdminBlackoutModal({ isOpen, onClose, zones, onCreated }: AdminB
               <ShieldAlert size={22} />
             </div>
             <div>
-              <h3 className="font-serif font-bold text-2xl text-ink">⚡ Apagado de Reservas</h3>
-              <p className="text-xs text-ink/60">Bloquea la recepción de reservas en línea</p>
+              <h3 className="font-serif italic font-bold text-2xl text-[#3b1f10]">Apagado de Reservas</h3>
+              <p className="text-xs text-[#3b1f10]/60">Bloquea la recepción de reservas en línea</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-ink/50 transition-colors"
+            className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-[#3b1f10]/50 transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -79,18 +79,18 @@ export function AdminBlackoutModal({ isOpen, onClose, zones, onCreated }: AdminB
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold uppercase tracking-wider text-ink/75 mb-1">
+            <label className="block font-bold uppercase tracking-wider text-[#3b1f10]/80 mb-1">
               Zona a Apagar / Bloquear
             </label>
             <select
               value={zoneId}
               onChange={(e) => setZoneId(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-black/10 text-xs text-ink font-bold outline-none cursor-pointer focus:border-red-500"
+              className="w-full px-4 py-2.5 rounded-2xl border border-[#d4a373]/30 bg-[#f7f5ef] text-xs text-[#3b1f10] font-bold outline-none cursor-pointer focus:border-[#8C1D40]"
             >
-              <option value="global">🔴 TODO EL RESTAURANTE (Apagado General)</option>
+              <option value="global">Todo el Restaurante (Apagado General)</option>
               {zones.map((z) => (
                 <option key={z.id} value={z.id}>
-                  📍 Salón: {z.name} ({z.max_tables_count} mesas max)
+                  Salón: {z.name} ({z.max_tables_count} mesas max)
                 </option>
               ))}
             </select>

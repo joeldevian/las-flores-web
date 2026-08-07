@@ -3,7 +3,7 @@ import type { RestaurantZone, ZoneBlackout } from "../features/zones/types";
 import { listRestaurantZones, listZoneBlackouts, toggleBlackoutStatus } from "../features/zones/api";
 import { AdminZoneModal } from "./AdminZoneModal";
 import { AdminBlackoutModal } from "./AdminBlackoutModal";
-import { LayoutGrid, ShieldAlert, Power, Edit3, Users, RefreshCw, Loader2, AlertCircle } from "lucide-react";
+import { LayoutGrid, ShieldAlert, Power, Edit3, Users, RefreshCw, Loader2, AlertCircle, MapPin, Clock } from "lucide-react";
 
 export function AdminZonesSection() {
   const [zones, setZones] = useState<RestaurantZone[]>([]);
@@ -77,44 +77,48 @@ export function AdminZonesSection() {
 
   return (
     <div className="p-6 lg:p-8 space-y-6">
-      {/* Header & Sub-Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 pb-5">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-[#d4a373]/25 shadow-sm">
         <div>
-          <span className="text-[10px] uppercase font-bold text-eucalipto tracking-wider block">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#d4a373] block">
             Gestión del Establecimiento
           </span>
-          <h2 className="font-serif font-bold text-2xl lg:text-3xl text-ink">
+          <h2 className="font-serif italic text-2xl font-bold text-[#3b1f10]">
             Salones & Apagado de Reservas
           </h2>
+          <p className="text-xs text-[#3b1f10]/60 mt-1 max-w-2xl font-sans">
+            Administra la configuración de fotos, aforo y mesas por salón. Bloquea la entrada de reservas por teléfono o eventos especiales para evitar cruces.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button
+            type="button"
             onClick={() => setIsBlackoutModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 shadow-md transition-all flex items-center gap-2"
+            className="w-full md:w-auto px-5 py-2.5 rounded-2xl bg-[#8C1D40] hover:bg-[#721733] text-white font-sans font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer border border-[#8C1D40]"
           >
-            <ShieldAlert size={16} />
-            <span>⚡ Apagar Zona / Local</span>
+            <Power size={16} />
+            <span>Apagar Zona / Local</span>
           </button>
+
           <button
+            type="button"
             onClick={loadData}
-            className="p-2.5 rounded-xl bg-black/5 hover:bg-black/10 text-ink/70 transition-colors"
-            title="Actualizar"
+            className="p-2.5 rounded-2xl bg-[#f7f5ef] hover:bg-[#fdf8f0] text-[#3b1f10] border border-[#d4a373]/30 transition-colors shadow-xs cursor-pointer"
+            title="Actualizar datos"
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={16} className="text-[#2e5339]" />
           </button>
         </div>
       </div>
 
-      {/* Selector de Sub-pestañas */}
-      <div className="flex border-b border-black/10 bg-cream/30 p-1 rounded-2xl max-w-md">
+      <div className="flex border border-[#d4a373]/25 bg-[#f7f5ef] p-1 rounded-2xl max-w-md shadow-inner">
         <button
           type="button"
           onClick={() => setActiveSubTab("zones")}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeSubTab === "zones"
-              ? "bg-white text-eucalipto shadow-sm"
-              : "text-ink/60 hover:text-ink"
+              ? "bg-[#2e5339] text-white shadow-xs"
+              : "text-[#3b1f10]/60 hover:text-[#3b1f10]"
           }`}
         >
           <LayoutGrid size={15} />
@@ -123,10 +127,10 @@ export function AdminZonesSection() {
         <button
           type="button"
           onClick={() => setActiveSubTab("blackouts")}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeSubTab === "blackouts"
-              ? "bg-white text-red-600 shadow-sm"
-              : "text-ink/60 hover:text-ink"
+              ? "bg-[#8C1D40] text-white shadow-xs"
+              : "text-[#3b1f10]/60 hover:text-[#3b1f10]"
           }`}
         >
           <Power size={15} />
@@ -134,75 +138,74 @@ export function AdminZonesSection() {
         </button>
       </div>
 
-      {/* Sub-pestaña 1: Zonas del Local */}
       {activeSubTab === "zones" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {zones.map((zone) => (
             <div
               key={zone.id}
-              className="bg-white rounded-3xl border border-black/10 shadow-sm overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
+              className="bg-white rounded-3xl border border-[#d4a373]/25 shadow-sm overflow-hidden hover:shadow-md transition-all flex flex-col justify-between group"
             >
               <div>
-                <div className="relative h-44 w-full bg-cream overflow-hidden">
+                <div className="relative h-48 w-full bg-[#f7f5ef] overflow-hidden">
                   {zone.image_url ? (
                     <img
                       src={zone.image_url}
                       alt={zone.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-ink/30 font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-[#3b1f10]/40 font-bold text-xs">
                       Sin foto asignada
                     </div>
                   )}
-                  <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  <div className="absolute top-3 right-3 bg-[#3b1f10]/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-white/20">
                     {zone.max_tables_count} Mesas
                   </div>
                 </div>
 
                 <div className="p-5 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-serif font-bold text-xl text-ink">{zone.name}</h3>
+                    <h3 className="font-serif font-bold text-xl text-[#3b1f10]">{zone.name}</h3>
                     <span
-                      className="w-3 h-3 rounded-full"
+                      className="w-3.5 h-3.5 rounded-full ring-2 ring-white shadow-xs"
                       style={{ backgroundColor: zone.color }}
                       title={`Color identificador: ${zone.color}`}
                     />
                   </div>
 
-                  <p className="text-xs text-ink/70 leading-relaxed min-h-[36px]">
+                  <p className="text-xs text-[#3b1f10]/70 leading-relaxed min-h-[36px]">
                     {zone.description || "Sin descripción asignada."}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs pt-2 border-t border-black/5 text-ink/80">
-                    <span className="flex items-center gap-1.5 font-semibold">
-                      <Users size={15} className="text-eucalipto" />
+                  <div className="flex items-center justify-between text-xs pt-3 border-t border-[#d4a373]/15 text-[#3b1f10]/80">
+                    <span className="flex items-center gap-1.5 font-semibold text-[#2e5339]">
+                      <Users size={15} />
                       <span>Aforo: {zone.max_capacity_persons} pers.</span>
                     </span>
 
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                      className={`px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border ${
                         zone.is_active
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-emerald-50 text-[#2e5339] border-emerald-200"
+                          : "bg-red-50 text-[#8C1D40] border-red-200"
                       }`}
                     >
-                      {zone.is_active ? "Habilitado" : "Deshabilitado"}
+                      {zone.is_active ? "HABILITADO" : "DESHABILITADO"}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 bg-[#fcfaf5] border-t border-black/5">
+              <div className="p-4 bg-[#f7f5ef]/50 border-t border-[#d4a373]/20">
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedZoneToEdit(zone);
                     setIsZoneModalOpen(true);
                   }}
-                  className="w-full py-2.5 bg-white border border-black/10 hover:border-eucalipto text-ink font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-white border border-[#d4a373]/30 hover:bg-[#2e5339] hover:text-white hover:border-[#2e5339] text-[#3b1f10] font-bold text-xs rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Edit3 size={14} className="text-eucalipto" />
+                  <Edit3 size={14} className="text-[#2e5339] group-hover:text-white" />
                   <span>Editar Foto y Datos</span>
                 </button>
               </div>
@@ -211,53 +214,53 @@ export function AdminZonesSection() {
         </div>
       )}
 
-      {/* Sub-pestaña 2: Bloqueos / Apagados Activos */}
       {activeSubTab === "blackouts" && (
-        <div className="bg-white rounded-3xl border border-black/10 shadow-sm overflow-hidden">
-          <div className="p-5 bg-[#fcfaf5] border-b border-black/10 flex items-center justify-between">
-            <h3 className="font-serif font-bold text-lg text-ink">Historial de Apagados y Bloqueos</h3>
-            <span className="text-xs text-ink/60 font-semibold">
+        <div className="bg-white rounded-3xl border border-[#d4a373]/25 shadow-sm overflow-hidden">
+          <div className="p-5 bg-[#f7f5ef] border-b border-[#d4a373]/20 flex items-center justify-between">
+            <h3 className="font-serif font-bold text-lg text-[#3b1f10]">Historial de Apagados y Bloqueos</h3>
+            <span className="text-xs text-[#3b1f10]/60 font-semibold">
               Total registrados: {blackouts.length}
             </span>
           </div>
 
           {blackouts.length === 0 ? (
-            <div className="p-12 text-center text-ink/50 space-y-3">
-              <ShieldAlert size={40} className="mx-auto text-ink/30" />
-              <p className="text-sm font-semibold">No hay apagados o bloqueos registrados.</p>
-              <p className="text-xs text-ink/60">
-                Las reservas públicas están funcionando normalmente en todas las zonas.
+            <div className="p-12 text-center text-[#3b1f10]/50 space-y-3">
+              <ShieldAlert size={40} className="mx-auto text-[#d4a373]" />
+              <p className="text-sm font-bold text-[#3b1f10]">No hay apagados o bloqueos registrados.</p>
+              <p className="text-xs text-[#3b1f10]/60">
+                Las reservas públicas están funcionando normalmente en todas las zonas del restaurante.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-cream/50 text-ink/70 font-bold uppercase tracking-wider border-b border-black/10">
+                <thead className="bg-[#f7f5ef] text-[#3b1f10]/60 font-serif font-bold uppercase tracking-wider border-b border-[#d4a373]/20">
                   <tr>
-                    <th className="py-3.5 px-4">Zona / Ámbito</th>
-                    <th className="py-3.5 px-4">Tipo Bloqueo</th>
-                    <th className="py-3.5 px-4">Fecha / Horario</th>
-                    <th className="py-3.5 px-4">Motivo</th>
-                    <th className="py-3.5 px-4">Estado</th>
-                    <th className="py-3.5 px-4 text-right">Acciones</th>
+                    <th className="py-4 px-5">Zona / Ámbito</th>
+                    <th className="py-4 px-5">Tipo Bloqueo</th>
+                    <th className="py-4 px-5">Fecha / Horario</th>
+                    <th className="py-4 px-5">Motivo</th>
+                    <th className="py-4 px-5">Estado</th>
+                    <th className="py-4 px-5 text-right">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/5">
+                <tbody className="divide-y divide-[#d4a373]/15">
                   {blackouts.map((b) => (
-                    <tr key={b.id} className="hover:bg-cream/20 transition-colors">
-                      <td className="py-4 px-4 font-bold text-ink">
+                    <tr key={b.id} className="hover:bg-[#fdf8f0]/80 transition-colors">
+                      <td className="py-4 px-5 font-bold text-[#3b1f10]">
                         {b.zone_id ? (
-                          <span className="flex items-center gap-1.5 text-eucalipto">
-                            📍 {b.restaurant_zones?.name || b.zone_id}
+                          <span className="flex items-center gap-1.5 text-[#2e5339]">
+                            <MapPin size={13} className="text-[#2e5339]" />
+                            {b.restaurant_zones?.name || b.zone_id}
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-md bg-red-100 text-red-700 font-black uppercase text-[10px]">
-                            🔴 TODO EL LOCAL
+                          <span className="px-2.5 py-1 rounded-lg bg-rose-50 text-[#8C1D40] font-bold uppercase text-[10px] border border-rose-200">
+                            Todo el Local
                           </span>
                         )}
                       </td>
-                      <td className="py-4 px-4">
-                        <span className="capitalize font-medium">
+                      <td className="py-4 px-5">
+                        <span className="capitalize font-semibold text-[#3b1f10]">
                           {b.blackout_type === "full_day"
                             ? "Día Completo"
                             : b.blackout_type === "time_slot"
@@ -265,40 +268,40 @@ export function AdminZonesSection() {
                             : "Indefinido"}
                         </span>
                       </td>
-                      <td className="py-4 px-4 font-mono text-[11px]">
+                      <td className="py-4 px-5 font-mono text-[11px]">
                         <div className="flex flex-col gap-0.5">
-                          <span className="font-semibold text-ink">
+                          <span className="font-bold text-[#3b1f10]">
                             {b.start_date} {b.end_date ? ` al ${b.end_date}` : ""}
                           </span>
                           {b.start_time && b.end_time && (
-                            <span className="text-ink/60">
-                              ⏰ {b.start_time.slice(0, 5)} - {b.end_time.slice(0, 5)} hrs
+                            <span className="text-[#3b1f10]/60 flex items-center gap-1">
+                              <Clock size={11} /> {b.start_time.slice(0, 5)} - {b.end_time.slice(0, 5)} hrs
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-ink/80 max-w-xs truncate" title={b.reason}>
+                      <td className="py-4 px-5 text-[#3b1f10]/80 max-w-xs truncate" title={b.reason}>
                         {b.reason}
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-5">
                         <span
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${
                             b.is_active
-                              ? "bg-red-100 text-red-700 animate-pulse"
-                              : "bg-gray-100 text-gray-600"
+                              ? "bg-rose-50 text-[#8C1D40] border-rose-200"
+                              : "bg-emerald-50 text-[#2e5339] border-emerald-200"
                           }`}
                         >
-                          {b.is_active ? "⚡ Apagado Activo" : "Encendido / Inactivo"}
+                          {b.is_active ? "Apagado Activo" : "Operativo"}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-right">
+                      <td className="py-4 px-5 text-right">
                         <button
                           type="button"
                           onClick={() => handleToggleBlackout(b.id, b.is_active)}
-                          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] transition-all flex items-center gap-1 ml-auto ${
+                          className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ml-auto cursor-pointer ${
                             b.is_active
-                              ? "bg-green-600 hover:bg-green-700 text-white shadow-sm"
-                              : "bg-black/5 hover:bg-black/10 text-ink/70"
+                              ? "bg-[#2e5339] hover:bg-[#23412c] text-white shadow-xs"
+                              : "bg-[#f7f5ef] hover:bg-white text-[#3b1f10] border border-[#d4a373]/30"
                           }`}
                         >
                           <Power size={13} />
@@ -314,7 +317,6 @@ export function AdminZonesSection() {
         </div>
       )}
 
-      {/* Modales */}
       <AdminZoneModal
         isOpen={isZoneModalOpen}
         onClose={() => {

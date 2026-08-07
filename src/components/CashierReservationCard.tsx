@@ -50,16 +50,16 @@ export function CashierReservationCard({
     const rawPhone = (reservation.client_phone || "").replace(/\D/g, "");
     const formattedPhone = rawPhone.startsWith("51") ? rawPhone : `51${rawPhone}`;
 
-    const text = `Hola *${reservation.client_name || "Cliente"}*! 🌿
+    const text = `Hola *${reservation.client_name || "Cliente"}*!
 Confirmamos tu reserva en *Restaurante Las Flores*:
 
-📅 *Fecha:* ${formatDate(reservation.reservation_date)}
-⏰ *Hora:* ${reservation.reservation_time || "Por confirmar"} (${(reservation.service_type || "almuerzo").toUpperCase()})
-👥 *Personas:* ${reservation.guest_count || 1} personas
-${reservation.zone_id ? `📍 *Zona:* ${reservation.zone_id}` : ""}
-${reservation.notes ? `📝 *Nota:* ${reservation.notes}` : ""}
+*Fecha:* ${formatDate(reservation.reservation_date)}
+*Hora:* ${reservation.reservation_time || "Por confirmar"} (${(reservation.service_type || "almuerzo").toUpperCase()})
+*Personas:* ${reservation.guest_count || 1} personas
+${reservation.zone_id ? `*Zona:* ${reservation.zone_id}` : ""}
+${reservation.notes ? `*Nota:* ${reservation.notes}` : ""}
 
-¡Te esperamos para brindarte la mejor experiencia gastronómica de Ayacucho! 🌺`;
+¡Te esperamos para brindarte la mejor experiencia gastronómica de Ayacucho!`;
 
     const encodedText = encodeURIComponent(text);
     const url = `https://wa.me/${formattedPhone}?text=${encodedText}`;
@@ -71,14 +71,14 @@ ${reservation.notes ? `📝 *Nota:* ${reservation.notes}` : ""}
     const rawPhone = (reservation.client_phone || "").replace(/\D/g, "");
     const formattedPhone = rawPhone.startsWith("51") ? rawPhone : `51${rawPhone}`;
 
-    const text = `¡Hola *${reservation.client_name || "Cliente"}*! 🌸
+    const text = `¡Hola *${reservation.client_name || "Cliente"}*!
 Te recordamos que *HOY* tienes una reserva en *Restaurante Las Flores*:
 
-⏰ *Hora:* ${reservation.reservation_time || "Por confirmar"} (${(reservation.service_type || "almuerzo").toUpperCase()})
-👥 *Personas:* ${reservation.guest_count || 1} personas
-${reservation.zone_id ? `📍 *Zona:* ${reservation.zone_id}` : ""}
+*Hora:* ${reservation.reservation_time || "Por confirmar"} (${(reservation.service_type || "almuerzo").toUpperCase()})
+*Personas:* ${reservation.guest_count || 1} personas
+${reservation.zone_id ? `*Zona:* ${reservation.zone_id}` : ""}
 
-Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aquí. ¡Te esperamos! ✨`;
+Si deseas realizar algún ajuste en tu reserva, no dudes en escribirnos por aquí. ¡Te esperamos!`;
 
     const encodedText = encodeURIComponent(text);
     const url = `https://wa.me/${formattedPhone}?text=${encodedText}`;

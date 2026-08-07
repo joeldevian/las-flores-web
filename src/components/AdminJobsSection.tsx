@@ -198,24 +198,24 @@ export function AdminJobsSection() {
   return (
     <div className="space-y-6">
       {/* Header con Sub-pestañas */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-black/10">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#d4a373]/20">
+        <div className="flex items-center gap-2 bg-[#f7f5ef] p-1 rounded-2xl border border-[#d4a373]/25 shadow-inner">
           <button
             onClick={() => setSubTab("offers")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+            className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer ${
               subTab === "offers"
-                ? "bg-eucalipto text-cream shadow-sm"
-                : "bg-white text-ink/70 hover:bg-black/5"
+                ? "bg-[#2e5339] text-white shadow-xs"
+                : "text-[#3b1f10]/60 hover:text-[#3b1f10]"
             }`}
           >
             Convocatorias ({offers.length})
           </button>
           <button
             onClick={() => setSubTab("applications")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+            className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer ${
               subTab === "applications"
-                ? "bg-eucalipto text-cream shadow-sm"
-                : "bg-white text-ink/70 hover:bg-black/5"
+                ? "bg-[#2e5339] text-white shadow-xs"
+                : "text-[#3b1f10]/60 hover:text-[#3b1f10]"
             }`}
           >
             Postulantes ({applications.length})
@@ -225,7 +225,7 @@ export function AdminJobsSection() {
         {subTab === "offers" && (
           <button
             onClick={handleOpenNewOffer}
-            className="flex items-center gap-2 px-5 py-2.5 bg-eucalipto text-cream font-bold text-xs rounded-xl shadow-md hover:bg-eucalipto/90 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#2e5339] hover:bg-[#23412c] text-white font-sans font-bold text-xs rounded-2xl shadow-md transition-all cursor-pointer border border-[#2e5339]"
           >
             <Plus size={16} />
             <span>Nueva Convocatoria</span>
@@ -234,21 +234,21 @@ export function AdminJobsSection() {
       </div>
 
       {loading ? (
-        <div className="py-20 flex flex-col items-center justify-center text-ink/50 gap-3">
-          <Loader2 size={36} className="animate-spin text-eucalipto" />
-          <p className="text-sm font-medium">Cargando información laboral…</p>
+        <div className="py-20 flex flex-col items-center justify-center text-[#3b1f10]/50 gap-3">
+          <Loader2 size={36} className="animate-spin text-[#2e5339]" />
+          <p className="text-sm font-bold text-[#3b1f10]">Cargando información laboral…</p>
         </div>
       ) : error ? (
-        <div className="p-6 bg-red-50 text-red-700 rounded-2xl border border-red-200 text-center">
-          <AlertCircle size={32} className="mx-auto mb-2 text-red-500" />
-          <p className="text-sm">{error}</p>
+        <div className="p-6 bg-red-50 text-[#8C1D40] rounded-3xl border border-red-200 text-center">
+          <AlertCircle size={32} className="mx-auto mb-2 text-[#8C1D40]" />
+          <p className="text-sm font-bold">{error}</p>
         </div>
       ) : subTab === "offers" ? (
         /* ── SECCIÓN 1: CONVOCATORIAS ── */
-        <div className="bg-white rounded-2xl border border-black/10 shadow-xs overflow-hidden">
+        <div className="bg-white rounded-3xl border border-[#d4a373]/25 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-ink">
-              <thead className="bg-[#fcfaf5] border-b border-black/5 text-[11px] font-bold uppercase tracking-wider text-ink/60">
+            <table className="w-full text-left text-sm text-[#3b1f10]">
+              <thead className="bg-[#f7f5ef] border-b border-[#d4a373]/20 text-[11px] font-serif font-bold uppercase tracking-wider text-[#3b1f10]/60">
                 <tr>
                   <th className="px-6 py-4">Convocatoria</th>
                   <th className="px-6 py-4">Área / Ubicación</th>
@@ -258,25 +258,25 @@ export function AdminJobsSection() {
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-black/5">
+              <tbody className="divide-y divide-[#d4a373]/15">
                 {offers.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-ink/50 text-sm">
+                    <td colSpan={6} className="px-6 py-12 text-center text-[#3b1f10]/40 text-sm">
                       No hay convocatorias creadas aún. Haz clic en "Nueva Convocatoria" para publicar una vacante.
                     </td>
                   </tr>
                 ) : (
                   offers.map((offer) => (
-                    <tr key={offer.id} className="hover:bg-cream/40 transition-colors">
+                    <tr key={offer.id} className="hover:bg-[#fdf8f0]/80 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-bold text-ink">{offer.title}</div>
-                        <div className="text-xs text-ink/60 line-clamp-1 max-w-xs">{offer.summary}</div>
+                        <div className="font-bold text-[#3b1f10] text-sm">{offer.title}</div>
+                        <div className="text-xs text-[#3b1f10]/60 line-clamp-1 max-w-xs">{offer.summary}</div>
                       </td>
-                      <td className="px-6 py-4 text-xs font-medium">
+                      <td className="px-6 py-4 text-xs font-semibold text-[#2e5339]">
                         {offer.department} • {offer.location}
                       </td>
                       <td className="px-6 py-4 text-xs">
-                        <span className="px-2.5 py-1 rounded-full bg-black/5 font-semibold text-ink/80">
+                        <span className="px-3 py-1 rounded-full bg-[#f7f5ef] font-semibold text-[#3b1f10] border border-[#d4a373]/25">
                           {offer.work_mode === "onsite"
                             ? "Presencial"
                             : offer.work_mode === "hybrid"
@@ -286,26 +286,26 @@ export function AdminJobsSection() {
                       </td>
                       <td className="px-6 py-4 text-xs">
                         <span
-                          className={`px-3 py-1 rounded-full font-bold text-[11px] ${
+                          className={`px-3 py-1 rounded-full font-bold text-[11px] border ${
                             offer.status === "published"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-emerald-50 text-[#2e5339] border-emerald-200"
                               : offer.status === "paused"
-                              ? "bg-amber-100 text-amber-800"
+                              ? "bg-amber-50 text-amber-800 border-amber-200"
                               : offer.status === "closed"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-700"
+                              ? "bg-red-50 text-[#8C1D40] border-red-200"
+                              : "bg-gray-100 text-gray-700 border-gray-200"
                           }`}
                         >
                           {JOB_OFFER_STATUS_LABELS[offer.status]}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-xs text-ink/70">
+                      <td className="px-6 py-4 text-xs text-[#3b1f10]/70 font-mono">
                         {offer.application_deadline || "Sin fecha límite"}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => handleOpenEditOffer(offer)}
-                          className="p-2 rounded-lg text-ink/70 hover:text-eucalipto hover:bg-eucalipto/10 transition-colors"
+                          className="p-2 rounded-xl text-[#3b1f10]/70 hover:text-[#2e5339] hover:bg-[#2e5339]/10 border border-transparent hover:border-[#2e5339]/20 transition-all cursor-pointer"
                           title="Editar Convocatoria"
                         >
                           <Edit2 size={16} />
@@ -322,15 +322,15 @@ export function AdminJobsSection() {
         /* ── SECCIÓN 2: POSTULANTES Y CVS ── */
         <div className="space-y-4">
           {/* Filtros */}
-          <div className="p-4 rounded-2xl bg-white border border-black/10 flex flex-wrap items-center justify-between gap-4">
+          <div className="p-4 rounded-3xl bg-white border border-[#d4a373]/25 shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" size={16} />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#2e5339]" size={16} />
               <input
                 type="text"
                 placeholder="Buscar por nombre, correo o ciudad…"
                 value={appSearch}
                 onChange={(e) => setAppSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-cream border border-black/10 text-xs text-ink outline-none focus:border-eucalipto"
+                className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#f7f5ef] border border-[#d4a373]/25 text-xs text-[#3b1f10] outline-none focus:ring-2 focus:ring-[#2e5339]/30"
               />
             </div>
 
@@ -338,7 +338,7 @@ export function AdminJobsSection() {
               <select
                 value={appStatusFilter}
                 onChange={(e) => setAppStatusFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-cream border border-black/10 text-xs font-semibold text-ink outline-none cursor-pointer"
+                className="px-3.5 py-2 rounded-2xl bg-[#f7f5ef] border border-[#d4a373]/25 text-xs font-bold text-[#3b1f10] outline-none cursor-pointer"
               >
                 <option value="all">Todos los estados</option>
                 {Object.entries(JOB_APPLICATION_STATUS_LABELS).map(([k, label]) => (

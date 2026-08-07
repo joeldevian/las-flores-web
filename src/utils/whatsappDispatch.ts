@@ -51,19 +51,19 @@ export function buildDeliveryWhatsAppMessage(order: any, items: any[]): string {
   const paymentMethod = (order.payment_method || "YAPE").toUpperCase();
   const total = Number(order.total || 0).toFixed(2);
 
-  return `🛵 *DESPACHO DE DELIVERY — LAS FLORES*
+  return `*DESPACHO DE DELIVERY — LAS FLORES*
 ----------------------------------------
-📌 *Orden:* #${orderNum}
-👤 *Cliente:* ${clientName}
-📞 *Teléfono:* ${phoneText}
-📍 *Dirección:* ${address}${reference}
-🗺️ *Ubicación GPS Mapa:* ${mapsUrl}
+*Orden:* #${orderNum}
+*Cliente:* ${clientName}
+*Teléfono:* ${phoneText}
+*Dirección:* ${address}${reference}
+*Ubicación GPS Mapa:* ${mapsUrl}
 
-🍽️ *DETALLE DE LA COMANDA:*
+*DETALLE DE LA COMANDA:*
 ${itemsListText}
 
-💰 *TOTAL A COBRAR AL CLIENTE:* S/ ${total}
-💳 *MÉTODO DE PAGO:* ${paymentMethod}
+*TOTAL A COBRAR AL CLIENTE:* S/ ${total}
+*MÉTODO DE PAGO:* ${paymentMethod}
 ----------------------------------------
 *¡Gracias por llevar el sabor de Las Flores!*`;
 }
