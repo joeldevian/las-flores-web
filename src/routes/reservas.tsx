@@ -855,7 +855,7 @@ function ReservasPage() {
                   Ambiente Seleccionado
                 </span>
 
-                <h1 className="font-serif italic text-4xl md:text-6xl text-[#2e5339] font-bold mb-4 leading-tight">
+                <h1 className="font-sans text-4xl md:text-6xl text-[#2e5339] font-bold mb-4 leading-tight">
                   {selectedZona.nombre}
                 </h1>
 
