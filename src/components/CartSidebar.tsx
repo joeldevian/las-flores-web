@@ -266,13 +266,12 @@ export function CartSidebar() {
     if (
       step === "delivery" &&
       orderType === "delivery" &&
-      delivery.email &&
       deliverySubStep === "location" &&
       !clientLocation
     ) {
       handleUseGPS();
     }
-  }, [step, orderType, delivery.email, deliverySubStep, clientLocation]);
+  }, [step, orderType, deliverySubStep, clientLocation]);
 
   // Calcular la distancia y el costo
   const distanceKm = clientLocation
@@ -1286,8 +1285,8 @@ export function CartSidebar() {
                 <button
                   type="button"
                   onClick={() => setDeliverySubStep("details")}
-                  disabled={!delivery.email || !clientLocation || isTooFar || !delivery.address}
-                  className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+                  disabled={!clientLocation || isTooFar || !delivery.address}
+                  className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed cursor-pointer"
                   style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
                 >
                   Continuar a datos &rarr;
@@ -1296,8 +1295,8 @@ export function CartSidebar() {
                 <button
                   type="submit"
                   form="delivery-form"
-                  disabled={!delivery.email || (orderType === "delivery" && (!clientLocation || isTooFar)) || !delivery.phone}
-                  className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+                  disabled={!delivery.phone || (orderType === "delivery" && (!clientLocation || isTooFar))}
+                  className="flex-1 py-3 rounded-xl font-serif font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed cursor-pointer"
                   style={{ background: "var(--color-eucalipto)", color: "#FBF5E6" }}
                 >
                   Ir al pago
