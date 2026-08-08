@@ -1057,62 +1057,62 @@ function Index() {
               Estos galardones reflejan nuestro respeto inquebrantable por la herencia culinaria.
             </p>
             <ul className="space-y-6 max-w-md">
-              <li className="flex items-start gap-5">
+              <li className="flex items-start gap-5 w-full">
                 <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
-                <div>
+                <div className="w-full">
                   <h4 className="font-serif text-xl font-semibold mb-0.5">
                     Mejor Restaurante Regional
                   </h4>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start justify-between gap-4 w-full min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-10 h-10 flex-none text-nogal/70" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2v6h6" />
                     </svg>
-                    <div>
-                      <div className="text-sm font-semibold">resolucion_andres_avelino.pdf</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold">Documento en PDF</div>
                       <div className="text-xs text-nogal/50">Municipalidad distrital de Andres Avelino Cáceres Dorregaray</div>
                     </div>
-                    <a href="/docs/resolucion_andres_avelino.pdf" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
+                    <a href="/docs/resolucion_andres_avelino.pdf" target="_blank" rel="noopener noreferrer" className="self-start inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
                       Ver documento
                     </a>
                   </div>
                 </div>
               </li>
-              <li className="flex items-start gap-5">
+              <li className="flex items-start gap-5 w-full">
                 <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
-                <div>
+                <div className="w-full">
                   <h4 className="font-serif text-xl font-semibold mb-0.5">
                     Guardianes de la Tradición
                   </h4>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start justify-between gap-4 w-full min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-10 h-10 flex-none text-nogal/70" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2v6h6" />
                     </svg>
-                    <div>
-                      <div className="text-sm font-semibold">documento_camara_comercio.pdf</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold">Documento en PDF</div>
                       <div className="text-xs text-nogal/50">Camara de Comercio</div>
                     </div>
-                    <a href="/docs/documento_camara_comercio.pdf" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
+                    <a href="/docs/documento_camara_comercio.pdf" target="_blank" rel="noopener noreferrer" className="self-start inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
                       Ver documento
                     </a>
                   </div>
                 </div>
               </li>
-              <li className="flex items-start gap-5">
+              <li className="flex items-start gap-5 w-full">
                 <span className="w-px h-10 bg-cochinilla shrink-0 mt-1" />
-                <div>
+                <div className="w-full">
                   <h4 className="font-serif text-xl font-semibold mb-0.5">Ayacucho Emprende</h4>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start justify-between gap-4 w-full min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-10 h-10 flex-none text-nogal/70" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 2v6h6" />
                     </svg>
-                    <div>
-                      <div className="text-sm font-semibold">resolucion_andres_avelino.pdf</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold">Documento en PDF</div>
                       <div className="text-xs text-nogal/50">Municipalidad distrital de Andres Avelino Cáceres Dorregaray</div>
                     </div>
-                    <a href="/docs/resolucion_andres_avelino.pdf" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
+                    <a href="/docs/Resolucion_andres_avelino_caceres.pdf" target="_blank" rel="noopener noreferrer" className="self-start inline-flex items-center justify-center flex-none w-36 h-10 bg-eucalipto text-white rounded-md text-sm text-center">
                       Ver documento
                     </a>
                   </div>
