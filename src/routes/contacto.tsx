@@ -83,8 +83,12 @@ function ContactoPage() {
     }, 1000);
   };
 
+  const scrollToDetalles = () => {
+    document.getElementById("contacto-detalles")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scroll-smooth bg-[#f8f4e6] flex flex-col font-sans text-[#2c2a29]">
+    <div className="min-h-screen bg-[#f8f4e6] flex flex-col font-sans text-[#2c2a29]">
       {/* ── HEADER FIJO SIN BLUR ── */}
       <header
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
@@ -155,8 +159,8 @@ function ContactoPage() {
         </div>
       </header>
 
-      {/* ── HERO PANTALLA COMPLETA (100VH + SNAP MANDATORY) ── */}
-      <section className="h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-[#1a120b] snap-start snap-always shrink-0">
+      {/* ── HERO PANTALLA COMPLETA ── */}
+      <section className="min-h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-[#1a120b]">
         <div className="absolute inset-0 z-0 opacity-50">
           <img
             src={heroImg}
@@ -178,20 +182,21 @@ function ContactoPage() {
           </p>
         </div>
 
-        {/* Indicador de Desplazamiento Suave a la Siguiente Sección */}
-        <a
-          href="#contacto-detalles"
+        {/* Indicador de Desplazamiento Suave */}
+        <button
+          onClick={scrollToDetalles}
+          type="button"
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-white/80 hover:text-white transition-all group cursor-pointer"
         >
           <span className="text-[10px] uppercase tracking-widest font-bold text-[#d4a373]">
             Desliza para Ver Contacto
           </span>
           <ChevronDown size={22} className="animate-bounce text-white" />
-        </a>
+        </button>
       </section>
 
-      {/* ── MAIN LAYOUT (SECCIÓN CON SNAP Y ESPACIADO PERFECTO) ── */}
-      <section id="contacto-detalles" className="min-h-screen w-full snap-start snap-always px-4 md:px-12 lg:px-20 pt-24 pb-20 flex-1 relative z-20 shrink-0">
+      {/* ── MAIN LAYOUT (DESPLAZAMIENTO NATURAL Y FLUIDO) ── */}
+      <section id="contacto-detalles" className="px-4 md:px-12 lg:px-20 pt-20 pb-20 flex-1 relative z-20">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* COLUMNA IZQUIERDA: Información Directa (5 cols) */}
