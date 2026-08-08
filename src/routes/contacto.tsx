@@ -60,8 +60,10 @@ function ContactoPage() {
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isOpenNow, setIsOpenNow] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -210,13 +212,13 @@ function ContactoPage() {
                 </h3>
                 <span
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                    isOpenNow
+                    (isMounted ? isOpenNow : true)
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                       : "bg-amber-50 text-amber-700 border border-amber-200"
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${isOpenNow ? "bg-emerald-500" : "bg-amber-500"}`} />
-                  {isOpenNow ? "Abierto Ahora" : "Atención por WhatsApp"}
+                  <span className={`w-2 h-2 rounded-full ${(isMounted ? isOpenNow : true) ? "bg-emerald-500" : "bg-amber-500"}`} />
+                  {(isMounted ? isOpenNow : true) ? "Abierto Ahora" : "Atención por WhatsApp"}
                 </span>
               </div>
 
