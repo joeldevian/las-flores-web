@@ -232,7 +232,7 @@ export async function createReservation(payload: any) {
       reservationData.user_id = authUser.user.id;
     }
   } catch (e) {
-    console.log("No se pudo obtener id de usuario para reserva:", e);
+    console.warn("No se pudo obtener id de usuario para reserva:", e);
   }
 
   // Filtrar valores nulos o indefinidos
@@ -282,7 +282,7 @@ export async function createOrder(payload: OrderPayload) {
       orderData.user_id = authUser.user.id;
     }
   } catch (e) {
-    console.log("No se pudo obtener id de usuario:", e);
+    console.warn("No se pudo obtener id de usuario:", e);
   }
 
   // Garantizar estado por defecto 'pendiente'

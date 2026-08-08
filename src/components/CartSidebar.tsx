@@ -261,7 +261,9 @@ export function CartSidebar() {
     }
   };
 
-  // Solicitar ubicación GPS automáticamente al entrar a la etapa de ubicación
+  // Solicitar ubicación GPS automáticamente al entrar a la etapa de ubicación.
+  // IMPORTANTE: clientLocation NO está en el dep array — si lo estuviera, cada vez que
+  // GPS devuelve un valor se re-ejecuta el effect y pide GPS de nuevo (bucle infinito).
   useEffect(() => {
     if (
       step === "delivery" &&
@@ -271,7 +273,8 @@ export function CartSidebar() {
     ) {
       handleUseGPS();
     }
-  }, [step, orderType, deliverySubStep, clientLocation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, orderType, deliverySubStep]);
 
   // Calcular la distancia y el costo
   const distanceKm = clientLocation
@@ -898,7 +901,7 @@ export function CartSidebar() {
                         try {
                           await signOut();
                         } catch (e) {
-                          console.log("Signout error:", e);
+                          console.warn("Signout error:", e);
                         }
                         setDelivery({ ...delivery, email: "", name: "" });
                       }}
@@ -1373,7 +1376,7 @@ export function CartSidebar() {
             try {
               await signInWithGoogle();
             } catch (err) {
-              console.log("Supabase Auth local fallback:", err);
+              console.warn("Supabase Auth local fallback:", err);
             }
             setShowLoginModal(false);
           }}

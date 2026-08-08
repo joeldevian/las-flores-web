@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import { playOrderChime } from "../utils/audioAlert";
 import { CashierOrderCard } from "../components/CashierOrderCard";
@@ -202,27 +202,32 @@ function CashierDashboardRoute() {
 
       if (!resErr && resData) {
         const todayStr = getLocalYYYYMMDD(new Date());
-        const pastUnfulfilled = resData.filter(res => 
-          (res.status === "pending" || res.status === "confirmed") && 
+        const pastUnfulfilled = resData.filter(res =>
+          (res.status === "pending" || res.status === "confirmed") &&
           res.reservation_date && res.reservation_date < todayStr
         );
 
+        // Auto-cancelar reservas pasadas — sin mutar el objeto original (inmutabilidad React)
         if (pastUnfulfilled.length > 0) {
           pastUnfulfilled.forEach(res => {
             supabase.from("reservations").update({ status: "cancelled" }).eq("id", res.id).then();
-            res.status = "cancelled";
           });
         }
 
+        // Construir nuevo array con status actualizados de forma inmutable
+        const updatedResData = resData.map(res =>
+          pastUnfulfilled.some(p => p.id === res.id) ? { ...res, status: "cancelled" } : res
+        );
+
         setReservations((prev) => {
-          if (prev.length > 0 && resData.length > prev.length) {
-            const newest = [...resData].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())[0];
+          if (prev.length > 0 && updatedResData.length > prev.length) {
+            const newest = [...updatedResData].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())[0];
             if (soundEnabled) {
               playOrderChime();
             }
             setNewReservationNotification(newest);
           }
-          return resData;
+          return updatedResData;
         });
       }
     } catch (err) {
@@ -233,13 +238,19 @@ function CashierDashboardRoute() {
     }
   };
 
+  // checkAuth se ejecuta solo una vez al montar — no debe depender de soundEnabled
   useEffect(() => {
     checkAuth();
+  }, []);
 
-    const pollInterval = setInterval(() => {
-      fetchData(true);
-    }, 3000);
+  // Supabase Realtime para actualizaciones en vivo — el polling HTTP fue eliminado porque es
+  // redundante cuando el canal WebSocket ya está activo, y causaba suscripciones duplicadas
+  // cada vez que soundEnabled cambiaba (Bug #1 & #2 corregidos).
+  // soundEnabled se lee via ref para evitar stale closures sin re-crear el canal
+  const soundEnabledRef = useRef(soundEnabled);
+  useEffect(() => { soundEnabledRef.current = soundEnabled; }, [soundEnabled]);
 
+  useEffect(() => {
     const channel = supabase
       .channel("cashier-realtime-all")
       .on(
@@ -247,7 +258,7 @@ function CashierDashboardRoute() {
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
           if (payload.eventType === "INSERT") {
-            if (soundEnabled) playOrderChime();
+            if (soundEnabledRef.current) playOrderChime();
             setNewOrderNotification(payload.new);
           }
           fetchData(true);
@@ -258,7 +269,7 @@ function CashierDashboardRoute() {
         { event: "*", schema: "public", table: "reservations" },
         (payload) => {
           if (payload.eventType === "INSERT") {
-            if (soundEnabled) playOrderChime();
+            if (soundEnabledRef.current) playOrderChime();
             setNewReservationNotification(payload.new);
           }
           fetchData(true);
@@ -267,10 +278,9 @@ function CashierDashboardRoute() {
       .subscribe();
 
     return () => {
-      clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
-  }, [soundEnabled]);
+  }, []);
 
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
     try {

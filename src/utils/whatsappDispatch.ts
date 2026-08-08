@@ -102,7 +102,7 @@ export async function sendCallMeBotNotification(
     
     // CallMeBot request
     const response = await fetch(url, { method: "GET", mode: "no-cors" });
-    console.log("CallMeBot notification triggered:", response);
+    console.info("CallMeBot notification triggered:", response.status || "no-cors");
     return true;
   } catch (err) {
     console.error("Error triggering CallMeBot notification:", err);

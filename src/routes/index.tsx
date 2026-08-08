@@ -339,12 +339,6 @@ function FestividadesSlider({ onSelect }: { onSelect: (f: Festividad) => void })
 
   return (
     <div className="relative overflow-hidden bg-cafe w-full aspect-[4/3] md:aspect-[21/9] rounded-3xl shadow-xl group">
-      <style>{`
-        @keyframes fillProgress {
-          from { width: 0%; }
-          to { width: 100%; }
-        }
-      `}</style>
 
       {festividades.map((f, i) => (
         <div
