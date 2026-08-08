@@ -510,7 +510,7 @@ function RestaurantePage() {
           <div className="flex-1 w-full">
             <div className="relative aspect-4/3 rounded-sm overflow-hidden group">
               <img
-                src="/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp"
+                src="/imagenes-reales/productosAyacucho/producto-ayacucho.webp"
                 alt="Productos ayacuchanos de temporada"
                 loading="lazy"
                 decoding="async"
