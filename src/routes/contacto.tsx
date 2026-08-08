@@ -91,95 +91,114 @@ function ContactoPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f4e6] flex flex-col font-sans text-[#2c2a29]">
-      {/* ── HEADER FIJO SIN BLUR ── */}
-      <header
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-[#f8f4e6] shadow-sm border-b border-[#2c1d11]/10 py-3" : "bg-transparent py-5"
-        }`}
+      {/* Nav */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-2 md:py-4 transition-all duration-500 pointer-events-none ${isScrolled ? "bg-piedra text-nogal shadow-md" : "bg-transparent text-piedra"}`}
       >
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 flex justify-between items-center">
+        <div className="flex-1 flex justify-start items-center">
           <SiteNavigationMenu isScrolled={isScrolled} />
-          
-          <a href="/" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center group">
-            <img 
-              src="/images.png" 
-              alt="Las Flores" 
-              className={`transition-all duration-300 origin-center ${isScrolled ? "h-8 opacity-100" : "h-10 md:h-12 opacity-100 invert brightness-0"}`}
-              style={isScrolled ? { filter: "brightness(0) saturate(100%) invert(19%) sepia(16%) saturate(740%) hue-rotate(346deg) brightness(96%) contrast(89%)" } : {}}
-            />
+        </div>
+        <a
+          href="/"
+          className="flex-none pointer-events-auto"
+        >
+          <img
+            src="/images.png"
+            alt="Las Flores Logo"
+            className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-8" : "h-10 md:h-12 brightness-0 invert"}`}
+          />
+        </a>
+        <div className="flex-1 flex justify-end items-center gap-6 md:gap-8 text-[11px] md:text-sm uppercase tracking-widest md:tracking-[0.15em] font-semibold pointer-events-auto">
+          <a href="/reservas" className="hover:text-chilca transition-colors hidden sm:inline-block">
+            RESERVAS
           </a>
-
-          {/* Language Selector */}
+          {/* Language Selector with Dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                isScrolled ? "text-[#2c2a29] border-[#2c2a29]/20 hover:bg-[#2c2a29]/5" : "text-white border-white/40 hover:bg-white/10"
+              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
+                isScrolled ? "text-nogal" : "text-piedra"
               }`}
             >
               <img
                 src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
                 alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-4 h-auto rounded-[2px]"
+                className="w-5 h-auto rounded-[2px]"
               />
               <span className="text-xs font-bold">{language}</span>
-              <ChevronDown
-                size={12}
-                className={`transition-transform duration-200 ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              />
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
             </button>
 
             {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 py-1 bg-white border border-gray-200 rounded-xl shadow-lg min-w-[110px] z-50">
-                <button
-                  onClick={() => {
-                    setLanguage("ES");
-                    setIsLangDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-bold transition-colors ${
-                    language === "ES" ? "bg-[#2e5339]/10 text-[#2e5339]" : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <img src="https://flagcdn.com/w40/pe.png" alt="Peru Flag" className="w-4 h-auto rounded-[2px]" />
-                  <span>ES (Español)</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setLanguage("EN");
-                    setIsLangDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-bold transition-colors ${
-                    language === "EN" ? "bg-[#2e5339]/10 text-[#2e5339]" : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <img src="https://flagcdn.com/w40/us.png" alt="USA Flag" className="w-4 h-auto rounded-[2px]" />
-                  <span>EN (English)</span>
-                </button>
+              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
+                {language === "ES" ? (
+                  <button
+                    onClick={() => {
+                      setLanguage("EN");
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-black/5"
+                  >
+                    <img
+                      src="https://flagcdn.com/w40/us.png"
+                      alt="USA Flag"
+                      className="w-5 h-auto rounded-[2px]"
+                    />
+                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setLanguage("ES");
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-black/5"
+                  >
+                    <img
+                      src="https://flagcdn.com/w40/pe.png"
+                      alt="Peru Flag"
+                      className="w-5 h-auto rounded-[2px]"
+                    />
+                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
+                  </button>
+                )}
               </div>
             )}
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* ── HERO PANTALLA COMPLETA ── */}
-      <section className="min-h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-[#1a120b]">
-        <div className="absolute inset-0 z-0 opacity-50">
+      <section className="min-h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-eucalipto">
+        <div className="absolute inset-0 z-0 opacity-70">
           <img
             src={heroImg}
             alt="Ambiente de Restaurante Las Flores Ayacucho"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-center scale-[1.02]"
           />
         </div>
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/30 to-ink/95" />
 
-        <div className="max-w-3xl mx-auto text-center relative z-10 space-y-4 pt-12">
-          <span className="text-xs uppercase tracking-[0.3em] font-extrabold text-[#d4a373] block">
-            Restaurante Las Flores · Ayacucho
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6 pt-12 animate-in fade-in duration-1000">
+          <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] font-bold text-chilca/90 block">
+            Ayacucho · Perú
           </span>
-          <h1 className="font-serif font-bold text-4xl sm:text-6xl md:text-7xl text-white tracking-tight leading-tight">
+          <h1 className="font-serif italic text-5xl sm:text-6xl md:text-8xl text-piedra tracking-tight leading-[1.05]">
             Contáctanos
           </h1>
-          <p className="font-sans text-white/90 text-base md:text-lg max-w-xl mx-auto leading-relaxed font-light">
+          <p className="font-sans text-piedra/80 text-sm md:text-lg max-w-xl mx-auto leading-relaxed">
             Estamos listos para atender tus reservas, consultas de la carta o pedidos a domicilio.
           </p>
         </div>
@@ -188,12 +207,12 @@ function ContactoPage() {
         <button
           onClick={scrollToDetalles}
           type="button"
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-white/80 hover:text-white transition-all group cursor-pointer"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-piedra/60 hover:text-piedra transition-all group cursor-pointer"
         >
-          <span className="text-[10px] uppercase tracking-widest font-bold text-[#d4a373]">
-            Desliza para Ver Contacto
+          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">
+            Desliza
           </span>
-          <ChevronDown size={22} className="animate-bounce text-white" />
+          <ChevronDown size={20} className="animate-bounce" />
         </button>
       </section>
 
