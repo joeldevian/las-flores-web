@@ -483,35 +483,35 @@ function RestaurantePage() {
 
       <ChefAccordionSection />
 
-      {/* Eventos Corporativos */}
-      <section id="corporativo" className="bg-eucalipto text-piedra py-24 md:py-32 px-6">
+      {/* Tesoros de Ayacucho */}
+      <section id="tesoros" className="bg-eucalipto text-piedra py-24 md:py-32 px-6">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 md:gap-20">
           <div className="flex-1 max-w-[50ch]">
             <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs mb-6 block">
-              Eventos Corporativos
+              Tesoros de Ayacucho
             </span>
             <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-balance mb-6">
-              El mejor escenario para sus negocios en Ayacucho
+              Productos ayacuchanos de temporada
             </h2>
             <p className="text-lg text-piedra/70 leading-[1.7] mb-8">
-              Contamos con ambientes exclusivos y un servicio de primera categoría, diseñados
-              especialmente para almuerzos de negocios, cenas de gala, conferencias y reuniones
-              corporativas. Garantice el éxito de su evento con la mejor propuesta gastronómica y el
-              prestigio del mejor restaurante de la ciudad.
+              Descubre los ingredientes autóctonos que dan vida a nuestra cocina: papa nativa, 
+              quinoa, nísperos, airampo, tunas y más. Cada temporada trae consigo los mejores 
+              productos de nuestra tierra, cosechados en su punto perfecto para ofrecerte 
+              el auténtico sabor de Ayacucho.
             </p>
             <Link
-              to="/eventos"
+              to="/tesoros-ayacucho"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="inline-flex items-center justify-center px-10 py-5 text-[11px] uppercase tracking-[0.25em] font-bold rounded-sm btn-yellow-hover"
             >
-              <span>CONOCE MÁS</span>
+              <span>DESCUBRE MÁS</span>
             </Link>
           </div>
           <div className="flex-1 w-full">
             <div className="relative aspect-4/3 rounded-sm overflow-hidden group">
               <img
-                src="/imagenes-reales/GALERIA/evento_corporativo.webp"
-                alt="Salón para eventos corporativos"
+                src="/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp"
+                alt="Productos ayacuchanos de temporada"
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

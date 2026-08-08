@@ -204,7 +204,7 @@ function GaleriaPage() {
       </section>
 
       {/* Category Tabs */}
-      <div className="w-full bg-white border-b border-nogal/10 sticky top-20 z-40">
+      <div className="w-full bg-white border-b border-nogal/10">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-4">
             {GALLERY_CATEGORIES.map((cat) => (
