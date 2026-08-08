@@ -21,6 +21,8 @@ import { Route as CartaRouteImport } from './routes/carta'
 import { Route as CajaRouteImport } from './routes/caja'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RastreoOrderIdRouteImport } from './routes/rastreo/$orderId'
+import { Route as DOrderIdRouteImport } from './routes/d/$orderId'
 
 const UneteAlEquipoRoute = UneteAlEquipoRouteImport.update({
   id: '/unete-al-equipo',
@@ -82,6 +84,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RastreoOrderIdRoute = RastreoOrderIdRouteImport.update({
+  id: '/rastreo/$orderId',
+  path: '/rastreo/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DOrderIdRoute = DOrderIdRouteImport.update({
+  id: '/d/$orderId',
+  path: '/d/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +108,8 @@ export interface FileRoutesByFullPath {
   '/restaurante': typeof RestauranteRoute
   '/tesoros-ayacucho': typeof TesorosAyacuchoRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
+  '/d/$orderId': typeof DOrderIdRoute
+  '/rastreo/$orderId': typeof RastreoOrderIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +124,8 @@ export interface FileRoutesByTo {
   '/restaurante': typeof RestauranteRoute
   '/tesoros-ayacucho': typeof TesorosAyacuchoRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
+  '/d/$orderId': typeof DOrderIdRoute
+  '/rastreo/$orderId': typeof RastreoOrderIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +141,8 @@ export interface FileRoutesById {
   '/restaurante': typeof RestauranteRoute
   '/tesoros-ayacucho': typeof TesorosAyacuchoRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
+  '/d/$orderId': typeof DOrderIdRoute
+  '/rastreo/$orderId': typeof RastreoOrderIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +159,8 @@ export interface FileRouteTypes {
     | '/restaurante'
     | '/tesoros-ayacucho'
     | '/unete-al-equipo'
+    | '/d/$orderId'
+    | '/rastreo/$orderId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +175,8 @@ export interface FileRouteTypes {
     | '/restaurante'
     | '/tesoros-ayacucho'
     | '/unete-al-equipo'
+    | '/d/$orderId'
+    | '/rastreo/$orderId'
   id:
     | '__root__'
     | '/'
@@ -169,6 +191,8 @@ export interface FileRouteTypes {
     | '/restaurante'
     | '/tesoros-ayacucho'
     | '/unete-al-equipo'
+    | '/d/$orderId'
+    | '/rastreo/$orderId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +208,8 @@ export interface RootRouteChildren {
   RestauranteRoute: typeof RestauranteRoute
   TesorosAyacuchoRoute: typeof TesorosAyacuchoRoute
   UneteAlEquipoRoute: typeof UneteAlEquipoRoute
+  DOrderIdRoute: typeof DOrderIdRoute
+  RastreoOrderIdRoute: typeof RastreoOrderIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +298,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rastreo/$orderId': {
+      id: '/rastreo/$orderId'
+      path: '/rastreo/$orderId'
+      fullPath: '/rastreo/$orderId'
+      preLoaderRoute: typeof RastreoOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/d/$orderId': {
+      id: '/d/$orderId'
+      path: '/d/$orderId'
+      fullPath: '/d/$orderId'
+      preLoaderRoute: typeof DOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +328,8 @@ const rootRouteChildren: RootRouteChildren = {
   RestauranteRoute: RestauranteRoute,
   TesorosAyacuchoRoute: TesorosAyacuchoRoute,
   UneteAlEquipoRoute: UneteAlEquipoRoute,
+  DOrderIdRoute: DOrderIdRoute,
+  RastreoOrderIdRoute: RastreoOrderIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

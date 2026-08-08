@@ -372,9 +372,19 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                   </div>
 
                   <div className="pt-2 border-t border-black/5 flex items-center justify-between text-xs">
-                    <span className="text-black/55 capitalize">
-                      {order.order_type === "delivery" ? "🚀 Delivery" : "🏪 Recojo en local"}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-black/55 capitalize">
+                      {order.order_type === "delivery" ? (
+                        <>
+                          <MapPin size={14} className="text-eucalipto" />
+                          <span>Delivery</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag size={14} className="text-nogal/50" />
+                          <span>Recojo en local</span>
+                        </>
+                      )}
+                    </div>
                     <div className="text-right">
                       <span className="text-[10px] text-black/45 block uppercase">Total</span>
                       <span className="font-serif font-bold text-sm text-eucalipto">
@@ -382,6 +392,20 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                       </span>
                     </div>
                   </div>
+                  
+                  {/* Botón de rastreo en vivo si es delivery y no está entregado */}
+                  {order.order_type === "delivery" && order.status !== "delivered" && (
+                    <div className="pt-3">
+                      <a 
+                        href={`/rastreo/${order.id}`}
+                        target="_blank" rel="noreferrer"
+                        className="w-full py-2.5 bg-eucalipto hover:bg-eucalipto/90 text-piedra rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2"
+                      >
+                        <MapPin size={14} />
+                        Rastrear Pedido en Vivo
+                      </a>
+                    </div>
+                  )}
                 </div>
               ))
             )

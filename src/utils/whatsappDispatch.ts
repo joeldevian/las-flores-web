@@ -64,6 +64,9 @@ ${itemsListText}
 
 *TOTAL A COBRAR AL CLIENTE:* S/ ${total}
 *MÉTODO DE PAGO:* ${paymentMethod}
+
+*PANEL DEL MOTORIZADO (Iniciar Viaje):*
+${window.location.origin}/d/${order.id || order.order_id}
 ----------------------------------------
 *¡Gracias por llevar el sabor de Las Flores!*`;
 }
