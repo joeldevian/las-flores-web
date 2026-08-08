@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UneteAlEquipoRouteImport } from './routes/unete-al-equipo'
+import { Route as TesorosAyacuchoRouteImport } from './routes/tesoros-ayacucho'
 import { Route as RestauranteRouteImport } from './routes/restaurante'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as GaleriaRouteImport } from './routes/galeria'
@@ -24,6 +25,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const UneteAlEquipoRoute = UneteAlEquipoRouteImport.update({
   id: '/unete-al-equipo',
   path: '/unete-al-equipo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TesorosAyacuchoRoute = TesorosAyacuchoRouteImport.update({
+  id: '/tesoros-ayacucho',
+  path: '/tesoros-ayacucho',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RestauranteRoute = RestauranteRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
+  '/tesoros-ayacucho': typeof TesorosAyacuchoRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
+  '/tesoros-ayacucho': typeof TesorosAyacuchoRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/galeria': typeof GaleriaRoute
   '/reservas': typeof ReservasRoute
   '/restaurante': typeof RestauranteRoute
+  '/tesoros-ayacucho': typeof TesorosAyacuchoRoute
   '/unete-al-equipo': typeof UneteAlEquipoRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/galeria'
     | '/reservas'
     | '/restaurante'
+    | '/tesoros-ayacucho'
     | '/unete-al-equipo'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/galeria'
     | '/reservas'
     | '/restaurante'
+    | '/tesoros-ayacucho'
     | '/unete-al-equipo'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/galeria'
     | '/reservas'
     | '/restaurante'
+    | '/tesoros-ayacucho'
     | '/unete-al-equipo'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   GaleriaRoute: typeof GaleriaRoute
   ReservasRoute: typeof ReservasRoute
   RestauranteRoute: typeof RestauranteRoute
+  TesorosAyacuchoRoute: typeof TesorosAyacuchoRoute
   UneteAlEquipoRoute: typeof UneteAlEquipoRoute
 }
 
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/unete-al-equipo'
       fullPath: '/unete-al-equipo'
       preLoaderRoute: typeof UneteAlEquipoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tesoros-ayacucho': {
+      id: '/tesoros-ayacucho'
+      path: '/tesoros-ayacucho'
+      fullPath: '/tesoros-ayacucho'
+      preLoaderRoute: typeof TesorosAyacuchoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/restaurante': {
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   GaleriaRoute: GaleriaRoute,
   ReservasRoute: ReservasRoute,
   RestauranteRoute: RestauranteRoute,
+  TesorosAyacuchoRoute: TesorosAyacuchoRoute,
   UneteAlEquipoRoute: UneteAlEquipoRoute,
 }
 export const routeTree = rootRouteImport
