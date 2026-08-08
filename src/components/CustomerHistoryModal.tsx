@@ -393,8 +393,8 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                     </div>
                   </div>
                   
-                  {/* Botón de rastreo en vivo si es delivery y no está entregado */}
-                  {order.order_type === "delivery" && order.status !== "delivered" && (
+                  {/* Botón de rastreo en vivo SOLO si el pedido está activamente en camino */}
+                  {order.order_type === "delivery" && order.status === "en_camino" && (
                     <div className="pt-3">
                       <a 
                         href={`/rastreo/${order.id}`}

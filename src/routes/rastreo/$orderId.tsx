@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { DeliveryTrackingMap } from "@/components/DeliveryTrackingMap";
-import { Package, MapPin, Navigation2 } from "lucide-react";
+import { Package, MapPin, Navigation2, Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/rastreo/$orderId")({
   head: () => ({
@@ -9,15 +11,81 @@ export const Route = createFileRoute("/rastreo/$orderId")({
   component: ClientTrackingLink,
 });
 
+interface OrderDetails {
+  id: string;
+  order_number: string;
+  address: string;
+  reference: string;
+  latitude: number | null;
+  longitude: number | null;
+  status: string;
+}
+
 function ClientTrackingLink() {
   const { orderId } = Route.useParams();
-  
-  // Ubicaciones de prueba estáticas (en el mundo real vienen de la DB base al orderId)
-  const mockRestaurantLocation = { lat: -13.1611, lng: -74.2255 }; // Centro Ayacucho
-  const mockCustomerLocation = { lat: -13.165, lng: -74.220 }; 
+
+  const [order, setOrder] = useState<OrderDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const restaurantLocation = { lat: -13.1611, lng: -74.2255 }; // Centro Ayacucho (Restaurante Las Flores)
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      setLoading(true);
+      try {
+        const { data, error: err } = await supabase
+          .from("orders")
+          .select("id, order_number, address, reference, latitude, longitude, status")
+          .eq("id", orderId)
+          .single();
+
+        if (err || !data) {
+          setError("No pudimos encontrar la orden de compra especificada.");
+          return;
+        }
+
+        setOrder(data);
+      } catch (e) {
+        console.error("Error al cargar orden de rastreo:", e);
+        setError("Ocurrió un error al cargar la información del rastreo.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f8f4e6] flex flex-col items-center justify-center p-6 text-nogal">
+        <Loader2 size={40} className="animate-spin text-eucalipto mb-4" />
+        <p className="font-bold text-xs uppercase tracking-widest text-nogal/60">Cargando mapa de rastreo...</p>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <div className="min-h-screen bg-[#f8f4e6] flex flex-col items-center justify-center p-6 text-nogal">
+        <div className="bg-white p-8 rounded-3xl border border-nogal/10 shadow-xl max-w-sm text-center space-y-4">
+          <AlertTriangle size={40} className="text-amber-500 mx-auto" />
+          <h2 className="font-serif font-bold text-xl">Pedido No Encontrado</h2>
+          <p className="text-xs text-nogal/60 leading-relaxed">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isDelivered = (order.status || "").toLowerCase().includes("entregad") || (order.status || "").toLowerCase().includes("delivered");
+
+  const customerLocation = order.latitude && order.longitude
+    ? { lat: order.latitude, lng: order.longitude }
+    : { lat: -13.165, lng: -74.220 }; // Coordenada por defecto cerca al centro
 
   return (
-    <div className="min-h-screen bg-[#f8f4e6] text-[#2c2a29] font-sans flex flex-col pt-16 pb-12 px-4 md:px-10 selection:bg-chilca/20">
+    <div className="min-h-screen bg-[#f8f4e6] text-[#2c2a29] font-sans flex flex-col pt-12 pb-12 px-4 md:px-10 selection:bg-chilca/20">
       
       <div className="max-w-4xl mx-auto w-full flex flex-col gap-6 md:gap-8">
         
@@ -31,7 +99,7 @@ function ClientTrackingLink() {
               Experiencia Las Flores
             </span>
             <h1 className="font-serif italic text-4xl md:text-6xl text-nogal tracking-tight leading-[1.1]">
-              Tu pedido está <br />en camino.
+              {isDelivered ? "Pedido Entregado." : "Tu pedido está en camino."}
             </h1>
           </div>
           
@@ -41,18 +109,18 @@ function ClientTrackingLink() {
             </div>
             <div>
               <p className="text-[9px] uppercase font-bold text-nogal/40 tracking-[0.2em] mb-0.5">Orden de Compra</p>
-              <p className="text-sm font-bold text-nogal tracking-wide">{orderId}</p>
+              <p className="text-sm font-bold text-nogal tracking-wide">#{order.order_number || orderId}</p>
             </div>
           </div>
         </header>
 
-        {/* Mapa Google Maps */}
+        {/* Mapa Leaflet */}
         <section className="bg-white p-2 rounded-[2rem] shadow-2xl shadow-nogal/5 border border-nogal/5 relative z-10">
           <div className="relative rounded-[1.5rem] overflow-hidden bg-piedra">
             <DeliveryTrackingMap 
               orderId={orderId}
-              restaurantLocation={mockRestaurantLocation}
-              customerLocation={mockCustomerLocation}
+              restaurantLocation={restaurantLocation}
+              customerLocation={customerLocation}
             />
           </div>
         </section>
@@ -65,8 +133,10 @@ function ClientTrackingLink() {
             </div>
             <div>
               <h3 className="font-bold text-xs uppercase tracking-[0.15em] text-nogal/50 mb-2">Destino Registrado</h3>
-              <p className="text-nogal text-sm font-medium leading-relaxed">Jr. Asamblea 123, Ayacucho</p>
-              <p className="text-nogal/50 text-[11px] mt-1 italic">Ref: Cerca a la Plaza Sucre</p>
+              <p className="text-nogal text-sm font-medium leading-relaxed">{order.address || "Dirección no especificada"}</p>
+              {order.reference && (
+                <p className="text-nogal/50 text-[11px] mt-1 italic">Ref: {order.reference}</p>
+              )}
             </div>
           </div>
 

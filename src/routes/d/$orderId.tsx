@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { Navigation, CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink } from "lucide-react";
+import { Navigation, CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/d/$orderId")({
@@ -10,15 +10,27 @@ export const Route = createFileRoute("/d/$orderId")({
   }),
 });
 
+interface OrderData {
+  id: string;
+  order_number: string;
+  client_name: string;
+  client_phone: string;
+  address: string;
+  reference: string;
+  latitude: number | null;
+  longitude: number | null;
+  total: number;
+  status: string;
+  payment_method: string;
+  order_items?: { quantity: number; product_name: string; subtotal: number }[];
+}
+
 function DriverMagicLink() {
   const { orderId } = Route.useParams();
   
-  // En producción, esto vendría de Supabase filtrando por orderId
-  const mockCustomerData = {
-    address: "Jr. Asamblea 123, Ayacucho",
-    reference: "Cerca a la Plaza Sucre",
-    location: { lat: -13.165, lng: -74.220 }
-  };
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
+  const [loadingOrder, setLoadingOrder] = useState(true);
+  const [orderError, setOrderError] = useState<string | null>(null);
   const [deliveryPhase, setDeliveryPhase] = useState<'pending' | 'to_restaurant' | 'to_customer' | 'delivered'>('pending');
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,9 +38,45 @@ function DriverMagicLink() {
   const watchIdRef = useRef<number | null>(null);
   const channelRef = useRef<any>(null);
 
+  // Cargar datos reales del pedido desde Supabase
   useEffect(() => {
+    const fetchOrder = async () => {
+      setLoadingOrder(true);
+      try {
+        const { data: order, error: fetchErr } = await supabase
+          .from("orders")
+          .select("*, order_items(*)")
+          .eq("id", orderId)
+          .single();
+
+        if (fetchErr || !order) {
+          setOrderError("Pedido no encontrado. Verifica el enlace.");
+          return;
+        }
+
+        // Si el pedido ya fue entregado, mostrar pantalla de completado
+        const normalizedStatus = (order.status || "").toLowerCase();
+        if (normalizedStatus.includes("entregad") || normalizedStatus.includes("delivered") || normalizedStatus.includes("complet")) {
+          setDeliveryPhase('delivered');
+        }
+
+        setOrderData(order);
+      } catch (err) {
+        console.error(err);
+        setOrderError("Error de conexión. Intenta recargar la página.");
+      } finally {
+        setLoadingOrder(false);
+      }
+    };
+
+    fetchOrder();
     return () => stopBroadcasting();
-  }, []);
+  }, [orderId]);
+
+  // Datos del destino de entrega
+  const customerLocation = orderData?.latitude && orderData?.longitude 
+    ? { lat: orderData.latitude, lng: orderData.longitude }
+    : null;
 
   const startBroadcasting = async () => {
     setError(null);
@@ -38,7 +86,6 @@ function DriverMagicLink() {
     }
 
     try {
-      // 1. Inicializar canal primero
       const channelName = `delivery_tracking_${orderId}`;
       const channel = supabase.channel(channelName, {
         config: { broadcast: { self: true, ack: false } },
@@ -46,21 +93,17 @@ function DriverMagicLink() {
 
       channelRef.current = channel;
       
-      // Suscribirse y esperar a estar conectado
       channel.subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          // 2. Intentar pedir GPS solo cuando el canal esté listo
           navigator.geolocation.getCurrentPosition(
             (pos) => {
               setIsBroadcasting(true);
-              // Emitir la primera posición
               channel.send({
                 type: "broadcast",
                 event: "location_update",
                 payload: { lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now() },
               });
               
-              // Emitir nuevo estado
               channel.send({
                 type: "broadcast",
                 event: "status_update",
@@ -69,7 +112,6 @@ function DriverMagicLink() {
 
               setDeliveryPhase('to_restaurant');
 
-              // Activar seguimiento continuo
               watchIdRef.current = navigator.geolocation.watchPosition(
                 (position) => {
                   const { latitude, longitude } = position.coords;
@@ -122,9 +164,8 @@ function DriverMagicLink() {
     }
   };
 
-  const markDelivered = () => {
-    stopBroadcasting();
-    setDeliveryPhase('delivered');
+  const markDelivered = async () => {
+    // Emitir estado antes de desconectar
     if (channelRef.current) {
       channelRef.current.send({
         type: "broadcast",
@@ -132,18 +173,56 @@ function DriverMagicLink() {
         payload: { status: 'delivered', timestamp: Date.now() }
       });
     }
-    // TODO: Llamada a la DB real
+
+    stopBroadcasting();
+    setDeliveryPhase('delivered');
+
+    // Actualizar estado del pedido en Supabase
+    try {
+      await supabase
+        .from("orders")
+        .update({ status: "entregado" })
+        .eq("id", orderId);
+    } catch (err) {
+      console.error("Error al actualizar estado en DB:", err);
+    }
   };
 
+  // Estado: Cargando datos del pedido
+  if (loadingOrder) {
+    return (
+      <div className="min-h-screen bg-[#f8f4e6] flex items-center justify-center p-6">
+        <div className="text-center space-y-4">
+          <Loader2 size={40} className="animate-spin text-eucalipto mx-auto" />
+          <p className="text-sm font-bold text-nogal/60 uppercase tracking-widest">Cargando pedido...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Estado: Error (pedido no encontrado)
+  if (orderError || !orderData) {
+    return (
+      <div className="min-h-screen bg-[#f8f4e6] flex items-center justify-center p-6">
+        <div className="max-w-sm bg-white rounded-3xl p-8 text-center shadow-xl border border-nogal/10 space-y-4">
+          <AlertTriangle size={40} className="text-amber-500 mx-auto" />
+          <h2 className="font-serif text-xl font-bold text-nogal">Enlace no válido</h2>
+          <p className="text-sm text-nogal/60">{orderError || "No se pudo cargar el pedido."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Estado: Entregado
   if (deliveryPhase === 'delivered') {
     return (
       <div className="min-h-screen bg-eucalipto flex flex-col items-center justify-center p-6 text-center text-piedra animate-in fade-in zoom-in duration-500">
         <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mb-6">
           <CheckCircle2 size={48} className="text-chilca" />
         </div>
-        <h1 className="text-3xl font-serif mb-2">¡Misión Cumplida!</h1>
+        <h1 className="text-3xl font-serif mb-2">Mision Cumplida</h1>
         <p className="text-piedra/70 text-sm max-w-xs mx-auto">
-          El pedido ha sido marcado como entregado. La transmisión GPS se ha cerrado de forma segura.
+          El pedido #{orderData.order_number} ha sido marcado como entregado. La transmision GPS se ha cerrado de forma segura.
         </p>
       </div>
     );
@@ -160,20 +239,40 @@ function DriverMagicLink() {
           <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-chilca mb-1 block">
             Ruta Asignada
           </span>
-          <h2 className="text-2xl font-serif font-bold">{orderId}</h2>
+          <h2 className="text-2xl font-serif font-bold">#{orderData.order_number}</h2>
         </div>
 
         {/* Cuerpo */}
-        <div className="p-6 md:p-8 flex flex-col gap-6 text-center">
+        <div className="p-6 md:p-8 flex flex-col gap-5 text-center">
           {/* Información del Cliente */}
-          <div className="bg-piedra/30 rounded-2xl p-4 text-left border border-nogal/5 flex gap-4">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm">
-              <MapPin className="text-nogal" size={20} />
+          <div className="bg-piedra/30 rounded-2xl p-4 text-left border border-nogal/5 space-y-3">
+            <div className="flex gap-4">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                <MapPin className="text-nogal" size={20} />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-nogal/50 mb-1">Entregar en:</p>
+                <p className="font-bold text-sm text-nogal">{orderData.address || "Sin direccion especificada"}</p>
+                {orderData.reference && (
+                  <p className="text-xs text-nogal/60 mt-0.5">Ref: {orderData.reference}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-nogal/50 mb-1">Entregar en:</p>
-              <p className="font-bold text-sm text-nogal">{mockCustomerData.address}</p>
-              <p className="text-xs text-nogal/60 mt-0.5">{mockCustomerData.reference}</p>
+            
+            {/* Resumen del pedido */}
+            <div className="border-t border-nogal/10 pt-3 space-y-1.5">
+              <p className="text-[10px] uppercase font-bold tracking-widest text-nogal/50">Detalle del pedido:</p>
+              {orderData.order_items?.map((item, idx) => (
+                <div key={idx} className="flex justify-between text-xs">
+                  <span className="text-nogal/80">{item.quantity}x {item.product_name}</span>
+                  <span className="font-bold text-nogal">S/ {Number(item.subtotal).toFixed(2)}</span>
+                </div>
+              ))}
+              <div className="flex justify-between text-sm font-bold border-t border-nogal/10 pt-2 mt-2">
+                <span className="text-nogal">Total a cobrar:</span>
+                <span className="text-eucalipto">S/ {Number(orderData.total).toFixed(2)}</span>
+              </div>
+              <p className="text-[10px] text-nogal/50 uppercase font-bold">Pago: {orderData.payment_method || "Yape / Plin"}</p>
             </div>
           </div>
 
@@ -187,7 +286,7 @@ function DriverMagicLink() {
           {deliveryPhase === 'pending' && (
             <>
               <p className="text-nogal/70 text-sm leading-relaxed">
-                Abre este enlace únicamente cuando estés listo para salir hacia el restaurante a recoger el pedido.
+                Abre este enlace unicamente cuando estes listo para salir hacia el restaurante a recoger el pedido.
               </p>
               <button 
                 onClick={startBroadcasting}
@@ -206,7 +305,7 @@ function DriverMagicLink() {
                   En camino a recoger
                 </p>
                 <p className="text-[11px] text-nogal/60 mt-2">
-                  Dirígete al restaurante. Tu ubicación ya está siendo transmitida.
+                  Dirigete al restaurante. Tu ubicacion ya esta siendo transmitida.
                 </p>
               </div>
 
@@ -215,7 +314,7 @@ function DriverMagicLink() {
                 className="w-full py-4 mt-2 bg-nogal hover:bg-nogal/90 text-piedra rounded-2xl font-bold text-sm uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
               >
                 <Package size={20} />
-                Pedido Recogido (Ir al cliente)
+                Pedido Recogido
               </button>
             </div>
           )}
@@ -228,28 +327,30 @@ function DriverMagicLink() {
                   En camino al destino
                 </p>
                 <p className="text-[11px] text-nogal/60 mt-2">
-                  El cliente está viendo tu progreso. Dirígete a la dirección de entrega.
+                  El cliente esta viendo tu progreso. Dirigete a la direccion de entrega.
                 </p>
               </div>
 
-              <div className="flex gap-2">
-                <a 
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${mockCustomerData.location.lat},${mockCustomerData.location.lng}`}
-                  target="_blank" rel="noreferrer"
-                  className="flex-1 py-3 bg-white border border-nogal/10 hover:bg-piedra text-nogal rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm active:scale-95 flex flex-col items-center justify-center gap-1"
-                >
-                  <ExternalLink size={16} className="mb-1" />
-                  Google Maps
-                </a>
-                <a 
-                  href={`https://waze.com/ul?ll=${mockCustomerData.location.lat},${mockCustomerData.location.lng}&navigate=yes`}
-                  target="_blank" rel="noreferrer"
-                  className="flex-1 py-3 bg-white border border-nogal/10 hover:bg-piedra text-nogal rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm active:scale-95 flex flex-col items-center justify-center gap-1"
-                >
-                  <ExternalLink size={16} className="mb-1" />
-                  Waze
-                </a>
-              </div>
+              {customerLocation && (
+                <div className="flex gap-2">
+                  <a 
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${customerLocation.lat},${customerLocation.lng}`}
+                    target="_blank" rel="noreferrer"
+                    className="flex-1 py-3 bg-white border border-nogal/10 hover:bg-piedra text-nogal rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm active:scale-95 flex flex-col items-center justify-center gap-1"
+                  >
+                    <ExternalLink size={16} className="mb-1" />
+                    Google Maps
+                  </a>
+                  <a 
+                    href={`https://waze.com/ul?ll=${customerLocation.lat},${customerLocation.lng}&navigate=yes`}
+                    target="_blank" rel="noreferrer"
+                    className="flex-1 py-3 bg-white border border-nogal/10 hover:bg-piedra text-nogal rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm active:scale-95 flex flex-col items-center justify-center gap-1"
+                  >
+                    <ExternalLink size={16} className="mb-1" />
+                    Waze
+                  </a>
+                </div>
+              )}
 
               <button 
                 onClick={markDelivered}
