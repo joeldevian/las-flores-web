@@ -248,7 +248,7 @@ function TesorosAyacuchoPage() {
       </header>
 
       {/* Tabs de Temporadas */}
-      <section className="bg-white border-b border-nogal/10 sticky top-20 z-30">
+      <section className="bg-white border-b border-nogal/10">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-4">
             {Object.keys(productosPorTemporada).map((temporada) => (
