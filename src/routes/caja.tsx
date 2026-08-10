@@ -9,6 +9,7 @@ import { CashierKPIHeader } from "../components/CashierKPIHeader";
 import { CashierKanbanView } from "../components/CashierKanbanView";
 import { CashierListView } from "../components/CashierListView";
 import { CashierAuditModal } from "../components/CashierAuditModal";
+import { CashierStockModal } from "../components/CashierStockModal";
 import {
   Search,
   RefreshCw,
@@ -20,6 +21,7 @@ import {
   LayoutGrid,
   List,
   TrendingUp,
+  PackageX,
 } from "lucide-react";
 
 const getLocalYYYYMMDD = (d?: Date | string) => {
@@ -130,6 +132,7 @@ function CashierDashboardRoute() {
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false);
 
   // Floating Toast Alerts
   const [newOrderNotification, setNewOrderNotification] = useState<any | null>(null);
@@ -554,6 +557,14 @@ function CashierDashboardRoute() {
             >
               <TrendingUp size={16} className="text-[#2D473C]" />
               <span>Arqueo de Caja</span>
+            </button>
+
+            <button
+              onClick={() => setIsStockModalOpen(true)}
+              className="py-2.5 px-4 rounded-xl text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 bg-[#2D473C]/10 text-[#2D473C] hover:bg-[#2D473C]/20 border border-[#2D473C]/30 cursor-pointer shadow-2xs"
+            >
+              <PackageX size={16} className="text-[#2D473C]" />
+              <span>Control de Stock</span>
             </button>
           </div>
 
@@ -1096,6 +1107,12 @@ function CashierDashboardRoute() {
         isOpen={isAuditModalOpen}
         onClose={() => setIsAuditModalOpen(false)}
         orders={orders}
+      />
+
+      {/* Control de Stock y Agotados Modal */}
+      <CashierStockModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
       />
 
     </div>
