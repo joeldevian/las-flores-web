@@ -76,22 +76,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Restaurante Las Flores — Cocina ayacuchana de autor" },
+      { title: "Restaurante Las Flores — El Mejor Restaurante en Ayacucho | Comida Típica & Parrillas" },
       {
         name: "description",
         content:
-          "Tres generaciones celebrando la tradición culinaria de Ayacucho. Reservas, delivery y una experiencia sensorial en el corazón de los Andes.",
+          "Descubre el mejor restaurante en Ayacucho. Restaurante Las Flores ofrece platos típicos ayacuchanos (Puca Picante, Cuy, Mondongo), cocina de autor y ambiente acogedor en Jr. José Olaya 106. ¡Reserva tu mesa o pide delivery!",
+      },
+      {
+        name: "keywords",
+        content:
+          "restaurante las flores, restaurante las flores ayacucho, restaurantes ayacucho, mejor restaurante ayacucho, donde comer en ayacucho, comida tipica ayacuchana, puca picante ayacucho, cuy ayacucho, delivery ayacucho, reservas restaurante ayacucho",
       },
       { name: "author", content: "Restaurante Las Flores" },
-      { property: "og:title", content: "Restaurante Las Flores — Ayacucho" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:title", content: "Restaurante Las Flores — El Mejor Restaurante en Ayacucho" },
       {
         property: "og:description",
-        content: "Cocina ayacuchana de autor. Tres generaciones, un mismo respeto por la tierra.",
+        content: "Cocina ayacuchana de autor y platos típicos de tradición. Reservas en línea y delivery en Ayacucho.",
       },
-      { property: "og:type", content: "website" },
+      { property: "og:type", content: "restaurant" },
+      { property: "og:url", content: "https://www.restaurantelasflores.com/" },
+      { property: "og:site_name", content: "Restaurante Las Flores Ayacucho" },
+      { property: "og:locale", content: "es_PE" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "geo.region", content: "PE-AYA" },
+      { name: "geo.placename", content: "Ayacucho, Huamanga" },
+      { name: "geo.position", content: "-13.1611;-74.2236" },
+      { name: "ICBM", content: "-13.1611, -74.2236" },
     ],
     links: [
+      { rel: "canonical", href: "https://www.restaurantelasflores.com/" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -112,11 +126,57 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const restaurantSchema = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Restaurante Las Flores",
+  "alternateName": ["Las Flores Ayacucho", "Restaurante Las Flores Ayacucho"],
+  "image": "https://www.restaurantelasflores.com/gastronomia/Puca-picante.webp",
+  "@id": "https://www.restaurantelasflores.com/#restaurant",
+  "url": "https://www.restaurantelasflores.com/",
+  "telephone": "+51980723422",
+  "priceRange": "S/ 25 - S/ 70",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Jr. José Olaya 106",
+    "addressLocality": "Huamanga",
+    "addressRegion": "Ayacucho",
+    "postalCode": "05001",
+    "addressCountry": "PE"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": -13.1611,
+    "longitude": -74.2236
+  },
+  "servesCuisine": [
+    "Peruana",
+    "Típica Ayacuchana",
+    "Parrillas",
+    "Desayunos Ayacuchanos"
+  ],
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "07:30",
+      "closes": "22:00"
+    }
+  ],
+  "acceptsReservations": "True",
+  "menu": "https://www.restaurantelasflores.com/carta",
+  "hasMenu": "https://www.restaurantelasflores.com/carta"
+};
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantSchema) }}
+        />
       </head>
       <body className="overflow-x-hidden">
         {children}
