@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/d/$orderId")({
@@ -34,6 +34,7 @@ function DriverMagicLink() {
   const [deliveryPhase, setDeliveryPhase] = useState<'pending' | 'to_restaurant' | 'to_customer' | 'delivered'>('pending');
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [gpsBlocked, setGpsBlocked] = useState(false);
   
   const watchIdRef = useRef<number | null>(null);
   const channelRef = useRef<any>(null);
@@ -78,9 +79,55 @@ function DriverMagicLink() {
     ? { lat: orderData.latitude, lng: orderData.longitude }
     : null;
 
+  const requestGPSPermission = () => {
+    setError(null);
+    if (!navigator.geolocation) {
+      setError("Tu navegador no soporta geolocalización por GPS.");
+      setGpsBlocked(true);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGpsBlocked(false);
+        setError(null);
+        const { latitude: lat, longitude: lng } = pos.coords;
+        
+        if (channelRef.current) {
+          channelRef.current.send({
+            type: "broadcast",
+            event: "location_update",
+            payload: { lat, lng, timestamp: Date.now() },
+          });
+        }
+
+        if (watchIdRef.current === null) {
+          watchIdRef.current = navigator.geolocation.watchPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              if (channelRef.current) {
+                channelRef.current.send({
+                  type: "broadcast",
+                  event: "location_update",
+                  payload: { lat: latitude, lng: longitude, timestamp: Date.now() },
+                });
+              }
+            },
+            (err) => console.warn("GPS Watch warning:", err.message),
+            { enableHighAccuracy: true, maximumAge: 5000, timeout: 5000 }
+          );
+        }
+      },
+      (err) => {
+        console.warn("GPS Permission error:", err.message);
+        setGpsBlocked(true);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: Infinity }
+    );
+  };
+
   const startBroadcasting = async () => {
     setError(null);
-    // Avanzar de fase inmediatamente sin bloquear al usuario
     setDeliveryPhase('to_restaurant');
 
     try {
@@ -105,42 +152,8 @@ function DriverMagicLink() {
       console.warn("Realtime error:", e);
     }
 
-    // Intentar activar GPS (sin bloquear si no hay permiso o falla el sensor)
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if (channelRef.current) {
-            channelRef.current.send({
-              type: "broadcast",
-              event: "location_update",
-              payload: { lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now() },
-            });
-          }
-
-          watchIdRef.current = navigator.geolocation.watchPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              if (channelRef.current) {
-                channelRef.current.send({
-                  type: "broadcast",
-                  event: "location_update",
-                  payload: { lat: latitude, lng: longitude, timestamp: Date.now() },
-                });
-              }
-            },
-            (err) => {
-              console.warn("GPS Watch warning:", err.message);
-            },
-            { enableHighAccuracy: true, maximumAge: 5000, timeout: 5000 }
-          );
-        },
-        (err) => {
-          console.warn("GPS Warning:", err.message);
-          setError("Ubicación GPS no activa o bloqueada por el navegador. Las funciones seguirán operando manualmente.");
-        },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: Infinity }
-      );
-    }
+    // Solicitar GPS sin bloquear el avance
+    requestGPSPermission();
   };
 
   const stopBroadcasting = () => {
@@ -225,7 +238,7 @@ function DriverMagicLink() {
   }
 
   // Estado 3: Enlace Colapsado / Pedido Completado o Cancelado
-  if (deliveryPhase === 'delivered' || ["entregado", "delivered", "cancelado", "cancelled"].includes((orderData.status || "").toLowerCase().trim())) {
+  if (deliveryPhase === 'delivered' || ["entregado", "delivered", "completado", "cancelado", "cancelled"].includes((orderData.status || "").toLowerCase().trim())) {
     return (
       <div className="min-h-screen bg-[#f8f4e6] flex flex-col items-center justify-center p-6 text-center text-nogal font-sans">
         <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-nogal/10 text-center space-y-5">
@@ -309,7 +322,28 @@ function DriverMagicLink() {
             </div>
           </div>
 
-          {error && (
+          {/* Banner interactivo de activación de GPS cuando está bloqueado */}
+          {gpsBlocked && (
+            <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl text-left space-y-2.5 animate-in fade-in duration-300 shadow-sm">
+              <div className="flex items-center gap-2 font-bold text-amber-950 text-xs">
+                <MapPinOff size={18} className="text-amber-600 shrink-0" />
+                <span>Ubicación GPS Desactivada o Bloqueada</span>
+              </div>
+              <p className="text-[11px] text-amber-900 leading-relaxed">
+                Para que el cliente vea tu movimiento en vivo sobre el mapa, presiona el botón para permitir el acceso a tu ubicación GPS.
+              </p>
+              <button
+                type="button"
+                onClick={requestGPSPermission}
+                className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-95"
+              >
+                <Navigation size={15} />
+                Activar GPS en mi celular
+              </button>
+            </div>
+          )}
+
+          {error && !gpsBlocked && (
             <div className="bg-amber-50 text-amber-800 p-3.5 rounded-2xl text-xs font-medium border border-amber-200 flex gap-2.5 text-left items-start">
               <AlertTriangle size={16} className="shrink-0 mt-0.5 text-amber-600" />
               <span>{error}</span>
