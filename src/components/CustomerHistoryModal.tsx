@@ -393,18 +393,22 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                     </div>
                   </div>
                   
-                  {/* Botón de rastreo en vivo SOLO si el pedido está activamente en camino */}
-                  {order.order_type === "delivery" && (order.status === "en_camino" || order.status === "on_the_way") && (
-                    <div className="pt-3">
-                      <a 
-                        href={`/rastreo/${order.id}`}
-                        target="_blank" rel="noreferrer"
-                        className="w-full py-2.5 bg-eucalipto hover:bg-eucalipto/90 text-piedra rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2"
-                      >
-                        <MapPin size={14} />
-                        Rastrear Pedido en Vivo
-                      </a>
-                    </div>
+                  {/* Botón de rastreo en vivo para pedidos de Delivery ACTIVOS (Pendiente, En Cocina, En Camino) */}
+                  {order.order_type === "delivery" &&
+                    !["entregado", "delivered", "cancelado", "cancelled"].includes(
+                      (order.status || "").toLowerCase().trim()
+                    ) && (
+                      <div className="pt-3">
+                        <a 
+                          href={`/rastreo/${order.id}`}
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="w-full py-2.5 bg-eucalipto hover:bg-eucalipto/90 text-piedra rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <MapPin size={14} />
+                          Rastrear Pedido en Vivo
+                        </a>
+                      </div>
                   )}
                 </div>
               ))
