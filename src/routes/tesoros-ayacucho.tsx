@@ -43,7 +43,7 @@ const productosPorTemporada: Record<string, Producto[]> = {
         "Fruto del nopal, dulce y refrescante. Rico en vitamina C y fibra. Se consume fresco o en jugos y mermeladas.",
       temporada: "Verano",
       meses: "Diciembre - Marzo",
-      imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp",
+      imagen: "/imagenes-reales/productosAyacucho/Tuna.webp",
       usos: ["Fresco", "Jugos", "Mermeladas", "Postres"],
     },
     {
@@ -53,7 +53,7 @@ const productosPorTemporada: Record<string, Producto[]> = {
         "Fruta dulce y jugosa de pulpa anaranjada. Excelente fuente de vitamina A y antioxidantes.",
       temporada: "Verano",
       meses: "Enero - Marzo",
-      imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp",
+      imagen: "/imagenes-reales/productosAyacucho/Níspero.webp",
       usos: ["Fresco", "Jugos", "Compotas", "Ensaladas de frutas"],
     },
   ],
@@ -65,7 +65,7 @@ const productosPorTemporada: Record<string, Producto[]> = {
         "Variedades ancestrales de papa con colores y sabores únicos. Base fundamental de la gastronomía ayacuchana.",
       temporada: "Otoño",
       meses: "Abril - Junio",
-      imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp",
+      imagen: "/imagenes-reales/productosAyacucho/Papa-Nativa.webp",
       usos: ["Guisos", "Sopas", "Puca picante", "Papas fritas"],
     },
     {
@@ -75,7 +75,7 @@ const productosPorTemporada: Record<string, Producto[]> = {
         "Grano andino considerado superalimento. Rico en proteínas y minerales esenciales.",
       temporada: "Otoño",
       meses: "Mayo - Julio",
-      imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp",
+      imagen: "/imagenes-reales/productosAyacucho/Quinoa.webp",
       usos: ["Sopas", "Ensaladas", "Guarniciones", "Postres"],
     },
   ],
@@ -87,7 +87,7 @@ const productosPorTemporada: Record<string, Producto[]> = {
         "Cactus cuya fruta produce un colorante natural rojo intenso. Usado en bebidas tradicionales.",
       temporada: "Invierno",
       meses: "Junio - Agosto",
-      imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp",
+      imagen: "/imagenes-reales/productosAyacucho/Airampo.webp",
       usos: ["Bebidas", "Colorante natural", "Postres", "Chicha"],
     },
   ],
@@ -99,7 +99,7 @@ const productosPorTemporada: Record<string, Producto[]> = {
         "Legumbre tierna y nutritiva. Se consume en sopas, guisos y como acompañamiento.",
       temporada: "Primavera",
       meses: "Septiembre - Noviembre",
-      imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVAL AYACUCHANO/02042026-DSC04656.webp",
+      imagen: "/imagenes-reales/productosAyacucho/Habas-Verdes.webp",
       usos: ["Sopas", "Guisos", "Ensaladas", "Saltados"],
     },
   ],
@@ -248,7 +248,7 @@ function TesorosAyacuchoPage() {
       </header>
 
       {/* Tabs de Temporadas */}
-      <section className="bg-white border-b border-nogal/10 sticky top-20 z-30">
+      <section className="bg-white border-b border-nogal/10">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-4">
             {Object.keys(productosPorTemporada).map((temporada) => (

@@ -249,7 +249,7 @@
 }
 
 .dish-card-hover:hover {
-  transform: rotate(-2.5deg) scale(1.04);
+  transform: scale(1.04);
   box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7);
 }
 
@@ -258,7 +258,7 @@
 }
 
 .dish-card-hover:hover img {
-  transform: scale(1.12) rotate(1.5deg);
+  transform: scale(1.12);
 }
 
 .dish-card-overlay {
@@ -266,18 +266,20 @@
   inset: 0;
   background: linear-gradient(to top, rgba(15, 10, 15, 0.95) 0%, rgba(15, 10, 15, 0.6) 60%, rgba(15, 10, 15, 0.2) 100%);
   opacity: 0;
-  transform: rotate(-12deg) scale(0.9);
+  transform: scale(0.95);
   transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.25rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
   z-index: 10;
 }
 
 .dish-card-hover:hover .dish-card-overlay {
   opacity: 1;
-  transform: rotate(0deg) scale(1);
+  transform: scale(1);
 }
 
 /* Scrollbars estilizadas sin tracks o flechas toscas */
