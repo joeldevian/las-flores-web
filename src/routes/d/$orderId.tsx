@@ -108,11 +108,21 @@ function DriverMagicLink() {
           payload: { status: 'to_restaurant', timestamp: Date.now() }
         });
       } catch (e) {
-        console.warn("Broadcast error:", e);
+        // Broadcast no crítico
       }
     }
 
-    setProcessingState(false);
+    // Persistir en la BD para que el motorizado no pierda progreso al refrescar
+    try {
+      await supabase
+        .from("orders")
+        .update({ status: "en_preparacion" })
+        .eq("id", orderId);
+    } catch (err) {
+      console.error("Error al actualizar estado en DB:", err);
+    } finally {
+      setProcessingState(false);
+    }
   };
 
   const markPickedUp = async () => {

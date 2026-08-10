@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Store,
 } from "lucide-react";
+import { isCancelledStatus } from "../lib/orderStatus";
 
 interface CashierAuditModalProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
   const filteredOrders = orders.filter((o) => {
     if (!o.created_at) return false;
     const orderDate = getYYYYMMDD(o.created_at);
-    return orderDate === selectedDate && o.status !== "cancelado";
+    return orderDate === selectedDate && !isCancelledStatus(o.status);
   });
 
   // Cálculos de montos

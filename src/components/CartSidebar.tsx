@@ -397,7 +397,29 @@ export function CartSidebar() {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setProcessing(true);
-    const orderNum = `LF-${Date.now().toString().slice(-6)}`;
+
+    // Validar disponibilidad de productos antes de confirmar el pedido
+    try {
+      const productNames = items.map((i) => i.name);
+      const { data: availableProducts } = await supabase
+        .from("products")
+        .select("name, is_available")
+        .in("name", productNames);
+
+      if (availableProducts && availableProducts.length > 0) {
+        const unavailable = availableProducts.filter((p) => p.is_available === false);
+        if (unavailable.length > 0) {
+          const names = unavailable.map((p) => p.name).join(", ");
+          alert(`Los siguientes platos se agotaron mientras realizabas tu pedido: ${names}. Por favor, retíralos del carrito.`);
+          setProcessing(false);
+          return;
+        }
+      }
+    } catch (stockErr) {
+      // Si no se puede verificar stock, continuar con el pedido
+    }
+
+    const orderNum = `LF-${Date.now().toString(36).toUpperCase().slice(-6)}`;
     try {
       const createdOrd = await createOrder({
         order_number: orderNum,
