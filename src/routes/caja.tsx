@@ -8,6 +8,7 @@ import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
 import { CashierKPIHeader } from "../components/CashierKPIHeader";
 import { CashierKanbanView } from "../components/CashierKanbanView";
 import { CashierListView } from "../components/CashierListView";
+import { CashierAuditModal } from "../components/CashierAuditModal";
 import {
   Search,
   RefreshCw,
@@ -18,6 +19,7 @@ import {
   Columns3,
   LayoutGrid,
   List,
+  TrendingUp,
 } from "lucide-react";
 
 const getLocalYYYYMMDD = (d?: Date | string) => {
@@ -127,6 +129,7 @@ function CashierDashboardRoute() {
   // Modal
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
 
   // Floating Toast Alerts
   const [newOrderNotification, setNewOrderNotification] = useState<any | null>(null);
@@ -519,8 +522,8 @@ function CashierDashboardRoute() {
         {/* View Mode Switcher Header Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-2 rounded-2xl border border-gray-200 shadow-2xs">
           
-          {/* Main Module Switcher (Comandas vs Reservas) */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          {/* Main Module Switcher (Comandas vs Reservas vs Arqueo) */}
+          <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
             <button
               onClick={() => setViewMode("orders")}
               className={`flex-1 sm:flex-none py-2.5 px-5 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
@@ -543,6 +546,14 @@ function CashierDashboardRoute() {
             >
               <Calendar size={16} className={viewMode === "reservations" ? "text-[#D4AF37]" : "text-gray-400"} />
               <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
+            </button>
+
+            <button
+              onClick={() => setIsAuditModalOpen(true)}
+              className="py-2.5 px-4 rounded-xl text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 bg-[#D4AF37]/15 text-[#2D473C] hover:bg-[#D4AF37]/25 border border-[#D4AF37]/40 cursor-pointer shadow-2xs"
+            >
+              <TrendingUp size={16} className="text-[#2D473C]" />
+              <span>📊 Arqueo de Caja</span>
             </button>
           </div>
 
@@ -1078,6 +1089,13 @@ function CashierDashboardRoute() {
         onClose={() => setIsDetailModalOpen(false)}
         order={selectedOrder}
         onStatusChange={handleUpdateOrderStatus}
+      />
+
+      {/* Arqueo y Cierre de Caja Modal */}
+      <CashierAuditModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+        orders={orders}
       />
 
     </div>
