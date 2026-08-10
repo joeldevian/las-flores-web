@@ -553,7 +553,7 @@ function CashierDashboardRoute() {
               className="py-2.5 px-4 rounded-xl text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 bg-[#D4AF37]/15 text-[#2D473C] hover:bg-[#D4AF37]/25 border border-[#D4AF37]/40 cursor-pointer shadow-2xs"
             >
               <TrendingUp size={16} className="text-[#2D473C]" />
-              <span>📊 Arqueo de Caja</span>
+              <span>Arqueo de Caja</span>
             </button>
           </div>
 

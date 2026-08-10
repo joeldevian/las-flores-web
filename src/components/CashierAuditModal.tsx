@@ -5,13 +5,11 @@ import {
   Download,
   Banknote,
   CreditCard,
-  Smartphone,
   Truck,
   Calendar,
   ShoppingBag,
-  CheckCircle2,
-  DollarSign,
   TrendingUp,
+  Store,
 } from "lucide-react";
 
 interface CashierAuditModalProps {
@@ -115,19 +113,19 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6 bg-nogal/75 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-[#fcfaf5] w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl border border-nogal/15 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6 bg-[#2c4a3e]/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="bg-[#fbf5e6] w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl border border-[#2c4a3e]/20 flex flex-col overflow-hidden">
         {/* Encabezado del Modal */}
-        <div className="bg-nogal text-white p-5 px-6 flex items-center justify-between shadow-md print:hidden">
+        <div className="bg-[#2c4a3e] text-white p-5 px-6 flex items-center justify-between shadow-md print:hidden">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-chilca/20 flex items-center justify-center border border-chilca/30">
-              <TrendingUp size={22} className="text-chilca" />
+            <div className="w-10 h-10 rounded-2xl bg-[#d4af37]/20 flex items-center justify-center border border-[#d4af37]/40">
+              <TrendingUp size={22} className="text-[#d4af37]" />
             </div>
             <div>
-              <h2 className="font-serif font-bold text-lg leading-tight tracking-wide text-crema">
+              <h2 className="font-serif font-bold text-lg leading-tight tracking-wide text-[#fbf5e6]">
                 Arqueo y Cierre de Caja
               </h2>
-              <p className="text-xs text-white/60">
+              <p className="text-xs text-white/70">
                 Resumen contable y rendimiento diario de comandas
               </p>
             </div>
@@ -135,8 +133,8 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
 
           <div className="flex items-center gap-3">
             {/* Filtro de Fecha */}
-            <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/15">
-              <Calendar size={15} className="text-chilca" />
+            <div className="flex items-center gap-2 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/20">
+              <Calendar size={15} className="text-[#d4af37]" />
               <input
                 type="date"
                 value={selectedDate}
@@ -159,87 +157,87 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
           {/* Encabezado visible en Impresión */}
           <div className="hidden print:block text-center border-b pb-4 mb-4">
             <h1 className="text-xl font-bold font-serif text-black">RESTAURANTE LAS FLORES</h1>
-            <p className="text-xs text-black/70">REPORTE DE ARQUEO Y CIERRE DE CAJA</p>
-            <p className="text-xs font-mono mt-1">Fecha: {selectedDate}</p>
+            <p className="text-xs text-black/70 uppercase tracking-widest font-bold">REPORTE DE ARQUEO Y CIERRE DE CAJA</p>
+            <p className="text-xs font-mono mt-1">Fecha de Cierre: {selectedDate}</p>
           </div>
 
           {/* Tarjetas de KPI */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 print:grid-cols-2 print:gap-2">
-            {/* 💵 Total Efectivo a Rendir */}
-            <div className="bg-white p-4 rounded-2xl border border-nogal/10 shadow-xs flex flex-col justify-between space-y-2">
+            {/* Total Efectivo a Rendir */}
+            <div className="bg-white p-5 rounded-2xl border border-black/10 shadow-xs flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-nogal/50 tracking-wider">
+                <span className="text-[10px] uppercase font-extrabold text-black/50 tracking-wider">
                   Efectivo a Rendir
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200/60">
                   <Banknote size={18} />
                 </div>
               </div>
               <div>
-                <span className="text-2xl font-serif font-extrabold text-emerald-700 block">
+                <span className="text-2xl font-serif font-extrabold text-emerald-800 block">
                   S/ {totalCash.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-nogal/50 font-medium">
+                <span className="text-[10px] text-black/50 font-medium">
                   Cobrado en efectivo por motorizados
                 </span>
               </div>
             </div>
 
-            {/* 💳 Total Pagado Online */}
-            <div className="bg-white p-4 rounded-2xl border border-nogal/10 shadow-xs flex flex-col justify-between space-y-2">
+            {/* Total Pagado Online */}
+            <div className="bg-white p-5 rounded-2xl border border-black/10 shadow-xs flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-nogal/50 tracking-wider">
+                <span className="text-[10px] uppercase font-extrabold text-black/50 tracking-wider">
                   Cobrado Online
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
-                  <Smartphone size={18} />
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-200/60">
+                  <CreditCard size={18} />
                 </div>
               </div>
               <div>
-                <span className="text-2xl font-serif font-extrabold text-purple-700 block">
+                <span className="text-2xl font-serif font-extrabold text-purple-800 block">
                   S/ {totalOnline.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-nogal/50 font-medium">
+                <span className="text-[10px] text-black/50 font-medium">
                   Yape, Plin y Tarjeta de Crédito
                 </span>
               </div>
             </div>
 
-            {/* 🛵 Total Comisiones Delivery */}
-            <div className="bg-white p-4 rounded-2xl border border-nogal/10 shadow-xs flex flex-col justify-between space-y-2">
+            {/* Total Comisiones Delivery */}
+            <div className="bg-white p-5 rounded-2xl border border-black/10 shadow-xs flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-nogal/50 tracking-wider">
+                <span className="text-[10px] uppercase font-extrabold text-black/50 tracking-wider">
                   Fletes Delivery
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200/60">
                   <Truck size={18} />
                 </div>
               </div>
               <div>
-                <span className="text-2xl font-serif font-extrabold text-blue-700 block">
+                <span className="text-2xl font-serif font-extrabold text-blue-800 block">
                   S/ {totalDeliveryFees.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-nogal/50 font-medium">
+                <span className="text-[10px] text-black/50 font-medium">
                   Suma total de costos de envío
                 </span>
               </div>
             </div>
 
-            {/* 📈 Venta Total Bruta */}
-            <div className="bg-nogal text-white p-4 rounded-2xl border border-nogal shadow-md flex flex-col justify-between space-y-2">
+            {/* Venta Total Bruta */}
+            <div className="bg-[#2c4a3e] text-white p-5 rounded-2xl border border-[#2c4a3e] shadow-md flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-chilca tracking-wider">
+                <span className="text-[10px] uppercase font-extrabold text-[#d4af37] tracking-wider">
                   Venta Total Neto
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-chilca/20 text-chilca flex items-center justify-center border border-chilca/30">
-                  <DollarSign size={18} />
+                <div className="w-9 h-9 rounded-xl bg-[#d4af37]/20 text-[#d4af37] flex items-center justify-center border border-[#d4af37]/40">
+                  <TrendingUp size={18} />
                 </div>
               </div>
               <div>
-                <span className="text-2xl font-serif font-extrabold text-crema block">
+                <span className="text-2xl font-serif font-extrabold text-[#fbf5e6] block">
                   S/ {totalSales.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-white/60 font-medium">
+                <span className="text-[10px] text-white/70 font-medium">
                   {filteredOrders.length} comandas ({countDelivery} delivery / {countPickup} recojo)
                 </span>
               </div>
@@ -247,38 +245,38 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
           </div>
 
           {/* Tabla de Detalle de Comandas */}
-          <div className="bg-white rounded-2xl border border-nogal/10 shadow-xs overflow-hidden">
-            <div className="p-4 bg-black/3 border-b border-nogal/10 flex items-center justify-between">
-              <h3 className="font-serif font-bold text-sm text-nogal flex items-center gap-2">
-                <ShoppingBag size={16} className="text-eucalipto" />
+          <div className="bg-white rounded-2xl border border-black/10 shadow-xs overflow-hidden">
+            <div className="p-4 bg-black/3 border-b border-black/10 flex items-center justify-between">
+              <h3 className="font-serif font-bold text-sm text-[#2c4a3e] flex items-center gap-2">
+                <ShoppingBag size={16} className="text-[#2c4a3e]" />
                 <span>Detalle de Comandas ({filteredOrders.length})</span>
               </h3>
-              <span className="text-xs text-nogal/50 font-medium">
+              <span className="text-xs text-black/50 font-medium">
                 Fecha: <strong>{selectedDate}</strong>
               </span>
             </div>
 
             {filteredOrders.length === 0 ? (
-              <div className="p-10 text-center text-nogal/50 space-y-2">
-                <Calendar size={36} className="mx-auto text-nogal/20" />
+              <div className="p-10 text-center text-black/40 space-y-2">
+                <Calendar size={36} className="mx-auto text-black/20" />
                 <p className="font-medium text-sm">No hay comandas registradas para el {selectedDate}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-nogal/5 text-nogal/60 font-bold uppercase tracking-wider text-[10px] border-b border-nogal/10">
-                      <th className="p-3 pl-4">Orden</th>
-                      <th className="p-3">Hora</th>
-                      <th className="p-3">Cliente</th>
-                      <th className="p-3">Tipo</th>
-                      <th className="p-3">Método Pago</th>
-                      <th className="p-3 text-right">Subtotal</th>
-                      <th className="p-3 text-right">Envío</th>
-                      <th className="p-3 text-right pr-4">Total</th>
+                    <tr className="bg-[#2c4a3e]/5 text-[#2c4a3e] font-extrabold uppercase tracking-wider text-[10px] border-b border-black/10">
+                      <th className="p-3.5 pl-4">Orden</th>
+                      <th className="p-3.5">Hora</th>
+                      <th className="p-3.5">Cliente</th>
+                      <th className="p-3.5">Tipo</th>
+                      <th className="p-3.5">Método Pago</th>
+                      <th className="p-3.5 text-right">Subtotal</th>
+                      <th className="p-3.5 text-right">Envío</th>
+                      <th className="p-3.5 text-right pr-4">Total</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-nogal/10 font-medium text-nogal">
+                  <tbody className="divide-y divide-black/5 font-medium text-black/80">
                     {filteredOrders.map((o) => {
                       const pm = (o.payment_method || "").toLowerCase().trim();
                       const isCash = pm.includes("efectivo") || pm.includes("cash");
@@ -288,41 +286,57 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
                       });
 
                       return (
-                        <tr key={o.id} className="hover:bg-black/2 transition-colors">
-                          <td className="p-3 pl-4 font-serif font-bold text-nogal">
+                        <tr key={o.id} className="hover:bg-[#2c4a3e]/5 transition-colors">
+                          <td className="p-3.5 pl-4 font-serif font-bold text-[#2c4a3e]">
                             #{o.order_number || o.id?.slice(0, 8)}
                           </td>
-                          <td className="p-3 text-nogal/60">{createdTime}</td>
-                          <td className="p-3 font-semibold">{o.client_name || "Cliente"}</td>
-                          <td className="p-3">
+                          <td className="p-3.5 text-black/60">{createdTime}</td>
+                          <td className="p-3.5 font-bold text-black">{o.client_name || "Cliente"}</td>
+                          <td className="p-3.5">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider ${
                                 o.order_type === "delivery"
-                                  ? "bg-blue-50 text-blue-700 border border-blue-200"
-                                  : "bg-amber-50 text-amber-700 border border-amber-200"
+                                  ? "bg-blue-50 text-blue-700 border border-blue-200/80"
+                                  : "bg-amber-50 text-amber-700 border border-amber-200/80"
                               }`}
                             >
-                              {o.order_type === "delivery" ? "Delivery" : "Recojo"}
+                              {o.order_type === "delivery" ? (
+                                <>
+                                  <Truck size={12} /> Delivery
+                                </>
+                              ) : (
+                                <>
+                                  <Store size={12} /> Recojo
+                                </>
+                              )}
                             </span>
                           </td>
-                          <td className="p-3">
+                          <td className="p-3.5">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider ${
                                 isCash
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                  : "bg-purple-50 text-purple-700 border border-purple-200"
+                                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200/80"
+                                  : "bg-purple-50 text-purple-800 border border-purple-200/80"
                               }`}
                             >
-                              {isCash ? "💵 Efectivo" : "💳 Online"}
+                              {isCash ? (
+                                <>
+                                  <Banknote size={12} /> EFECTIVO
+                                </>
+                              ) : (
+                                <>
+                                  <CreditCard size={12} /> ONLINE
+                                </>
+                              )}
                             </span>
                           </td>
-                          <td className="p-3 text-right text-nogal/70">
+                          <td className="p-3.5 text-right text-black/70">
                             S/ {Number(o.subtotal || 0).toFixed(2)}
                           </td>
-                          <td className="p-3 text-right text-nogal/70">
+                          <td className="p-3.5 text-right text-black/70">
                             S/ {Number(o.delivery_fee || 0).toFixed(2)}
                           </td>
-                          <td className="p-3 text-right pr-4 font-bold text-nogal">
+                          <td className="p-3.5 text-right pr-4 font-bold text-[#2c4a3e]">
                             S/ {Number(o.total || 0).toFixed(2)}
                           </td>
                         </tr>
@@ -336,8 +350,8 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
         </div>
 
         {/* Acciones de Footer del Modal */}
-        <div className="p-4 px-6 bg-white border-t border-nogal/10 flex items-center justify-between print:hidden">
-          <div className="text-xs text-nogal/60 font-medium">
+        <div className="p-4 px-6 bg-white border-t border-black/10 flex items-center justify-between print:hidden">
+          <div className="text-xs text-black/60 font-medium">
             Imprime el reporte o descárgalo en Excel/CSV para contabilidad.
           </div>
 
@@ -345,18 +359,18 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
             <button
               onClick={handleExportCSV}
               disabled={filteredOrders.length === 0}
-              className="py-2.5 px-4 rounded-xl bg-white border border-nogal/20 hover:bg-nogal/5 text-nogal font-bold text-xs flex items-center gap-2 transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="py-2.5 px-4 rounded-xl bg-white border border-black/20 hover:bg-black/5 text-black font-bold text-xs flex items-center gap-2 transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
-              <Download size={16} className="text-eucalipto" />
+              <Download size={16} className="text-[#2c4a3e]" />
               <span>Exportar Excel (CSV)</span>
             </button>
 
             <button
               onClick={handlePrint}
               disabled={filteredOrders.length === 0}
-              className="py-2.5 px-5 rounded-xl bg-nogal hover:bg-nogal/90 text-crema font-bold text-xs flex items-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-50"
+              className="py-2.5 px-5 rounded-xl bg-[#2c4a3e] hover:bg-[#2c4a3e]/90 text-[#fbf5e6] font-bold text-xs flex items-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-50"
             >
-              <Printer size={16} className="text-chilca" />
+              <Printer size={16} className="text-[#d4af37]" />
               <span>Imprimir Ticket de Cierre</span>
             </button>
           </div>
