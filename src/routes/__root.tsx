@@ -88,6 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "restaurante las flores, restaurante las flores ayacucho, restaurantes ayacucho, mejor restaurante ayacucho, donde comer en ayacucho, comida tipica ayacuchana, puca picante ayacucho, cuy ayacucho, delivery ayacucho, reservas restaurante ayacucho",
       },
       { name: "author", content: "Restaurante Las Flores" },
+      { name: "google-site-verification", content: "googleffddf4f084c15495" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:title", content: "Restaurante Las Flores — El Mejor Restaurante en Ayacucho" },
       {
