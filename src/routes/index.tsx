@@ -994,22 +994,22 @@ function Index() {
               {
                 img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Puca-Picante.webp",
                 nombre: "Puca Picante",
-                desc: "Presente en festividades y picanterías, la puca picante es un emblemático guiso de intenso color rojo elaborado a base de papa, maní tostado, betarraga y chicharrón de cerdo. Degustarlo brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
+                desc: "Emblemático guiso de intenso color rojo a base de papa, maní tostado, betarraga y chicharrón de cerdo. Un clásico de festividades y picanterías ayacuchanas.",
               },
               {
                 img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Mondongo%20Ayacuchano.webp",
                 nombre: "Mondongo Ayacuchano",
-                desc: "Presente tradicionalmente en las mañanas de los domingos, el mondongo ayacuchano es un contundente y reparador caldo de maíz mote, carnes, panza y hierbabuena. Degustar esta clásica tradición dominical brinda una excelente oportunidad para disfrutar de la auténtica gastronomía local, recordando siempre que nuestros platos en la carta son variados.",
+                desc: "Contundente caldo dominical preparado con maíz mote, carnes, panza y hierbabuena. Un reparador desayuno tradicional de la sierra.",
               },
               {
                 img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Cuy-Frito-Ayacuchano.webp",
                 nombre: "Cuy Frito Ayacuchano",
-                desc: "Presente en las celebraciones y picanterías tradicionales, el cuy frito ayacuchano es un plato crujiente y emblemático elaborado con el cuy, un animal andino cuyo consumo se remonta a la época prehispánica. Degustarlo brinda una excelente oportunidad para disfrutar de esta herencia milenaria, recordando siempre que nuestros platos en la carta son variados.",
+                desc: "Plato crujiente y emblemático de la gastronomía andina. Una herencia culinaria prehispánica presente en celebraciones tradicionales.",
               },
               {
                 img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Chorizo-Ayacuchano.webp",
                 nombre: "Chorizo Ayacuchano",
-                desc: "Presente en las tradicionales picanterías y festividades de la región, especialmente durante Semana Santa, el chorizo ayacuchano es un emblemático plato a base de carne de cerdo finamente picada y macerada en ají panca que se sirve sin embutir. Degustar este sabroso manjar tradicional brinda una excelente oportunidad para disfrutar de la auténtica y única riqueza gastronómica local.",
+                desc: "Carne de cerdo finamente picada y macerada en ají panca, servida sin embutir. Un manjar tradicional especialmente popular en Semana Santa.",
               },
             ].map((p) => (
               <article key={p.nombre} className="flex flex-col group">
@@ -1117,13 +1117,13 @@ function Index() {
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <img
-              src="/imagenes-reales/PREMIOS/premios-las-flores.webp"
+              src="/imagenes-reales/premios/premios-las-flores.webp"
               alt="Premios de Restaurante Las Flores"
               width={800}
               height={1200}
               loading="lazy"
               decoding="async"
-              className="w-full aspect-square object-cover rounded-3xl"
+              className="w-full h-full min-h-[500px] md:min-h-[600px] object-cover rounded-3xl"
             />
           </div>
         </div>
