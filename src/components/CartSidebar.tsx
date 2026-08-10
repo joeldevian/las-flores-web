@@ -1051,26 +1051,24 @@ export function CartSidebar() {
               <div className="grid grid-cols-3 gap-2">
                 {(
                   [
-                    { id: "yape", label: "Yape / Plin", Icon: Smartphone, color: R.morado },
-                    { id: "card", label: "Tarjeta", Icon: CreditCard, color: "#0057A8" },
-                    { id: "efectivo", label: "Efectivo", Icon: Banknote, color: "#2c4a3e" },
+                    { id: "yape", label: "Yape / Plin", Icon: Smartphone },
+                    { id: "card", label: "Tarjeta", Icon: CreditCard },
+                    { id: "efectivo", label: "Efectivo", Icon: Banknote },
                   ] as const
-                ).map(({ id, label, Icon, color }) => {
+                ).map(({ id, label, Icon }) => {
                   const active = paymentMethod === id;
                   return (
                     <button
                       key={id}
                       type="button"
                       onClick={() => setPaymentMethod(id)}
-                      className="py-3 px-1 rounded-xl font-serif font-bold text-xs flex flex-col items-center gap-1.5 transition-all border-2 cursor-pointer"
-                      style={{
-                        background: active ? color : "white",
-                        borderColor: active ? color : `${color}25`,
-                        color: active ? "white" : `${color}99`,
-                        boxShadow: active ? `0 4px 12px ${color}30` : "none",
-                      }}
+                      className={`py-3 px-1 rounded-2xl font-serif font-bold text-xs flex flex-col items-center gap-1.5 transition-all border-2 cursor-pointer ${
+                        active
+                          ? "bg-[#2c4a3e] text-white border-[#2c4a3e] shadow-md scale-[1.02]"
+                          : "bg-white text-nogal/70 border-nogal/15 hover:border-nogal/30 hover:bg-piedra/30"
+                      }`}
                     >
-                      <Icon size={18} />
+                      <Icon size={18} className={active ? "text-chilca" : "text-nogal/60"} />
                       <span className="truncate w-full text-center">{label}</span>
                     </button>
                   );
@@ -1078,26 +1076,24 @@ export function CartSidebar() {
               </div>
 
               {paymentMethod === "efectivo" && (
-                <div className="bg-white rounded-xl p-4 border border-black/10 shadow-sm space-y-2 text-left">
+                <div className="bg-white rounded-2xl p-5 border border-nogal/10 shadow-sm space-y-2 text-left animate-in fade-in duration-300">
                   <div className="flex items-center gap-2 font-bold text-xs text-nogal">
                     <Banknote size={18} className="text-eucalipto" />
                     <span>Pago Contra Entrega en Efectivo</span>
                   </div>
-                  <p className="text-xs text-black/60 leading-relaxed font-medium">
-                    Pagarás un total de <strong>S/ {total.toFixed(2)}</strong> directamente al motorizado al recibir tu pedido.
+                  <p className="text-xs text-nogal/70 leading-relaxed font-medium">
+                    Pagarás un total de <strong className="text-eucalipto">S/ {total.toFixed(2)}</strong> directamente al motorizado al recibir tu pedido.
                   </p>
                 </div>
               )}
 
-              {paymentMethod === "yape" ? (
+              {paymentMethod === "yape" && (
                 <div
-                  className="bg-white rounded-xl p-5 border shadow-sm space-y-4"
-                  style={{ borderColor: `${R.amarillo}50` }}
+                  className="bg-white rounded-2xl p-5 border border-nogal/10 shadow-sm space-y-4 animate-in fade-in duration-300"
                 >
                   <div className="flex flex-col items-center">
                     <div
-                      className="w-36 h-36 rounded-xl p-3 mb-3 border bg-white"
-                      style={{ borderColor: `${R.amarillo}50` }}
+                      className="w-36 h-36 rounded-xl p-3 mb-3 border border-nogal/10 bg-white shadow-xs"
                     >
                       <div
                         className="w-full h-full rounded-lg"
@@ -1125,8 +1121,10 @@ export function CartSidebar() {
                     </p>
                   </div>
                 </div>
-              ) : (
-                <div className="bg-white rounded-xl p-5 border border-[#0057A8]/15 shadow-sm space-y-4">
+              )}
+
+              {paymentMethod === "card" && (
+                <div className="bg-white rounded-2xl p-5 border border-[#0057A8]/15 shadow-sm space-y-4 animate-in fade-in duration-300">
                   <div
                     className="rounded-lg px-4 py-2.5 flex items-center justify-between"
                     style={{ background: "linear-gradient(135deg,#0057A8,#0088D1)" }}
@@ -1193,10 +1191,10 @@ export function CartSidebar() {
                       required
                       value={payment.cardName}
                       onChange={(e) =>
-                        setPayment({ ...payment, cardName: e.target.value.toUpperCase() })
+                        setPayment({ ...payment, cardName: e.target.value })
                       }
-                      placeholder="JUAN PEREZ"
-                      className={`${inputCls} uppercase`}
+                      placeholder="Nombre como figura en la tarjeta"
+                      className={inputCls}
                     />
                   </div>
                 </div>
