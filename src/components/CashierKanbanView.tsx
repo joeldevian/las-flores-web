@@ -24,11 +24,11 @@ export function CashierKanbanView({
     return "pendiente";
   };
 
-  const getLocalYYYYMMDD = (d = new Date()) => {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  const getLocalYYYYMMDD = (d?: Date | string) => {
+    if (!d) return "";
+    const dateObj = typeof d === "string" ? new Date(d) : d;
+    if (isNaN(dateObj.getTime())) return "";
+    return dateObj.toLocaleDateString("sv-SE");
   };
   const todayStr = getLocalYYYYMMDD(new Date());
 
@@ -37,8 +37,8 @@ export function CashierKanbanView({
   const onWay = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino");
   const completed = orders.filter((o) => {
     if (getNormalizedStatus(o.status) !== "entregado") return false;
-    const ordDateStr = o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) : "";
-    return ordDateStr === todayStr;
+    const ordDateStr = o.created_at ? getLocalYYYYMMDD(o.created_at) : "";
+    return ordDateStr === todayStr || !ordDateStr;
   });
 
   const columns = [

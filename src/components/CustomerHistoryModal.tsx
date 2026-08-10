@@ -394,7 +394,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                   </div>
                   
                   {/* Botón de rastreo en vivo SOLO si el pedido está activamente en camino */}
-                  {order.order_type === "delivery" && order.status === "en_camino" && (
+                  {order.order_type === "delivery" && (order.status === "en_camino" || order.status === "on_the_way") && (
                     <div className="pt-3">
                       <a 
                         href={`/rastreo/${order.id}`}
@@ -660,15 +660,21 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
 }
 
 function OrderStatusBadge({ status }: { status: string }) {
+  const norm = (status || "").toLowerCase().trim();
   const map: Record<string, { label: string; bg: string; text: string }> = {
-    received: { label: "Recibido", bg: "bg-amber-100", text: "text-amber-800" },
-    preparing: { label: "En preparación", bg: "bg-blue-100", text: "text-blue-800" },
-    on_the_way: { label: "En camino", bg: "bg-purple-100", text: "text-purple-800" },
+    pendiente: { label: "Pendiente", bg: "bg-amber-100", text: "text-amber-800" },
+    received: { label: "Pendiente", bg: "bg-amber-100", text: "text-amber-800" },
+    en_preparacion: { label: "En Cocina", bg: "bg-blue-100", text: "text-blue-800" },
+    preparing: { label: "En Cocina", bg: "bg-blue-100", text: "text-blue-800" },
+    en_camino: { label: "En Camino", bg: "bg-purple-100", text: "text-purple-800" },
+    on_the_way: { label: "En Camino", bg: "bg-purple-100", text: "text-purple-800" },
+    entregado: { label: "Entregado", bg: "bg-emerald-100", text: "text-emerald-800" },
     delivered: { label: "Entregado", bg: "bg-emerald-100", text: "text-emerald-800" },
+    cancelado: { label: "Cancelado", bg: "bg-red-100", text: "text-red-800" },
     cancelled: { label: "Cancelado", bg: "bg-red-100", text: "text-red-800" },
   };
 
-  const style = map[status] || { label: status, bg: "bg-gray-100", text: "text-gray-800" };
+  const style = map[norm] || { label: status, bg: "bg-gray-100", text: "text-gray-800" };
 
   return (
     <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${style.bg} ${style.text}`}>

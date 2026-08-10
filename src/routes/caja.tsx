@@ -20,11 +20,11 @@ import {
   List,
 } from "lucide-react";
 
-const getLocalYYYYMMDD = (d = new Date()) => {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+const getLocalYYYYMMDD = (d?: Date | string) => {
+  if (!d) return "";
+  const dateObj = typeof d === "string" ? new Date(d) : d;
+  if (isNaN(dateObj.getTime())) return "";
+  return dateObj.toLocaleDateString("sv-SE");
 };
 
 export const Route = createFileRoute("/caja")({

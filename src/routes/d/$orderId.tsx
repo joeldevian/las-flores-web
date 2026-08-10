@@ -153,7 +153,7 @@ function DriverMagicLink() {
     setIsBroadcasting(false);
   };
 
-  const markPickedUp = () => {
+  const markPickedUp = async () => {
     setDeliveryPhase('to_customer');
     if (channelRef.current) {
       channelRef.current.send({
@@ -161,6 +161,16 @@ function DriverMagicLink() {
         event: "status_update",
         payload: { status: 'to_customer', timestamp: Date.now() }
       });
+    }
+
+    // Actualizar estado del pedido en Supabase DB a 'en_camino'
+    try {
+      await supabase
+        .from("orders")
+        .update({ status: "en_camino" })
+        .eq("id", orderId);
+    } catch (err) {
+      console.error("Error al actualizar estado en DB:", err);
     }
   };
 
