@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, Navigation2, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, Phone, Clock, ArrowRight } from "lucide-react";
+import { CheckCircle2, Navigation2, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, Phone, Clock, ArrowRight, Banknote, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/d/$orderId")({
@@ -235,6 +235,10 @@ function DriverMagicLink() {
     );
   }
 
+  const rawPaymentMethod = (orderData.payment_method || "yape").toLowerCase();
+  const isCashPayment = rawPaymentMethod.includes("efectivo") || rawPaymentMethod.includes("cash");
+  const paymentLabel = isCashPayment ? "Efectivo (Pago al entregar)" : orderData.payment_method || "Yape / Plin";
+
   return (
     <div className="min-h-screen bg-[#f8f4e6] font-sans flex flex-col p-4 md:p-6 justify-center">
       <div className="max-w-md w-full mx-auto bg-white rounded-3xl shadow-xl shadow-nogal/5 overflow-hidden border border-nogal/10">
@@ -269,7 +273,7 @@ function DriverMagicLink() {
 
             {orderData.client_phone && (
               <div className="pt-2 border-t border-nogal/10 flex justify-between items-center">
-                <span className="text-[10px] uppercase font-bold text-nogal/50">Teléfono:</span>
+                <span className="text-[10px] uppercase font-bold text-nogal/50">Teléfono del cliente:</span>
                 <a
                   href={`tel:${orderData.client_phone}`}
                   className="text-xs font-bold text-eucalipto hover:underline flex items-center gap-1"
@@ -289,11 +293,35 @@ function DriverMagicLink() {
                   <span className="font-bold text-nogal">S/ {Number(item.subtotal).toFixed(2)}</span>
                 </div>
               ))}
-              <div className="flex justify-between text-sm font-bold border-t border-nogal/10 pt-2 mt-2">
-                <span className="text-nogal">Total a Cobrar:</span>
-                <span className="text-eucalipto">S/ {Number(orderData.total).toFixed(2)}</span>
-              </div>
-              <p className="text-[10px] text-nogal/50 uppercase font-bold">Pago: {orderData.payment_method || "Yape / Plin / Efectivo"}</p>
+
+              {/* BANNER DISTINTIVO DE COBRO DE DINERO */}
+              {isCashPayment ? (
+                <div className="bg-amber-50 border-2 border-amber-300 p-3.5 rounded-xl text-left space-y-1 mt-3">
+                  <div className="flex justify-between items-center text-xs font-bold text-amber-950">
+                    <span className="flex items-center gap-1.5">
+                      <Banknote size={16} className="text-amber-600" />
+                      COBRAR AL CLIENTE (EFECTIVO):
+                    </span>
+                    <span className="text-base text-amber-700 font-serif font-black">S/ {Number(orderData.total).toFixed(2)}</span>
+                  </div>
+                  <p className="text-[10px] text-amber-900 font-bold uppercase tracking-wider">
+                    Cobrar el dinero en efectivo al entregar el pedido.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-emerald-50 border-2 border-emerald-300 p-3.5 rounded-xl text-left space-y-1 mt-3">
+                  <div className="flex justify-between items-center text-xs font-bold text-emerald-950">
+                    <span className="flex items-center gap-1.5">
+                      <Check size={16} className="text-emerald-600" />
+                      MONTO YA PAGADO (NO COBRAR):
+                    </span>
+                    <span className="text-base text-emerald-700 font-serif font-black">S/ {Number(orderData.total).toFixed(2)}</span>
+                  </div>
+                  <p className="text-[10px] text-emerald-900 font-bold uppercase tracking-wider">
+                    Pagado online ({paymentLabel}) — No solicitar dinero.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

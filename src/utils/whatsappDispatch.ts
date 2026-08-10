@@ -7,7 +7,13 @@ export function buildDeliveryWhatsAppMessage(order: any, items: any[]): string {
   const orderNum = order.order_number || order.id?.slice(0, 8) || "S/N";
   const clientName = order.client_name || "Cliente General";
   const total = Number(order.total || 0).toFixed(2);
-  const paymentMethod = (order.payment_method || "YAPE").toUpperCase();
+  const paymentMethod = (order.payment_method || "YAPE").toUpperCase().trim();
+
+  const isCash = paymentMethod.includes("EFECTIVO") || paymentMethod.includes("CASH");
+
+  const paymentLabel = isCash
+    ? `💵 *COBRAR EN EFECTIVO:* S/ ${total} (PAGO CONTRA ENTREGA)`
+    : `✅ *MONTO YA PAGADO (NO COBRAR):* S/ ${total} (PAGADO CON ${paymentMethod})`;
 
   const baseUrl = typeof window !== "undefined" && window.location.origin 
     ? window.location.origin 
@@ -17,7 +23,7 @@ export function buildDeliveryWhatsAppMessage(order: any, items: any[]): string {
 ==============================
 *Orden:* #${orderNum}
 *Cliente:* ${clientName}
-*Total a Cobrar:* S/ ${total} (${paymentMethod})
+${paymentLabel}
 
 👉 *INICIA EL DESPACHO AQUÍ (Ver Dirección y Navegar):*
 ${baseUrl}/d/${order.id || order.order_id}

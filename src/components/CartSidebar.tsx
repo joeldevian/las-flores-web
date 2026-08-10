@@ -19,6 +19,7 @@ import {
   ClipboardList,
   Ticket,
   Tag,
+  Banknote,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import {
@@ -85,7 +86,7 @@ export function CartSidebar() {
   const [step, setStep] = useState<Step>("cart");
   const [deliverySubStep, setDeliverySubStep] = useState<"location" | "details">("location");
   const [orderType, setOrderType] = useState<OrderType>("delivery");
-  const [paymentMethod, setPaymentMethod] = useState<"yape" | "card">("yape");
+  const [paymentMethod, setPaymentMethod] = useState<"yape" | "card" | "efectivo">("yape");
   const [isMounted, setIsMounted] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
@@ -1047,11 +1048,12 @@ export function CartSidebar() {
           {/* PASO 3: PAGO */}
           {step === "payment" && (
             <form id="payment-form" className="p-5 space-y-4 min-h-full" onSubmit={handlePayment}>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {(
                   [
                     { id: "yape", label: "Yape / Plin", Icon: Smartphone, color: R.morado },
                     { id: "card", label: "Tarjeta", Icon: CreditCard, color: "#0057A8" },
+                    { id: "efectivo", label: "Efectivo", Icon: Banknote, color: "#2c4a3e" },
                   ] as const
                 ).map(({ id, label, Icon, color }) => {
                   const active = paymentMethod === id;
@@ -1060,20 +1062,32 @@ export function CartSidebar() {
                       key={id}
                       type="button"
                       onClick={() => setPaymentMethod(id)}
-                      className="py-4 rounded-xl font-serif font-bold text-sm flex flex-col items-center gap-2 transition-all border-2"
+                      className="py-3 px-1 rounded-xl font-serif font-bold text-xs flex flex-col items-center gap-1.5 transition-all border-2 cursor-pointer"
                       style={{
                         background: active ? color : "white",
                         borderColor: active ? color : `${color}25`,
                         color: active ? "white" : `${color}99`,
-                        boxShadow: active ? `0 4px 16px ${color}35` : "none",
+                        boxShadow: active ? `0 4px 12px ${color}30` : "none",
                       }}
                     >
-                      <Icon size={20} />
-                      {label}
+                      <Icon size={18} />
+                      <span className="truncate w-full text-center">{label}</span>
                     </button>
                   );
                 })}
               </div>
+
+              {paymentMethod === "efectivo" && (
+                <div className="bg-white rounded-xl p-4 border border-black/10 shadow-sm space-y-2 text-left">
+                  <div className="flex items-center gap-2 font-bold text-xs text-nogal">
+                    <Banknote size={18} className="text-eucalipto" />
+                    <span>Pago Contra Entrega en Efectivo</span>
+                  </div>
+                  <p className="text-xs text-black/60 leading-relaxed font-medium">
+                    Pagarás un total de <strong>S/ {total.toFixed(2)}</strong> directamente al motorizado al recibir tu pedido.
+                  </p>
+                </div>
+              )}
 
               {paymentMethod === "yape" ? (
                 <div
