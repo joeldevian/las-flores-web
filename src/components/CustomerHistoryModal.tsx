@@ -137,19 +137,29 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
       document.body.style.overflow = "";
     }
 
-    if (open && user?.id) {
-      if (loadedUserIdRef.current !== user.id) {
+    if (open) {
+      let localOrderIds: string[] = [];
+      try {
+        localOrderIds = JSON.parse(localStorage.getItem("las_flores_recent_orders") || "[]");
+      } catch (e) {
+        console.warn("Could not read local recent orders:", e);
+      }
+
+      const userId = user?.id;
+      const userEmail = user?.email;
+
+      if (userId && loadedUserIdRef.current !== userId) {
         setOrders([]);
         setReservations([]);
-        loadedUserIdRef.current = user.id;
+        loadedUserIdRef.current = userId;
       }
 
       const fetchHistory = async () => {
         setLoading(true);
         try {
           const [userOrders, userRes] = await Promise.all([
-            getUserOrders(user.id, user.email),
-            getUserReservations(user.id, user.email),
+            getUserOrders(userId, userEmail, localOrderIds),
+            getUserReservations(userId, userEmail),
           ]);
           if (!cancelled) {
             setOrders(userOrders);

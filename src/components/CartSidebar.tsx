@@ -399,12 +399,12 @@ export function CartSidebar() {
     setProcessing(true);
     const orderNum = `LF-${Date.now().toString().slice(-6)}`;
     try {
-      await createOrder({
+      const createdOrd = await createOrder({
         order_number: orderNum,
         order_type: orderType,
         status: "pendiente",
         client_name: delivery.name || "Cliente",
-        client_email: delivery.email || "cliente@ejemplo.com",
+        client_email: delivery.email || activeUser?.email || "cliente@ejemplo.com",
         client_phone: delivery.phone || "",
         address: delivery.address,
         reference: delivery.reference,
@@ -435,6 +435,19 @@ export function CartSidebar() {
           };
         }),
       });
+
+      // Guardar el ID de la orden en localStorage para garantizar el acceso al historial inmediato
+      try {
+        if (createdOrd?.id) {
+          const savedIds: string[] = JSON.parse(localStorage.getItem("las_flores_recent_orders") || "[]");
+          if (!savedIds.includes(createdOrd.id)) {
+            savedIds.push(createdOrd.id);
+            localStorage.setItem("las_flores_recent_orders", JSON.stringify(savedIds.slice(-20)));
+          }
+        }
+      } catch (lsErr) {
+        console.warn("Error guardando orden local:", lsErr);
+      }
 
       // Increment coupon used_count in Supabase & Log redemption record for BI Analytics
       if (appliedCoupon) {

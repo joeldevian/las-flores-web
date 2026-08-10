@@ -186,7 +186,6 @@ export async function signOut() {
 export async function createReservation(payload: any) {
   const { reservation_date, reservation_time, zone_id } = payload;
 
-  // Hard backend validation: check if date/time/zone is in blackout
   if (reservation_date) {
     try {
       const { data: blackouts } = await supabase
@@ -225,7 +224,6 @@ export async function createReservation(payload: any) {
 
   const reservationData = { ...payload };
 
-  // Asociar el id del usuario autenticado si existe en la sesión
   try {
     const { data: authUser } = await supabase.auth.getUser();
     if (authUser?.user?.id) {
@@ -235,7 +233,6 @@ export async function createReservation(payload: any) {
     console.warn("No se pudo obtener id de usuario para reserva:", e);
   }
 
-  // Filtrar valores nulos o indefinidos
   const payloadToInsert: Record<string, any> = {
     status: payload.status || "pending",
   };
@@ -305,7 +302,6 @@ export async function createOrder(payload: OrderPayload) {
   if (orderError) {
     console.error("Error al crear pedido en Supabase:", orderError);
 
-    // Si falló por restricción del nombre del método de pago ('cash' vs 'efectivo'), reintentar con 'cash'
     if (payloadToInsert.payment_method === "efectivo") {
       payloadToInsert.payment_method = "cash";
       const { data: retryData, error: retryError } = await supabase
@@ -350,22 +346,33 @@ export async function createOrder(payload: OrderPayload) {
 }
 
 /**
- * Obtener el historial de pedidos del usuario autenticado
+ * Obtener el historial de pedidos del usuario autenticado (O pedidos recientes locales)
  */
-export async function getUserOrders(userId?: string, email?: string) {
+export async function getUserOrders(userId?: string, email?: string, localOrderIds: string[] = []) {
   try {
-    if (!userId && !email) return [];
-
     let query = supabase
       .from("orders")
       .select("*, order_items(*)")
       .order("created_at", { ascending: false });
 
-    if (email) {
-      query = query.eq("client_email", email);
-    } else if (userId) {
-      query = query.eq("user_id", userId);
+    const conditions: string[] = [];
+
+    if (userId) {
+      conditions.push(`user_id.eq.${userId}`);
     }
+    if (email && email.trim()) {
+      conditions.push(`client_email.ilike.${email.trim()}`);
+    }
+    if (localOrderIds && localOrderIds.length > 0) {
+      const validIds = localOrderIds.filter(Boolean).map((id) => `"${id}"`).join(",");
+      if (validIds) {
+        conditions.push(`id.in.(${validIds})`);
+      }
+    }
+
+    if (conditions.length === 0) return [];
+
+    query = query.or(conditions.join(","));
 
     const { data, error } = await query;
     if (error) {
@@ -392,7 +399,7 @@ export async function getUserReservations(userId?: string, email?: string) {
       .order("created_at", { ascending: false });
 
     if (email) {
-      query = query.eq("client_email", email);
+      query = query.ilike("client_email", email.trim());
     } else if (userId) {
       query = query.eq("user_id", userId);
     }
