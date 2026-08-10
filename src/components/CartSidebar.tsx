@@ -89,6 +89,12 @@ export function CartSidebar() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
+  const [completedOrderSummary, setCompletedOrderSummary] = useState<{
+    orderNumber: string;
+    items: { id: string; name: string; quantity: number; price: number }[];
+    total: number;
+    address: string;
+  } | null>(null);
 
   // Ref para medir si ya estamos completamente en el cliente (evita problemas de hidratación SSR)
   const portalRef = useRef<HTMLDivElement | null>(null);
@@ -441,6 +447,12 @@ export function CartSidebar() {
         }
       }
 
+      setCompletedOrderSummary({
+        orderNumber: orderNum,
+        items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.price })),
+        total: total,
+        address: delivery.address,
+      });
       setCreatedOrderNumber(orderNum);
       clearCart();
       setStep("success");
@@ -1213,7 +1225,7 @@ export function CartSidebar() {
               {orderType === "delivery" ? (
                 <p className="text-black/50 text-xs mb-6">
                   Llegará a{" "}
-                  <strong className="text-black/70">{delivery.address || "tu dirección"}</strong> en
+                  <strong className="text-black/70">{completedOrderSummary?.address || delivery.address || "tu dirección"}</strong> en
                   aprox. <strong style={{ color: R.verde }}>30 min</strong>.
                 </p>
               ) : (
@@ -1231,7 +1243,7 @@ export function CartSidebar() {
                 <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-black/40 mb-3">
                   Resumen
                 </p>
-                {items.map((item) => (
+                {(completedOrderSummary?.items || items).map((item) => (
                   <div
                     key={item.id}
                     className="flex justify-between text-sm text-black/60 font-medium mb-1.5"
@@ -1244,12 +1256,12 @@ export function CartSidebar() {
                 ))}
                 <div className="flex justify-between font-serif font-bold text-base pt-2.5 border-t border-black/5 mt-2">
                   <span className="text-black/70">Total pagado</span>
-                  <span style={{ color: R.rojo }}>S/ {total.toFixed(2)}</span>
+                  <span style={{ color: R.rojo }}>S/ {(completedOrderSummary?.total ?? total).toFixed(2)}</span>
                 </div>
               </div>
               <p className="text-xs text-black/30 font-medium">
                 Pedido{" "}
-                <strong style={{ color: R.morado }}>#{createdOrderNumber}</strong>
+                <strong style={{ color: R.morado }}>#{completedOrderSummary?.orderNumber || createdOrderNumber}</strong>
               </p>
             </div>
           )}
