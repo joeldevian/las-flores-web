@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation } from "lucide-react";
+import { CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation, Info } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/d/$orderId")({
@@ -35,9 +35,20 @@ function DriverMagicLink() {
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gpsBlocked, setGpsBlocked] = useState(false);
-  
+  const [testingGps, setTestingGps] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [isIOSDevice, setIsIOSDevice] = useState(false);
+
   const watchIdRef = useRef<number | null>(null);
   const channelRef = useRef<any>(null);
+
+  // Detectar tipo de dispositivo (iPhone/iPad vs Android)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.navigator) {
+      const isIOS = /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+      setIsIOSDevice(isIOS);
+    }
+  }, []);
 
   // Cargar datos reales del pedido desde Supabase
   useEffect(() => {
@@ -80,17 +91,23 @@ function DriverMagicLink() {
     : null;
 
   const requestGPSPermission = () => {
+    setTestingGps(true);
     setError(null);
+    setShowInstructions(false);
+
     if (!navigator.geolocation) {
-      setError("Tu navegador no soporta geolocalización por GPS.");
+      setError("Tu dispositivo o navegador no soporta geolocalización por GPS.");
       setGpsBlocked(true);
+      setTestingGps(false);
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setGpsBlocked(false);
+        setTestingGps(false);
         setError(null);
+        setShowInstructions(false);
         const { latitude: lat, longitude: lng } = pos.coords;
         
         if (channelRef.current) {
@@ -119,10 +136,12 @@ function DriverMagicLink() {
         }
       },
       (err) => {
-        console.warn("GPS Permission error:", err.message);
+        console.warn("GPS Permission error:", err);
         setGpsBlocked(true);
+        setTestingGps(false);
+        setShowInstructions(true); // Mostrar guía visual de desbloqueo según iPhone o Android
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: Infinity }
+      { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
     );
   };
 
@@ -322,24 +341,67 @@ function DriverMagicLink() {
             </div>
           </div>
 
-          {/* Banner interactivo de activación de GPS cuando está bloqueado */}
+          {/* Banner interactivo de activación de GPS para iPhone / Android */}
           {gpsBlocked && (
-            <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl text-left space-y-2.5 animate-in fade-in duration-300 shadow-sm">
-              <div className="flex items-center gap-2 font-bold text-amber-950 text-xs">
-                <MapPinOff size={18} className="text-amber-600 shrink-0" />
-                <span>Ubicación GPS Desactivada o Bloqueada</span>
+            <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl text-left space-y-3 animate-in fade-in duration-300 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-amber-950 text-xs">
+                  <MapPinOff size={18} className="text-amber-600 shrink-0" />
+                  <span>Ubicación GPS Requerida</span>
+                </div>
+                <span className="text-[9px] uppercase font-extrabold px-2 py-0.5 bg-amber-200 text-amber-900 rounded-full">
+                  {isIOSDevice ? "iPhone / Safari" : "Android"}
+                </span>
               </div>
+
               <p className="text-[11px] text-amber-900 leading-relaxed">
-                Para que el cliente vea tu movimiento en vivo sobre el mapa, presiona el botón para permitir el acceso a tu ubicación GPS.
+                {isIOSDevice
+                  ? "Safari en iPhone requiere otorgar permiso de Ubicación para transmitir tu movimiento en el mapa al cliente."
+                  : "Tu navegador tiene la Ubicación bloqueada o desactivada para esta página."}
               </p>
+
               <button
                 type="button"
                 onClick={requestGPSPermission}
-                className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-95"
+                disabled={testingGps}
+                className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-95 disabled:opacity-50"
               >
-                <Navigation size={15} />
-                Activar GPS en mi celular
+                {testingGps ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Conectando con GPS...</span>
+                  </>
+                ) : (
+                  <>
+                    <Navigation size={15} />
+                    <span>📡 Activar GPS de mi celular</span>
+                  </>
+                )}
               </button>
+
+              {/* Guía paso a paso cuando el permiso fue denegado previamente */}
+              {showInstructions && (
+                <div className="mt-3 pt-3 border-t border-amber-200/80 space-y-2 text-[11px] text-amber-950 bg-amber-100/60 p-3 rounded-xl">
+                  <p className="font-bold uppercase tracking-wider text-[10px] text-amber-900 flex items-center gap-1">
+                    <Info size={14} className="text-amber-700" />
+                    <span>Pasos para activar en {isIOSDevice ? "iPhone" : "Android"}:</span>
+                  </p>
+                  {isIOSDevice ? (
+                    <ol className="list-decimal list-inside space-y-1 text-amber-900 font-medium">
+                      <li>Toca el botón <strong>"aA"</strong> o <strong>🔒</strong> a la izquierda de la barra de dirección arriba.</li>
+                      <li>Entra a <strong>"Configuración del sitio web"</strong>.</li>
+                      <li>Cambia <strong>Ubicación</strong> a <strong>"Permitir"</strong>.</li>
+                      <li>Presiona nuevamente el botón de arriba.</li>
+                    </ol>
+                  ) : (
+                    <ol className="list-decimal list-inside space-y-1 text-amber-900 font-medium">
+                      <li>Toca el ícono del candado <strong>🔒</strong> junto a la dirección arriba.</li>
+                      <li>Selecciona <strong>"Permisos del sitio"</strong> o <strong>"Ubicación"</strong>.</li>
+                      <li>Marca <strong>"Permitir"</strong> y recarga la página.</li>
+                    </ol>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
