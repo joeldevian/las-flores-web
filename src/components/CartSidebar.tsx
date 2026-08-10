@@ -96,7 +96,7 @@ export function CartSidebar() {
     address: string;
   } | null>(null);
 
-  // Ref para medir si ya estamos completamente en el cliente (evita problemas de hidratación SSR)
+  const isHistoryTrigger = useRef(false);
   const portalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
