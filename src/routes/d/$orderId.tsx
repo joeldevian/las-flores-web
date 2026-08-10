@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, Navigation2, XCircle, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation, Info } from "lucide-react";
+import { CheckCircle2, Navigation2, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation, Info, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/d/$orderId")({
@@ -35,6 +35,7 @@ function DriverMagicLink() {
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gpsBlocked, setGpsBlocked] = useState(false);
+  const [gpsSuccess, setGpsSuccess] = useState(false);
   const [testingGps, setTestingGps] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
@@ -42,7 +43,7 @@ function DriverMagicLink() {
   const watchIdRef = useRef<number | null>(null);
   const channelRef = useRef<any>(null);
 
-  // Detectar tipo de dispositivo (iPhone/iPad vs Android)
+  // Detectar tipo de dispositivo (iPhone vs Android)
   useEffect(() => {
     if (typeof window !== "undefined" && window.navigator) {
       const isIOS = /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
@@ -93,7 +94,7 @@ function DriverMagicLink() {
   const requestGPSPermission = () => {
     setTestingGps(true);
     setError(null);
-    setShowInstructions(false);
+    setShowInstructions(true);
 
     if (!navigator.geolocation) {
       setError("Tu dispositivo o navegador no soporta geolocalización por GPS.");
@@ -108,6 +109,7 @@ function DriverMagicLink() {
         setTestingGps(false);
         setError(null);
         setShowInstructions(false);
+        setGpsSuccess(true);
         const { latitude: lat, longitude: lng } = pos.coords;
         
         if (channelRef.current) {
@@ -139,7 +141,7 @@ function DriverMagicLink() {
         console.warn("GPS Permission error:", err);
         setGpsBlocked(true);
         setTestingGps(false);
-        setShowInstructions(true); // Mostrar guía visual de desbloqueo según iPhone o Android
+        setShowInstructions(true);
       },
       { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
     );
@@ -296,7 +298,7 @@ function DriverMagicLink() {
   return (
     <div className="min-h-screen bg-[#f8f4e6] font-sans flex flex-col p-4 md:p-6 justify-center">
       <div className="max-w-md w-full mx-auto bg-white rounded-3xl shadow-xl shadow-nogal/5 overflow-hidden border border-nogal/10">
-        {/* Cabecera */}
+        {/* Cabecera corporativa */}
         <div className="bg-nogal text-piedra p-6 text-center">
           <div className="w-16 h-16 mx-auto bg-white/10 rounded-full flex items-center justify-center mb-4">
             <Navigation2 size={32} className={isBroadcasting ? "animate-pulse text-eucalipto" : "text-piedra/60"} />
@@ -341,23 +343,31 @@ function DriverMagicLink() {
             </div>
           </div>
 
-          {/* Banner interactivo de activación de GPS para iPhone / Android */}
+          {/* Confirmación verde cuando el GPS se conecta exitosamente */}
+          {gpsSuccess && (
+            <div className="bg-emerald-50 border border-emerald-300 p-3 rounded-2xl text-left flex items-center gap-2.5 text-emerald-900 text-xs font-bold shadow-xs">
+              <Check size={18} className="text-emerald-600 shrink-0" />
+              <span>Ubicación GPS conectada exitosamente.</span>
+            </div>
+          )}
+
+          {/* Panel de permisos GPS para iPhone o Android */}
           {gpsBlocked && (
             <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl text-left space-y-3 animate-in fade-in duration-300 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-amber-950 text-xs">
                   <MapPinOff size={18} className="text-amber-600 shrink-0" />
-                  <span>Ubicación GPS Requerida</span>
+                  <span>Permiso de Ubicación Requerido</span>
                 </div>
-                <span className="text-[9px] uppercase font-extrabold px-2 py-0.5 bg-amber-200 text-amber-900 rounded-full">
-                  {isIOSDevice ? "iPhone / Safari" : "Android"}
+                <span className="text-[9px] uppercase font-extrabold px-2.5 py-0.5 bg-amber-200 text-amber-900 rounded-full">
+                  {isIOSDevice ? "iPhone / iOS" : "Android"}
                 </span>
               </div>
 
-              <p className="text-[11px] text-amber-900 leading-relaxed">
+              <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
                 {isIOSDevice
-                  ? "Safari en iPhone requiere otorgar permiso de Ubicación para transmitir tu movimiento en el mapa al cliente."
-                  : "Tu navegador tiene la Ubicación bloqueada o desactivada para esta página."}
+                  ? "Para enviar tu posición en tiempo real al mapa del cliente, autoriza el permiso de ubicación en tu navegador."
+                  : "Tu navegador no ha concedido el permiso de ubicación para este sitio web."}
               </p>
 
               <button
@@ -369,35 +379,34 @@ function DriverMagicLink() {
                 {testingGps ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    <span>Conectando con GPS...</span>
+                    <span>Verificando permiso...</span>
                   </>
                 ) : (
                   <>
                     <Navigation size={15} />
-                    <span>📡 Activar GPS de mi celular</span>
+                    <span>Activar Ubicación GPS</span>
                   </>
                 )}
               </button>
 
-              {/* Guía paso a paso cuando el permiso fue denegado previamente */}
+              {/* Guía paso a paso cuando el permiso fue denegado por el navegador */}
               {showInstructions && (
-                <div className="mt-3 pt-3 border-t border-amber-200/80 space-y-2 text-[11px] text-amber-950 bg-amber-100/60 p-3 rounded-xl">
-                  <p className="font-bold uppercase tracking-wider text-[10px] text-amber-900 flex items-center gap-1">
-                    <Info size={14} className="text-amber-700" />
-                    <span>Pasos para activar en {isIOSDevice ? "iPhone" : "Android"}:</span>
+                <div className="mt-3 pt-3 border-t border-amber-200 space-y-2 text-[11px] text-amber-950 bg-amber-100/60 p-3 rounded-xl">
+                  <p className="font-bold uppercase tracking-wider text-[10px] text-amber-900 flex items-center gap-1.5">
+                    <Info size={14} className="text-amber-700 shrink-0" />
+                    <span>Pasos de configuración ({isIOSDevice ? "iPhone" : "Android"}):</span>
                   </p>
                   {isIOSDevice ? (
-                    <ol className="list-decimal list-inside space-y-1 text-amber-900 font-medium">
-                      <li>Toca el botón <strong>"aA"</strong> o <strong>🔒</strong> a la izquierda de la barra de dirección arriba.</li>
-                      <li>Entra a <strong>"Configuración del sitio web"</strong>.</li>
-                      <li>Cambia <strong>Ubicación</strong> a <strong>"Permitir"</strong>.</li>
-                      <li>Presiona nuevamente el botón de arriba.</li>
+                    <ol className="list-decimal list-inside space-y-1 text-amber-950 font-medium">
+                      <li>En la barra superior de la web, toca el botón de configuración del navegador.</li>
+                      <li>Ingresa a <strong>Configuración del sitio web</strong>.</li>
+                      <li>Cambia el ajuste de <strong>Ubicación</strong> a <strong>Permitir</strong>.</li>
                     </ol>
                   ) : (
-                    <ol className="list-decimal list-inside space-y-1 text-amber-900 font-medium">
-                      <li>Toca el ícono del candado <strong>🔒</strong> junto a la dirección arriba.</li>
-                      <li>Selecciona <strong>"Permisos del sitio"</strong> o <strong>"Ubicación"</strong>.</li>
-                      <li>Marca <strong>"Permitir"</strong> y recarga la página.</li>
+                    <ol className="list-decimal list-inside space-y-1 text-amber-950 font-medium">
+                      <li>Toca el ícono de seguridad/candado en la dirección de la web.</li>
+                      <li>Selecciona <strong>Permisos del sitio</strong>.</li>
+                      <li>Habilita el permiso de <strong>Ubicación</strong> y recarga.</li>
                     </ol>
                   )}
                 </div>
@@ -414,8 +423,8 @@ function DriverMagicLink() {
 
           {deliveryPhase === 'pending' && (
             <>
-              <p className="text-nogal/70 text-sm leading-relaxed">
-                Abre este enlace cuando salgas hacia el restaurante a recoger el pedido.
+              <p className="text-nogal/70 text-sm leading-relaxed font-serif italic">
+                Presiona el botón cuando inicies el viaje hacia el restaurante para preparar el pedido.
               </p>
               <button 
                 onClick={startBroadcasting}
@@ -429,12 +438,12 @@ function DriverMagicLink() {
           {deliveryPhase === 'to_restaurant' && (
             <div className="flex flex-col gap-4 animate-in fade-in duration-300">
               <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
-                <p className="text-xs font-bold text-amber-600 uppercase tracking-widest flex items-center justify-center gap-2 mb-1">
+                <p className="text-xs font-bold text-amber-700 uppercase tracking-widest flex items-center justify-center gap-2 mb-1">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   En camino a recoger
                 </p>
-                <p className="text-[11px] text-nogal/60 mt-2">
-                  Dirígete al restaurante. Cuando tengas el paquete, presiona el botón.
+                <p className="text-[11px] text-nogal/60 mt-1">
+                  Dirígete al local. Al retirar el paquete de cocina, presiona el botón.
                 </p>
               </div>
 
@@ -455,8 +464,8 @@ function DriverMagicLink() {
                   <span className="w-2 h-2 rounded-full bg-eucalipto animate-pulse" />
                   En camino al destino
                 </p>
-                <p className="text-[11px] text-nogal/60 mt-2">
-                  Dirígete a la dirección del cliente. Puedes usar la navegación GPS.
+                <p className="text-[11px] text-nogal/60 mt-1">
+                  Dirígete a la ubicación del cliente. Puedes abrir las aplicaciones de mapas.
                 </p>
               </div>
 
@@ -495,7 +504,7 @@ function DriverMagicLink() {
       
       <div className="mt-8 text-center text-nogal/40 text-[10px] uppercase font-bold tracking-widest flex items-center justify-center gap-2">
         <img src="/images.png" className="h-4 brightness-0 opacity-40 grayscale" alt="Logo" />
-        Sistema de Tracking Seguro
+        Sistema de Tracking Corporativo
       </div>
     </div>
   );
