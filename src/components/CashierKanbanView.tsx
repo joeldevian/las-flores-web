@@ -1,5 +1,6 @@
 import { CashierOrderCard } from "./CashierOrderCard";
-import { Utensils, Clock, Truck, CheckCircle2 } from "lucide-react";
+import { Utensils, Clock, Truck, CheckCircle2, XCircle } from "lucide-react";
+import { normalizeOrderStatus, isCancelledStatus } from "../lib/orderStatus";
 
 interface CashierKanbanViewProps {
   orders: any[];
@@ -14,16 +15,6 @@ export function CashierKanbanView({
   onStatusChange,
   onViewDetail,
 }: CashierKanbanViewProps) {
-  const getNormalizedStatus = (status: string | null | undefined) => {
-    if (!status) return "pendiente";
-    const s = status.toLowerCase().trim();
-    if (s.includes("cocina") || s.includes("preparac") || s.includes("kitchen")) return "en_preparacion";
-    if (s.includes("camino") || s.includes("listo") || s.includes("way") || s.includes("pickup")) return "en_camino";
-    if (s.includes("entregad") || s.includes("complet") || s.includes("delivered")) return "entregado";
-    if (s.includes("cancel") || s.includes("rechaz")) return "cancelado";
-    return "pendiente";
-  };
-
   const getLocalYYYYMMDD = (d?: Date | string) => {
     if (!d) return "";
     const dateObj = typeof d === "string" ? new Date(d) : d;
@@ -32,14 +23,22 @@ export function CashierKanbanView({
   };
   const todayStr = getLocalYYYYMMDD(new Date());
 
-  const pending = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente");
-  const inKitchen = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion");
-  const onWay = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino");
+  const pending = orders.filter(
+    (o) => !isCancelledStatus(o.status) && normalizeOrderStatus(o.status) === "pendiente"
+  );
+  const inKitchen = orders.filter(
+    (o) => !isCancelledStatus(o.status) && normalizeOrderStatus(o.status) === "en_preparacion"
+  );
+  const onWay = orders.filter(
+    (o) => !isCancelledStatus(o.status) && normalizeOrderStatus(o.status) === "en_camino"
+  );
   const completed = orders.filter((o) => {
-    if (getNormalizedStatus(o.status) !== "entregado") return false;
+    if (isCancelledStatus(o.status)) return false;
+    if (normalizeOrderStatus(o.status) !== "entregado") return false;
     const ordDateStr = o.created_at ? getLocalYYYYMMDD(o.created_at) : "";
     return ordDateStr === todayStr || !ordDateStr;
   });
+  const cancelled = orders.filter((o) => isCancelledStatus(o.status));
 
   const columns = [
     {
@@ -86,10 +85,21 @@ export function CashierKanbanView({
       badgeColor: "bg-emerald-600 text-white",
       items: completed,
     },
+    {
+      id: "cancelado",
+      title: "5. Cancelados",
+      count: cancelled.length,
+      icon: XCircle,
+      bgColor: "bg-rose-500/10",
+      borderColor: "border-rose-400",
+      textColor: "text-rose-950",
+      badgeColor: "bg-rose-600 text-white",
+      items: cancelled,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start font-sans">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start font-sans">
       {columns.map((col) => {
         const Icon = col.icon;
         return (

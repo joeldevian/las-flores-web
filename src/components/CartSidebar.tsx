@@ -87,6 +87,8 @@ export function CartSidebar() {
   const [deliverySubStep, setDeliverySubStep] = useState<"location" | "details">("location");
   const [orderType, setOrderType] = useState<OrderType>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<"yape" | "card" | "efectivo">("yape");
+  const [yapeTitular, setYapeTitular] = useState("");
+  const [yapeOperacion, setYapeOperacion] = useState("");
   const [isMounted, setIsMounted] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
@@ -437,7 +439,11 @@ export function CartSidebar() {
         delivery_fee: DELIVERY_FEE,
         total: total,
         payment_method: paymentMethod,
-        notes: delivery.notes,
+        notes: [
+          delivery.notes,
+          paymentMethod === "yape" && yapeTitular ? `Yape Titular: ${yapeTitular}` : "",
+          paymentMethod === "yape" && yapeOperacion ? `N° Op: ${yapeOperacion}` : "",
+        ].filter(Boolean).join(" | ") || undefined,
         items: items.map((i) => {
           const opts = i.customizations
             ? [
@@ -474,10 +480,13 @@ export function CartSidebar() {
       // Increment coupon used_count in Supabase & Log redemption record for BI Analytics
       if (appliedCoupon) {
         try {
-          await supabase
-            .from("coupons")
-            .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
-            .eq("id", appliedCoupon.id);
+          await supabase.rpc("increment_coupon_used_count", { coupon_id: appliedCoupon.id }).catch(() => {
+            // Fallback si la función RPC no existe: incremento directo
+            return supabase
+              .from("coupons")
+              .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
+              .eq("id", appliedCoupon.id);
+          });
 
           await supabase.from("coupon_redemptions").insert([
             {
@@ -1146,11 +1155,23 @@ export function CartSidebar() {
                   </div>
                   <div>
                     <Label>Titular de la cuenta origen *</Label>
-                    <input required placeholder="Ej: Juan Pérez" className={inputCls} />
+                    <input
+                      required
+                      placeholder="Ej: Juan Pérez"
+                      className={inputCls}
+                      value={yapeTitular}
+                      onChange={(e) => setYapeTitular(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label>N° Operación (Yape/Plin) *</Label>
-                    <input required placeholder="Ej: 123456" className={inputCls} />
+                    <input
+                      required
+                      placeholder="Ej: 123456"
+                      className={inputCls}
+                      value={yapeOperacion}
+                      onChange={(e) => setYapeOperacion(e.target.value)}
+                    />
                     <p className="text-[10px] text-black/40 mt-1.5 font-medium">
                       6 u 8 dígitos de aprobación de tu pantalla de éxito.
                     </p>

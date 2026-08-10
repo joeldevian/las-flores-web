@@ -61,10 +61,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = (newItem: Omit<CartItem, "quantity">) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === newItem.id);
+      // Generar clave única que incluye las personalizaciones
+      const customKey = newItem.customizations
+        ? Object.values(newItem.customizations).filter(Boolean).sort().join("|")
+        : "";
+      const uniqueId = customKey ? `${newItem.id}__${customKey}` : newItem.id;
+
+      const existing = prev.find((i) => i.id === uniqueId);
       const updated = existing
-        ? prev.map((i) => (i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i))
-        : [...prev, { ...newItem, quantity: 1 }];
+        ? prev.map((i) => (i.id === uniqueId ? { ...i, quantity: i.quantity + 1 } : i))
+        : [...prev, { ...newItem, id: uniqueId, quantity: 1 }];
       try {
         localStorage.setItem("las_flores_cart", JSON.stringify(updated));
       } catch {}

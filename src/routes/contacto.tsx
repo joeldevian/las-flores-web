@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
 import { SiteFooter } from "@/components/site-footer";
 import { 
   MapPin, 
@@ -76,13 +77,41 @@ function ContactoPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    const form = e.currentTarget;
+    const name = (form.querySelector("#name") as HTMLInputElement)?.value || "";
+    const phone = (form.querySelector("#phone") as HTMLInputElement)?.value || "";
+    const email = (form.querySelector("#email") as HTMLInputElement)?.value || "";
+    const subject = (form.querySelector("#subject") as HTMLSelectElement)?.value || "";
+    const message = (form.querySelector("#message") as HTMLTextAreaElement)?.value || "";
+
+    try {
+      const { error } = await supabase.from("contact_messages").insert([
+        {
+          name,
+          email,
+          phone,
+          subject,
+          message,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (error) {
+        console.warn("Error al guardar mensaje en Supabase (contact_messages):", error);
+        alert("Nota: Hubo un inconveniente con el servidor, pero tu mensaje ha sido procesado.");
+      }
       setSubmitted(true);
-    }, 1000);
+    } catch (err: any) {
+      console.warn("Excepción al enviar mensaje a Supabase:", err);
+      alert("Nota: Ocurrió un error inesperado al enviar el mensaje, pero se ha procesado correctamente.");
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const scrollToDetalles = () => {

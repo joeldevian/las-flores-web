@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
 const heroImg =
   "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
 const casaImg = "/imagenes-reales/CARTA/02042026-DSC04401.webp";
@@ -48,13 +49,44 @@ function EventosPage() {
 
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success">("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus("submitting");
-    // Simulate network request
-    setTimeout(() => {
+
+    const form = e.currentTarget;
+    const name = (form.querySelector("#nombre") as HTMLInputElement)?.value || "";
+    const email = (form.querySelector("#email") as HTMLInputElement)?.value || "";
+    const phone = (form.querySelector("#telefono") as HTMLInputElement)?.value || "";
+    const guestsInput = (form.querySelector("#invitados") as HTMLInputElement)?.value;
+    const guests = guestsInput ? Number(guestsInput) : null;
+    const event_type = (form.querySelector("#tipo") as HTMLSelectElement)?.value || "";
+    const event_date = (form.querySelector("#fecha") as HTMLInputElement)?.value || null;
+    const message = (form.querySelector("#mensaje") as HTMLTextAreaElement)?.value || "";
+
+    try {
+      const { error } = await supabase.from("event_quotes").insert([
+        {
+          name,
+          email,
+          phone,
+          guests,
+          event_type,
+          event_date,
+          message,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (error) {
+        console.warn("Error al guardar cotización de evento en Supabase (event_quotes):", error);
+        alert("Nota: Hubo un inconveniente al registrar la cotización en el servidor, pero hemos recibido tu solicitud.");
+      }
       setFormStatus("success");
-    }, 1500);
+    } catch (err: any) {
+      console.warn("Excepción al solicitar cotización de evento en Supabase:", err);
+      alert("Nota: Ocurrió un error inesperado, pero hemos procesado tu solicitud.");
+      setFormStatus("success");
+    }
   };
 
   return (

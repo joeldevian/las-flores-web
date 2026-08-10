@@ -958,7 +958,7 @@ function ReservasPage() {
                     </div>
                     <a
                       href={
-                        "https://wa.me/51966543210?text=" +
+                        "https://wa.me/51980723422?text=" +
                         encodeURIComponent(
                           "Hola, deseo coordinar una reserva para un grupo de más de " +
                             selectedZona.maxCap +
@@ -1434,7 +1434,7 @@ function ReservasPage() {
                   <MapPin size={18} className="text-[#2e5339] shrink-0" />
                   <div>
                     <span className="text-[10px] text-gray-500 uppercase block font-semibold">Ubicación</span>
-                    <span className="font-bold text-gray-800">Jr. Las Flores 123, Huamanga — Ayacucho</span>
+                    <span className="font-bold text-gray-800">Jr. José Olaya 106, Huamanga — Ayacucho</span>
                   </div>
                 </div>
               </div>
@@ -1485,7 +1485,7 @@ function ReservasPage() {
 
                 <a
                   href={
-                    "https://wa.me/51966543210?text=" +
+                    "https://wa.me/51980723422?text=" +
                     encodeURIComponent(
                       `Hola Las Flores, confirmo mi reserva #${form.reservationCode || "RES-88219"} a nombre de ${form.firstName} ${form.lastName} para el ${form.date} a las ${form.time}h en el ${form.zona.nombre}.`
                     )
