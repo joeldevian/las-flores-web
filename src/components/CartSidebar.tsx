@@ -113,6 +113,17 @@ export function CartSidebar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      if (!isHistoryTrigger.current) {
+        if (step === "profile" || step === "success") {
+          setStep("cart");
+        }
+      }
+      isHistoryTrigger.current = false;
+    }
+  }, [isOpen]);
+
   // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
   useEffect(() => {
     let isCancelled = false;
@@ -188,6 +199,7 @@ export function CartSidebar() {
     };
 
     const handleOpenHistory = () => {
+      isHistoryTrigger.current = true;
       setStep("profile");
       setIsOpen(true);
     };
