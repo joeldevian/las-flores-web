@@ -783,18 +783,23 @@ function InlineOrderTracker({ order, onBack }: { order: any; onBack: () => void 
           })}
         </div>
 
-        <div className="pt-3 border-t border-black/5 flex items-center justify-between text-xs">
+        <div className="pt-3 border-t border-black/5 flex flex-col gap-3">
           <div>
-            <span className="text-[9px] uppercase font-bold text-nogal/40 block">Destino:</span>
+            <span className="text-[9px] uppercase font-bold text-nogal/40 block">Destino Registrado:</span>
             <span className="text-xs font-bold text-nogal">{order.address || "Dirección registrada"}</span>
+            {order.reference && (
+              <span className="text-[10px] text-nogal/50 block italic mt-0.5">Ref: {order.reference}</span>
+            )}
           </div>
+
           <a
-            href={`/rastreo/${order.id}`}
+            href={`https://wa.me/51980723422?text=${encodeURIComponent(`Hola Las Flores, tengo una consulta sobre mi pedido #${order.order_number || order.id}`)}`}
             target="_blank"
             rel="noreferrer"
-            className="text-[10px] font-bold text-eucalipto hover:underline flex items-center gap-1"
+            className="w-full py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-95 mt-1"
           >
-            Ver más &rarr;
+            <Phone size={15} />
+            <span>Contactar Soporte por WhatsApp</span>
           </a>
         </div>
       </div>
