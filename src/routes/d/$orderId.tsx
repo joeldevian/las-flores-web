@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, Navigation2, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation, Info, Check } from "lucide-react";
+import { CheckCircle2, Navigation2, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, MapPinOff, Navigation, Info, Check, Settings, RefreshCw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/d/$orderId")({
@@ -37,7 +37,6 @@ function DriverMagicLink() {
   const [gpsBlocked, setGpsBlocked] = useState(false);
   const [gpsSuccess, setGpsSuccess] = useState(false);
   const [testingGps, setTestingGps] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(false);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
 
   const watchIdRef = useRef<number | null>(null);
@@ -94,7 +93,6 @@ function DriverMagicLink() {
   const requestGPSPermission = () => {
     setTestingGps(true);
     setError(null);
-    setShowInstructions(true);
 
     if (!navigator.geolocation) {
       setError("Tu dispositivo o navegador no soporta geolocalización por GPS.");
@@ -103,12 +101,12 @@ function DriverMagicLink() {
       return;
     }
 
+    // Solicitar posición síncrona
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setGpsBlocked(false);
         setTestingGps(false);
         setError(null);
-        setShowInstructions(false);
         setGpsSuccess(true);
         const { latitude: lat, longitude: lng } = pos.coords;
         
@@ -141,7 +139,6 @@ function DriverMagicLink() {
         console.warn("GPS Permission error:", err);
         setGpsBlocked(true);
         setTestingGps(false);
-        setShowInstructions(true);
       },
       { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
     );
@@ -351,7 +348,7 @@ function DriverMagicLink() {
             </div>
           )}
 
-          {/* Panel de permisos GPS para iPhone o Android */}
+          {/* Panel interactivo de permisos GPS para iPhone o Android */}
           {gpsBlocked && (
             <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl text-left space-y-3 animate-in fade-in duration-300 shadow-sm">
               <div className="flex items-center justify-between">
@@ -364,10 +361,10 @@ function DriverMagicLink() {
                 </span>
               </div>
 
-              <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
+              <p className="text-[11px] text-amber-950 leading-relaxed font-medium">
                 {isIOSDevice
-                  ? "Para enviar tu posición en tiempo real al mapa del cliente, autoriza el permiso de ubicación en tu navegador."
-                  : "Tu navegador no ha concedido el permiso de ubicación para este sitio web."}
+                  ? "Safari en iPhone requiere permitir la ubicación del sitio web para mostrar tu movimiento en el mapa al cliente."
+                  : "Tu navegador no ha concedido el permiso de ubicación para esta página."}
               </p>
 
               <button
@@ -379,38 +376,37 @@ function DriverMagicLink() {
                 {testingGps ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    <span>Verificando permiso...</span>
+                    <span>Solicitando Permiso...</span>
                   </>
                 ) : (
                   <>
                     <Navigation size={15} />
-                    <span>Activar Ubicación GPS</span>
+                    <span>Reintentar Permiso de GPS</span>
                   </>
                 )}
               </button>
 
-              {/* Guía paso a paso cuando el permiso fue denegado por el navegador */}
-              {showInstructions && (
-                <div className="mt-3 pt-3 border-t border-amber-200 space-y-2 text-[11px] text-amber-950 bg-amber-100/60 p-3 rounded-xl">
-                  <p className="font-bold uppercase tracking-wider text-[10px] text-amber-900 flex items-center gap-1.5">
-                    <Info size={14} className="text-amber-700 shrink-0" />
-                    <span>Pasos de configuración ({isIOSDevice ? "iPhone" : "Android"}):</span>
-                  </p>
-                  {isIOSDevice ? (
-                    <ol className="list-decimal list-inside space-y-1 text-amber-950 font-medium">
-                      <li>En la barra superior de la web, toca el botón de configuración del navegador.</li>
-                      <li>Ingresa a <strong>Configuración del sitio web</strong>.</li>
-                      <li>Cambia el ajuste de <strong>Ubicación</strong> a <strong>Permitir</strong>.</li>
-                    </ol>
-                  ) : (
-                    <ol className="list-decimal list-inside space-y-1 text-amber-950 font-medium">
-                      <li>Toca el ícono de seguridad/candado en la dirección de la web.</li>
-                      <li>Selecciona <strong>Permisos del sitio</strong>.</li>
-                      <li>Habilita el permiso de <strong>Ubicación</strong> y recarga.</li>
-                    </ol>
-                  )}
-                </div>
-              )}
+              {/* Guía visual paso a paso para iPhone y Android */}
+              <div className="pt-3 border-t border-amber-200 space-y-2 text-[11px] text-amber-950 bg-amber-100/70 p-3 rounded-xl">
+                <p className="font-bold uppercase tracking-wider text-[10px] text-amber-900 flex items-center gap-1.5">
+                  <Settings size={14} className="text-amber-700 shrink-0" />
+                  <span>Cómo activar en {isIOSDevice ? "iPhone (Safari)" : "Android (Chrome)"}:</span>
+                </p>
+                {isIOSDevice ? (
+                  <ol className="list-decimal list-inside space-y-1.5 text-amber-950 font-medium leading-relaxed">
+                    <li>Arriba a la izquierda de la URL, toca el botón de configuración del navegador.</li>
+                    <li>Ingresa a <strong>Configuración del sitio web</strong>.</li>
+                    <li>Cambia <strong>Ubicación</strong> de <i>Preguntar</i> a <strong>Permitir</strong>.</li>
+                    <li>Presiona el botón de arriba o recarga la página.</li>
+                  </ol>
+                ) : (
+                  <ol className="list-decimal list-inside space-y-1.5 text-amber-950 font-medium leading-relaxed">
+                    <li>Toca el candado o ícono de ajustes a la izquierda de la URL arriba.</li>
+                    <li>Selecciona <strong>Permisos del sitio</strong> → <strong>Ubicación</strong>.</li>
+                    <li>Elige <strong>Permitir</strong> y presiona Reintentar.</li>
+                  </ol>
+                )}
+              </div>
             </div>
           )}
 
