@@ -3,6 +3,22 @@
  * Restaurante Las Flores — Ayacucho
  */
 
+export function generateDeliveryGoogleMapsUrl(
+  latitude?: number | null,
+  longitude?: number | null,
+  address?: string | null
+): string {
+  if (latitude && longitude) {
+    return `https://www.google.com/maps?q=${latitude},${longitude}`;
+  }
+  if (address && address.trim()) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      address.trim() + ", Huamanga, Ayacucho"
+    )}`;
+  }
+  return `https://www.google.com/maps?q=-13.1588,-74.2239`;
+}
+
 export function buildDeliveryWhatsAppMessage(order: any, items: any[]): string {
   const orderNum = order.order_number || order.id?.slice(0, 8) || "S/N";
   const clientName = order.client_name || "Cliente General";
