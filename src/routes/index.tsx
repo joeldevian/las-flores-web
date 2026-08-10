@@ -78,7 +78,7 @@ const festividades: Festividad[] = [
     nombre: "Semana Santa Ayacuchana",
     fecha: "Marzo / Abril",
     colorAccent: "bg-cochinilla",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/SEMANA SANTA/semana santa-opt.webp",
+    imagen: "/imagenes-reales/seccion-festividades/semana-santa.webp",
     descripcionCorta:
       "La mayor expresión de fe y fervor religioso en el Perú, con impresionantes alfombras de flores.",
     descripcion:
@@ -97,7 +97,7 @@ const festividades: Festividad[] = [
     nombre: "Carnaval Ayacuchano",
     fecha: "Febrero / Marzo",
     colorAccent: "bg-chilca",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/CARNAVALES/Carnavales-opt.webp",
+    imagen: "/imagenes-reales/seccion-festividades/carnaval-ayacuchano.webp",
     descripcionCorta:
       "Vibrante festividad que preserva la identidad andina a través de multitudinarias comparsas.",
     descripcion:
@@ -117,7 +117,7 @@ const festividades: Festividad[] = [
     fecha: "Agosto / Septiembre",
     colorAccent: "bg-eucalipto",
     imagen:
-      "/imagenes-reales/FESTIVIDADES LISTO/HATUN YAKU RAYMI PARAS/HATUN YAKU RAYMI PARAS.webp",
+      "/imagenes-reales/seccion-festividades/hatun-yaku-raymi.webp",
     descripcionCorta: "Un ancestral tributo al agua y a la Pachamama con los Danzantes de Tijeras.",
     descripcion:
       "Celebrado entre agosto y septiembre en Paras, el Hatun Yaku Raymi es un ancestral tributo al agua y a la Pachamama. Destaca la participación de los Danzantes de Tijeras, quienes actúan como mediadores espirituales ante los Apus para bendecir el inicio del ciclo agrícola. Una gran oportunidad para presenciar esta milenaria tradición andina.",
@@ -134,7 +134,7 @@ const festividades: Festividad[] = [
     nombre: "Fiesta de las Cruces",
     fecha: "Mayo",
     colorAccent: "bg-retablo-blue",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/FIESTA DE LAS CRUCES/fiesta de las cruces(1).webp",
+    imagen: "/imagenes-reales/seccion-festividades/fiestas-de-cruces.webp",
     descripcionCorta:
       "Fusiona la fe católica y andina con el tradicional descenso de cruces al ritmo de música.",
     descripcion:
@@ -153,7 +153,7 @@ const festividades: Festividad[] = [
     nombre: "Vilcas Raymi",
     fecha: "Julio",
     colorAccent: "bg-adobe",
-    imagen: "/imagenes-reales/FESTIVIDADES LISTO/VILCAS RAYMI/Vilcas raymi.webp",
+    imagen: "/imagenes-reales/seccion-festividades/vilcas-raymi.webp",
     descripcionCorta:
       "Escenificación de la guerra Inca-Chanca en el antiguo centro administrativo inca.",
     descripcion:
@@ -175,7 +175,7 @@ const lugares: Lugar[] = [
     numeral: "I",
     nombre: "Aguas Turquesas de Millpu",
     categoria: "Naturaleza",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/MILLPU/millpu-opt.webp",
+    imagen: "/imagenes-reales/seccion-turs/millpu.webp",
     descripcion:
       "Ubicadas a casi 4 horas de Huamanga, las Aguas Turquesas de Millpu conforman una impresionante sucesión de piscinas naturales escalonadas en el interior de un cañón.",
     consejo:
@@ -186,7 +186,7 @@ const lugares: Lugar[] = [
     numeral: "II",
     nombre: "Pampa de Quinua",
     categoria: "Historia",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/PAMPA DE QUINUA/pampa de quinua.webp",
+    imagen: "/imagenes-reales/seccion-turs/pampa-quinua.webp",
     descripcion:
       "A solo 45 minutos de Huamanga, la Pampa de Quinua es un majestuoso escenario histórico coronado por un obelisco que conmemora la Batalla de Ayacucho.",
     consejo: "Complementar la visita explorando la tradicional alfarería del pueblo aledaño.",
@@ -196,7 +196,7 @@ const lugares: Lugar[] = [
     numeral: "III",
     nombre: "Complejo Arqueológico Wari",
     categoria: "Arqueología",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/COMPLEJO WARI/complejo wari.webp",
+    imagen: "/imagenes-reales/seccion-turs/complejo-wari.webp",
     descripcion:
       "A solo 30 minutos de Huamanga, destaca por haber sido la imponente capital del primer gran imperio andino, siendo pionero en la planificación urbana preincaica.",
     consejo:
@@ -205,30 +205,31 @@ const lugares: Lugar[] = [
   {
     id: 4,
     numeral: "IV",
-    nombre: "Catedral de Huamanga",
-    categoria: "Arquitectura Colonial",
-    imagen: "/imagenes-reales/DESTINOS LISTO/CITY TOUR/CATEDRAL DE HUAMANGA/CATEDRAL.webp",
+    nombre: "Intihuatana",
+    categoria: "Patrimonio Inca",
+    imagen: "/imagenes-reales/seccion-turs/ruinas-de-intihuatana.webp",
     descripcion:
-      "Majestuosa obra del siglo XVII que destaca por su fachada renacentista y sus interiores barrocos, albergando impresionantes altares bañados en pan de oro.",
-    consejo: "Recorrer el centro histórico a pie para admirar su arquitectura y riqueza histórica.",
+      "A 3 horas de Huamanga, el Complejo Arqueológico de Intihuatana destaca por sus finas edificaciones de piedra y su famoso reloj solar a orillas de la hermosa laguna de Pumacocha.",
+    consejo:
+      "Llevar ropa abrigadora y calzado cómodo para explorar la magia de este antiguo refugio de descanso de la nobleza incaica.",
   },
   {
     id: 5,
     numeral: "V",
-    nombre: "Arte y Cultura Ayacuchana",
-    categoria: "Artesanía",
-    imagen: "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/RetabloR.webp",
+    nombre: "Bosque de Titankayocc",
+    categoria: "Naturaleza Andina",
+    imagen: "/imagenes-reales/seccion-turs/puyas-de-raimondi.titankayocc.webp",
     descripcion:
-      "El retablo ayacuchano plasma magistralmente las costumbres andinas y religiosas mediante diminutas figuras en coloridas cajas de madera. Patrimonio Cultural de la Nación.",
+      "A poco más de 2 horas de Huamanga, el bosque de Titankayocc alberga el santuario más grande de Puyas de Raimondi, imponentes plantas andinas que superan los 10 metros de altura.",
     consejo:
-      "Visitar los talleres artesanales para admirar este minucioso arte y adquirir piezas únicas.",
+      "Llevar ropa abrigadora y aclimatarse previamente a la altitud para disfrutar plenamente de este espectacular paisaje natural.",
   },
   {
     id: 6,
     numeral: "VI",
     nombre: "Vilcashuamán",
     categoria: "Patrimonio Inca",
-    imagen: "/imagenes-reales/DESTINOS LISTO/EXCURSIONES/VILCASHUAMAN/DSC09327-2-opt.webp",
+    imagen: "/imagenes-reales/seccion-turs/vilcas-huaman.webp",
     descripcion:
       "A 3 horas de Huamanga, este imponente complejo arqueológico fue un importante centro administrativo inca, conectado estratégicamente con el Cusco.",
     consejo:
