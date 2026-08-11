@@ -258,31 +258,28 @@ function TesorosAyacuchoPage() {
         </div>
       </header>
 
-      {/* Tabs de Temporadas */}
-      <section className="bg-white border-b border-nogal/10">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-4">
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-6 py-16 space-y-12">
+        
+        {/* Category Filters */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
             {Object.keys(productosPorTemporada).map((temporada) => (
               <button
                 key={temporada}
                 onClick={() => setActiveTemporada(temporada)}
-                className={`px-6 py-3 text-xs uppercase tracking-[0.2em] font-bold transition-all rounded-full whitespace-nowrap ${
+                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
                   activeTemporada === temporada
-                    ? "bg-eucalipto text-piedra"
-                    : "bg-transparent text-nogal/60 hover:text-nogal hover:bg-nogal/5"
+                    ? "bg-[#2D473C] text-[#D4AF37] font-black shadow-md scale-105"
+                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 {temporada}
               </button>
             ))}
-          </div>
         </div>
-      </section>
 
-      {/* Grid de Productos */}
-      <section className="bg-piedra py-16 md:py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Grid de Productos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {productosPorTemporada[activeTemporada].map((producto, index) => (
               <article
                 key={index}
@@ -328,9 +325,8 @@ function TesorosAyacuchoPage() {
                 </div>
               </article>
             ))}
-          </div>
         </div>
-      </section>
+      </main>
 
       <SiteFooter />
     </div>

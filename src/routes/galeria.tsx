@@ -208,29 +208,26 @@ function GaleriaPage() {
         </div>
       </section>
 
-      {/* Category Tabs */}
-      <div className="w-full bg-white border-b border-nogal/10">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-4">
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-6 py-16 space-y-12">
+        {/* Category Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
             {GALLERY_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-6 py-2 text-sm font-semibold uppercase tracking-wider whitespace-nowrap transition-all duration-300 ${
+                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
                   activeCategory === cat.id
-                    ? "text-eucalipto border-b-2 border-eucalipto"
-                    : "text-nogal/60 hover:text-nogal"
+                    ? "bg-[#2D473C] text-[#D4AF37] font-black shadow-md scale-105"
+                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 {cat.label}
               </button>
             ))}
-          </div>
         </div>
-      </div>
 
-      {/* Gallery Grid */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
+        {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentCategory?.images.map((img, idx) => (
             <div
