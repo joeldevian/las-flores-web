@@ -149,7 +149,7 @@ function CartaPage() {
 
       {/* Page Title */}
       <div className="bg-piedra pt-10 pb-4 text-center">
-        <h1 className="font-serif text-4xl md:text-5xl text-nogal">Nuestra Carta</h1>
+        <h1 className="font-serif text-4xl md:text-6xl text-nogal font-normal leading-tight">Nuestra Carta</h1>
       </div>
 
       {/* Main Content with Sidebar */}

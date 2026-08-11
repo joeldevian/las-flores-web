@@ -236,10 +236,10 @@ function TesorosAyacuchoPage() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8 text-piedra">
           <div className="max-w-3xl text-center">
-            <h1 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.05] text-balance">
+            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
               Tesoros de Ayacucho
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-[1.7] text-piedra/80">
+            <p className="mx-auto mt-6 max-w-3xl text-base md:text-lg text-piedra/90 leading-relaxed">
               Ingredientes autóctonos que dan vida a nuestra cocina. Cada temporada trae los mejores
               productos de nuestra tierra, cosechados en su punto perfecto.
             </p>

@@ -714,7 +714,7 @@ function ReservasPage() {
             <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
               Las Flores · Ayacucho
             </span>
-            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight drop-shadow-md">
+            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
               Reserva tu Experiencia
             </h1>
           </div>

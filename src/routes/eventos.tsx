@@ -7,7 +7,7 @@ const equipoImg = "/imagenes-reales/EQUIPO/02042026-DSC05038.webp";
 const retabloImg =
   "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp";
 import { SiteFooter } from "@/components/site-footer";
-import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2, ChevronDown } from "lucide-react";
 import { SiteNavigationMenu } from '../components/SiteNavigationMenu';
 import { useState, useTransition, useEffect } from 'react';
 import { ShoppingCart } from "lucide-react";
@@ -214,31 +214,29 @@ function EventosPage() {
         {/* Elegant Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/20 to-ink/95" />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 pb-4 flex flex-col items-center text-center mt-8">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center text-center -mt-12">
           {/* Decorative Top Accent */}
           <div className="w-px h-8 md:h-10 bg-chilca/60 mb-5 animate-reveal"></div>
 
-          <span className="text-chilca font-semibold uppercase tracking-[0.4em] text-[10px] md:text-xs mb-5 block animate-reveal [animation-delay:100ms]">
+          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block animate-reveal [animation-delay:100ms]">
             Celebre con nosotros
           </span>
 
-          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-piedra leading-[1.05] mb-6 w-full animate-reveal [animation-delay:200ms]">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight mb-6 w-full animate-reveal [animation-delay:200ms]">
             Eventos Memorables <br />
-            <span className="italic font-light text-piedra/90">en Ayacucho</span>
+            <span className="font-normal">en Ayacucho</span>
           </h1>
 
-          <p className="text-sm md:text-base text-piedra/80 max-w-[50ch] font-light leading-[1.8] animate-reveal [animation-delay:300ms]">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed animate-reveal [animation-delay:300ms]">
             Nuestros espacios, impregnados de historia y elegancia, son el escenario ideal para sus
             celebraciones más importantes. Celebre rodeado de la magia de Huamanga.
           </p>
+        </div>
 
-          <button
-            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
-            className="mt-8 inline-flex items-center gap-3 px-8 py-4 bg-transparent border border-chilca/30 text-chilca text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-chilca hover:text-nogal transition-colors animate-reveal [animation-delay:400ms] rounded-sm group"
-          >
-            Explorar Espacios
-            <span className="group-hover:translate-y-1 transition-transform">↓</span>
-          </button>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
+          <span className="text-piedra/60 text-[10px] uppercase tracking-[0.4em] font-medium">Desliza</span>
+          <ChevronDown size={24} className="text-piedra/60" strokeWidth={1.5} />
         </div>
       </section>
 
@@ -256,7 +254,7 @@ function EventosPage() {
             </div>
           </div>
           <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Celebraciones Familiares</h2>
+            <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-balance mb-6">Celebraciones Familiares</h2>
             <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
               Desde cumpleaños hasta aniversarios, Las Flores es el hogar perfecto para celebrar la
               vida con sus seres queridos. Disfrute de nuestra propuesta tradicional de compartir en
@@ -287,7 +285,7 @@ function EventosPage() {
             </div>
           </div>
           <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Reuniones Corporativas</h2>
+            <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-balance mb-6">Reuniones Corporativas</h2>
             <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
               El entorno perfecto para los negocios. Contamos con salones acondicionados para
               almuerzos ejecutivos, conferencias, y cenas de gala empresariales, garantizando
@@ -322,7 +320,7 @@ function EventosPage() {
             </div>
           </div>
           <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Bodas y Recepciones</h2>
+            <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-balance mb-6">Bodas y Recepciones</h2>
             <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
               Haga de su día especial un momento inolvidable. Ofrecemos ambientes íntimos y
               majestuosos, un servicio impecable y propuestas gastronómicas diseñadas a medida para
@@ -348,10 +346,10 @@ function EventosPage() {
 
       {/* CTA Section */}
       <section className="bg-eucalipto text-piedra py-32 px-6 flex flex-col items-center justify-center text-center">
-        <span className="text-chilca font-medium uppercase tracking-[0.4em] text-xs mb-6 block animate-reveal">
+        <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs mb-6 block animate-reveal">
           SU CELEBRACIÓN COMIENZA AQUÍ
         </span>
-        <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl mb-12 max-w-3xl text-balance animate-reveal [animation-delay:100ms]">
+        <h2 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05] text-balance mb-12 max-w-3xl animate-reveal [animation-delay:100ms]">
           Hagamos de su evento un recuerdo imborrable
         </h2>
         <button

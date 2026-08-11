@@ -221,13 +221,13 @@ function ContactoPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/30 to-ink/95" />
 
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6 pt-12 animate-in fade-in duration-1000">
-          <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] font-bold text-chilca/90 block">
+          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
             Ayacucho · Perú
           </span>
-          <h1 className="font-serif italic text-5xl sm:text-6xl md:text-8xl text-piedra tracking-tight leading-[1.05]">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Contáctanos
           </h1>
-          <p className="font-sans text-piedra/80 text-sm md:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             Estamos listos para atender tus reservas, consultas de la carta o pedidos a domicilio.
           </p>
         </div>

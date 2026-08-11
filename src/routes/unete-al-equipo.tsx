@@ -128,10 +128,10 @@ function UneteAlEquipoPage() {
           <span className="inline-block text-xs uppercase tracking-[0.3em] font-bold text-cream/90 bg-eucalipto/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/20 shadow-md">
             Trabaja con nosotros
           </span>
-          <h1 className="font-serif font-medium text-5xl md:text-7xl lg:text-8xl text-piedra mb-6 tracking-tight drop-shadow-2xl">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight mb-6">
             Crece con nosotros
           </h1>
-          <p className="font-sans text-piedra/90 text-lg md:text-2xl max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             Forma parte de la tradición gastronómica y cultural de Ayacucho. Construye tu futuro laboral en la familia de Restaurante Las Flores.
           </p>
         </div>

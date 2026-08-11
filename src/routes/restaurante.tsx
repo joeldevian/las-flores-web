@@ -7,7 +7,7 @@ const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
 import { useState, useTransition, useEffect, useRef } from "react";
-import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart } from "lucide-react";
+import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart, ChevronDown } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 
@@ -467,15 +467,21 @@ function RestaurantePage() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8 text-piedra">
           <div className="max-w-3xl text-center">
-            <h1 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05] text-balance animate-reveal [animation-delay:200ms]">
+            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight animate-reveal [animation-delay:200ms]">
               La familia detrás de cada plato
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-[1.7] text-piedra/80">
+            <p className="mx-auto mt-6 max-w-3xl text-base md:text-lg text-piedra/90 leading-relaxed">
               Cada generación ha dejado una huella distinta: una fundadora que abrió el fuego, una
               segunda etapa que consolidó el proyecto y una tercera que lo lleva al presente con una
               mirada contemporánea.
             </p>
           </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
+          <span className="text-piedra/60 text-[10px] uppercase tracking-[0.4em] font-medium">Desliza</span>
+          <ChevronDown size={24} className="text-piedra/60" strokeWidth={1.5} />
         </div>
       </header>
 
