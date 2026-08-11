@@ -701,22 +701,29 @@ function ReservasPage() {
 
       {/* Header Banner */}
       {!selectedZona && (
-        <section className="relative h-[36vh] min-h-[280px] flex items-center justify-center bg-[#2c1d11]">
-          <div className="absolute inset-0">
+        <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+          <div className="absolute inset-0 z-0">
             <img
               src="/imagenes-reales/GALERIA/evento_corporativo.webp"
               alt="Restaurante Las Flores Ayacucho"
-              className="w-full h-full object-cover opacity-35"
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
           </div>
-          <div className="relative z-10 text-center text-white px-6 pt-12">
-            <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
-              Las Flores · Ayacucho
+          <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+            <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+              <Sparkles size={14} />
+              Tu Mesa · Tu Momento · Las Flores
+              <Sparkles size={14} />
             </span>
             <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
               Reserva tu Experiencia
             </h1>
+            <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
+              Asegura tu mesa y vive una experiencia gastronómica única en el corazón de Ayacucho. Te esperamos con los mejores sabores de nuestra tierra.
+            </p>
           </div>
         </section>
       )}
@@ -724,16 +731,6 @@ function ReservasPage() {
       {/* PHASE 1: GALERÍA DE AMBIENTES (Estilo La Rosa Náutica: Tarjetas limpias, fotos verticales y botones ovalados) */}
       {!selectedZona && (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-balance text-[#2e5339] mb-4">
-              Nuestros Ambientes y Salones
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed">
-              Elige cómo quieres vivir la experiencia: desde la calidez del Salón Principal, la vista abierta de la Terraza o la intimidad del Jardín. Cada espacio propone una forma única de disfrutar nuestra gastronomía.
-            </p>
-            <div className="w-24 h-[2px] bg-[#d4a373] mx-auto mt-6" />
-          </div>
-
           {/* Grid de Tarjetas Elegantes (Estilo La Rosa Náutica: Fotos altas y prominentes) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {ZONAS.map((z) => {

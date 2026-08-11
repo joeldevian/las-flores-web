@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
+import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/galeria")({
   component: GaleriaPage,
@@ -181,20 +182,24 @@ function GaleriaPage() {
       </nav>
 
       {/* Header Banner */}
-      <section className="relative h-[36vh] min-h-[280px] flex items-center justify-center bg-[#2c1d11]">
-        <div className="absolute inset-0">
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
-            src="/imagenes-reales/GALERIA/evento_corporativo.webp"
+            src="/imagenes-reales/hero-paginas/hero-galeria.webp"
             alt="Galería Las Flores"
-            className="w-full h-full object-cover opacity-35"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
         </div>
-        <div className="relative z-10 text-center text-white px-6 pt-12">
-          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
-            Las Flores · Ayacucho
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+            <Sparkles size={14} />
+            Nuestra Galería · Momentos que inspiran
+            <Sparkles size={14} />
           </span>
-          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight drop-shadow-md mb-5">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Galería de Momentos
           </h1>
           <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">

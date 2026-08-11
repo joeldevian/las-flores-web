@@ -9,10 +9,11 @@ import {
   Send, 
   CheckCircle2, 
   MessageSquare, 
-  ChevronDown, 
+  ChevronDown,
   Compass, 
   HelpCircle, 
-  ExternalLink 
+  ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useState, useEffect } from "react";
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/contacto")({
   component: ContactoPage,
 });
 
-const heroImg = "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
+const heroImg = "/imagenes-reales/hero-paginas/hero-contacto.webp";
 
 // FAQS reales y congruentes del Restaurante Las Flores Ayacucho
 const FAQS = [
@@ -112,10 +113,6 @@ function ContactoPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const scrollToDetalles = () => {
-    document.getElementById("contacto-detalles")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -209,20 +206,24 @@ function ContactoPage() {
         </div>
       </nav>
 
-      {/* ── HERO PANTALLA COMPLETA ── */}
-      <section className="min-h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-eucalipto">
-        <div className="absolute inset-0 z-0 opacity-70">
+      {/* ── HERO ── */}
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
             src={heroImg}
             alt="Ambiente de Restaurante Las Flores Ayacucho"
-            className="w-full h-full object-cover object-center scale-[1.02]"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/30 to-ink/95" />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6 pt-12 animate-in fade-in duration-1000">
-          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
-            Ayacucho · Perú
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+            <Sparkles size={14} />
+            Estamos para servirte · Escríbenos
+            <Sparkles size={14} />
           </span>
           <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Contáctanos
@@ -231,18 +232,6 @@ function ContactoPage() {
             Estamos listos para atender tus reservas, consultas de la carta o pedidos a domicilio.
           </p>
         </div>
-
-        {/* Indicador de Desplazamiento Suave */}
-        <button
-          onClick={scrollToDetalles}
-          type="button"
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-piedra/60 hover:text-piedra transition-all group cursor-pointer"
-        >
-          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">
-            Desliza
-          </span>
-          <ChevronDown size={20} className="animate-bounce" />
-        </button>
       </section>
 
       {/* ── MAIN LAYOUT (DESPLAZAMIENTO NATURAL Y FLUIDO) ── */}

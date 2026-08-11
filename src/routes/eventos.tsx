@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
 const heroImg =
-  "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
+  "/imagenes-reales/hero-paginas/hero-eventos-opt.webp";
 const casaImg = "/imagenes-reales/CARTA/02042026-DSC04401.webp";
 const equipoImg = "/imagenes-reales/EQUIPO/02042026-DSC05038.webp";
 const retabloImg =
   "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp";
 import { SiteFooter } from "@/components/site-footer";
-import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2, ChevronDown } from "lucide-react";
+import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2, Sparkles } from "lucide-react";
 import { SiteNavigationMenu } from '../components/SiteNavigationMenu';
 import { useState, useTransition, useEffect } from 'react';
 import { ShoppingCart } from "lucide-react";
@@ -203,41 +203,35 @@ function EventosPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-eucalipto pt-20 pb-10">
-        {/* Background Image with Slow Zoom */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-eucalipto pt-32 pb-24 px-6">
         <img
           src={heroImg}
           alt="Eventos en Restaurante Las Flores Ayacucho"
+          loading="eager"
+          decoding="async"
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover opacity-60 animate-hero"
+          className="absolute inset-0 w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
         />
-        {/* Elegant Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/20 to-ink/95" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center text-center -mt-12">
-          {/* Decorative Top Accent */}
-          <div className="w-px h-8 md:h-10 bg-chilca/60 mb-5 animate-reveal"></div>
-
-          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block animate-reveal [animation-delay:100ms]">
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6 -mt-12">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+            <Sparkles size={14} />
             Celebre con nosotros
+            <Sparkles size={14} />
           </span>
 
-          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight mb-6 w-full animate-reveal [animation-delay:200ms]">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Eventos Memorables <br />
             <span className="font-normal">en Ayacucho</span>
           </h1>
 
-          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed animate-reveal [animation-delay:300ms]">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             Nuestros espacios, impregnados de historia y elegancia, son el escenario ideal para sus
             celebraciones más importantes. Celebre rodeado de la magia de Huamanga.
           </p>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-piedra/60 text-[10px] uppercase tracking-[0.4em] font-medium">Desliza</span>
-          <ChevronDown size={24} className="text-piedra/60" strokeWidth={1.5} />
-        </div>
       </section>
 
       {/* Servicios de Eventos */}

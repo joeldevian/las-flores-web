@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { MenuModal } from "@/components/MenuModal";
-import { Quote, Heart, Award, Utensils, Sparkles, ArrowRight, ShieldCheck, Star, ChevronDown } from "lucide-react";
+import { Quote, Heart, Award, Utensils, Sparkles, ArrowRight, Star } from "lucide-react";
 
 export const Route = createFileRoute("/familia-las-flores")({
   head: () => ({
@@ -166,7 +166,7 @@ function FamiliaLasFloresPage() {
       </header>
 
       {/* Hero Section Completa */}
-      <section className="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src="/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp"
@@ -192,24 +192,6 @@ function FamiliaLasFloresPage() {
           <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             "Detrás de cada plato sabroso y cada sonrisa en mesa hay hombres y mujeres ayacuchanos que trabajan con dignidad, pasión y profundo amor por nuestras raíces."
           </p>
-
-          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-piedra/80 font-bold uppercase tracking-widest">
-            <span className="flex items-center gap-2">
-              <ShieldCheck size={16} className="text-chilca" /> Trato Digno y Justo
-            </span>
-            <span className="flex items-center gap-2">
-              <Heart size={16} className="text-chilca" /> Tradición Familiar
-            </span>
-            <span className="flex items-center gap-2">
-              <Award size={16} className="text-chilca" /> Excelencia Ayacuchana
-            </span>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-piedra/60 text-[10px] uppercase tracking-[0.4em] font-medium">Desliza</span>
-          <ChevronDown size={24} className="text-piedra/60" strokeWidth={1.5} />
         </div>
       </section>
 
