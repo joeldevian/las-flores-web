@@ -27,7 +27,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     const init = async () => {
       const { data: { session: s } } = await supabase.auth.getSession();
       setSession(s);
-      if (s) await fetchProfile(s.user.id, s.user, false);
+      if (s) await fetchProfile(s.user.id, s.user, true);
       setLoading(false);
     };
     init();
@@ -35,7 +35,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     const handleAuthSync = async () => {
       const { data: { session: s } } = await supabase.auth.getSession();
       setSession(s);
-      if (s) await fetchProfile(s.user.id, s.user, false);
+      if (s) await fetchProfile(s.user.id, s.user, true);
     };
 
     window.addEventListener("message", handleAuthSync);
@@ -44,9 +44,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
       if (s) {
-        // Al iniciar sesión (SIGNED_IN), verificar si faltan datos para solicitar completarlos
-        const shouldPrompt = event === "SIGNED_IN";
-        await fetchProfile(s.user.id, s.user, shouldPrompt);
+        await fetchProfile(s.user.id, s.user, true);
       } else {
         setProfile(null);
         setShowCompleteModal(false);
@@ -234,6 +232,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
           }
           initialPhone={profile?.phone || session.user?.user_metadata?.phone || ""}
           initialBirthdate={profile?.birthdate || session.user?.user_metadata?.birth_date || ""}
+          initialEmail={profile?.email || session.user?.email || ""}
           onSuccess={(updated) => {
             setProfile((prev: any) => ({ ...prev, ...updated }));
             setShowCompleteModal(false);

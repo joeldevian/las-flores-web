@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Phone, Calendar, Sparkles, Check, Loader2, X } from "lucide-react";
+import { Phone, Calendar, Sparkles, Check, Loader2, X, Mail } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface CompleteProfileModalProps {
@@ -8,6 +8,7 @@ interface CompleteProfileModalProps {
   initialName?: string;
   initialPhone?: string;
   initialBirthdate?: string;
+  initialEmail?: string;
   onSuccess: (updatedProfile: any) => void;
   onClose?: () => void;
 }
@@ -43,11 +44,13 @@ export function CompleteProfileModal({
   initialName = "",
   initialPhone = "",
   initialBirthdate = "",
+  initialEmail = "",
   onSuccess,
   onClose,
 }: CompleteProfileModalProps) {
   const [mounted, setMounted] = useState(false);
   const [name, setName] = useState(initialName);
+  const [email, setEmail] = useState(initialEmail);
   const [phone, setPhone] = useState(initialPhone);
   
   // Parse initial birthdate (YYYY-MM-DD)
@@ -78,6 +81,12 @@ export function CompleteProfileModal({
       return;
     }
 
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setErrorMsg("Por favor ingresa tu correo electrónico.");
+      return;
+    }
+
     const birthdateFormatted = `${year}-${month}-${day}`;
 
     setSaving(true);
@@ -87,6 +96,7 @@ export function CompleteProfileModal({
         phone: cleanPhone,
         birth_date: birthdateFormatted,
         birthdate: birthdateFormatted,
+        email: cleanEmail,
         updated_at: new Date().toISOString(),
       };
       if (name.trim()) updatePayload.full_name = name.trim();
@@ -99,9 +109,8 @@ export function CompleteProfileModal({
 
       let isSavedInDb = updatedData && updatedData.length > 0;
 
-      // Si UPDATE falló o devolvió 0 filas (e.g. columna inexistente o la fila aún no existe)
+      // Si UPDATE falló o devolvió 0 filas
       if (!isSavedInDb || updateErr) {
-        console.warn("UPDATE directo no afectó filas o dio error, probando sin columna 'birthdate':", updateErr?.message);
         delete updatePayload.birthdate;
 
         const { data: updatedData2, error: updateErr2 } = await supabase
@@ -112,14 +121,11 @@ export function CompleteProfileModal({
 
         isSavedInDb = updatedData2 && updatedData2.length > 0;
 
-        // Si la fila no existía en la tabla profiles, hacer UPSERT con email
+        // Si la fila no existía en la tabla profiles, hacer UPSERT completo
         if (!isSavedInDb || updateErr2) {
-          console.warn("Fila no existe en profiles, ejecutando UPSERT completo con email...");
-          const { data: { user } } = await supabase.auth.getUser();
-          
           const upsertPayload: Record<string, any> = {
             id: userId,
-            email: user?.email,
+            email: cleanEmail,
             phone: cleanPhone,
             birth_date: birthdateFormatted,
             role: "client",
@@ -132,8 +138,8 @@ export function CompleteProfileModal({
             .upsert(upsertPayload);
 
           if (finalUpsertErr) {
-            console.error("Error crítico al guardar perfil en la base de datos:", finalUpsertErr);
-            setErrorMsg(`No se pudo actualizar la base de datos (${finalUpsertErr.message}). Por favor reintenta.`);
+            console.error("Error al guardar en base de datos:", finalUpsertErr);
+            setErrorMsg(`No se pudo guardar en la BD (${finalUpsertErr.message}). Reintenta.`);
             setSaving(false);
             return;
           }
@@ -149,7 +155,7 @@ export function CompleteProfileModal({
         },
       });
 
-      onSuccess({ phone: cleanPhone, birthdate: birthdateFormatted, full_name: name });
+      onSuccess({ phone: cleanPhone, birthdate: birthdateFormatted, full_name: name, email: cleanEmail });
     } catch (err: any) {
       console.error("Error al actualizar perfil:", err);
       setErrorMsg("No se pudieron guardar los datos. Intenta nuevamente.");
@@ -183,14 +189,14 @@ export function CompleteProfileModal({
             ¡Queremos conocerte mejor! 🌸
           </h2>
           <p className="text-xs text-piedra/80 mt-1 max-w-xs mx-auto leading-relaxed">
-            Completa tu celular para coordinar tus entregas y tu cumpleaños para regalarte sorpresas en tu día.
+            Completa tus datos para coordinar tus entregas y enviarte sorpresas en tu cumpleaños.
           </p>
         </div>
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           
-          {/* Nombre (opcional/editable) */}
+          {/* Nombre */}
           <div>
             <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
               Nombre Completo *
@@ -201,6 +207,21 @@ export function CompleteProfileModal({
               placeholder="Ej: María García"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white text-sm text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto font-medium"
+            />
+          </div>
+
+          {/* Correo Electrónico (si faltaba, como en Facebook OAuth) */}
+          <div>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <Mail size={13} className="text-eucalipto" /> Correo Electrónico *
+            </label>
+            <input
+              type="email"
+              required
+              placeholder="tu@correo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white text-sm text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto font-medium"
             />
           </div>
@@ -218,24 +239,21 @@ export function CompleteProfileModal({
               placeholder="Ej: 980723422"
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))}
-              className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white text-sm text-ink font-bold tracking-wider focus:outline-none focus:ring-2 focus:ring-eucalipto"
+              className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white text-sm text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto font-medium"
             />
-            <p className="text-[11px] text-ink/50 mt-1">
-              Necesario para notificarte cuando tu pedido vaya en camino.
-            </p>
           </div>
 
           {/* Cumpleaños */}
           <div>
             <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Calendar size={13} className="text-eucalipto" /> Fecha de Nacimiento (Cumpleaños) *
+              <Calendar size={13} className="text-eucalipto" /> Fecha de Nacimiento *
             </label>
             <div className="grid grid-cols-3 gap-2">
               <select
                 required
                 value={day}
                 onChange={(e) => setDay(e.target.value)}
-                className="px-2 py-3 rounded-xl border border-black/15 bg-white text-xs font-bold text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto"
+                className="px-3 py-3 rounded-xl border border-black/15 bg-white text-xs font-medium text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto cursor-pointer"
               >
                 <option value="">Día</option>
                 {DAYS.map((d) => (
@@ -249,7 +267,7 @@ export function CompleteProfileModal({
                 required
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
-                className="px-2 py-3 rounded-xl border border-black/15 bg-white text-xs font-bold text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto"
+                className="px-3 py-3 rounded-xl border border-black/15 bg-white text-xs font-medium text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto cursor-pointer"
               >
                 <option value="">Mes</option>
                 {MONTHS.map((m) => (
@@ -263,7 +281,7 @@ export function CompleteProfileModal({
                 required
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="px-2 py-3 rounded-xl border border-black/15 bg-white text-xs font-bold text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto"
+                className="px-3 py-3 rounded-xl border border-black/15 bg-white text-xs font-medium text-ink focus:outline-none focus:ring-2 focus:ring-eucalipto cursor-pointer"
               >
                 <option value="">Año</option>
                 {YEARS.map((y) => (
@@ -273,13 +291,10 @@ export function CompleteProfileModal({
                 ))}
               </select>
             </div>
-            <p className="text-[11px] text-ink/50 mt-1">
-              ¡Te prepararemos sorpresas y promociones exclusivas en tu mes!
-            </p>
           </div>
 
           {errorMsg && (
-            <p className="text-xs font-bold text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 text-center animate-shake">
+            <p className="text-xs font-bold text-red-600 bg-red-50 p-3 rounded-xl border border-red-200 text-center">
               {errorMsg}
             </p>
           )}
