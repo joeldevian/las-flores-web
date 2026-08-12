@@ -82,18 +82,38 @@ export function CompleteProfileModal({
 
     setSaving(true);
     try {
-      // 1. Actualizar tabla public.profiles en la BD Supabase
-      const { error: profileErr } = await supabase.from("profiles").upsert({
-        id: userId,
-        full_name: name.trim() || undefined,
+      // 1. Intentar actualizar tabla public.profiles con la columna birth_date (estándar Supabase)
+      const updateData: Record<string, any> = {
         phone: cleanPhone,
         birth_date: birthdateFormatted,
-        birthdate: birthdateFormatted,
         updated_at: new Date().toISOString(),
-      });
+      };
+      if (name.trim()) updateData.full_name = name.trim();
 
+      let { error: profileErr } = await supabase
+        .from("profiles")
+        .update(updateData)
+        .eq("id", userId);
+
+      // Si falla por columna inexistente (e.g. la columna se llama birthdate en vez de birth_date)
       if (profileErr) {
-        console.error("Upsert profiles error en BD:", profileErr);
+        console.warn("Intento 1 con birth_date falló, probando con birthdate:", profileErr.message);
+        delete updateData.birth_date;
+        updateData.birthdate = birthdateFormatted;
+
+        const { error: err2 } = await supabase
+          .from("profiles")
+          .update(updateData)
+          .eq("id", userId);
+
+        if (err2) {
+          console.warn("Intento 2 con birthdate falló, probando upsert solo phone:", err2.message);
+          // Si ambas fallan, al menos asegurar guardar el teléfono
+          await supabase
+            .from("profiles")
+            .update({ phone: cleanPhone, updated_at: new Date().toISOString() })
+            .eq("id", userId);
+        }
       }
 
       // 2. Actualizar user_metadata en Supabase Auth

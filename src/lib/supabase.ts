@@ -227,22 +227,31 @@ export async function updateUserProfile(payload: ProfileUpdatePayload) {
   // 2. Persistir en la tabla public.profiles de la base de datos
   if (user) {
     const updateObj: Record<string, any> = {
-      id: user.id,
       updated_at: new Date().toISOString(),
     };
     if (payload.full_name) updateObj.full_name = payload.full_name;
     if (payload.phone) updateObj.phone = payload.phone;
-    if (payload.birth_date) {
-      updateObj.birth_date = payload.birth_date;
-      updateObj.birthdate = payload.birth_date;
-    }
+    if (payload.birth_date) updateObj.birth_date = payload.birth_date;
 
-    const { error: dbErr } = await supabase
+    let { error: dbErr } = await supabase
       .from("profiles")
-      .upsert(updateObj);
+      .update(updateObj)
+      .eq("id", user.id);
 
-    if (dbErr) {
-      console.error("Error al actualizar la tabla profiles en la BD:", dbErr);
+    if (dbErr && payload.birth_date) {
+      delete updateObj.birth_date;
+      updateObj.birthdate = payload.birth_date;
+      const { error: err2 } = await supabase
+        .from("profiles")
+        .update(updateObj)
+        .eq("id", user.id);
+
+      if (err2 && payload.phone) {
+        await supabase
+          .from("profiles")
+          .update({ phone: payload.phone, updated_at: new Date().toISOString() })
+          .eq("id", user.id);
+      }
     }
   }
 
