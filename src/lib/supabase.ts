@@ -211,7 +211,10 @@ export interface ProfileUpdatePayload {
  * Actualizar información de perfil del usuario en Supabase Auth
  */
 export async function updateUserProfile(payload: ProfileUpdatePayload) {
-  const { data, error } = await supabase.auth.updateUser({
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // 1. Actualizar user_metadata en Supabase Auth
+  const { data: authData, error: authErr } = await supabase.auth.updateUser({
     data: {
       full_name: payload.full_name,
       phone: payload.phone,
@@ -219,9 +222,31 @@ export async function updateUserProfile(payload: ProfileUpdatePayload) {
     },
   });
 
-  if (error) throw error;
+  if (authErr) console.warn("Auth updateUser warning:", authErr);
 
-  return data;
+  // 2. Persistir en la tabla public.profiles de la base de datos
+  if (user) {
+    const updateObj: Record<string, any> = {
+      id: user.id,
+      updated_at: new Date().toISOString(),
+    };
+    if (payload.full_name) updateObj.full_name = payload.full_name;
+    if (payload.phone) updateObj.phone = payload.phone;
+    if (payload.birth_date) {
+      updateObj.birth_date = payload.birth_date;
+      updateObj.birthdate = payload.birth_date;
+    }
+
+    const { error: dbErr } = await supabase
+      .from("profiles")
+      .upsert(updateObj);
+
+    if (dbErr) {
+      console.error("Error al actualizar la tabla profiles en la BD:", dbErr);
+    }
+  }
+
+  return authData;
 }
 
 /**

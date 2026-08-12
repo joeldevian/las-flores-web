@@ -82,17 +82,18 @@ export function CompleteProfileModal({
 
     setSaving(true);
     try {
-      // 1. Actualizar tabla profiles
+      // 1. Actualizar tabla public.profiles en la BD Supabase
       const { error: profileErr } = await supabase.from("profiles").upsert({
         id: userId,
         full_name: name.trim() || undefined,
         phone: cleanPhone,
+        birth_date: birthdateFormatted,
         birthdate: birthdateFormatted,
         updated_at: new Date().toISOString(),
       });
 
       if (profileErr) {
-        console.warn("Upsert profiles error:", profileErr);
+        console.error("Upsert profiles error en BD:", profileErr);
       }
 
       // 2. Actualizar user_metadata en Supabase Auth
