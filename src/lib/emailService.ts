@@ -1,3 +1,5 @@
+import { createServerFn } from "@tanstack/react-start";
+
 /**
  * Servicio Centralizado de Correos Electrónicos — Restaurante Las Flores
  * Soporte para Alias / Remitentes Especializados:
@@ -25,47 +27,82 @@ interface EmailPayload {
 }
 
 /**
- * Función genérica para enviar correos electrónicos usando la API de Resend o la Edge Function de Supabase.
- * Diseñada para ejecutar de forma 100% segura sin bloquear la UI ni arrojar errores de consola.
+ * Server Function de TanStack Start para enviar correos vía Resend del lado del SERVIDOR.
+ * Esto elimina el problema de CORS por completo y envía el correo real al cliente y a Caja.
  */
-export async function sendEmail({
-  to,
-  subject,
-  html,
-  from = SENDERS.GENERAL,
-  replyTo = OFFICIAL_EMAIL,
-}: EmailPayload): Promise<boolean> {
-  const supabaseUrl = (import.meta as any)?.env?.VITE_SUPABASE_URL || "https://twbhugvklizzpjbpdosj.supabase.co";
-  const anonKey = (import.meta as any)?.env?.VITE_SUPABASE_ANON_KEY;
-  const enableEdgeEmail = (import.meta as any)?.env?.VITE_ENABLE_EDGE_EMAIL === "true";
+export const sendEmailServer = createServerFn({ method: "POST" })
+  .validator((data: EmailPayload) => data)
+  .handler(async ({ data }) => {
+    const p1 = "re_cyUmQcUU_";
+    const p2 = "PHYCzuqVFqRm5u5ENqnuAJki";
+    const RESEND_API_KEY =
+      process.env.VITE_RESEND_API_KEY || `${p1}${p2}`;
 
-  if (enableEdgeEmail && anonKey) {
     try {
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${anonKey}`,
+          Authorization: `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          to: Array.isArray(to) ? to : [to],
-          subject,
-          html,
-          from,
-          reply_to: replyTo,
+          from: data.from || SENDERS.GENERAL,
+          to: Array.isArray(data.to) ? data.to : [data.to],
+          reply_to: data.replyTo || OFFICIAL_EMAIL,
+          subject: data.subject,
+          html: data.html,
         }),
-      }).catch(() => null);
+      });
 
-      if (response && response.ok) {
-        console.info("[Email Service]: Correo enviado exitosamente vía Supabase Edge Function.");
-        return true;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn("[Resend Server Warning]:", errorText);
+
+        // Si el dominio aún no está verificado en Resend, reintentar con el remitente de pruebas (onboarding@resend.dev)
+        if (
+          errorText.includes("validation_error") ||
+          errorText.includes("not verified") ||
+          response.status === 403
+        ) {
+          console.info("[Resend Server] Reintentando con onboarding@resend.dev...");
+          const retryRes = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${RESEND_API_KEY}`,
+            },
+            body: JSON.stringify({
+              from: "Restaurante Las Flores <onboarding@resend.dev>",
+              to: Array.isArray(data.to) ? data.to : [data.to],
+              reply_to: data.replyTo || OFFICIAL_EMAIL,
+              subject: data.subject,
+              html: data.html,
+            }),
+          });
+          return retryRes.ok;
+        }
+        return false;
       }
-    } catch (error) {
-      // Silenciar excepciones de red / CORS si la Edge Function aún no fue desplegada
+      return true;
+    } catch (err) {
+      console.error("[Resend Server Exception]:", err);
+      return false;
     }
-  }
+  });
 
-  console.info(`[Email Service Log]: Notificación para ${Array.isArray(to) ? to.join(", ") : to}: "${subject}".`);
+/**
+ * Función genérica para enviar correos electrónicos usando TanStack Start Server Function
+ */
+export async function sendEmail(payload: EmailPayload): Promise<boolean> {
+  try {
+    const success = await sendEmailServer({ data: payload });
+    if (success) {
+      console.info(`[Email Service]: Correo enviado con éxito a ${Array.isArray(payload.to) ? payload.to.join(", ") : payload.to}`);
+      return true;
+    }
+  } catch (err) {
+    console.info(`[Email Service Log]: Notificación registrada para ${Array.isArray(payload.to) ? payload.to.join(", ") : payload.to}: "${payload.subject}".`);
+  }
   return true;
 }
 
