@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Calendar, Sparkles, Check, Loader2 } from "lucide-react";
+import { Phone, Calendar, Sparkles, Check, Loader2, X } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface CompleteProfileModalProps {
@@ -109,8 +109,20 @@ export function CompleteProfileModal({
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-ink/75 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#f8f4e6] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-black/10 animate-in zoom-in-95 duration-200">
+      <div className="bg-[#f8f4e6] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-black/10 animate-in zoom-in-95 duration-200 relative">
         
+        {/* Botón Cerrar X */}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-all cursor-pointer"
+            aria-label="Cerrar"
+          >
+            <X size={18} />
+          </button>
+        )}
+
         {/* Header */}
         <div className="bg-eucalipto text-piedra p-6 text-center relative">
           <div className="w-14 h-14 rounded-2xl bg-white/10 text-chilca flex items-center justify-center mx-auto mb-3 border border-white/20">

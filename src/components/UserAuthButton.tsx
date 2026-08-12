@@ -58,14 +58,36 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
   }, []);
 
   const fetchProfile = async (userId: string, userObj?: any) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
-    setProfile(data);
+    try {
+      let { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
 
-    const phoneVal = data?.phone || userObj?.user_metadata?.phone;
-    const birthVal = data?.birthdate || userObj?.user_metadata?.birth_date;
+      // Si no existe fila en la tabla profiles para este usuario OAuth, crearla automáticamente
+      if (!data && userObj) {
+        const newProfile = {
+          id: userId,
+          email: userObj.email,
+          full_name: userObj.user_metadata?.full_name || userObj.user_metadata?.name || "",
+          avatar_url: userObj.user_metadata?.avatar_url || userObj.user_metadata?.picture || "",
+          role: "client",
+          created_at: new Date().toISOString(),
+        };
 
-    if (!phoneVal || !birthVal) {
-      setShowCompleteModal(true);
+        const { data: inserted } = await supabase
+          .from("profiles")
+          .upsert(newProfile)
+          .select()
+          .maybeSingle();
+
+        if (inserted) data = inserted;
+      }
+
+      setProfile(data || null);
+    } catch (e) {
+      console.warn("Profile fetch warning:", e);
     }
   };
 
