@@ -50,7 +50,7 @@ const COLLABORATORS: Collaborator[] = [
     id: "2",
     name: "Marilu Fernanda",
     role: "Logistica",
-    category: "Administración",
+    category: "administracion",
     years: "3 años en Las Flores",
     photo: "/familia/Fernanda.webp",
     quote:
@@ -63,7 +63,7 @@ const COLLABORATORS: Collaborator[] = [
     id: "3",
     name: "Juan Carlos ",
     role: "Inocuidad",
-    category: "Administración",
+    category: "administracion",
     years: "1 años en Las Flores",
     photo: "/familia/Carlos.webp",
     quote:
@@ -89,7 +89,7 @@ const COLLABORATORS: Collaborator[] = [
     id: "5",
     name: "Yadira Paris",
     role: "Cocina",
-    category: "Cocina",
+    category: "cocina",
     years: "1 años en Las Flores",
     photo: "/familia/Cocina.webp",
     quote:
@@ -208,7 +208,17 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Todos los Colaboradores ({COLLABORATORS.length})
+            Todos ({COLLABORATORS.length})
+          </button>
+          <button
+            onClick={() => setActiveCategory("administracion")}
+            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
+              activeCategory === "administracion"
+                ? "bg-[#2D473C] text-[#D4AF37] font-black shadow-md scale-105"
+                : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Administración
           </button>
           <button
             onClick={() => setActiveCategory("cocina")}
@@ -218,7 +228,7 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Cocina y Fuegos
+            Cocina
           </button>
           <button
             onClick={() => setActiveCategory("salon")}
@@ -228,7 +238,17 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Salón y Hospitalidad
+            Salón
+          </button>
+          <button
+            onClick={() => setActiveCategory("barra")}
+            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
+              activeCategory === "barra"
+                ? "bg-[#2D473C] text-[#D4AF37] font-black shadow-md scale-105"
+                : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Barra
           </button>
           <button
             onClick={() => setActiveCategory("reposteria")}
@@ -238,7 +258,7 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Repostería y Bar
+            Repostería
           </button>
         </div>
 
