@@ -105,19 +105,19 @@ function AdminRoute() {
 
   const checkAuth = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
       
-      if (!session) {
+      if (!user) {
         window.location.href = "/restaurante";
         return;
       }
 
-      setUserEmail(session.user.email || "");
+      setUserEmail(user.email || "");
 
       const { data: profile } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", user.id)
         .single();
 
       if (profile?.role !== "admin") {
@@ -138,18 +138,27 @@ function AdminRoute() {
   const fetchData = async () => {
     setRefreshing(true);
     try {
+      // Limitar a los últimos 30 días para Admin (vista más amplia que Caja)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const dateFilter = thirtyDaysAgo.toISOString();
+
       // 1. Reservations
       const { data: resData } = await supabase
         .from("reservations")
         .select("*")
-        .order("reservation_date", { ascending: false });
+        .gte("created_at", dateFilter)
+        .order("reservation_date", { ascending: false })
+        .limit(300);
       if (resData) setReservations(resData);
 
       // 2. Orders
       const { data: ordData } = await supabase
         .from("orders")
         .select("*")
-        .order("created_at", { ascending: false });
+        .gte("created_at", dateFilter)
+        .order("created_at", { ascending: false })
+        .limit(500);
       if (ordData) setOrders(ordData);
 
       // 3. Order Items
