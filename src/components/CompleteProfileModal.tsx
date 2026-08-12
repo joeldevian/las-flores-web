@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Phone, Calendar, Sparkles, Check, Loader2, X } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
@@ -45,6 +46,7 @@ export function CompleteProfileModal({
   onSuccess,
   onClose,
 }: CompleteProfileModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone);
   
@@ -56,6 +58,10 @@ export function CompleteProfileModal({
 
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,9 +113,9 @@ export function CompleteProfileModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-ink/75 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#f8f4e6] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-black/10 animate-in zoom-in-95 duration-200 relative">
+  const content = (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-ink/75 backdrop-blur-sm animate-in fade-in duration-200 pointer-events-auto">
+      <div className="bg-[#f8f4e6] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-black/10 animate-in zoom-in-95 duration-200 relative pointer-events-auto">
         
         {/* Botón Cerrar X */}
         {onClose && (
@@ -253,4 +259,7 @@ export function CompleteProfileModal({
       </div>
     </div>
   );
+
+  if (!mounted || typeof document === "undefined") return null;
+  return createPortal(content, document.body);
 }
