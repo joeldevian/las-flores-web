@@ -82,31 +82,61 @@ export function CompleteProfileModal({
 
     setSaving(true);
     try {
-      // 1. Guardar en public.profiles con upsert (crea la fila si no existe o la actualiza si existe)
-      const payload: Record<string, any> = {
-        id: userId,
+      // 1. Intentar UPDATE directo en public.profiles por ID
+      const updatePayload: Record<string, any> = {
         phone: cleanPhone,
         birth_date: birthdateFormatted,
+        birthdate: birthdateFormatted,
         updated_at: new Date().toISOString(),
       };
-      if (name.trim()) payload.full_name = name.trim();
+      if (name.trim()) updatePayload.full_name = name.trim();
 
-      const { error: upsertErr } = await supabase
+      let { data: updatedData, error: updateErr } = await supabase
         .from("profiles")
-        .upsert(payload, { onConflict: "id" });
+        .update(updatePayload)
+        .eq("id", userId)
+        .select();
 
-      if (upsertErr) {
-        console.warn("Error en upsert profiles con birth_date:", upsertErr.message);
-        // Fallback: probar con la columna 'birthdate' si 'birth_date' no existe en el esquema
-        delete payload.birth_date;
-        payload.birthdate = birthdateFormatted;
+      let isSavedInDb = updatedData && updatedData.length > 0;
 
-        const { error: upsertErr2 } = await supabase
+      // Si UPDATE falló o devolvió 0 filas (e.g. columna inexistente o la fila aún no existe)
+      if (!isSavedInDb || updateErr) {
+        console.warn("UPDATE directo no afectó filas o dio error, probando sin columna 'birthdate':", updateErr?.message);
+        delete updatePayload.birthdate;
+
+        const { data: updatedData2, error: updateErr2 } = await supabase
           .from("profiles")
-          .upsert(payload, { onConflict: "id" });
+          .update(updatePayload)
+          .eq("id", userId)
+          .select();
 
-        if (upsertErr2) {
-          console.error("Error definitivo guardando perfil en BD:", upsertErr2.message);
+        isSavedInDb = updatedData2 && updatedData2.length > 0;
+
+        // Si la fila no existía en la tabla profiles, hacer UPSERT con email
+        if (!isSavedInDb || updateErr2) {
+          console.warn("Fila no existe en profiles, ejecutando UPSERT completo con email...");
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          const upsertPayload: Record<string, any> = {
+            id: userId,
+            email: user?.email,
+            phone: cleanPhone,
+            birth_date: birthdateFormatted,
+            role: "client",
+            updated_at: new Date().toISOString(),
+          };
+          if (name.trim()) upsertPayload.full_name = name.trim();
+
+          const { error: finalUpsertErr } = await supabase
+            .from("profiles")
+            .upsert(upsertPayload);
+
+          if (finalUpsertErr) {
+            console.error("Error crítico al guardar perfil en la base de datos:", finalUpsertErr);
+            setErrorMsg(`No se pudo actualizar la base de datos (${finalUpsertErr.message}). Por favor reintenta.`);
+            setSaving(false);
+            return;
+          }
         }
       }
 
