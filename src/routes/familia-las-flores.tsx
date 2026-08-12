@@ -34,6 +34,32 @@ interface Collaborator {
 
 const COLLABORATORS: Collaborator[] = [
   {
+    id: "admin-1",
+    name: "Ritney Betsy",
+    role: "Jefa Administrativa",
+    category: "administracion",
+    years: "5 años en Las Flores",
+    photo: "/familia/Ritney.webp",
+    quote:
+      "Liderar el área administrativa de Las Flores durante estos 5 años ha sido un honor. Mi enfoque principal es optimizar nuestros procesos para que cada área brinde lo mejor y sigamos creciendo como una gran familia.",
+    recommendedDish: "Pachamanca",
+    dishPrice: "S/ 55.00",
+    badge: "Líder Estratégico",
+  },
+  {
+    id: "0",
+    name: "Mayte Jarumy",
+    role: "Jefa de Azafatas",
+    category: "salon",
+    years: "3 años en Las Flores",
+    photo: "/familia/Mayte.webp",
+    quote:
+      "Como Jefa de Azafatas, mi misión es asegurar que cada detalle en el salón sea perfecto. Liderar este equipo me llena de orgullo, y ver a nuestros clientes regresar felices es la mayor recompensa.",
+    recommendedDish: "Puca Picante Especial",
+    dishPrice: "S/ 42.00",
+    badge: "Líder de Servicio",
+  },
+  {
     id: "1",
     name: "Paola Zinthia",
     role: "Maestra Repostera",
@@ -111,6 +137,97 @@ const COLLABORATORS: Collaborator[] = [
     dishPrice: "S/ 34.00",
     badge: "Garantía de Servicio",
   },
+  {
+    id: "7",
+    name: "Jhon Aldahir",
+    role: "Mozo",
+    category: "salon",
+    years: "1 año en Las Flores",
+    photo: "/familia/Jhon.webp",
+    quote:
+      "Me enorgullece recibir a cada familia que nos visita y asegurar que se lleven una experiencia inolvidable. El ambiente cálido de Las Flores es contagioso y me encanta ser parte de ello.",
+    recommendedDish: "Puca Picante con Chicharrón",
+    dishPrice: "S/ 38.00",
+    badge: "Atención Especial",
+  },
+  {
+    id: "8",
+    name: "Heidi Jeraldine",
+    role: "Anfitriona",
+    category: "salon",
+    years: "8 meses en Las Flores",
+    photo: "/familia/Heidi.webp",
+    quote:
+      "Desde mi primer día me sentí acogida. Recibir a los clientes con una sonrisa y guiarlos a su mesa es el primer paso para una gran comida ayacuchana.",
+    recommendedDish: "Chicharrón de Cerdo",
+    dishPrice: "S/ 42.00",
+    badge: "Sonrisa Acogedora",
+  },
+  {
+    id: "9",
+    name: "Dina Luz",
+    role: "Moza",
+    category: "salon",
+    years: "2 años en Las Flores",
+    photo: "/familia/Dina.webp",
+    quote:
+      "Atender a nuestros comensales es un arte que cultivo cada día. Conozco nuestros platos a la perfección y siempre recomiendo lo mejor según los gustos de cada cliente.",
+    recommendedDish: "Cuy Chactado",
+    dishPrice: "S/ 68.00",
+    badge: "Servicio Impecable",
+  },
+  {
+    id: "10",
+    name: "Aurelio",
+    role: "Capitán de Mozos",
+    category: "salon",
+    years: "3 años en Las Flores",
+    photo: "/familia/Aurelio.webp",
+    quote:
+      "Organizar el salón y garantizar que cada mesa reciba un trato excepcional es mi pasión. Estos años en Las Flores me han enseñado el verdadero significado de la hospitalidad andina.",
+    recommendedDish: "Trucha Frita",
+    dishPrice: "S/ 35.00",
+    badge: "Líder de Salón",
+  },
+  {
+    id: "11",
+    name: "Percy Yoni",
+    role: "Azafata",
+    category: "salon",
+    years: "2 años en Las Flores",
+    photo: "/familia/Percy.webp",
+    quote:
+      "Me dedico a brindar la mejor atención, asegurando que cada comensal tenga todo lo que necesita en su mesa. Formar parte de Las Flores por estos dos años me ha llenado de hermosas experiencias.",
+    recommendedDish: "Mondongo Ayacuchano",
+    dishPrice: "S/ 25.00",
+    badge: "Atención Dedicada",
+  },
+  {
+    id: "admin-2",
+    name: "Paola Sofia",
+    role: "Caja",
+    category: "administracion",
+    years: "2 años en Las Flores",
+    photo: "/familia/Sofia.webp",
+    quote:
+      "Atender a nuestros clientes al finalizar su comida con rapidez, exactitud y amabilidad es mi objetivo. Garantizo que su experiencia termine tan bien como empezó.",
+    recommendedDish: "Choclo con Queso",
+    dishPrice: "S/ 15.00",
+    badge: "Atención Eficiente",
+  },
+  {
+    id: "admin-3",
+    name: "Jose",
+    role: "Marketing",
+    category: "administracion",
+    years: "1 año en Las Flores",
+    photo: "/familia/Jose.webp",
+    quote:
+      "Mi trabajo es mostrar al mundo la belleza, sabor y tradición de Las Flores. Cada foto y cada publicación busca transmitir el cariño con el que preparamos nuestros platos.",
+    recommendedDish: "Helado de Lúcuma",
+    dishPrice: "S/ 12.00",
+    badge: "Creatividad Visual",
+  }
 ];
 
 function FamiliaLasFloresPage() {
