@@ -257,7 +257,13 @@ function ReservasPage() {
     reason?: string;
   }>({ open: false, zoneName: "", date: "", time: "", reason: "" });
 
-  const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const todayIso = useMemo(() => {
+    const t = new Date();
+    const yyyy = t.getFullYear();
+    const mm = String(t.getMonth() + 1).padStart(2, "0");
+    const dd = String(t.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }, []);
 
   // Fetch all active blackouts for fast real-time checking
   useEffect(() => {
@@ -306,15 +312,17 @@ function ReservasPage() {
     });
   }, [form.date, form.time]);
 
-  // Generate next 14 days calendar carousel
+  // Generate next 14 days calendar carousel with consistent local date formatting
   const DAYS_CAROUSEL = useMemo(() => {
     const list = [];
     const t = new Date();
     for (let i = 0; i < 14; i++) {
-      const d = new Date(t);
-      d.setDate(t.getDate() + i);
-      const iso = d.toISOString().split("T")[0];
-      const dayNum = String(d.getDate()).padStart(2, "0");
+      const d = new Date(t.getFullYear(), t.getMonth(), t.getDate() + i);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const iso = `${yyyy}-${mm}-${dd}`;
+      const dayNum = dd;
       const dayShort = d.toLocaleDateString("es-PE", { weekday: "short" }).substring(0, 2);
       const dayShortCap = dayShort.charAt(0).toUpperCase() + dayShort.slice(1);
       list.push({ iso, dayNum, dayShortCap, fullDate: d });
