@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Phone, Calendar, Check, Loader2, X, Mail, User, ShieldCheck } from "lucide-react";
+import { Phone, Calendar, Check, Loader2, X, Mail, ShieldCheck } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface CompleteProfileModalProps {
@@ -53,7 +53,7 @@ export function CompleteProfileModal({
   const [email, setEmail] = useState(initialEmail);
   const [phone, setPhone] = useState(initialPhone);
   
-  // Parse initial birthdate (YYYY-MM-DD)
+  // Parse initial birthdate (YYYY-MM-DD) if present
   const parts = (initialBirthdate || "").split("-");
   const [year, setYear] = useState(parts[0] || "");
   const [month, setMonth] = useState(parts[1] || "");
@@ -62,43 +62,52 @@ export function CompleteProfileModal({
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Bloquear el scroll de la web mientras el modal está abierto
   useEffect(() => {
     setMounted(true);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
 
+    // Validar Celular (WhatsApp) - Estrictamente 9 dígitos iniciando en 9
     const cleanPhone = phone.replace(/\D/g, "");
-    if (cleanPhone.length < 9) {
-      setErrorMsg("Ingresa un número de celular válido de 9 dígitos.");
+    if (!/^9\d{8}$/.test(cleanPhone)) {
+      setErrorMsg("Ingresa un número de celular válido de 9 dígitos (ejemplo: 980723422).");
       return;
     }
 
-    if (!day || !month || !year) {
-      setErrorMsg("Selecciona tu fecha de nacimiento completa (Día, Mes y Año).");
-      return;
-    }
-
+    // Validar correo si no venía inicializado
     const cleanEmail = email.trim();
     if (!cleanEmail) {
       setErrorMsg("Por favor ingresa tu correo electrónico.");
       return;
     }
 
-    const birthdateFormatted = `${year}-${month}-${day}`;
+    // Fecha de cumpleaños (OPCIONAL)
+    let birthdateFormatted: string | null = null;
+    if (day && month && year) {
+      birthdateFormatted = `${year}-${month}-${day}`;
+    }
 
     setSaving(true);
     try {
-      // 1. Intentar UPDATE directo en public.profiles por ID
+      // 1. UPDATE directo en public.profiles
       const updatePayload: Record<string, any> = {
         phone: cleanPhone,
-        birth_date: birthdateFormatted,
-        birthdate: birthdateFormatted,
         email: cleanEmail,
         updated_at: new Date().toISOString(),
       };
+      if (birthdateFormatted) {
+        updatePayload.birth_date = birthdateFormatted;
+        updatePayload.birthdate = birthdateFormatted;
+      }
       if (name.trim()) updatePayload.full_name = name.trim();
 
       let { data: updatedData, error: updateErr } = await supabase
@@ -109,7 +118,7 @@ export function CompleteProfileModal({
 
       let isSavedInDb = updatedData && updatedData.length > 0;
 
-      // Si UPDATE falló o devolvió 0 filas
+      // Si UPDATE falla por columna birthdate inexistente
       if (!isSavedInDb || updateErr) {
         delete updatePayload.birthdate;
 
@@ -121,16 +130,18 @@ export function CompleteProfileModal({
 
         isSavedInDb = updatedData2 && updatedData2.length > 0;
 
-        // Si la fila no existía en la tabla profiles, hacer UPSERT completo
+        // Fallback a UPSERT completo si la fila no existía
         if (!isSavedInDb || updateErr2) {
           const upsertPayload: Record<string, any> = {
             id: userId,
             email: cleanEmail,
             phone: cleanPhone,
-            birth_date: birthdateFormatted,
             role: "client",
             updated_at: new Date().toISOString(),
           };
+          if (birthdateFormatted) {
+            upsertPayload.birth_date = birthdateFormatted;
+          }
           if (name.trim()) upsertPayload.full_name = name.trim();
 
           const { error: finalUpsertErr } = await supabase
@@ -150,12 +161,17 @@ export function CompleteProfileModal({
       await supabase.auth.updateUser({
         data: {
           phone: cleanPhone,
-          birth_date: birthdateFormatted,
+          birth_date: birthdateFormatted || undefined,
           full_name: name.trim() || undefined,
         },
       });
 
-      onSuccess({ phone: cleanPhone, birthdate: birthdateFormatted, full_name: name, email: cleanEmail });
+      onSuccess({
+        phone: cleanPhone,
+        birthdate: birthdateFormatted,
+        full_name: name,
+        email: cleanEmail,
+      });
     } catch (err: any) {
       console.error("Error al actualizar perfil:", err);
       setErrorMsg("No se pudieron guardar los datos. Intenta nuevamente.");
@@ -164,12 +180,15 @@ export function CompleteProfileModal({
     }
   };
 
+  // Solo permitir cerrar con la "X" si el usuario YA tenía un celular válido previamente registrado
+  const canClose = Boolean(initialPhone && /^9\d{8}$/.test(initialPhone.replace(/\D/g, "")));
+
   const content = (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1b2a24]/80 backdrop-blur-md animate-in fade-in duration-200 pointer-events-auto">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1b2a24]/85 backdrop-blur-md animate-in fade-in duration-200 pointer-events-auto select-none">
       <div className="bg-[#FAF6ED] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-[#2C4A3E]/15 animate-in zoom-in-95 duration-200 relative pointer-events-auto">
         
-        {/* Botón Cerrar X */}
-        {onClose && (
+        {/* Botón Cerrar X (Solo si ya tenía celular previo) */}
+        {onClose && canClose && (
           <button
             type="button"
             onClick={onClose}
@@ -190,17 +209,17 @@ export function CompleteProfileModal({
             Completa tu Perfil
           </h2>
           <p className="text-xs text-[#FAF6ED]/75 mt-1.5 max-w-xs mx-auto leading-relaxed font-sans">
-            Ingresa tu información para agilizar tus pedidos de delivery y ofrecerte sorpresas en tu cumpleaños.
+            Ingresa tu número de WhatsApp para confirmar y coordinar tus entregas de delivery de forma segura.
           </p>
         </div>
 
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="p-6 sm:p-7 space-y-4.5">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-7 space-y-4">
           
-          {/* Nombre */}
+          {/* Nombre Completo */}
           <div>
-            <label className="block text-[11px] font-bold text-[#2C4A3E] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <User size={13} className="text-[#2C4A3E]/70" /> Nombre Completo *
+            <label className="block text-[11px] font-bold text-[#2C4A3E] uppercase tracking-wider mb-1.5">
+              Nombre Completo *
             </label>
             <input
               type="text"
@@ -208,29 +227,35 @@ export function CompleteProfileModal({
               placeholder="Ej: María García"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] focus:border-transparent transition-all shadow-xs"
+              className="w-full px-4 py-3 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] transition-all shadow-xs"
             />
           </div>
 
-          {/* Correo Electrónico */}
+          {/* Correo Electrónico (BLOQUEADO SI YA TIENE CUENTA) */}
           <div>
             <label className="block text-[11px] font-bold text-[#2C4A3E] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Mail size={13} className="text-[#2C4A3E]/70" /> Correo Electrónico *
+              <Mail size={13} className="text-[#2C4A3E]/70" /> Correo Electrónico {initialEmail ? "(Asociado a tu cuenta)" : "*"}
             </label>
             <input
               type="email"
               required
+              disabled={Boolean(initialEmail)}
+              readOnly={Boolean(initialEmail)}
               placeholder="tu@correo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] focus:border-transparent transition-all shadow-xs"
+              className={`w-full px-4 py-3 rounded-xl border text-xs font-semibold transition-all shadow-xs ${
+                initialEmail
+                  ? "bg-[#2C4A3E]/5 border-[#2C4A3E]/15 text-[#2C4A3E]/60 cursor-not-allowed"
+                  : "bg-white border-[#2C4A3E]/20 text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E]"
+              }`}
             />
           </div>
 
-          {/* Celular */}
+          {/* Celular / WhatsApp (OBLIGATORIO) */}
           <div>
             <label className="block text-[11px] font-bold text-[#2C4A3E] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Phone size={13} className="text-[#2C4A3E]/70" /> Celular / WhatsApp *
+              <Phone size={13} className="text-[#2C4A3E]" /> Celular / WhatsApp (Obligatorio) *
             </label>
             <input
               type="tel"
@@ -240,21 +265,20 @@ export function CompleteProfileModal({
               placeholder="Ej: 980723422"
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))}
-              className="w-full px-4 py-3.5 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] focus:border-transparent transition-all shadow-xs"
+              className="w-full px-4 py-3 rounded-xl border-2 border-[#2C4A3E]/30 bg-white text-xs font-bold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] focus:border-[#2C4A3E] transition-all shadow-xs"
             />
           </div>
 
-          {/* Cumpleaños */}
+          {/* Fecha de Nacimiento (OPCIONAL) */}
           <div>
-            <label className="block text-[11px] font-bold text-[#2C4A3E] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Calendar size={13} className="text-[#2C4A3E]/70" /> Fecha de Nacimiento *
+            <label className="block text-[11px] font-bold text-[#2C4A3E]/80 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <Calendar size={13} className="text-[#2C4A3E]/70" /> Fecha de Nacimiento (Opcional)
             </label>
             <div className="grid grid-cols-3 gap-2">
               <select
-                required
                 value={day}
                 onChange={(e) => setDay(e.target.value)}
-                className="px-3 py-3 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] cursor-pointer shadow-xs"
+                className="px-3 py-2.5 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] cursor-pointer shadow-xs"
               >
                 <option value="">Día</option>
                 {DAYS.map((d) => (
@@ -265,10 +289,9 @@ export function CompleteProfileModal({
               </select>
 
               <select
-                required
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
-                className="px-3 py-3 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] cursor-pointer shadow-xs"
+                className="px-3 py-2.5 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] cursor-pointer shadow-xs"
               >
                 <option value="">Mes</option>
                 {MONTHS.map((m) => (
@@ -279,10 +302,9 @@ export function CompleteProfileModal({
               </select>
 
               <select
-                required
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="px-3 py-3 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] cursor-pointer shadow-xs"
+                className="px-3 py-2.5 rounded-xl border border-[#2C4A3E]/20 bg-white text-xs font-semibold text-[#1b2a24] focus:outline-none focus:ring-2 focus:ring-[#2C4A3E] cursor-pointer shadow-xs"
               >
                 <option value="">Año</option>
                 {YEARS.map((y) => (
@@ -303,7 +325,7 @@ export function CompleteProfileModal({
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-4 rounded-xl font-serif font-bold text-sm tracking-wide bg-[#2C4A3E] text-[#FAF6ED] hover:bg-[#233b31] active:scale-[0.99] transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 mt-2"
+            className="w-full py-3.5 rounded-xl font-serif font-bold text-sm tracking-wide bg-[#2C4A3E] text-[#FAF6ED] hover:bg-[#233b31] active:scale-[0.99] transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 mt-2"
           >
             {saving ? (
               <>
