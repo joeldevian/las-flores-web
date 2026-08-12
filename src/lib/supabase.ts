@@ -283,6 +283,11 @@ export async function createOrder(payload: OrderPayload) {
     orderData.status = "pendiente";
   }
 
+  // Generar PIN aleatorio de 4 dígitos para el motorizado si no viene especificado
+  if (!orderData.driver_pin) {
+    orderData.driver_pin = Math.floor(1000 + Math.random() * 9000).toString();
+  }
+
   // Generar UUID con fallback para navegadores antiguos
   const orderId = (typeof crypto !== "undefined" && crypto.randomUUID)
     ? crypto.randomUUID()

@@ -219,10 +219,12 @@ function DriverMagicLink() {
     const cleanInput = pinInput.trim();
     const phoneLast4 = (orderData?.client_phone || "").replace(/\D/g, "").slice(-4);
     const orderLast4 = (orderData?.order_number || "").slice(-4);
+    const exactDriverPin = (orderData as any)?.driver_pin;
 
     if (
       cleanInput === "2026" ||
       cleanInput === "1234" ||
+      (exactDriverPin && cleanInput === String(exactDriverPin).trim()) ||
       (phoneLast4 && cleanInput === phoneLast4) ||
       (orderLast4 && cleanInput.toUpperCase() === orderLast4.toUpperCase())
     ) {
