@@ -40,12 +40,33 @@ export async function sendEmail({
   from = SENDERS.GENERAL,
   replyTo = OFFICIAL_EMAIL,
 }: EmailPayload): Promise<boolean> {
-  // Desactivado temporalmente - las llamadas directas a Resend desde el navegador fallan por CORS
-  // Para enviar emails, usar una Edge Function de Supabase o un servidor backend
-  console.info(
-    `[Email Service] Correo registrado de ${from} para ${Array.isArray(to) ? to.join(", ") : to}: "${subject}". (Emails desactivados temporalmente - requiere backend)`
-  );
-  return true;
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://twbhugvklizzpjbpdosj.supabase.co";
+    const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        to,
+        subject,
+        html,
+        from,
+        replyTo,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn("[Email Service] Edge function failed:", await response.text());
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("[Email Service] Error calling edge function:", error);
+    return false;
+  }
 }
 
 /**
