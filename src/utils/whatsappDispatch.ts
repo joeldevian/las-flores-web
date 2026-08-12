@@ -35,16 +35,19 @@ export function buildDeliveryWhatsAppMessage(order: any, items: any[]): string {
     ? window.location.origin 
     : "https://las-flores-web-0079.vercel.app";
 
+  const driverPin = order.driver_pin || "1234";
+
   return `🛵 *DESPACHO DE DELIVERY — LAS FLORES*
 ==============================
 *Orden:* #${orderNum}
+🔑 *PIN MOTORIZADO:* ${driverPin}
 *Cliente:* ${clientName}
 ${paymentLabel}
 
 👉 *INICIA EL DESPACHO AQUÍ (Ver Dirección y Navegar):*
 ${baseUrl}/d/${order.id || order.order_id}
 ==============================
-*Instrucción:* Abre la web para ver la dirección, llamar al cliente y marcar "En camino" y "Entregado". ¡Gracias!`;
+*Instrucción:* Abre el enlace, ingresa el PIN *${driverPin}* para ver la dirección, llamar al cliente y marcar "En camino" y "Entregado". ¡Gracias!`;
 }
 
 export function openWhatsAppDispatch(

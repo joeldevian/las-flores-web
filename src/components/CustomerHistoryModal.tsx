@@ -83,6 +83,8 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const [profileEmail, setProfileEmail] = useState("");
+
   useEffect(() => {
     if (user) {
       const nameVal = user.user_metadata?.full_name || user.user_metadata?.name || "";
@@ -100,6 +102,8 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
       setProfileBirthDate(dateVal);
       setInitialBirthDate(dateVal);
 
+      setProfileEmail(user.email || "");
+
       if (dateVal) {
         const parts = dateVal.split("-");
         if (parts.length === 3) {
@@ -108,6 +112,30 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
           setBirthDay(parts[2]);
         }
       }
+
+      // Cargar datos directamente desde la tabla public.profiles de la BD
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) {
+            if (data.full_name) setProfileName(data.full_name);
+            if (data.phone) setProfilePhone(data.phone);
+            if (data.email) setProfileEmail(data.email);
+            const bDate = data.birth_date || data.birthdate;
+            if (bDate) {
+              setProfileBirthDate(bDate);
+              const parts = bDate.split("-");
+              if (parts.length === 3) {
+                setBirthYear(parts[0]);
+                setBirthMonth(parts[1]);
+                setBirthDay(parts[2]);
+              }
+            }
+          }
+        });
     }
   }, [user]);
 
@@ -595,7 +623,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                   <input
                     type="email"
                     disabled
-                    value={user.email || ""}
+                    value={profileEmail || user?.email || ""}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 text-xs bg-black/5 text-black/50 cursor-not-allowed font-medium"
                   />
                 </div>

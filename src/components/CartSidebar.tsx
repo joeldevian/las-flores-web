@@ -398,6 +398,29 @@ export function CartSidebar() {
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar ubicación exacta para delivery
+    if (orderType === "delivery" && !clientLocation) {
+      alert("Por favor, selecciona tu ubicación exacta en el mapa para que el motorizado pueda realizar la entrega con precisión.");
+      return;
+    }
+
+    // Validar datos de Yape/Plin (de 3 a 8 dígitos numéricos: Yape directo 3+, Plin 6-8)
+    if (paymentMethod === "yape") {
+      const cleanTitular = yapeTitular.trim();
+      const cleanOp = yapeOperacion.trim();
+
+      if (cleanTitular.length < 3) {
+        alert("Por favor, ingresa el nombre completo del titular de la cuenta de origen.");
+        return;
+      }
+
+      if (!/^\d{3,8}$/.test(cleanOp)) {
+        alert("El número de operación de Yape/Plin debe contener entre 3 y 8 dígitos numéricos (Ej: 123456 o 789).");
+        return;
+      }
+    }
+
     setProcessing(true);
 
     // Validar disponibilidad de productos antes de confirmar el pedido
@@ -1167,13 +1190,16 @@ export function CartSidebar() {
                     <Label>N° Operación (Yape/Plin) *</Label>
                     <input
                       required
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={8}
                       placeholder="Ej: 123456"
                       className={inputCls}
                       value={yapeOperacion}
-                      onChange={(e) => setYapeOperacion(e.target.value)}
+                      onChange={(e) => setYapeOperacion(e.target.value.replace(/\D/g, "").slice(0, 8))}
                     />
                     <p className="text-[10px] text-black/40 mt-1.5 font-medium">
-                      6 u 8 dígitos de aprobación de tu pantalla de éxito.
+                      Entre 3 y 8 dígitos de aprobación de tu pantalla de éxito.
                     </p>
                   </div>
                 </div>

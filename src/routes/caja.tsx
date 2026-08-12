@@ -140,9 +140,9 @@ function CashierDashboardRoute() {
 
   const checkAuth = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
       
-      if (!session) {
+      if (!user) {
         window.location.href = "/restaurante";
         return;
       }
@@ -150,7 +150,7 @@ function CashierDashboardRoute() {
       const { data: profile } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", user.id)
         .single();
 
       const userRole = profile?.role?.toLowerCase();
@@ -173,11 +173,17 @@ function CashierDashboardRoute() {
   const fetchData = async (isSilent = false) => {
     if (!isSilent) setRefreshing(true);
     try {
-      // 1. Fetch Orders
+      // Limitar consulta a los últimos 7 días para evitar descargar todo el histórico
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const dateFilter = sevenDaysAgo.toISOString();
+
       const { data: ordData, error: ordErr } = await supabase
         .from("orders")
         .select("*")
-        .order("created_at", { ascending: false });
+        .gte("created_at", dateFilter)
+        .order("created_at", { ascending: false })
+        .limit(200);
 
       if (!ordErr && ordData) {
         setOrders((prev) => {
@@ -203,8 +209,10 @@ function CashierDashboardRoute() {
       const { data: resData, error: resErr } = await supabase
         .from("reservations")
         .select("*")
+        .gte("created_at", dateFilter)
         .order("reservation_date", { ascending: false })
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(100);
 
       if (!resErr && resData) {
         const todayStr = getLocalYYYYMMDD(new Date());

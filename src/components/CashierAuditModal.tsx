@@ -43,12 +43,14 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
   let totalCash = 0;
   let totalOnline = 0;
   let totalDeliveryFees = 0;
+  let totalDiscounts = 0;
   let countDelivery = 0;
   let countPickup = 0;
 
   filteredOrders.forEach((o) => {
     const total = Number(o.total || 0);
     const fee = Number(o.delivery_fee || 0);
+    const discount = Number(o.discount_amount || o.discount || 0);
     const pm = (o.payment_method || "").toLowerCase().trim();
     const isCash = pm.includes("efectivo") || pm.includes("cash");
 
@@ -59,6 +61,7 @@ export function CashierAuditModal({ isOpen, onClose, orders }: CashierAuditModal
     }
 
     totalDeliveryFees += fee;
+    totalDiscounts += discount;
 
     const isDelivery = (o.order_type || "delivery").toLowerCase().includes("delivery");
     if (isDelivery) countDelivery++;

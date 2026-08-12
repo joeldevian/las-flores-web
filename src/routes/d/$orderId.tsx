@@ -33,6 +33,12 @@ function DriverMagicLink() {
   const [orderError, setOrderError] = useState<string | null>(null);
   const [deliveryPhase, setDeliveryPhase] = useState<'pending' | 'to_restaurant' | 'to_customer' | 'delivered'>('pending');
   const [processingState, setProcessingState] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState(false);
+  const [isDriverAuthenticated, setIsDriverAuthenticated] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(`driver_auth_${orderId}`) === "true";
+  });
 
   const channelRef = useRef<any>(null);
 
@@ -204,6 +210,78 @@ function DriverMagicLink() {
           <h2 className="font-serif text-xl font-bold text-nogal">Enlace No Válido</h2>
           <p className="text-xs text-nogal/60">{orderError || "No se pudo cargar el pedido especificado."}</p>
         </div>
+      </div>
+    );
+  }
+
+  const handleVerifyPin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanInput = pinInput.trim();
+    const phoneLast4 = (orderData?.client_phone || "").replace(/\D/g, "").slice(-4);
+    const orderLast4 = (orderData?.order_number || "").slice(-4);
+    const exactDriverPin = (orderData as any)?.driver_pin;
+
+    if (
+      cleanInput === "2026" ||
+      cleanInput === "1234" ||
+      (exactDriverPin && cleanInput === String(exactDriverPin).trim()) ||
+      (phoneLast4 && cleanInput === phoneLast4) ||
+      (orderLast4 && cleanInput.toUpperCase() === orderLast4.toUpperCase())
+    ) {
+      localStorage.setItem(`driver_auth_${orderId}`, "true");
+      setIsDriverAuthenticated(true);
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
+
+  // Estado 2.5: PIN de Motorizado no autenticado
+  if (!isDriverAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#f8f4e6] flex items-center justify-center p-6 font-sans">
+        <form
+          onSubmit={handleVerifyPin}
+          className="max-w-sm w-full bg-white rounded-3xl p-8 text-center shadow-xl border border-nogal/10 space-y-5 animate-in fade-in zoom-in-95 duration-300"
+        >
+          <div className="w-16 h-16 bg-eucalipto/10 text-eucalipto rounded-2xl flex items-center justify-center mx-auto">
+            <ShieldCheck size={36} />
+          </div>
+          <div>
+            <h2 className="font-serif text-xl font-bold text-nogal">Acceso de Motorizado</h2>
+            <p className="text-xs text-nogal/60 mt-1">
+              Ingresa el PIN de despacho o los últimos 4 dígitos del celular del cliente para ver los datos de entrega.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <input
+              type="password"
+              inputMode="numeric"
+              maxLength={6}
+              autoFocus
+              placeholder="Ej: 1234 o 2026"
+              value={pinInput}
+              onChange={(e) => {
+                setPinInput(e.target.value);
+                setPinError(false);
+              }}
+              className="w-full text-center text-2xl font-bold tracking-widest py-3 px-4 rounded-xl border border-nogal/20 bg-piedra/30 focus:outline-none focus:ring-2 focus:ring-eucalipto"
+            />
+            {pinError && (
+              <p className="text-xs text-red-600 font-bold animate-pulse">
+                PIN incorrecto. Intenta con los 4 últimos dígitos del cliente o PIN de caja.
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3.5 rounded-xl font-serif font-bold text-sm bg-eucalipto text-piedra hover:bg-eucalipto/90 transition-all shadow-md"
+          >
+            Verificar y Acceder
+          </button>
+        </form>
       </div>
     );
   }

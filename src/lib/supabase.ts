@@ -102,8 +102,24 @@ export async function signInWithGoogle() {
   const currentOrigin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : "https://las-flores-web-0079.vercel.app";
+      : "https://www.restaurantelasflores.com";
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  if (isMobile) {
+    // Redirección directa en móviles para garantizar persistencia de sesión sin bloqueo de popups
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${currentOrigin}/`,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  // En escritorio intentamos popup con fallback a redirección directa
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -124,19 +140,21 @@ export async function signInWithGoogle() {
       "google_auth_popup",
       `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
     );
-    if (!popup) window.location.href = data.url;
+    if (!popup) {
+      window.location.href = data.url;
+    }
   }
   return data;
 }
 
 /**
- * Iniciar sesión con Facebook OAuth (redirect directo — Supabase maneja el PKCE automáticamente)
+ * Iniciar sesión con Facebook OAuth
  */
 export async function signInWithFacebook() {
   const currentOrigin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : "https://las-flores-web-0079.vercel.app";
+      : "https://www.restaurantelasflores.com";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "facebook",
@@ -144,7 +162,41 @@ export async function signInWithFacebook() {
       redirectTo: `${currentOrigin}/`,
     },
   });
+  if (error) throw error;
+  return data;
+}
 
+/**
+ * Iniciar sesión con Correo y Contraseña
+ */
+export async function signInWithEmail(email: string, pass: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: pass,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Registrarse con Correo y Contraseña
+ */
+export async function signUpWithEmail(email: string, pass: string, fullName?: string) {
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://www.restaurantelasflores.com";
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: pass,
+    options: {
+      emailRedirectTo: `${currentOrigin}/`,
+      data: {
+        full_name: fullName || "",
+      },
+    },
+  });
   if (error) throw error;
   return data;
 }
@@ -159,7 +211,10 @@ export interface ProfileUpdatePayload {
  * Actualizar información de perfil del usuario en Supabase Auth
  */
 export async function updateUserProfile(payload: ProfileUpdatePayload) {
-  const { data, error } = await supabase.auth.updateUser({
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // 1. Actualizar user_metadata en Supabase Auth
+  const { data: authData, error: authErr } = await supabase.auth.updateUser({
     data: {
       full_name: payload.full_name,
       phone: payload.phone,
@@ -167,9 +222,40 @@ export async function updateUserProfile(payload: ProfileUpdatePayload) {
     },
   });
 
-  if (error) throw error;
+  if (authErr) console.warn("Auth updateUser warning:", authErr);
 
-  return data;
+  // 2. Persistir en la tabla public.profiles de la base de datos
+  if (user) {
+    const updateObj: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+    if (payload.full_name) updateObj.full_name = payload.full_name;
+    if (payload.phone) updateObj.phone = payload.phone;
+    if (payload.birth_date) updateObj.birth_date = payload.birth_date;
+
+    let { error: dbErr } = await supabase
+      .from("profiles")
+      .update(updateObj)
+      .eq("id", user.id);
+
+    if (dbErr && payload.birth_date) {
+      delete updateObj.birth_date;
+      updateObj.birthdate = payload.birth_date;
+      const { error: err2 } = await supabase
+        .from("profiles")
+        .update(updateObj)
+        .eq("id", user.id);
+
+      if (err2 && payload.phone) {
+        await supabase
+          .from("profiles")
+          .update({ phone: payload.phone, updated_at: new Date().toISOString() })
+          .eq("id", user.id);
+      }
+    }
+  }
+
+  return authData;
 }
 
 /**
@@ -281,6 +367,11 @@ export async function createOrder(payload: OrderPayload) {
 
   if (!orderData.status) {
     orderData.status = "pendiente";
+  }
+
+  // Generar PIN aleatorio de 4 dígitos para el motorizado si no viene especificado
+  if (!orderData.driver_pin) {
+    orderData.driver_pin = Math.floor(1000 + Math.random() * 9000).toString();
   }
 
   // Generar UUID con fallback para navegadores antiguos
