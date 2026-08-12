@@ -29,6 +29,7 @@ import {
   DELIVERY_CONFIG,
 } from "../utils/deliveryUtils";
 import { signInWithGoogle, signInWithFacebook, createOrder, signOut, supabase } from "../lib/supabase";
+import { sendOrderEmails } from "../lib/emailService";
 import { LocationSelector } from "./LocationSelector";
 import { CustomerHistoryModal } from "./CustomerHistoryModal";
 import { LoginModal } from "./LoginModal";
@@ -486,6 +487,22 @@ export function CartSidebar() {
           };
         }),
       });
+
+      // Enviar correo de confirmación al cliente y notificación a la caja (contacto@restaurantelasflores.com)
+      sendOrderEmails(
+        {
+          ...createdOrd,
+          customer_email: delivery.email || activeUser?.email,
+          customer_name: delivery.name || "Cliente",
+          order_type: orderType,
+          subtotal: totalPrice,
+          delivery_fee: DELIVERY_FEE,
+          total_amount: total,
+          payment_method: paymentMethod,
+          address: delivery.address,
+        },
+        items
+      ).catch((e) => console.warn("Background email notification error:", e));
 
       // Guardar el ID de la orden en localStorage para garantizar el acceso al historial inmediato
       try {

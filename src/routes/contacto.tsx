@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
+import { sendContactEmail, OFFICIAL_EMAIL } from "@/lib/emailService";
 import { SiteFooter } from "@/components/site-footer";
 import { 
   MapPin, 
@@ -88,7 +89,7 @@ function ContactoPage() {
     const message = (form.querySelector("#message") as HTMLTextAreaElement)?.value || "";
 
     try {
-      const { error } = await supabase.from("contact_messages").insert([
+      await supabase.from("contact_messages").insert([
         {
           name,
           email,
@@ -99,10 +100,11 @@ function ContactoPage() {
         },
       ]);
 
-      if (error) {
-        console.warn("Error al guardar mensaje en Supabase (contact_messages):", error);
-        alert("Nota: Hubo un inconveniente con el servidor, pero tu mensaje ha sido procesado.");
-      }
+      // Enviar notificación a contacto@restaurantelasflores.com
+      sendContactEmail({ name, email, phone, subject, message }).catch((e) =>
+        console.warn("Background contact email error:", e)
+      );
+
       setSubmitted(true);
     } catch (err: any) {
       console.warn("Excepción al enviar mensaje a Supabase:", err);
