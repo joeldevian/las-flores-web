@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useRouter } from "@tanstack/react-router";
 
 export interface CartCustomizations {
   bebidaFria?: string;
@@ -33,6 +34,12 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  // Cerrar el carrito automáticamente al cambiar de ruta
+  useEffect(() => {
+    setIsOpen(false);
+  }, [router.state.location.pathname]);
 
   // Cargar carrito desde localStorage únicamente después de montar en el cliente (evita error 418 de hidratación)
   useEffect(() => {

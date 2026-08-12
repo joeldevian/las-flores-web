@@ -1,5 +1,5 @@
 import { CashierOrderCard } from "./CashierOrderCard";
-import { Utensils, Clock, Truck, CheckCircle2, XCircle } from "lucide-react";
+import { Utensils, Clock, Truck, CheckCircle2 } from "lucide-react";
 import { normalizeOrderStatus, isCancelledStatus } from "../lib/orderStatus";
 
 interface CashierKanbanViewProps {
@@ -38,7 +38,6 @@ export function CashierKanbanView({
     const ordDateStr = o.created_at ? getLocalYYYYMMDD(o.created_at) : "";
     return ordDateStr === todayStr || !ordDateStr;
   });
-  const cancelled = orders.filter((o) => isCancelledStatus(o.status));
 
   const columns = [
     {
@@ -85,21 +84,10 @@ export function CashierKanbanView({
       badgeColor: "bg-emerald-600 text-white",
       items: completed,
     },
-    {
-      id: "cancelado",
-      title: "5. Cancelados",
-      count: cancelled.length,
-      icon: XCircle,
-      bgColor: "bg-rose-500/10",
-      borderColor: "border-rose-400",
-      textColor: "text-rose-950",
-      badgeColor: "bg-rose-600 text-white",
-      items: cancelled,
-    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start font-sans">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start font-sans">
       {columns.map((col) => {
         const Icon = col.icon;
         return (

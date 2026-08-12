@@ -12,11 +12,15 @@ import { ShoppingCart } from "lucide-react";
 export const Route = createFileRoute("/carta")({
   head: () => ({
     meta: [
-      { title: "Nuestra Carta — Restaurante Las Flores" },
+      { title: "Menú y Carta Digital — Restaurante Las Flores Ayacucho | Platos Típicos & Delivery" },
       {
         name: "description",
         content:
-          "Explore nuestra carta completa. Platos típicos de Ayacucho, recomendaciones del chef y más.",
+          "Consulta la carta completa de Restaurante Las Flores en Ayacucho: Puca Picante, Cuy Frito, Pachamanca, Trucha y postres tradicionales. ¡Pide delivery a domicilio en Huamanga!",
+      },
+      {
+        name: "keywords",
+        content: "carta restaurante las flores, menu restaurante las flores, platos tipicos ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery comida ayacucho",
       },
     ],
   }),

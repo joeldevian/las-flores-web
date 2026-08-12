@@ -21,25 +21,70 @@ import { FamiliaLasFloresSection } from "../components/FamiliaLasFloresSection";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ayacucho — Las Flores | Tierra, cultura y sabor" },
+      { title: "Restaurante Las Flores Ayacucho — El Mejor Restaurante en Huamanga | Platos Típicos & Parrillas" },
       {
         name: "description",
         content:
-          "Un viaje sensorial por Ayacucho: su gente, sus retablos, sus fogones. La carta de presentación del alma andina que inspira Restaurante Las Flores.",
+          "El mejor restaurante en Ayacucho. En Restaurante Las Flores disfruta la auténtica gastronomía ayacuchana (Puca Picante, Cuy Frito, Pachamanca) en Jr. José Olaya 106, Huamanga. ¡Reserva tu mesa o pide delivery online!",
       },
-      { property: "og:title", content: "Ayacucho — Las Flores" },
+      {
+        name: "keywords",
+        content:
+          "restaurante las flores, restaurante las flores ayacucho, restaurantes ayacucho, mejor restaurante ayacucho, donde comer en ayacucho, restaurante turistico ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery ayacucho, reservas restaurante ayacucho",
+      },
+      { property: "og:title", content: "Restaurante Las Flores Ayacucho — El Mejor Restaurante en Huamanga" },
       {
         property: "og:description",
         content:
-          "Cultura, tradición y platos típicos de Ayacucho. La tierra que da vida a Restaurante Las Flores.",
+          "Disfruta la verdadera gastronomía ayacuchana en Restaurante Las Flores. Ubicados en Jr. José Olaya 106, Huamanga — Ayacucho.",
       },
       {
         property: "og:image",
-        content: new URL(ayacuchoHero, "https://restaurantelasflores.pe").toString(),
+        content: "https://www.restaurantelasflores.com/images.png",
       },
       {
         name: "twitter:image",
-        content: new URL(ayacuchoHero, "https://restaurantelasflores.pe").toString(),
+        content: "https://www.restaurantelasflores.com/images.png",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          "name": "Restaurante Las Flores",
+          "alternateName": "Las Flores Ayacucho",
+          "url": "https://www.restaurantelasflores.com",
+          "logo": "https://www.restaurantelasflores.com/images.png",
+          "image": "https://www.restaurantelasflores.com/images.png",
+          "telephone": "+51980723422",
+          "priceRange": "S/ 30 - S/ 80",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jr. José Olaya 106",
+            "addressLocality": "Huamanga",
+            "addressRegion": "Ayacucho",
+            "postalCode": "05001",
+            "addressCountry": "PE"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -13.158,
+            "longitude": -74.223
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+              "opens": "07:00",
+              "closes": "22:00"
+            }
+          ],
+          "servesCuisine": ["Peruana", "Ayacuchana", "Tradicional", "Parrillas", "Desayunos", "Almuerzos", "Cenas"],
+          "acceptsReservations": "True",
+          "hasMenu": "https://www.restaurantelasflores.com/carta"
+        }),
       },
     ],
   }),

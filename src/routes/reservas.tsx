@@ -5,6 +5,7 @@ import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 import type { User } from "@supabase/supabase-js";
 import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
+import { sendReservationEmail } from "@/lib/emailService";
 import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle, Sparkles, Sun, Wine, Utensils, Users, Award, Share2, CalendarPlus, QrCode, Heart, Coffee } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
 import { getBlockedZonesForReservation, listRestaurantZones } from "@/features/zones/api";
@@ -256,7 +257,13 @@ function ReservasPage() {
     reason?: string;
   }>({ open: false, zoneName: "", date: "", time: "", reason: "" });
 
-  const todayIso = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const todayIso = useMemo(() => {
+    const t = new Date();
+    const yyyy = t.getFullYear();
+    const mm = String(t.getMonth() + 1).padStart(2, "0");
+    const dd = String(t.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }, []);
 
   // Fetch all active blackouts for fast real-time checking
   useEffect(() => {
@@ -305,15 +312,17 @@ function ReservasPage() {
     });
   }, [form.date, form.time]);
 
-  // Generate next 14 days calendar carousel
+  // Generate next 14 days calendar carousel with consistent local date formatting
   const DAYS_CAROUSEL = useMemo(() => {
     const list = [];
     const t = new Date();
     for (let i = 0; i < 14; i++) {
-      const d = new Date(t);
-      d.setDate(t.getDate() + i);
-      const iso = d.toISOString().split("T")[0];
-      const dayNum = String(d.getDate()).padStart(2, "0");
+      const d = new Date(t.getFullYear(), t.getMonth(), t.getDate() + i);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const iso = `${yyyy}-${mm}-${dd}`;
+      const dayNum = dd;
       const dayShort = d.toLocaleDateString("es-PE", { weekday: "short" }).substring(0, 2);
       const dayShortCap = dayShort.charAt(0).toUpperCase() + dayShort.slice(1);
       list.push({ iso, dayNum, dayShortCap, fullDate: d });
@@ -509,6 +518,18 @@ function ReservasPage() {
       });
 
       const resCode = createdRes?.id ? String(createdRes.id) : code;
+
+      // Enviar correo de confirmación de reserva
+      sendReservationEmail({
+        name: fullName,
+        email: form.email,
+        phone: fullPhone,
+        reservation_date: form.date,
+        reservation_time: form.time,
+        guests: form.guests,
+        zone: form.zona.nombre,
+      }).catch((e) => console.warn("Background reservation email error:", e));
+
       setForm((f) => ({ ...f, reservationCode: resCode }));
       setMainStep(4); // Advance to Confirmation
       window.scrollTo({ top: 300, behavior: "smooth" });
