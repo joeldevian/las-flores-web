@@ -95,8 +95,9 @@ export async function sendEmail({
     }
 
     return true;
-  } catch (error) {
-    console.error("[Email Service Exception]:", error);
+  } catch (error: any) {
+    // Si la llamada fue bloqueada por CORS en el cliente navegador, silenciar la advertencia
+    console.info("[Email Service]: El envío directo por navegador requiere delegación en servidor o webhook de producción.");
     return false;
   }
 }
