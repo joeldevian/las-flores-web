@@ -27,7 +27,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     const init = async () => {
       const { data: { session: s } } = await supabase.auth.getSession();
       setSession(s);
-      if (s) await fetchProfile(s.user.id, s.user);
+      if (s) await fetchProfile(s.user.id, s.user, false);
       setLoading(false);
     };
     init();
@@ -35,7 +35,7 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     const handleAuthSync = async () => {
       const { data: { session: s } } = await supabase.auth.getSession();
       setSession(s);
-      if (s) await fetchProfile(s.user.id, s.user);
+      if (s) await fetchProfile(s.user.id, s.user, false);
     };
 
     window.addEventListener("message", handleAuthSync);
@@ -44,9 +44,12 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
       if (s) {
-        await fetchProfile(s.user.id, s.user);
+        // Al iniciar sesión (SIGNED_IN), verificar si faltan datos para solicitar completarlos
+        const shouldPrompt = event === "SIGNED_IN";
+        await fetchProfile(s.user.id, s.user, shouldPrompt);
       } else {
         setProfile(null);
+        setShowCompleteModal(false);
       }
     });
 
@@ -57,9 +60,9 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
     };
   }, []);
 
-  const fetchProfile = async (userId: string, userObj?: any) => {
+  const fetchProfile = async (userId: string, userObj?: any, promptIfIncomplete = false) => {
     try {
-      let { data, error } = await supabase
+      let { data } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
@@ -86,6 +89,16 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
       }
 
       setProfile(data || null);
+
+      // Si se acaba de iniciar sesión (promptIfIncomplete === true), verificar si faltan teléfono o cumpleaños
+      if (promptIfIncomplete) {
+        const phoneVal = data?.phone || userObj?.user_metadata?.phone;
+        const birthVal = data?.birthdate || userObj?.user_metadata?.birth_date;
+
+        if (!phoneVal || !birthVal) {
+          setShowCompleteModal(true);
+        }
+      }
     } catch (e) {
       console.warn("Profile fetch warning:", e);
     }
