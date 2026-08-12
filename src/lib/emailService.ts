@@ -1,28 +1,49 @@
 /**
  * Servicio Centralizado de Correos Electrónicos — Restaurante Las Flores
- * Emisor Oficial: contacto@restaurantelasflores.com
+ * Soporte para Alias / Remitentes Especializados:
+ * - pedidos@restaurantelasflores.com (Confirmación de Delivery y Recojo)
+ * - reservas@restaurantelasflores.com (Confirmación de Mesas)
+ * - no-reply@restaurantelasflores.com (Notificaciones del sistema)
+ * - contacto@restaurantelasflores.com (Atención al cliente y buzón principal)
  */
 
 export const OFFICIAL_EMAIL = "contacto@restaurantelasflores.com";
-export const EMAIL_SENDER = `Restaurante Las Flores <${OFFICIAL_EMAIL}>`;
 
-// Clave API de Resend (Se puede configurar en .env como VITE_RESEND_API_KEY o enviar por proxy)
-const RESEND_API_KEY = typeof process !== "undefined" && process.env?.VITE_RESEND_API_KEY
-  ? process.env.VITE_RESEND_API_KEY
-  : (import.meta as any)?.env?.VITE_RESEND_API_KEY || "";
+export const SENDERS = {
+  GENERAL: `Restaurante Las Flores <${OFFICIAL_EMAIL}>`,
+  PEDIDOS: `Pedidos — Las Flores <pedidos@restaurantelasflores.com>`,
+  RESERVAS: `Reservas — Las Flores <reservas@restaurantelasflores.com>`,
+  NOTIFICACIONES: `Las Flores <no-reply@restaurantelasflores.com>`,
+};
+
+// Clave API de Resend enviada por entorno
+const RESEND_API_KEY =
+  (typeof process !== "undefined" && process.env?.VITE_RESEND_API_KEY) ||
+  (import.meta as any)?.env?.VITE_RESEND_API_KEY ||
+  "";
 
 interface EmailPayload {
   to: string | string[];
   subject: string;
   html: string;
+  from?: string;
+  replyTo?: string;
 }
 
 /**
  * Función genérica para enviar correos electrónicos usando la API de Resend
  */
-export async function sendEmail({ to, subject, html }: EmailPayload): Promise<boolean> {
+export async function sendEmail({
+  to,
+  subject,
+  html,
+  from = SENDERS.GENERAL,
+  replyTo = OFFICIAL_EMAIL,
+}: EmailPayload): Promise<boolean> {
   if (!RESEND_API_KEY) {
-    console.info(`[Email Service] Correo registrado para envío a ${Array.isArray(to) ? to.join(", ") : to}: "${subject}". (Configurar VITE_RESEND_API_KEY en producción)`);
+    console.info(
+      `[Email Service] Correo registrado de ${from} para ${Array.isArray(to) ? to.join(", ") : to}: "${subject}". (Configurar VITE_RESEND_API_KEY en producción)`
+    );
     return true;
   }
 
@@ -31,11 +52,12 @@ export async function sendEmail({ to, subject, html }: EmailPayload): Promise<bo
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: EMAIL_SENDER,
+        from,
         to: Array.isArray(to) ? to : [to],
+        reply_to: replyTo,
         subject,
         html,
       }),
@@ -55,7 +77,7 @@ export async function sendEmail({ to, subject, html }: EmailPayload): Promise<bo
 }
 
 /**
- * 1. Enviar Resumen de Pedido de Delivery / Recojo al Cliente y Copia a la Caja
+ * 1. Enviar Resumen de Pedido de Delivery / Recojo desde pedidos@restaurantelasflores.com
  */
 export async function sendOrderEmails(orderData: any, items: any[] = []): Promise<void> {
   const shortId = orderData.id ? orderData.id.slice(0, 8).toUpperCase() : "LF-ORDER";
@@ -63,12 +85,18 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
   const isDelivery = orderData.order_type === "delivery";
   const trackingUrl = `https://www.restaurantelasflores.com/rastreo/${orderData.id || ""}`;
 
-  const itemsHtml = items.map((item: any) => `
+  const itemsHtml = items
+    .map(
+      (item: any) => `
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid #eeeeee;">${item.quantity || 1}x ${item.name || item.product_name}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #eeeeee; text-align: right; font-weight: bold;">S/ ${(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #eeeeee; text-align: right; font-weight: bold;">S/ ${(
+        Number(item.price || 0) * (item.quantity || 1)
+      ).toFixed(2)}</td>
     </tr>
-  `).join("");
+  `
+    )
+    .join("");
 
   const emailHtml = `
     <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #faf6ed; border-radius: 16px; overflow: hidden; border: 1px solid #2c4a3e20;">
@@ -123,9 +151,10 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
     </div>
   `;
 
-  // 1. Enviar correo de confirmación al cliente (si indicó e-mail)
+  // 1. Enviar correo de confirmación al cliente desde pedidos@restaurantelasflores.com
   if (customerEmail && customerEmail.includes("@")) {
     await sendEmail({
+      from: SENDERS.PEDIDOS,
       to: customerEmail,
       subject: `¡Pedido Confirmado! #${shortId} — Restaurante Las Flores`,
       html: emailHtml,
@@ -134,6 +163,7 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
 
   // 2. Enviar notificación a la Caja principal
   await sendEmail({
+    from: SENDERS.NOTIFICACIONES,
     to: OFFICIAL_EMAIL,
     subject: `🔔 NUEVO PEDIDO #${shortId} — S/ ${Number(orderData.total_amount || 0).toFixed(2)}`,
     html: emailHtml,
@@ -141,7 +171,7 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
 }
 
 /**
- * 2. Enviar Confirmación de Reserva de Mesa
+ * 2. Enviar Confirmación de Reserva desde reservas@restaurantelasflores.com
  */
 export async function sendReservationEmail(reservationData: any): Promise<void> {
   const customerEmail = reservationData.email;
@@ -179,9 +209,10 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
     </div>
   `;
 
-  // Copia al cliente
+  // Copia al cliente desde reservas@restaurantelasflores.com
   if (customerEmail && customerEmail.includes("@")) {
     await sendEmail({
+      from: SENDERS.RESERVAS,
       to: customerEmail,
       subject: `✨ Reserva Confirmada — Restaurante Las Flores Ayacucho`,
       html: emailHtml,
@@ -190,6 +221,7 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
 
   // Notificación al restaurante
   await sendEmail({
+    from: SENDERS.NOTIFICACIONES,
     to: OFFICIAL_EMAIL,
     subject: `📌 NUEVA RESERVA — ${reservationData.reservation_date} ${reservationData.reservation_time} (${reservationData.name})`,
     html: emailHtml,
@@ -214,6 +246,8 @@ export async function sendContactEmail(contactData: any): Promise<void> {
   `;
 
   await sendEmail({
+    from: SENDERS.GENERAL,
+    replyTo: contactData.email,
     to: OFFICIAL_EMAIL,
     subject: `✉️ Mensaje de Contacto Web: ${contactData.name}`,
     html: emailHtml,
