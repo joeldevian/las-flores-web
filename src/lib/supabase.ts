@@ -102,8 +102,24 @@ export async function signInWithGoogle() {
   const currentOrigin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : "https://las-flores-web-0079.vercel.app";
+      : "https://www.restaurantelasflores.com";
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  if (isMobile) {
+    // Redirección directa en móviles para garantizar persistencia de sesión sin bloqueo de popups
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${currentOrigin}/`,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  // En escritorio intentamos popup con fallback a redirección directa
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -124,19 +140,21 @@ export async function signInWithGoogle() {
       "google_auth_popup",
       `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
     );
-    if (!popup) window.location.href = data.url;
+    if (!popup) {
+      window.location.href = data.url;
+    }
   }
   return data;
 }
 
 /**
- * Iniciar sesión con Facebook OAuth (redirect directo — Supabase maneja el PKCE automáticamente)
+ * Iniciar sesión con Facebook OAuth
  */
 export async function signInWithFacebook() {
   const currentOrigin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : "https://las-flores-web-0079.vercel.app";
+      : "https://www.restaurantelasflores.com";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "facebook",
@@ -144,7 +162,41 @@ export async function signInWithFacebook() {
       redirectTo: `${currentOrigin}/`,
     },
   });
+  if (error) throw error;
+  return data;
+}
 
+/**
+ * Iniciar sesión con Correo y Contraseña
+ */
+export async function signInWithEmail(email: string, pass: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: pass,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Registrarse con Correo y Contraseña
+ */
+export async function signUpWithEmail(email: string, pass: string, fullName?: string) {
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://www.restaurantelasflores.com";
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: pass,
+    options: {
+      emailRedirectTo: `${currentOrigin}/`,
+      data: {
+        full_name: fullName || "",
+      },
+    },
+  });
   if (error) throw error;
   return data;
 }

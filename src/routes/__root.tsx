@@ -191,14 +191,8 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
-  // ── Detectar si estamos dentro del popup de Google ─────────────────
-  const isPopup = typeof window !== "undefined" && (
-    window.name === "google_auth_popup" ||
-    (Boolean(window.opener) && (
-      window.location.hash.includes("access_token") ||
-      window.location.search.includes("code=")
-    ))
-  );
+  // ── Detectar si estamos dentro de la ventana popup de Google ───────
+  const isPopup = typeof window !== "undefined" && window.name === "google_auth_popup";
 
   // ── Mostrar spinner mientras Supabase procesa el callback OAuth ─────
   // Solo aplica a la ventana PRINCIPAL (no al popup) con ?code= o #access_token=
