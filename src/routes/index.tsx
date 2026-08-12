@@ -40,11 +40,51 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:image",
-        content: "https://www.restaurantelasflores.com/gastronomia/Puca-picante.webp",
+        content: "https://www.restaurantelasflores.com/images.png",
       },
       {
         name: "twitter:image",
-        content: "https://www.restaurantelasflores.com/gastronomia/Puca-picante.webp",
+        content: "https://www.restaurantelasflores.com/images.png",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          "name": "Restaurante Las Flores",
+          "alternateName": "Las Flores Ayacucho",
+          "url": "https://www.restaurantelasflores.com",
+          "logo": "https://www.restaurantelasflores.com/images.png",
+          "image": "https://www.restaurantelasflores.com/images.png",
+          "telephone": "+51980723422",
+          "priceRange": "S/ 30 - S/ 80",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jr. José Olaya 106",
+            "addressLocality": "Huamanga",
+            "addressRegion": "Ayacucho",
+            "postalCode": "05001",
+            "addressCountry": "PE"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -13.158,
+            "longitude": -74.223
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+              "opens": "07:00",
+              "closes": "22:00"
+            }
+          ],
+          "servesCuisine": ["Peruana", "Ayacuchana", "Tradicional", "Parrillas", "Desayunos", "Almuerzos", "Cenas"],
+          "acceptsReservations": "True",
+          "hasMenu": "https://www.restaurantelasflores.com/carta"
+        }),
       },
     ],
   }),
