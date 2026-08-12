@@ -391,15 +391,32 @@ export async function createOrder(payload: OrderPayload) {
 
   // Intentar inserción principal
   let createdOrder: any = null;
-  const { data: insertedData, error: orderError } = await supabase
+  let { data: insertedData, error: orderError } = await supabase
     .from("orders")
     .insert([payloadToInsert])
     .select();
+
+  // Si falló por columna 'driver_pin' u otra columna opcional no existente en el esquema
+  if (orderError) {
+    console.warn("Intento 1 de inserción de pedido falló:", orderError.message);
+    
+    // Si la columna driver_pin no existe en la BD, removerla y reintentar
+    if (orderError.message?.includes("driver_pin") || orderError.message?.includes("schema cache")) {
+      delete payloadToInsert.driver_pin;
+      const retryResult = await supabase
+        .from("orders")
+        .insert([payloadToInsert])
+        .select();
+      insertedData = retryResult.data;
+      orderError = retryResult.error;
+    }
+  }
 
   if (orderError) {
     // Reintentar con payment_method alternativo si aplica
     if (payloadToInsert.payment_method === "efectivo") {
       payloadToInsert.payment_method = "cash";
+      delete payloadToInsert.driver_pin; // asegurar compatibilidad
       const { data: retryData, error: retryError } = await supabase
         .from("orders")
         .insert([payloadToInsert])
