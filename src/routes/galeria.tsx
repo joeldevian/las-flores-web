@@ -2,8 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
+import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/galeria")({
+  head: () => ({
+    meta: [
+      { title: "Galería | Restaurante Las Flores Ayacucho" },
+      {
+        name: "description",
+        content:
+          "Galería fotográfica del Restaurante Las Flores en Ayacucho. Descubre nuestros platos, ambiente y momentos especiales.",
+      },
+    ],
+  }),
   component: GaleriaPage,
 });
 
@@ -74,8 +85,6 @@ function GaleriaPage() {
   const [activeCategory, setActiveCategory] = useState<string>("restaurante");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -112,89 +121,28 @@ function GaleriaPage() {
           />
         </div>
         <div className="flex-1 flex justify-end items-center">
-          {/* Language Selector with Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
-              }`}
-            >
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
-              />
-              <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 
       {/* Header Banner */}
-      <section className="relative h-[36vh] min-h-[280px] flex items-center justify-center bg-[#2c1d11]">
-        <div className="absolute inset-0">
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
-            src="/imagenes-reales/GALERIA/evento_corporativo.webp"
+            src="/imagenes-reales/hero-paginas/hero-galeria.webp"
             alt="Galería Las Flores"
-            className="w-full h-full object-cover opacity-35"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
         </div>
-        <div className="relative z-10 text-center text-white px-6 pt-12">
-          <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
-            Las Flores · Ayacucho
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+            <Sparkles size={14} />
+            Nuestra Galería · Momentos que inspiran
+            <Sparkles size={14} />
           </span>
-          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight drop-shadow-md mb-5">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Galería de Momentos
           </h1>
           <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
@@ -203,29 +151,26 @@ function GaleriaPage() {
         </div>
       </section>
 
-      {/* Category Tabs */}
-      <div className="w-full bg-white border-b border-nogal/10">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-4">
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-6 py-16 space-y-12">
+        {/* Category Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
             {GALLERY_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-6 py-2 text-sm font-semibold uppercase tracking-wider whitespace-nowrap transition-all duration-300 ${
+                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
                   activeCategory === cat.id
-                    ? "text-eucalipto border-b-2 border-eucalipto"
-                    : "text-nogal/60 hover:text-nogal"
+                    ? "bg-[#2D473C] text-[#D4AF37] font-black shadow-md scale-105"
+                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 {cat.label}
               </button>
             ))}
-          </div>
         </div>
-      </div>
 
-      {/* Gallery Grid */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
+        {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentCategory?.images.map((img, idx) => (
             <div

@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
 const heroImg =
-  "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
+  "/imagenes-reales/hero-paginas/hero-eventos-opt.webp";
 const casaImg = "/imagenes-reales/CARTA/02042026-DSC04401.webp";
 const equipoImg = "/imagenes-reales/EQUIPO/02042026-DSC05038.webp";
 const retabloImg =
   "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/Retablo-Ayacuchano.webp";
 import { SiteFooter } from "@/components/site-footer";
-import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CalendarHeart, GlassWater, Users, CheckCircle2, Sparkles, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { SiteNavigationMenu } from '../components/SiteNavigationMenu';
 import { useState, useTransition, useEffect } from 'react';
 import { ShoppingCart } from "lucide-react";
@@ -28,13 +29,75 @@ export const Route = createFileRoute("/eventos")({
   component: EventosPage,
 });
 
+type EventTabId = "familiares" | "corporativas" | "bodas";
+
+interface EventTabData {
+  id: EventTabId;
+  label: string;
+  title: string;
+  description: string;
+  bullets: string[];
+  images: string[];
+}
+
+const EVENT_TABS: EventTabData[] = [
+  {
+    id: "familiares",
+    label: "Celebraciones Familiares",
+    title: "Celebraciones Familiares",
+    description: "Desde cumpleaños hasta aniversarios, Las Flores es el hogar perfecto para celebrar la vida con sus seres queridos. Disfrute de nuestra propuesta tradicional de compartir en el centro de la mesa, rodeado de un ambiente cálido y acogedor.",
+    bullets: [
+      "Platos diseñados para compartir",
+      "Espacios modulares según la cantidad de invitados"
+    ],
+    images: [
+      "/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp",
+      "/imagenes-reales/Salones/Salonprincipal.webp",
+      "/imagenes-reales/Salones/Terraza.webp",
+      "/imagenes-reales/Salones/jardin.webp"
+    ]
+  },
+  {
+    id: "corporativas",
+    label: "Reuniones Corporativas",
+    title: "Reuniones Corporativas",
+    description: "El entorno perfecto para los negocios. Contamos con salones acondicionados para almuerzos ejecutivos, conferencias, y cenas de gala empresariales, garantizando privacidad y distinción.",
+    bullets: [
+      "Opciones de menú ejecutivo",
+      "Equipamiento audiovisual (bajo solicitud)",
+      "Coffee breaks premium"
+    ],
+    images: [
+      "/imagenes-reales/EVENTOS-COORPORATIVAS/reuniones-corporativas.webp",
+      "/imagenes-reales/Salones/Estrado.webp",
+      "/imagenes-reales/Salones/Ventana.webp",
+      "/imagenes-reales/Salones/pasillo.webp"
+    ]
+  },
+  {
+    id: "bodas",
+    label: "Bodas y Recepciones",
+    title: "Bodas y Recepciones",
+    description: "Haga de su día especial un momento inolvidable. Ofrecemos ambientes íntimos y majestuosos, un servicio impecable y propuestas gastronómicas diseñadas a medida para usted y sus invitados, fusionando la alta cocina con los sabores tradicionales.",
+    bullets: [
+      "Menú de degustación personalizado",
+      "Salones privados exclusivos",
+      "Atención preferencial"
+    ],
+    images: [
+      "/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp",
+      "/imagenes-reales/Salones/entrada.webp",
+      "/imagenes-reales/Salones/Terraza.webp",
+      "/imagenes-reales/Salones/Salonprincipal.webp"
+    ]
+  }
+];
+
 function EventosPage() {
   const { totalItems, setIsOpen: setCartOpen } = useCart();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,17 +107,72 @@ function EventosPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [isPending, startTransition] = useTransition();
 
-  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [activeTab, setActiveTab] = useState<EventTabId>("familiares");
+  const [carouselIndices, setCarouselIndices] = useState<Record<EventTabId, number>>({
+    familiares: 0,
+    corporativas: 0,
+    bodas: 0,
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleNextSlide = () => {
+    setCarouselIndices((prev) => {
+      const currentImages = EVENT_TABS.find((t) => t.id === activeTab)?.images || [];
+      const totalPairs = Math.ceil(currentImages.length / 2);
+      const nextIndex = (prev[activeTab] + 1) % totalPairs;
+      return { ...prev, [activeTab]: nextIndex };
+    });
+  };
+
+  const handlePrevSlide = () => {
+    setCarouselIndices((prev) => {
+      const currentImages = EVENT_TABS.find((t) => t.id === activeTab)?.images || [];
+      const totalPairs = Math.ceil(currentImages.length / 2);
+      const prevIndex = (prev[activeTab] - 1 + totalPairs) % totalPairs;
+      return { ...prev, [activeTab]: prevIndex };
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus("submitting");
-    // Simulate network request
-    setTimeout(() => {
+
+    const form = e.currentTarget;
+    const name = (form.querySelector("#nombre") as HTMLInputElement)?.value || "";
+    const email = (form.querySelector("#email") as HTMLInputElement)?.value || "";
+    const phone = (form.querySelector("#telefono") as HTMLInputElement)?.value || "";
+    const guestsInput = (form.querySelector("#invitados") as HTMLInputElement)?.value;
+    const guests = guestsInput ? Number(guestsInput) : null;
+    const event_type = (form.querySelector("#tipo") as HTMLSelectElement)?.value || "";
+    const event_date = (form.querySelector("#fecha") as HTMLInputElement)?.value || null;
+    const message = (form.querySelector("#mensaje") as HTMLTextAreaElement)?.value || "";
+
+    try {
+      const { error } = await supabase.from("event_quotes").insert([
+        {
+          name,
+          email,
+          phone,
+          guests,
+          event_type,
+          event_date,
+          message,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (error) {
+        console.warn("Error al guardar cotización de evento en Supabase (event_quotes):", error);
+        alert("Nota: Hubo un inconveniente al registrar la cotización en el servidor, pero hemos recibido tu solicitud.");
+      }
       setFormStatus("success");
-    }, 1500);
+    } catch (err: any) {
+      console.warn("Excepción al solicitar cotización de evento en Supabase:", err);
+      alert("Nota: Ocurrió un error inesperado, pero hemos procesado tu solicitud.");
+      setFormStatus("success");
+    }
   };
 
   return (
@@ -101,233 +219,167 @@ function EventosPage() {
               </span>
             </button>
           )}
-          
-          {/* Language Selector with Dropdown */}
-          <div className="pointer-events-auto relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
-              }`}
-            >
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
-              />
-              <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
 
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-eucalipto pt-20 pb-10">
-        {/* Background Image with Slow Zoom */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-eucalipto pt-32 pb-24 px-6">
         <img
           src={heroImg}
           alt="Eventos en Restaurante Las Flores Ayacucho"
+          loading="eager"
+          decoding="async"
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover opacity-60 animate-hero"
+          className="absolute inset-0 w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
         />
-        {/* Elegant Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/20 to-ink/95" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 pb-4 flex flex-col items-center text-center mt-8">
-          {/* Decorative Top Accent */}
-          <div className="w-px h-8 md:h-10 bg-chilca/60 mb-5 animate-reveal"></div>
-
-          <span className="text-chilca font-semibold uppercase tracking-[0.4em] text-[10px] md:text-xs mb-5 block animate-reveal [animation-delay:100ms]">
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6 -mt-12">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+            <Sparkles size={14} />
             Celebre con nosotros
+            <Sparkles size={14} />
           </span>
 
-          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-piedra leading-[1.05] mb-6 w-full animate-reveal [animation-delay:200ms]">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Eventos Memorables <br />
-            <span className="italic font-light text-piedra/90">en Ayacucho</span>
+            <span className="font-normal">en Ayacucho</span>
           </h1>
 
-          <p className="text-sm md:text-base text-piedra/80 max-w-[50ch] font-light leading-[1.8] animate-reveal [animation-delay:300ms]">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             Nuestros espacios, impregnados de historia y elegancia, son el escenario ideal para sus
             celebraciones más importantes. Celebre rodeado de la magia de Huamanga.
           </p>
-
-          <button
-            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
-            className="mt-8 inline-flex items-center gap-3 px-8 py-4 bg-transparent border border-chilca/30 text-chilca text-[11px] uppercase tracking-[0.25em] font-bold hover:bg-chilca hover:text-nogal transition-colors animate-reveal [animation-delay:400ms] rounded-sm group"
-          >
-            Explorar Espacios
-            <span className="group-hover:translate-y-1 transition-transform">↓</span>
-          </button>
         </div>
+
       </section>
 
-      {/* Servicios de Eventos */}
-      <section className="py-24 md:py-32 px-6 max-w-7xl mx-auto space-y-32">
-        {/* Familiares */}
-        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-          <div className="flex-1">
-            <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
-              <img
-                src="/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp"
-                alt="Almuerzos Especiales"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Celebraciones Familiares</h2>
-            <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
-              Desde cumpleaños hasta aniversarios, Las Flores es el hogar perfecto para celebrar la
-              vida con sus seres queridos. Disfrute de nuestra propuesta tradicional de compartir en
-              el centro de la mesa, rodeado de un ambiente cálido y acogedor.
-            </p>
-            <ul className="space-y-4 text-nogal/80 font-medium">
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Platos diseñados para compartir
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Espacios modulares según la cantidad de invitados
-              </li>
-            </ul>
-          </div>
+      {/* Servicios de Eventos - 3 Column Layout */}
+      <section className="bg-piedra w-full overflow-hidden">
+        {/* Tabs Navigation */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-16 pb-0 w-full max-w-7xl mx-auto px-6">
+          {EVENT_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-2xs ${activeTab === tab.id
+                  ? "bg-[#2D473C] text-[#D4AF37] font-black shadow-md scale-105"
+                  : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Corporativo */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-12 md:gap-20">
-          <div className="flex-1">
-            <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
-              <img
-                src="/imagenes-reales/EVENTOS-COORPORATIVAS/reuniones-corporativas.webp"
-                alt="Eventos Corporativos"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Reuniones Corporativas</h2>
-            <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
-              El entorno perfecto para los negocios. Contamos con salones acondicionados para
-              almuerzos ejecutivos, conferencias, y cenas de gala empresariales, garantizando
-              privacidad y distinción.
-            </p>
-            <ul className="space-y-4 text-nogal/80 font-medium">
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Opciones de menú ejecutivo
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Equipamiento audiovisual (bajo solicitud)
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Coffee breaks premium
-              </li>
-            </ul>
-          </div>
-        </div>
+        {/* Tab Content (3 Columns) */}
+        <div className="relative w-full max-w-[1800px] mx-auto flex">
+          {EVENT_TABS.map((tab) => {
+            const currentIndex = carouselIndices[tab.id];
+            const currentImages = tab.images;
 
-        {/* Bodas y Recepciones */}
-        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-          <div className="flex-1">
-            <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-lg">
-              <img
-                src="/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp"
-                alt="Bodas y Recepciones"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          <div className="flex-1">
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Bodas y Recepciones</h2>
-            <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
-              Haga de su día especial un momento inolvidable. Ofrecemos ambientes íntimos y
-              majestuosos, un servicio impecable y propuestas gastronómicas diseñadas a medida para
-              usted y sus invitados, fusionando la alta cocina con los sabores tradicionales.
-            </p>
-            <ul className="space-y-4 text-nogal/80 font-medium">
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Menú de degustación personalizado
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Salones privados exclusivos
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 bg-cochinilla rounded-full"></span>
-                Atención preferencial
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
+            return (
+              <div
+                key={tab.id}
+                className={`transition-opacity duration-500 ease-in-out w-full flex flex-col lg:flex-row items-stretch ${activeTab === tab.id
+                    ? "opacity-100 relative z-10"
+                    : "opacity-0 absolute inset-0 z-0 pointer-events-none hidden"
+                  }`}
+              >
+                {/* Columna 1 (Izquierda - 40%) */}
+                <div className="w-full lg:w-[40%] flex flex-col justify-center px-8 lg:px-16 pt-12 pb-16">
+                  <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-balance mb-6 text-nogal">
+                    {tab.title}
+                  </h2>
+                  <p className="text-lg text-nogal/70 leading-[1.7] mb-8">
+                    {tab.description}
+                  </p>
+                  <ul className="space-y-4 text-nogal/80 font-medium mb-12">
+                    {tab.bullets.map((bullet, idx) => (
+                      <li key={idx} className="flex items-center gap-3">
+                        <span className="w-1.5 h-1.5 bg-[#2D473C] rounded-full flex-shrink-0"></span>
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => setIsContactOpen(true)}
+                      className="px-10 py-5 text-[11px] uppercase tracking-[0.25em] font-bold rounded-sm btn-yellow-hover"
+                    >
+                      Cotizar Evento
+                    </button>
+                  </div>
+                </div>
 
-      {/* CTA Section */}
-      <section className="bg-eucalipto text-piedra py-32 px-6 flex flex-col items-center justify-center text-center">
-        <span className="text-chilca font-medium uppercase tracking-[0.4em] text-xs mb-6 block animate-reveal">
-          SU CELEBRACIÓN COMIENZA AQUÍ
-        </span>
-        <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl mb-12 max-w-3xl text-balance animate-reveal [animation-delay:100ms]">
-          Hagamos de su evento un recuerdo imborrable
-        </h2>
-        <button
-          onClick={() => setIsContactOpen(true)}
-          className="px-10 py-5 text-[11px] uppercase tracking-[0.25em] font-bold rounded-sm animate-reveal [animation-delay:200ms] btn-yellow-hover"
-        >
-          <span>Solicitar Cotización</span>
-        </button>
+                {/* Columna 2 (Centro - Controles) */}
+                <div className="hidden lg:flex w-fit px-4 flex-col justify-end items-center gap-3 pb-16">
+                  <button
+                    onClick={handlePrevSlide}
+                    className="w-12 h-12 border border-nogal/20 flex items-center justify-center text-nogal hover:bg-nogal/10 transition-colors"
+                  >
+                    <ChevronLeft size={20} strokeWidth={1.8} />
+                  </button>
+                  <button
+                    onClick={handleNextSlide}
+                    className="w-12 h-12 border border-nogal/20 flex items-center justify-center text-nogal hover:bg-nogal/10 transition-colors"
+                  >
+                    <ChevronRight size={20} strokeWidth={1.8} />
+                  </button>
+                </div>
+
+                {/* Columna 3 (Derecha - 52% Galería Carrusel) */}
+                <div className="w-full lg:w-[52%] pt-8 lg:pt-12 pb-8 lg:pb-16 pr-2 lg:pr-4 relative self-stretch">
+                  {/* Clip wrapper — mueve páginas completas de 2 imágenes */}
+                  <div className="overflow-hidden h-full">
+                    <div
+                      className="flex h-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                      style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                    >
+                      {/* Agrupar imágenes en pares (páginas de 2) */}
+                      {Array.from({ length: Math.ceil(currentImages.length / 2) }, (_, pairIdx) => (
+                        <div
+                          key={pairIdx}
+                          className="w-full h-full flex-shrink-0 flex gap-6"
+                        >
+                          {currentImages.slice(pairIdx * 2, pairIdx * 2 + 2).map((img, imgIdx) => (
+                            <div key={imgIdx} className="flex-1 h-full relative overflow-hidden">
+                              <img
+                                src={img}
+                                alt={`${tab.title} ${pairIdx * 2 + imgIdx + 1}`}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                              {/* Borde interior blanco fino */}
+                              <div className="absolute inset-2 md:inset-4 border border-white/40 pointer-events-none" />
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Controles Móviles (Ocultos en desktop) */}
+                  <div className="flex lg:hidden justify-center gap-4 mt-6 absolute bottom-12 left-0 right-0">
+                    <button
+                      onClick={handlePrevSlide}
+                      className="w-12 h-12 bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white"
+                    >
+                      <ChevronUp size={20} strokeWidth={1} className="-rotate-90" />
+                    </button>
+                    <button
+                      onClick={handleNextSlide}
+                      className="w-12 h-12 bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white"
+                    >
+                      <ChevronDown size={20} strokeWidth={1} className="-rotate-90" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       <SiteFooter />

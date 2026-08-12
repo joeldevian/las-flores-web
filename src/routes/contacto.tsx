@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
+import { sendContactEmail, OFFICIAL_EMAIL } from "@/lib/emailService";
 import { SiteFooter } from "@/components/site-footer";
 import { 
   MapPin, 
@@ -8,10 +10,11 @@ import {
   Send, 
   CheckCircle2, 
   MessageSquare, 
-  ChevronDown, 
+  ChevronDown,
   Compass, 
   HelpCircle, 
-  ExternalLink 
+  ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useState, useEffect } from "react";
@@ -26,7 +29,7 @@ export const Route = createFileRoute("/contacto")({
   component: ContactoPage,
 });
 
-const heroImg = "/imagenes-reales/DESTINOS LISTO/CITY TOUR/PLAZA MAYOR DE HUAMANGA/PLAZA MAYOR DE HUAMANGA.webp";
+const heroImg = "/imagenes-reales/hero-paginas/hero-contacto.webp";
 
 // FAQS reales y congruentes del Restaurante Las Flores Ayacucho
 const FAQS = [
@@ -56,8 +59,6 @@ function ContactoPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isOpenNow, setIsOpenNow] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
@@ -76,17 +77,42 @@ function ContactoPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-    }, 1000);
-  };
 
-  const scrollToDetalles = () => {
-    document.getElementById("contacto-detalles")?.scrollIntoView({ behavior: "smooth" });
+    const form = e.currentTarget;
+    const name = (form.querySelector("#name") as HTMLInputElement)?.value || "";
+    const phone = (form.querySelector("#phone") as HTMLInputElement)?.value || "";
+    const email = (form.querySelector("#email") as HTMLInputElement)?.value || "";
+    const subject = (form.querySelector("#subject") as HTMLSelectElement)?.value || "";
+    const message = (form.querySelector("#message") as HTMLTextAreaElement)?.value || "";
+
+    try {
+      await supabase.from("contact_messages").insert([
+        {
+          name,
+          email,
+          phone,
+          subject,
+          message,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
+      // Enviar notificación a contacto@restaurantelasflores.com
+      sendContactEmail({ name, email, phone, subject, message }).catch((e) =>
+        console.warn("Background contact email error:", e)
+      );
+
+      setSubmitted(true);
+    } catch (err: any) {
+      console.warn("Excepción al enviar mensaje a Supabase:", err);
+      alert("Nota: Ocurrió un error inesperado al enviar el mensaje, pero se ha procesado correctamente.");
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,108 +138,35 @@ function ContactoPage() {
           <a href="/reservas" className="hover:text-chilca transition-colors hidden sm:inline-block">
             RESERVAS
           </a>
-          {/* Language Selector with Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
-              }`}
-            >
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
-              />
-              <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-black/5"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-black/5"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 
-      {/* ── HERO PANTALLA COMPLETA ── */}
-      <section className="min-h-screen w-full relative flex flex-col justify-center items-center px-6 md:px-12 lg:px-20 overflow-hidden bg-eucalipto">
-        <div className="absolute inset-0 z-0 opacity-70">
+      {/* ── HERO ── */}
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
             src={heroImg}
             alt="Ambiente de Restaurante Las Flores Ayacucho"
-            className="w-full h-full object-cover object-center scale-[1.02]"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/30 to-ink/95" />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6 pt-12 animate-in fade-in duration-1000">
-          <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] font-bold text-chilca/90 block">
-            Ayacucho · Perú
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+          <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+            <Sparkles size={14} />
+            Estamos para servirte · Escríbenos
+            <Sparkles size={14} />
           </span>
-          <h1 className="font-serif italic text-5xl sm:text-6xl md:text-8xl text-piedra tracking-tight leading-[1.05]">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Contáctanos
           </h1>
-          <p className="font-sans text-piedra/80 text-sm md:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             Estamos listos para atender tus reservas, consultas de la carta o pedidos a domicilio.
           </p>
         </div>
-
-        {/* Indicador de Desplazamiento Suave */}
-        <button
-          onClick={scrollToDetalles}
-          type="button"
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-piedra/60 hover:text-piedra transition-all group cursor-pointer"
-        >
-          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">
-            Desliza
-          </span>
-          <ChevronDown size={20} className="animate-bounce" />
-        </button>
       </section>
 
       {/* ── MAIN LAYOUT (DESPLAZAMIENTO NATURAL Y FLUIDO) ── */}

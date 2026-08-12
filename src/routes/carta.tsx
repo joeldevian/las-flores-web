@@ -12,11 +12,15 @@ import { ShoppingCart } from "lucide-react";
 export const Route = createFileRoute("/carta")({
   head: () => ({
     meta: [
-      { title: "Nuestra Carta — Restaurante Las Flores" },
+      { title: "Menú y Carta Digital — Restaurante Las Flores Ayacucho | Platos Típicos & Delivery" },
       {
         name: "description",
         content:
-          "Explore nuestra carta completa. Platos típicos de Ayacucho, recomendaciones del chef y más.",
+          "Consulta la carta completa de Restaurante Las Flores en Ayacucho: Puca Picante, Cuy Frito, Pachamanca, Trucha y postres tradicionales. ¡Pide delivery a domicilio en Huamanga!",
+      },
+      {
+        name: "keywords",
+        content: "carta restaurante las flores, menu restaurante las flores, platos tipicos ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery comida ayacucho",
       },
     ],
   }),
@@ -27,8 +31,6 @@ function CartaPage() {
   const { categories: liveCategories } = useLiveMenuCategories();
   const [activeId, setActiveId] = useState("desayuno");
   const { totalItems, setIsOpen: setIsCartOpen } = useCart();
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const currentCategories = liveCategories.length > 0 ? liveCategories : staticCategories;
@@ -80,76 +82,12 @@ function CartaPage() {
           >
             DELIVERY
           </button>
-
-          {/* Language Selector with Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className="flex items-center gap-2 px-2 py-1.5 transition-all text-nogal"
-            >
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
-              />
-              <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className="text-xs font-bold text-nogal">EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className="text-xs font-bold text-nogal">ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 
       {/* Page Title */}
       <div className="bg-piedra pt-10 pb-4 text-center">
-        <h1 className="font-serif text-4xl md:text-5xl text-nogal">Nuestra Carta</h1>
+        <h1 className="font-serif text-4xl md:text-6xl text-nogal font-normal leading-tight">Nuestra Carta</h1>
       </div>
 
       {/* Main Content with Sidebar */}

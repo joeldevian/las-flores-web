@@ -5,11 +5,22 @@ import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 import type { User } from "@supabase/supabase-js";
 import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
+import { sendReservationEmail } from "@/lib/emailService";
 import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle, Sparkles, Sun, Wine, Utensils, Users, Award, Share2, CalendarPlus, QrCode, Heart, Coffee } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
 import { getBlockedZonesForReservation, listRestaurantZones } from "@/features/zones/api";
 
 export const Route = createFileRoute("/reservas")({
+  head: () => ({
+    meta: [
+      { title: "Reservas | Restaurante Las Flores — Mesa en Ayacucho" },
+      {
+        name: "description",
+        content:
+          "Reserva tu mesa en el Restaurante Las Flores de Ayacucho. Desayunos, almuerzos y cenas con vista al corazón de Huamanga. Atención todos los días.",
+      },
+    ],
+  }),
   validateSearch: (search: Record<string, unknown>): { zona?: string } => {
     return {
       zona: (search.zona as string) || undefined,
@@ -230,8 +241,6 @@ function ReservasPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [pendingStepTransition, setPendingStepTransition] = useState<number | null>(null);
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   // Blackout & Zone Status State
   const [blockedZoneIds, setBlockedZoneIds] = useState<string[]>([]);
@@ -501,6 +510,18 @@ function ReservasPage() {
       });
 
       const resCode = createdRes?.id ? String(createdRes.id) : code;
+
+      // Enviar correo de confirmación de reserva
+      sendReservationEmail({
+        name: fullName,
+        email: form.email,
+        phone: fullPhone,
+        reservation_date: form.date,
+        reservation_time: form.time,
+        guests: form.guests,
+        zone: form.zona.nombre,
+      }).catch((e) => console.warn("Background reservation email error:", e));
+
       setForm((f) => ({ ...f, reservationCode: resCode }));
       setMainStep(4); // Advance to Confirmation
       window.scrollTo({ top: 300, behavior: "smooth" });
@@ -631,92 +652,34 @@ function ReservasPage() {
             </button>
           )}
 
-          {/* Language Selector with Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
-              }`}
-            >
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
-              />
-              <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 
       {/* Header Banner */}
       {!selectedZona && (
-        <section className="relative h-[36vh] min-h-[280px] flex items-center justify-center bg-[#2c1d11]">
-          <div className="absolute inset-0">
+        <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+          <div className="absolute inset-0 z-0">
             <img
               src="/imagenes-reales/GALERIA/evento_corporativo.webp"
               alt="Restaurante Las Flores Ayacucho"
-              className="w-full h-full object-cover opacity-35"
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover opacity-65 filter brightness-105 saturate-[1.1]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2c1d11] via-transparent to-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-black/30" />
           </div>
-          <div className="relative z-10 text-center text-white px-6 pt-12">
-            <span className="text-[#d4a373] uppercase tracking-[0.35em] text-xs font-bold mb-4 block">
-              Las Flores · Ayacucho
+          <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+            <span className="text-chilca font-medium uppercase tracking-[0.3em] text-xs flex items-center justify-center gap-2">
+              <Sparkles size={14} />
+              Tu Mesa · Tu Momento · Las Flores
+              <Sparkles size={14} />
             </span>
-            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight drop-shadow-md">
+            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
               Reserva tu Experiencia
             </h1>
+            <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
+              Asegura tu mesa y vive una experiencia gastronómica única en el corazón de Ayacucho. Te esperamos con los mejores sabores de nuestra tierra.
+            </p>
           </div>
         </section>
       )}
@@ -724,16 +687,6 @@ function ReservasPage() {
       {/* PHASE 1: GALERÍA DE AMBIENTES (Estilo La Rosa Náutica: Tarjetas limpias, fotos verticales y botones ovalados) */}
       {!selectedZona && (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-14 pb-24">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-balance text-[#2e5339] mb-4">
-              Nuestros Ambientes y Salones
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed">
-              Elige cómo quieres vivir la experiencia: desde la calidez del Salón Principal, la vista abierta de la Terraza o la intimidad del Jardín. Cada espacio propone una forma única de disfrutar nuestra gastronomía.
-            </p>
-            <div className="w-24 h-[2px] bg-[#d4a373] mx-auto mt-6" />
-          </div>
-
           {/* Grid de Tarjetas Elegantes (Estilo La Rosa Náutica: Fotos altas y prominentes) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {ZONAS.map((z) => {
@@ -958,7 +911,7 @@ function ReservasPage() {
                     </div>
                     <a
                       href={
-                        "https://wa.me/51966543210?text=" +
+                        "https://wa.me/51980723422?text=" +
                         encodeURIComponent(
                           "Hola, deseo coordinar una reserva para un grupo de más de " +
                             selectedZona.maxCap +
@@ -1434,7 +1387,7 @@ function ReservasPage() {
                   <MapPin size={18} className="text-[#2e5339] shrink-0" />
                   <div>
                     <span className="text-[10px] text-gray-500 uppercase block font-semibold">Ubicación</span>
-                    <span className="font-bold text-gray-800">Jr. Las Flores 123, Huamanga — Ayacucho</span>
+                    <span className="font-bold text-gray-800">Jr. José Olaya 106, Huamanga — Ayacucho</span>
                   </div>
                 </div>
               </div>
@@ -1485,7 +1438,7 @@ function ReservasPage() {
 
                 <a
                   href={
-                    "https://wa.me/51966543210?text=" +
+                    "https://wa.me/51980723422?text=" +
                     encodeURIComponent(
                       `Hola Las Flores, confirmo mi reserva #${form.reservationCode || "RES-88219"} a nombre de ${form.firstName} ${form.lastName} para el ${form.date} a las ${form.time}h en el ${form.zona.nombre}.`
                     )

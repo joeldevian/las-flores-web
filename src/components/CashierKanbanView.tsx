@@ -1,5 +1,6 @@
 import { CashierOrderCard } from "./CashierOrderCard";
 import { Utensils, Clock, Truck, CheckCircle2 } from "lucide-react";
+import { normalizeOrderStatus, isCancelledStatus } from "../lib/orderStatus";
 
 interface CashierKanbanViewProps {
   orders: any[];
@@ -14,31 +15,28 @@ export function CashierKanbanView({
   onStatusChange,
   onViewDetail,
 }: CashierKanbanViewProps) {
-  const getNormalizedStatus = (status: string | null | undefined) => {
-    if (!status) return "pendiente";
-    const s = status.toLowerCase().trim();
-    if (s.includes("cocina") || s.includes("preparac") || s.includes("kitchen")) return "en_preparacion";
-    if (s.includes("camino") || s.includes("listo") || s.includes("way") || s.includes("pickup")) return "en_camino";
-    if (s.includes("entregad") || s.includes("complet") || s.includes("delivered")) return "entregado";
-    if (s.includes("cancel") || s.includes("rechaz")) return "cancelado";
-    return "pendiente";
-  };
-
-  const getLocalYYYYMMDD = (d = new Date()) => {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  const getLocalYYYYMMDD = (d?: Date | string) => {
+    if (!d) return "";
+    const dateObj = typeof d === "string" ? new Date(d) : d;
+    if (isNaN(dateObj.getTime())) return "";
+    return dateObj.toLocaleDateString("sv-SE");
   };
   const todayStr = getLocalYYYYMMDD(new Date());
 
-  const pending = orders.filter((o) => getNormalizedStatus(o.status) === "pendiente");
-  const inKitchen = orders.filter((o) => getNormalizedStatus(o.status) === "en_preparacion");
-  const onWay = orders.filter((o) => getNormalizedStatus(o.status) === "en_camino");
+  const pending = orders.filter(
+    (o) => !isCancelledStatus(o.status) && normalizeOrderStatus(o.status) === "pendiente"
+  );
+  const inKitchen = orders.filter(
+    (o) => !isCancelledStatus(o.status) && normalizeOrderStatus(o.status) === "en_preparacion"
+  );
+  const onWay = orders.filter(
+    (o) => !isCancelledStatus(o.status) && normalizeOrderStatus(o.status) === "en_camino"
+  );
   const completed = orders.filter((o) => {
-    if (getNormalizedStatus(o.status) !== "entregado") return false;
-    const ordDateStr = o.created_at ? getLocalYYYYMMDD(new Date(o.created_at)) : "";
-    return ordDateStr === todayStr;
+    if (isCancelledStatus(o.status)) return false;
+    if (normalizeOrderStatus(o.status) !== "entregado") return false;
+    const ordDateStr = o.created_at ? getLocalYYYYMMDD(o.created_at) : "";
+    return ordDateStr === todayStr || !ordDateStr;
   });
 
   const columns = [

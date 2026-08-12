@@ -16,59 +16,38 @@ export function generateDeliveryGoogleMapsUrl(
       address.trim() + ", Huamanga, Ayacucho"
     )}`;
   }
-  // Default Huamanga Ayacucho fallback
   return `https://www.google.com/maps?q=-13.1588,-74.2239`;
 }
 
 export function buildDeliveryWhatsAppMessage(order: any, items: any[]): string {
   const orderNum = order.order_number || order.id?.slice(0, 8) || "S/N";
   const clientName = order.client_name || "Cliente General";
-  const rawPhone = (order.client_phone || "").replace(/\D/g, "");
-  const clientPhoneFormatted = rawPhone ? `51${rawPhone}` : "";
-  const phoneText = rawPhone
-    ? `${order.client_phone} ( https://wa.me/${clientPhoneFormatted} )`
-    : "No especificado";
-
-  const address = order.address || "Recojo / En restaurante";
-  const reference = order.reference ? ` (Ref: ${order.reference})` : "";
-  const mapsUrl = generateDeliveryGoogleMapsUrl(
-    order.latitude,
-    order.longitude,
-    order.address
-  );
-
-  const orderItems = items.filter(
-    (item) => item.order_id === order.id || item.orderId === order.id
-  );
-
-  const itemsListText =
-    orderItems.length > 0
-      ? orderItems
-          .map((i) => `• ${i.quantity}x ${i.product_name || i.name} (S/ ${Number(i.subtotal || i.unit_price * i.quantity).toFixed(2)})`)
-          .join("\n")
-      : "• Sin especificación de platos";
-
-  const paymentMethod = (order.payment_method || "YAPE").toUpperCase();
   const total = Number(order.total || 0).toFixed(2);
+  const paymentMethod = (order.payment_method || "YAPE").toUpperCase().trim();
 
-  return `*DESPACHO DE DELIVERY — LAS FLORES*
-----------------------------------------
+  const isCash = paymentMethod.includes("EFECTIVO") || paymentMethod.includes("CASH");
+
+  const paymentLabel = isCash
+    ? `💵 *COBRAR EN EFECTIVO:* S/ ${total} (PAGO CONTRA ENTREGA)`
+    : `✅ *MONTO YA PAGADO (NO COBRAR):* S/ ${total} (PAGADO CON ${paymentMethod})`;
+
+  const baseUrl = typeof window !== "undefined" && window.location.origin 
+    ? window.location.origin 
+    : "https://las-flores-web-0079.vercel.app";
+
+  const driverPin = order.driver_pin || "1234";
+
+  return `🛵 *DESPACHO DE DELIVERY — LAS FLORES*
+==============================
 *Orden:* #${orderNum}
+🔑 *PIN MOTORIZADO:* ${driverPin}
 *Cliente:* ${clientName}
-*Teléfono:* ${phoneText}
-*Dirección:* ${address}${reference}
-*Ubicación GPS Mapa:* ${mapsUrl}
+${paymentLabel}
 
-*DETALLE DE LA COMANDA:*
-${itemsListText}
-
-*TOTAL A COBRAR AL CLIENTE:* S/ ${total}
-*MÉTODO DE PAGO:* ${paymentMethod}
-
-*PANEL DEL MOTORIZADO (Iniciar Viaje):*
-${window.location.origin}/d/${order.id || order.order_id}
-----------------------------------------
-*¡Gracias por llevar el sabor de Las Flores!*`;
+👉 *INICIA EL DESPACHO AQUÍ (Ver Dirección y Navegar):*
+${baseUrl}/d/${order.id || order.order_id}
+==============================
+*Instrucción:* Abre el enlace, ingresa el PIN *${driverPin}* para ver la dirección, llamar al cliente y marcar "En camino" y "Entregado". ¡Gracias!`;
 }
 
 export function openWhatsAppDispatch(

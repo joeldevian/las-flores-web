@@ -139,19 +139,22 @@ export async function getLiveCategories(): Promise<Category[]> {
       const isMixto = normalizedName.includes("mixto") && !normalizedName.includes("deshuesado");
       const isMixtoDeshuesado = normalizedName.includes("mixto") && normalizedName.includes("deshuesado");
 
+      // Calcular precios de variantes basados en el precio del producto en BD
+      const basePrice = Number(prod.price || 0);
+
       const customOptions = isCuyLasFlores
-        ? buildSizeCustomizationSection(38, 68)
+        ? buildSizeCustomizationSection(basePrice, Math.round(basePrice * 1.79))
         : isCuyLasFloresDeshuesado
-          ? buildSizeCustomizationSection(42, 72)
+          ? buildSizeCustomizationSection(basePrice, Math.round(basePrice * 1.71))
           : isMixto
             ? buildChoiceCustomizationSection("1. Tamaño", [
-                { id: "mixto_clasico", name: "Mixto clásico", price: 52 },
-                { id: "mixto_deshuesado", name: "Mixto deshuesado", price: 58 },
+                { id: "mixto_clasico", name: "Mixto clásico", price: basePrice },
+                { id: "mixto_deshuesado", name: "Mixto deshuesado", price: Math.round(basePrice * 1.12) },
               ])
             : isMixtoDeshuesado
               ? buildChoiceCustomizationSection("1. Tamaño", [
-                  { id: "mixto_clasico", name: "Mixto clásico", price: 52 },
-                  { id: "mixto_deshuesado", name: "Mixto deshuesado", price: 58 },
+                  { id: "mixto_clasico", name: "Mixto clásico", price: Math.round(basePrice / 1.12) },
+                  { id: "mixto_deshuesado", name: "Mixto deshuesado", price: basePrice },
                 ])
           : undefined;
 

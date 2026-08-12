@@ -14,6 +14,11 @@ import {
   Check,
   Edit3,
   Save,
+  ArrowLeft,
+  CheckCircle2,
+  Utensils,
+  Truck,
+  Package,
 } from "lucide-react";
 import {
   supabase,
@@ -62,6 +67,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
   const [orders, setOrders] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedTrackingOrder, setSelectedTrackingOrder] = useState<any | null>(null);
   const loadedUserIdRef = useRef<string | null>(null);
 
   // Estado para edición de perfil
@@ -76,6 +82,8 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
   const [birthYear, setBirthYear] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const [profileEmail, setProfileEmail] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -94,6 +102,8 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
       setProfileBirthDate(dateVal);
       setInitialBirthDate(dateVal);
 
+      setProfileEmail(user.email || "");
+
       if (dateVal) {
         const parts = dateVal.split("-");
         if (parts.length === 3) {
@@ -102,6 +112,30 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
           setBirthDay(parts[2]);
         }
       }
+
+      // Cargar datos directamente desde la tabla public.profiles de la BD
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) {
+            if (data.full_name) setProfileName(data.full_name);
+            if (data.phone) setProfilePhone(data.phone);
+            if (data.email) setProfileEmail(data.email);
+            const bDate = data.birth_date || data.birthdate;
+            if (bDate) {
+              setProfileBirthDate(bDate);
+              const parts = bDate.split("-");
+              if (parts.length === 3) {
+                setBirthYear(parts[0]);
+                setBirthMonth(parts[1]);
+                setBirthDay(parts[2]);
+              }
+            }
+          }
+        });
     }
   }, [user]);
 
@@ -131,20 +165,29 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
       document.body.style.overflow = "";
     }
 
-    if (open && user?.id) {
-      // Si cambió de usuario, limpiar datos anteriores
-      if (loadedUserIdRef.current !== user.id) {
+    if (open) {
+      let localOrderIds: string[] = [];
+      try {
+        localOrderIds = JSON.parse(localStorage.getItem("las_flores_recent_orders") || "[]");
+      } catch (e) {
+        console.warn("Could not read local recent orders:", e);
+      }
+
+      const userId = user?.id;
+      const userEmail = user?.email;
+
+      if (userId && loadedUserIdRef.current !== userId) {
         setOrders([]);
         setReservations([]);
-        loadedUserIdRef.current = user.id;
+        loadedUserIdRef.current = userId;
       }
 
       const fetchHistory = async () => {
         setLoading(true);
         try {
           const [userOrders, userRes] = await Promise.all([
-            getUserOrders(user.id, user.email),
-            getUserReservations(user.id, user.email),
+            getUserOrders(userId, userEmail, localOrderIds),
+            getUserReservations(userId, userEmail),
           ]);
           if (!cancelled) {
             setOrders(userOrders);
@@ -193,7 +236,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
         birth_date: dateToSave,
       });
 
-      // Actualizar valores iniciales para desactivar el modo edición y volver a 'Aceptar'
       setInitialName(nameToSave);
       setInitialPhone(phoneToSave);
       setInitialBirthDate(dateToSave);
@@ -203,7 +245,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
         text: "¡Perfil actualizado con éxito!",
       });
 
-      // Disparar evento global para sincronizar en toda la aplicación
       if (typeof window !== "undefined") {
         window.dispatchEvent(
           new CustomEvent("supabase_auth_changed", { detail: updated?.user })
@@ -224,6 +265,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
     if (hasChanges) {
       await handleSaveProfile();
     }
+    setSelectedTrackingOrder(null);
     onClose();
   };
 
@@ -236,13 +278,11 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
     "Cliente";
 
   const firstName = fullName.split(" ")[0];
-  const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
 
   const content = (
       <div className={`relative z-10 w-full max-w-[390px] bg-[#f8f4e6] text-nogal rounded-[24px] sm:rounded-[32px] rounded-b-none sm:rounded-b-[32px] shadow-2xl overflow-hidden border border-black/10 flex flex-col shrink-0 ${inline ? "h-full max-w-full shadow-none border-none rounded-none w-full" : "h-[92dvh] sm:h-[calc(100dvh-80px)] sm:max-h-[950px] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200"}`}>
         {/* Header & Navbar Pinned Bar */}
         <div className="bg-white shrink-0 border-b border-black/10 shadow-xs z-20">
-          {/* Header estilo Chicha */}
           <div className="px-5 py-3.5 flex items-center justify-between border-b border-black/5">
             <div className="w-8 flex items-center gap-1.5 text-nogal/70">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -269,51 +309,58 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
           </div>
 
           {/* Navigation Bar Fixed Tabs */}
-          <div className="grid grid-cols-3 gap-1 p-1.5 bg-gray-100/90 m-3 rounded-2xl border border-black/5">
-            <button
-              type="button"
-              onClick={() => setActiveTab("orders")}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
-                activeTab === "orders"
-                  ? "bg-white text-eucalipto shadow-sm border border-black/5"
-                  : "text-black/60 hover:text-black hover:bg-white/50"
-              }`}
-            >
-              <ShoppingBag size={14} />
-              <span className="truncate">Pedidos ({orders.length})</span>
-            </button>
+          {!selectedTrackingOrder && (
+            <div className="grid grid-cols-3 gap-1 p-1.5 bg-gray-100/90 m-3 rounded-2xl border border-black/5">
+              <button
+                type="button"
+                onClick={() => { setActiveTab("orders"); setSelectedTrackingOrder(null); }}
+                className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
+                  activeTab === "orders"
+                    ? "bg-white text-eucalipto shadow-sm border border-black/5"
+                    : "text-black/60 hover:text-black hover:bg-white/50"
+                }`}
+              >
+                <ShoppingBag size={14} />
+                <span className="truncate">Pedidos ({orders.length})</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("reservations")}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
-                activeTab === "reservations"
-                  ? "bg-white text-eucalipto shadow-sm border border-black/5"
-                  : "text-black/60 hover:text-black hover:bg-white/50"
-              }`}
-            >
-              <Calendar size={14} />
-              <span className="truncate">Reservas ({reservations.length})</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => { setActiveTab("reservations"); setSelectedTrackingOrder(null); }}
+                className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
+                  activeTab === "reservations"
+                    ? "bg-white text-eucalipto shadow-sm border border-black/5"
+                    : "text-black/60 hover:text-black hover:bg-white/50"
+                }`}
+              >
+                <Calendar size={14} />
+                <span className="truncate">Reservas ({reservations.length})</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("profile")}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
-                activeTab === "profile"
-                  ? "bg-white text-eucalipto shadow-sm border border-black/5"
-                  : "text-black/60 hover:text-black hover:bg-white/50"
-              }`}
-            >
-              <UserIcon size={14} />
-              <span className="truncate">Mi Perfil</span>
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => { setActiveTab("profile"); setSelectedTrackingOrder(null); }}
+                className={`flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-extrabold uppercase tracking-wider rounded-xl transition-all ${
+                  activeTab === "profile"
+                    ? "bg-white text-eucalipto shadow-sm border border-black/5"
+                    : "text-black/60 hover:text-black hover:bg-white/50"
+                }`}
+              >
+                <UserIcon size={14} />
+                <span className="truncate">Mi Perfil</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Contenido de Historial */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
-          {loading ? (
+          {selectedTrackingOrder ? (
+            <InlineOrderTracker 
+              order={selectedTrackingOrder} 
+              onBack={() => setSelectedTrackingOrder(null)} 
+            />
+          ) : loading ? (
             <div className="py-16 text-center space-y-3">
               <RefreshCw size={24} className="animate-spin text-eucalipto mx-auto" />
               <p className="text-xs font-bold text-black/50 uppercase tracking-widest">
@@ -321,7 +368,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
               </p>
             </div>
           ) : activeTab === "orders" ? (
-            /* --- TABLA / LISTA DE PEDIDOS --- */
             orders.length === 0 ? (
               <div className="py-16 text-center px-6 bg-white/70 rounded-2xl border border-black/5">
                 <UtensilsCrossed size={32} className="text-black/30 mx-auto mb-3" />
@@ -393,24 +439,26 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                     </div>
                   </div>
                   
-                  {/* Botón de rastreo en vivo SOLO si el pedido está activamente en camino */}
-                  {order.order_type === "delivery" && order.status === "en_camino" && (
-                    <div className="pt-3">
-                      <a 
-                        href={`/rastreo/${order.id}`}
-                        target="_blank" rel="noreferrer"
-                        className="w-full py-2.5 bg-eucalipto hover:bg-eucalipto/90 text-piedra rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2"
-                      >
-                        <MapPin size={14} />
-                        Rastrear Pedido en Vivo
-                      </a>
-                    </div>
+                  {/* Botón de rastreo integrado dentro del modal */}
+                  {order.order_type === "delivery" &&
+                    !["entregado", "delivered", "cancelado", "cancelled"].includes(
+                      (order.status || "").toLowerCase().trim()
+                    ) && (
+                      <div className="pt-3">
+                        <button 
+                          type="button"
+                          onClick={() => setSelectedTrackingOrder(order)}
+                          className="w-full py-2.5 bg-eucalipto hover:bg-eucalipto/90 text-piedra rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                        >
+                          <MapPin size={14} />
+                          Rastrear Pedido en Vivo
+                        </button>
+                      </div>
                   )}
                 </div>
               ))
             )
           ) : activeTab === "reservations" ? (
-            /* --- TABLA / LISTA DE RESERVAS --- */
             reservations.length === 0 ? (
               <div className="py-16 text-center px-6 bg-white/70 rounded-2xl border border-black/5">
                 <Calendar size={32} className="text-black/30 mx-auto mb-3" />
@@ -466,7 +514,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
               ))
             )
           ) : (
-            /* --- FORMULARIO EDITAR PERFIL DE USUARIO --- */
             <form onSubmit={handleSaveProfile} className="space-y-4 py-1">
               <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-black/5 pb-3">
@@ -480,7 +527,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                 </div>
 
                 <p className="text-xs text-black/60 leading-relaxed">
-                  Completa tu información para agilizar tus pedidos y reservas. Usamos estos datos únicamente para atención al cliente y sorpresas especiales.
+                  Completa tu información para agilizar tus pedidos y reservas.
                 </p>
 
                 {profileMessage && (
@@ -496,7 +543,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                   </div>
                 )}
 
-                {/* Nombre Completo */}
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
                     Nombre Completo
@@ -511,7 +557,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                   />
                 </div>
 
-                {/* Teléfono / WhatsApp */}
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
                     Teléfono / WhatsApp de Contacto
@@ -523,18 +568,13 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                     placeholder="Ej: 987654321"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-black/15 text-xs focus:outline-none focus:ring-2 focus:ring-eucalipto/30 focus:border-eucalipto bg-white font-medium text-nogal"
                   />
-                  <span className="text-[10px] text-black/45 mt-1 block">
-                    Para enviarte confirmaciones de reserva o actualizaciones de delivery.
-                  </span>
                 </div>
 
-                {/* Fecha de Nacimiento con 3 Dropdowns ultra fáciles */}
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-black/70 mb-1">
                     Fecha de Nacimiento
                   </label>
                   <div className="grid grid-cols-3 gap-2">
-                    {/* Día */}
                     <select
                       value={birthDay}
                       onChange={(e) => handleDateChange(e.target.value, birthMonth, birthYear)}
@@ -548,7 +588,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                       ))}
                     </select>
 
-                    {/* Mes */}
                     <select
                       value={birthMonth}
                       onChange={(e) => handleDateChange(birthDay, e.target.value, birthYear)}
@@ -562,7 +601,6 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                       ))}
                     </select>
 
-                    {/* Año */}
                     <select
                       value={birthYear}
                       onChange={(e) => handleDateChange(birthDay, birthMonth, e.target.value)}
@@ -576,12 +614,8 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                       ))}
                     </select>
                   </div>
-                  <span className="text-[10px] text-eucalipto font-medium mt-1.5 block">
-                    ¡Te prepararemos una cortesía especial en el día de tu cumpleaños!
-                  </span>
                 </div>
 
-                {/* Correo Electrónico (No editable) */}
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-black/45 mb-1">
                     Correo Electrónico (Asociado a tu cuenta)
@@ -589,7 +623,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
                   <input
                     type="email"
                     disabled
-                    value={user.email || ""}
+                    value={profileEmail || user?.email || ""}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 text-xs bg-black/5 text-black/50 cursor-not-allowed font-medium"
                   />
                 </div>
@@ -613,7 +647,7 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
             Volver
           </button>
 
-          {activeTab === "profile" && (
+          {activeTab === "profile" && !selectedTrackingOrder && (
             hasChanges ? (
               <button
                 type="button"
@@ -659,16 +693,174 @@ export function CustomerHistoryModal({ open, onClose, user, inline }: CustomerHi
   );
 }
 
+// Subcomponente de Seguimiento en Vivo Integrado en Modal
+function InlineOrderTracker({ order, onBack }: { order: any; onBack: () => void }) {
+  const [currentStatus, setCurrentStatus] = useState<string>(order.status || "pendiente");
+
+  useEffect(() => {
+    // Suscripción Realtime a cambios en la tabla 'orders'
+    const subscription = supabase
+      .channel(`modal_order_sync_${order.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "orders",
+          filter: `id=eq.${order.id}`,
+        },
+        (payload: any) => {
+          if (payload.new && payload.new.status) {
+            setCurrentStatus(payload.new.status);
+          }
+        }
+      )
+      .subscribe();
+
+    // Suscripción Realtime a eventos Broadcast del motorizado
+    const broadcastChannel = supabase.channel(`delivery_tracking_${order.id}`);
+    broadcastChannel
+      .on("broadcast", { event: "status_update" }, (payload: any) => {
+        if (payload?.payload?.status) {
+          const s = payload.payload.status;
+          if (s === "to_customer") setCurrentStatus("en_camino");
+          else if (s === "delivered") setCurrentStatus("entregado");
+          else if (s === "to_restaurant") setCurrentStatus("en_preparacion");
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+      supabase.removeChannel(broadcastChannel);
+    };
+  }, [order.id]);
+
+  const norm = (currentStatus || "").toLowerCase().trim();
+  const isDelivered = norm.includes("entregad") || norm.includes("delivered") || norm.includes("complet");
+  const isOnWay = norm.includes("camino") || norm.includes("listo") || norm.includes("to_customer");
+  const isKitchen = norm.includes("preparac") || norm.includes("cocina") || norm.includes("to_restaurant");
+
+  let activeStep = 1;
+  if (isDelivered) activeStep = 4;
+  else if (isOnWay) activeStep = 3;
+  else if (isKitchen) activeStep = 2;
+
+  const steps = [
+    { num: 1, title: "Comanda Registrada", desc: "Comanda registrada en caja Las Flores.", icon: Package },
+    { num: 2, title: "En Cocina", desc: "Nuestros chefs están preparando tu orden.", icon: Utensils },
+    { num: 3, title: "Repartidor en Camino", desc: "Tu motorizado ya tiene tu paquete y se dirige a tu domicilio.", icon: Truck },
+    { num: 4, title: "Entregado", desc: "¡Pedido completado con éxito! Buen provecho.", icon: CheckCircle2 },
+  ];
+
+  return (
+    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+      <div className="flex items-center justify-between border-b border-black/10 pb-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-xs font-bold text-eucalipto hover:underline flex items-center gap-1.5 cursor-pointer"
+        >
+          <ArrowLeft size={16} />
+          <span>Volver a Mis Pedidos</span>
+        </button>
+        <span className="font-serif font-bold text-xs text-nogal">
+          #{order.order_number}
+        </span>
+      </div>
+
+      <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-xs space-y-6">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] uppercase font-extrabold tracking-widest text-nogal/50">
+            Seguimiento en Vivo
+          </span>
+          <span className="text-[9px] uppercase font-bold px-2.5 py-0.5 bg-eucalipto/10 text-eucalipto rounded-full flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-eucalipto animate-ping" />
+            En Tiempo Real
+          </span>
+        </div>
+
+        {/* Timeline */}
+        <div className="relative pl-6 border-l-2 border-nogal/15 space-y-6">
+          {steps.map((step) => {
+            const Icon = step.icon;
+            const isCompleted = step.num < activeStep;
+            const isCurrent = step.num === activeStep;
+
+            return (
+              <div key={step.num} className="relative flex items-start gap-3">
+                <div
+                  className={`absolute -left-[29px] top-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] transition-all ${
+                    isCompleted
+                      ? "bg-eucalipto text-white"
+                      : isCurrent
+                      ? "bg-nogal text-chilca shadow-md ring-2 ring-eucalipto/30 scale-110"
+                      : "bg-piedra text-nogal/40 border border-nogal/20"
+                  }`}
+                >
+                  {isCompleted ? <Check size={13} /> : <Icon size={13} />}
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className={`text-xs font-bold ${isCurrent ? "text-nogal font-black" : isCompleted ? "text-eucalipto" : "text-nogal/40"}`}>
+                      {step.title}
+                    </h4>
+                    {isCurrent && (
+                      <span className="text-[8px] uppercase font-extrabold px-1.5 py-0.2 bg-nogal text-chilca rounded animate-pulse">
+                        En Proceso
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-[11px] mt-0.5 leading-snug ${isCurrent ? "text-nogal/80 font-medium" : "text-nogal/45"}`}>
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="pt-3 border-t border-black/5 flex flex-col gap-3">
+          <div>
+            <span className="text-[9px] uppercase font-bold text-nogal/40 block">Destino Registrado:</span>
+            <span className="text-xs font-bold text-nogal">{order.address || "Dirección registrada"}</span>
+            {order.reference && (
+              <span className="text-[10px] text-nogal/50 block italic mt-0.5">Ref: {order.reference}</span>
+            )}
+          </div>
+
+          <a
+            href={`https://wa.me/51980723422?text=${encodeURIComponent(`Hola Las Flores, tengo una consulta sobre mi pedido #${order.order_number || order.id}`)}`}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-95 mt-1"
+          >
+            <Phone size={15} />
+            <span>Contactar Soporte por WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function OrderStatusBadge({ status }: { status: string }) {
+  const norm = (status || "").toLowerCase().trim();
   const map: Record<string, { label: string; bg: string; text: string }> = {
-    received: { label: "Recibido", bg: "bg-amber-100", text: "text-amber-800" },
-    preparing: { label: "En preparación", bg: "bg-blue-100", text: "text-blue-800" },
-    on_the_way: { label: "En camino", bg: "bg-purple-100", text: "text-purple-800" },
+    pendiente: { label: "Pendiente", bg: "bg-amber-100", text: "text-amber-800" },
+    received: { label: "Pendiente", bg: "bg-amber-100", text: "text-amber-800" },
+    en_preparacion: { label: "En Cocina", bg: "bg-blue-100", text: "text-blue-800" },
+    preparing: { label: "En Cocina", bg: "bg-blue-100", text: "text-blue-800" },
+    en_camino: { label: "En Camino", bg: "bg-purple-100", text: "text-purple-800" },
+    on_the_way: { label: "En Camino", bg: "bg-purple-100", text: "text-purple-800" },
+    entregado: { label: "Entregado", bg: "bg-emerald-100", text: "text-emerald-800" },
     delivered: { label: "Entregado", bg: "bg-emerald-100", text: "text-emerald-800" },
+    cancelado: { label: "Cancelado", bg: "bg-red-100", text: "text-red-800" },
     cancelled: { label: "Cancelado", bg: "bg-red-100", text: "text-red-800" },
   };
 
-  const style = map[status] || { label: status, bg: "bg-gray-100", text: "text-gray-800" };
+  const style = map[norm] || { label: status, bg: "bg-gray-100", text: "text-gray-800" };
 
   return (
     <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${style.bg} ${style.text}`}>
@@ -693,4 +885,3 @@ function ReservationStatusBadge({ status }: { status: string }) {
     </span>
   );
 }
-

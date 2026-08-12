@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigationMenu } from "@/components/SiteNavigationMenu";
 import { MenuModal } from "@/components/MenuModal";
-import { Quote, Heart, Award, Utensils, Sparkles, ArrowRight, ShieldCheck, Star } from "lucide-react";
+import { Quote, Heart, Award, Utensils, Sparkles, ArrowRight, Star } from "lucide-react";
 
 export const Route = createFileRoute("/familia-las-flores")({
   head: () => ({
@@ -36,20 +36,20 @@ const COLLABORATORS: Collaborator[] = [
   {
     id: "1",
     name: "Rosaura Huamán",
-    role: "Maestra Repostera & Bebidas Tradicionales",
+    role: "Maestra Repostera y Bebidas Tradicionales",
     category: "reposteria",
     years: "6 años en Las Flores",
     photo: "/imagenes-reales/EQUIPO/02042026-DSC04926-opt.webp",
     quote:
       "En Las Flores no solo servimos recetas, compartimos las memorias vivas de nuestras abuelas. Mi mayor orgullo es ver la cara de sorpresa y felicidad de los clientes cuando prueban la mazamorra y las bebidas artesanales hechas a fuego lento.",
-    recommendedDish: "Mazamorra de Llipta & Chapla Tradicional",
+    recommendedDish: "Mazamorra de Llipta y Chapla Tradicional",
     dishPrice: "S/ 18.00",
     badge: "Maestra Dulcera",
   },
   {
     id: "2",
     name: "Dante Galindo",
-    role: "Capitán de Salón & Hospitalidad",
+    role: "Capitán de Salón y Hospitalidad",
     category: "salon",
     years: "4 años en Las Flores",
     photo: "/imagenes-reales/EQUIPO/02042026-DSC05081-opt.webp",
@@ -62,7 +62,7 @@ const COLLABORATORS: Collaborator[] = [
   {
     id: "3",
     name: "Carlos Avelino",
-    role: "Chef de Fuegos & Carnes Andinas",
+    role: "Chef de Fuegos y Carnes Andinas",
     category: "cocina",
     years: "5 años en Las Flores",
     photo: "/imagenes-reales/EQUIPO/encantados-de-atenderlos-opt.webp",
@@ -75,7 +75,7 @@ const COLLABORATORS: Collaborator[] = [
   {
     id: "4",
     name: "Maritza Sulca",
-    role: "Jefa de Cocina & Sazones Típicas",
+    role: "Jefa de Cocina y Sazones Típicas",
     category: "cocina",
     years: "8 años en Las Flores",
     photo: "/imagenes-reales/EQUIPO/02042026-DSC05069-opt.webp",
@@ -88,7 +88,7 @@ const COLLABORATORS: Collaborator[] = [
   {
     id: "5",
     name: "Brayan Mendoza",
-    role: "Sommelier & Barman de Macerados",
+    role: "Sommelier y Barman de Macerados",
     category: "reposteria",
     years: "3 años en Las Flores",
     photo: "/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp",
@@ -101,7 +101,7 @@ const COLLABORATORS: Collaborator[] = [
   {
     id: "6",
     name: "Lucía Cárdenas",
-    role: "Supervisora de Calidad & Protocolo",
+    role: "Supervisora de Calidad y Protocolo",
     category: "salon",
     years: "7 años en Las Flores",
     photo: "/imagenes-reales/EQUIPO/02042026-DSC04926-opt.webp",
@@ -166,7 +166,7 @@ function FamiliaLasFloresPage() {
       </header>
 
       {/* Hero Section Completa */}
-      <section className="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-32 pb-24 px-6 bg-eucalipto-dark text-piedra overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src="/imagenes-reales/EQUIPO/02042026-DSC05038-opt.webp"
@@ -185,25 +185,13 @@ function FamiliaLasFloresPage() {
             <Sparkles size={14} />
           </span>
 
-          <h1 className="font-serif font-black text-5xl md:text-7xl leading-[1.05] tracking-tight text-white">
+          <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight">
             Familia Las Flores
           </h1>
 
-          <p className="text-lg md:text-xl text-piedra/90 font-serif italic max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-piedra/90 max-w-3xl mx-auto leading-relaxed">
             "Detrás de cada plato sabroso y cada sonrisa en mesa hay hombres y mujeres ayacuchanos que trabajan con dignidad, pasión y profundo amor por nuestras raíces."
           </p>
-
-          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-piedra/80 font-bold uppercase tracking-widest">
-            <span className="flex items-center gap-2">
-              <ShieldCheck size={16} className="text-chilca" /> Trato Digno y Justo
-            </span>
-            <span className="flex items-center gap-2">
-              <Heart size={16} className="text-chilca" /> Tradición Familiar
-            </span>
-            <span className="flex items-center gap-2">
-              <Award size={16} className="text-chilca" /> Excelencia Ayacuchana
-            </span>
-          </div>
         </div>
       </section>
 
@@ -230,7 +218,7 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Cocina & Fuegos
+            Cocina y Fuegos
           </button>
           <button
             onClick={() => setActiveCategory("salon")}
@@ -240,7 +228,7 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Salón & Hospitalidad
+            Salón y Hospitalidad
           </button>
           <button
             onClick={() => setActiveCategory("reposteria")}
@@ -250,7 +238,7 @@ function FamiliaLasFloresPage() {
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
             }`}
           >
-            Repostería & Bar
+            Repostería y Bar
           </button>
         </div>
 
@@ -275,10 +263,10 @@ function FamiliaLasFloresPage() {
                 </span>
 
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <h3 className="font-serif font-black text-xl leading-tight">
+                  <h3 className="font-serif text-3xl leading-tight">
                     {c.name}
                   </h3>
-                  <p className="text-xs text-emerald-200 font-medium">
+                  <p className="text-sm text-emerald-200">
                     {c.role}
                   </p>
                   <span className="text-[10px] text-gray-300 font-bold uppercase tracking-wider block mt-0.5">
@@ -290,7 +278,7 @@ function FamiliaLasFloresPage() {
               {/* Quote Body */}
               <div className="p-6 space-y-4 flex-1">
                 <Quote size={24} className="text-[#D4AF37]" />
-                <p className="text-xs text-gray-700 font-serif italic leading-relaxed">
+                <p className="text-base italic leading-relaxed text-gray-700">
                   "{c.quote}"
                 </p>
               </div>
@@ -298,10 +286,10 @@ function FamiliaLasFloresPage() {
               {/* Dish Recommendation Footer */}
               <div className="p-4 bg-[#F9F8F3] border-t border-gray-100 flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <span className="text-[9px] uppercase font-black tracking-wider text-gray-400 block">
+                  <span className="text-[10px] uppercase font-black tracking-wider text-gray-400 block">
                     Recomendación de {c.name.split(" ")[0]}
                   </span>
-                  <p className="font-serif font-bold text-xs text-[#2D473C] truncate">
+                  <p className="font-serif text-sm text-[#2D473C] truncate">
                     {c.recommendedDish}
                   </p>
                 </div>
@@ -324,10 +312,10 @@ function FamiliaLasFloresPage() {
             <span className="text-xs uppercase font-black text-[#D4AF37] tracking-widest">
               Únete a Nuestra Historia
             </span>
-            <h3 className="font-serif font-black text-2xl md:text-3xl">
+            <h3 className="font-serif text-3xl md:text-4xl">
               ¿Te gustaría formar parte de la Familia Las Flores?
             </h3>
-            <p className="text-sm text-emerald-100/90 leading-relaxed font-serif">
+            <p className="text-sm text-emerald-100/90 leading-relaxed">
               Buscamos personas apasionadas por el buen servicio, la riqueza cultural de Ayacucho y el crecimiento profesional en un ambiente respetuoso y acogedor.
             </p>
           </div>

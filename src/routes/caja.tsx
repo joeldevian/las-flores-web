@@ -8,6 +8,8 @@ import { AdminOrderDetailModal } from "../components/AdminOrderDetailModal";
 import { CashierKPIHeader } from "../components/CashierKPIHeader";
 import { CashierKanbanView } from "../components/CashierKanbanView";
 import { CashierListView } from "../components/CashierListView";
+import { CashierAuditModal } from "../components/CashierAuditModal";
+import { CashierStockModal } from "../components/CashierStockModal";
 import {
   Search,
   RefreshCw,
@@ -18,13 +20,15 @@ import {
   Columns3,
   LayoutGrid,
   List,
+  TrendingUp,
+  PackageX,
 } from "lucide-react";
 
-const getLocalYYYYMMDD = (d = new Date()) => {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+const getLocalYYYYMMDD = (d?: Date | string) => {
+  if (!d) return "";
+  const dateObj = typeof d === "string" ? new Date(d) : d;
+  if (isNaN(dateObj.getTime())) return "";
+  return dateObj.toLocaleDateString("sv-SE");
 };
 
 export const Route = createFileRoute("/caja")({
@@ -127,6 +131,8 @@ function CashierDashboardRoute() {
   // Modal
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false);
 
   // Floating Toast Alerts
   const [newOrderNotification, setNewOrderNotification] = useState<any | null>(null);
@@ -134,9 +140,9 @@ function CashierDashboardRoute() {
 
   const checkAuth = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
       
-      if (!session) {
+      if (!user) {
         window.location.href = "/restaurante";
         return;
       }
@@ -144,7 +150,7 @@ function CashierDashboardRoute() {
       const { data: profile } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", user.id)
         .single();
 
       const userRole = profile?.role?.toLowerCase();
@@ -167,11 +173,17 @@ function CashierDashboardRoute() {
   const fetchData = async (isSilent = false) => {
     if (!isSilent) setRefreshing(true);
     try {
-      // 1. Fetch Orders
+      // Limitar consulta a los últimos 7 días para evitar descargar todo el histórico
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const dateFilter = sevenDaysAgo.toISOString();
+
       const { data: ordData, error: ordErr } = await supabase
         .from("orders")
         .select("*")
-        .order("created_at", { ascending: false });
+        .gte("created_at", dateFilter)
+        .order("created_at", { ascending: false })
+        .limit(200);
 
       if (!ordErr && ordData) {
         setOrders((prev) => {
@@ -197,8 +209,10 @@ function CashierDashboardRoute() {
       const { data: resData, error: resErr } = await supabase
         .from("reservations")
         .select("*")
+        .gte("created_at", dateFilter)
         .order("reservation_date", { ascending: false })
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(100);
 
       if (!resErr && resData) {
         const todayStr = getLocalYYYYMMDD(new Date());
@@ -519,8 +533,8 @@ function CashierDashboardRoute() {
         {/* View Mode Switcher Header Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-2 rounded-2xl border border-gray-200 shadow-2xs">
           
-          {/* Main Module Switcher (Comandas vs Reservas) */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          {/* Main Module Switcher (Comandas vs Reservas vs Arqueo) */}
+          <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
             <button
               onClick={() => setViewMode("orders")}
               className={`flex-1 sm:flex-none py-2.5 px-5 rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 ${
@@ -543,6 +557,22 @@ function CashierDashboardRoute() {
             >
               <Calendar size={16} className={viewMode === "reservations" ? "text-[#D4AF37]" : "text-gray-400"} />
               <span>Reservas de Mesas ({todayReservationsCount} Hoy)</span>
+            </button>
+
+            <button
+              onClick={() => setIsAuditModalOpen(true)}
+              className="py-2.5 px-4 rounded-xl text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 bg-[#D4AF37]/15 text-[#2D473C] hover:bg-[#D4AF37]/25 border border-[#D4AF37]/40 cursor-pointer shadow-2xs"
+            >
+              <TrendingUp size={16} className="text-[#2D473C]" />
+              <span>Arqueo de Caja</span>
+            </button>
+
+            <button
+              onClick={() => setIsStockModalOpen(true)}
+              className="py-2.5 px-4 rounded-xl text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 bg-[#2D473C]/10 text-[#2D473C] hover:bg-[#2D473C]/20 border border-[#2D473C]/30 cursor-pointer shadow-2xs"
+            >
+              <PackageX size={16} className="text-[#2D473C]" />
+              <span>Control de Stock</span>
             </button>
           </div>
 
@@ -1078,6 +1108,19 @@ function CashierDashboardRoute() {
         onClose={() => setIsDetailModalOpen(false)}
         order={selectedOrder}
         onStatusChange={handleUpdateOrderStatus}
+      />
+
+      {/* Arqueo y Cierre de Caja Modal */}
+      <CashierAuditModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+        orders={orders}
+      />
+
+      {/* Control de Stock y Agotados Modal */}
+      <CashierStockModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
       />
 
     </div>

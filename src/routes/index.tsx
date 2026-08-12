@@ -21,25 +21,30 @@ import { FamiliaLasFloresSection } from "../components/FamiliaLasFloresSection";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ayacucho — Las Flores | Tierra, cultura y sabor" },
+      { title: "Restaurante Las Flores Ayacucho — El Mejor Restaurante en Huamanga | Platos Típicos & Parrillas" },
       {
         name: "description",
         content:
-          "Un viaje sensorial por Ayacucho: su gente, sus retablos, sus fogones. La carta de presentación del alma andina que inspira Restaurante Las Flores.",
+          "El mejor restaurante en Ayacucho. En Restaurante Las Flores disfruta la auténtica gastronomía ayacuchana (Puca Picante, Cuy Frito, Pachamanca) en Jr. José Olaya 106, Huamanga. ¡Reserva tu mesa o pide delivery online!",
       },
-      { property: "og:title", content: "Ayacucho — Las Flores" },
+      {
+        name: "keywords",
+        content:
+          "restaurante las flores, restaurante las flores ayacucho, restaurantes ayacucho, mejor restaurante ayacucho, donde comer en ayacucho, restaurante turistico ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery ayacucho, reservas restaurante ayacucho",
+      },
+      { property: "og:title", content: "Restaurante Las Flores Ayacucho — El Mejor Restaurante en Huamanga" },
       {
         property: "og:description",
         content:
-          "Cultura, tradición y platos típicos de Ayacucho. La tierra que da vida a Restaurante Las Flores.",
+          "Disfruta la verdadera gastronomía ayacuchana en Restaurante Las Flores. Ubicados en Jr. José Olaya 106, Huamanga — Ayacucho.",
       },
       {
         property: "og:image",
-        content: new URL(ayacuchoHero, "https://restaurantelasflores.pe").toString(),
+        content: "https://www.restaurantelasflores.com/gastronomia/Puca-picante.webp",
       },
       {
         name: "twitter:image",
-        content: new URL(ayacuchoHero, "https://restaurantelasflores.pe").toString(),
+        content: "https://www.restaurantelasflores.com/gastronomia/Puca-picante.webp",
       },
     ],
   }),
@@ -588,8 +593,6 @@ function Index() {
   const [lugarActivo, setLugarActivo] = useState<Lugar | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -689,77 +692,6 @@ function Index() {
           >
             Reservar
           </Link>
-          {/* Language Selector with Dropdown */}
-          <div className="pointer-events-auto relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
-              }`}
-            >
-              {/* Flag */}
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto shadow-sm rounded-[2px]"
-              />
-              
-              {/* Language Code */}
-              <span className="text-xs font-bold">{language}</span>
-              
-              {/* Chevron */}
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu - Solo muestra el idioma NO seleccionado */}
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 

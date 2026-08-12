@@ -1,4 +1,5 @@
 import { Eye, ChevronRight, Truck, Store } from "lucide-react";
+import { normalizeOrderStatus, getNextOrderStatus, STATUS_LABELS } from "../lib/orderStatus";
 
 interface CashierListViewProps {
   orders: any[];
@@ -14,19 +15,17 @@ export function CashierListView({
   onViewDetail,
 }: CashierListViewProps) {
   const getNextStatus = (status: string) => {
-    const raw = (status || "").toLowerCase().trim();
-    if (raw.includes("cocina") || raw.includes("preparac")) return "en_camino";
-    if (raw.includes("camino") || raw.includes("listo")) return "entregado";
-    return "en_preparacion";
+    return getNextOrderStatus(status) || "entregado";
   };
 
   const getNextStatusLabel = (status: string, orderType: string) => {
-    const raw = (status || "").toLowerCase().trim();
-    if (raw.includes("cocina") || raw.includes("preparac")) {
+    const normalized = normalizeOrderStatus(status);
+    if (normalized === "pendiente") return "Enviar a Cocina";
+    if (normalized === "en_preparacion") {
       return orderType === "delivery" ? "A En Camino" : "A Listo Recojo";
     }
-    if (raw.includes("camino") || raw.includes("listo")) return "A Entregado";
-    return "Enviar a Cocina";
+    if (normalized === "en_camino") return "A Entregado";
+    return "Entregado";
   };
 
   return (

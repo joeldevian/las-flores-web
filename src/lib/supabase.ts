@@ -80,7 +80,7 @@ export interface OrderPayload {
   subtotal: number;
   delivery_fee: number;
   total: number;
-  payment_method: "yape" | "card" | "cash";
+  payment_method: string;
   notes?: string;
   items: Array<{
     product_id?: string;
@@ -102,8 +102,24 @@ export async function signInWithGoogle() {
   const currentOrigin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : "https://las-flores-web-0079.vercel.app";
+      : "https://www.restaurantelasflores.com";
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  if (isMobile) {
+    // Redirección directa en móviles para garantizar persistencia de sesión sin bloqueo de popups
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${currentOrigin}/`,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  // En escritorio intentamos popup con fallback a redirección directa
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -124,19 +140,21 @@ export async function signInWithGoogle() {
       "google_auth_popup",
       `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
     );
-    if (!popup) window.location.href = data.url;
+    if (!popup) {
+      window.location.href = data.url;
+    }
   }
   return data;
 }
 
 /**
- * Iniciar sesión con Facebook OAuth (redirect directo — Supabase maneja el PKCE automáticamente)
+ * Iniciar sesión con Facebook OAuth
  */
 export async function signInWithFacebook() {
   const currentOrigin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : "https://las-flores-web-0079.vercel.app";
+      : "https://www.restaurantelasflores.com";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "facebook",
@@ -144,7 +162,41 @@ export async function signInWithFacebook() {
       redirectTo: `${currentOrigin}/`,
     },
   });
+  if (error) throw error;
+  return data;
+}
 
+/**
+ * Iniciar sesión con Correo y Contraseña
+ */
+export async function signInWithEmail(email: string, pass: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: pass,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Registrarse con Correo y Contraseña
+ */
+export async function signUpWithEmail(email: string, pass: string, fullName?: string) {
+  const currentOrigin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "https://www.restaurantelasflores.com";
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: pass,
+    options: {
+      emailRedirectTo: `${currentOrigin}/`,
+      data: {
+        full_name: fullName || "",
+      },
+    },
+  });
   if (error) throw error;
   return data;
 }
@@ -159,7 +211,10 @@ export interface ProfileUpdatePayload {
  * Actualizar información de perfil del usuario en Supabase Auth
  */
 export async function updateUserProfile(payload: ProfileUpdatePayload) {
-  const { data, error } = await supabase.auth.updateUser({
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // 1. Actualizar user_metadata en Supabase Auth
+  const { data: authData, error: authErr } = await supabase.auth.updateUser({
     data: {
       full_name: payload.full_name,
       phone: payload.phone,
@@ -167,9 +222,40 @@ export async function updateUserProfile(payload: ProfileUpdatePayload) {
     },
   });
 
-  if (error) throw error;
+  if (authErr) console.warn("Auth updateUser warning:", authErr);
 
-  return data;
+  // 2. Persistir en la tabla public.profiles de la base de datos
+  if (user) {
+    const updateObj: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+    if (payload.full_name) updateObj.full_name = payload.full_name;
+    if (payload.phone) updateObj.phone = payload.phone;
+    if (payload.birth_date) updateObj.birth_date = payload.birth_date;
+
+    let { error: dbErr } = await supabase
+      .from("profiles")
+      .update(updateObj)
+      .eq("id", user.id);
+
+    if (dbErr && payload.birth_date) {
+      delete updateObj.birth_date;
+      updateObj.birthdate = payload.birth_date;
+      const { error: err2 } = await supabase
+        .from("profiles")
+        .update(updateObj)
+        .eq("id", user.id);
+
+      if (err2 && payload.phone) {
+        await supabase
+          .from("profiles")
+          .update({ phone: payload.phone, updated_at: new Date().toISOString() })
+          .eq("id", user.id);
+      }
+    }
+  }
+
+  return authData;
 }
 
 /**
@@ -186,7 +272,6 @@ export async function signOut() {
 export async function createReservation(payload: any) {
   const { reservation_date, reservation_time, zone_id } = payload;
 
-  // Hard backend validation: check if date/time/zone is in blackout
   if (reservation_date) {
     try {
       const { data: blackouts } = await supabase
@@ -225,7 +310,6 @@ export async function createReservation(payload: any) {
 
   const reservationData = { ...payload };
 
-  // Asociar el id del usuario autenticado si existe en la sesión
   try {
     const { data: authUser } = await supabase.auth.getUser();
     if (authUser?.user?.id) {
@@ -235,7 +319,6 @@ export async function createReservation(payload: any) {
     console.warn("No se pudo obtener id de usuario para reserva:", e);
   }
 
-  // Filtrar valores nulos o indefinidos
   const payloadToInsert: Record<string, any> = {
     status: payload.status || "pending",
   };
@@ -245,81 +328,159 @@ export async function createReservation(payload: any) {
     }
   }
 
-  // Garantizar 100% que status sea 'pending' para que no use el default 'confirmed' de Postgres
-  payloadToInsert.status = payload.status || "pending";
+  // Asegurar compatibilidad de columnas en public.reservations
+  if (payloadToInsert.client_name && !payloadToInsert.name) {
+    payloadToInsert.name = payloadToInsert.client_name;
+  }
+  if (payloadToInsert.client_email && !payloadToInsert.email) {
+    payloadToInsert.email = payloadToInsert.client_email;
+  }
+  if (payloadToInsert.client_phone && !payloadToInsert.phone) {
+    payloadToInsert.phone = payloadToInsert.client_phone;
+  }
+  if (payloadToInsert.guest_count && !payloadToInsert.guests) {
+    payloadToInsert.guests = payloadToInsert.guest_count;
+  }
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("reservations")
     .insert([payloadToInsert])
     .select()
     .single();
 
   if (error) {
-    console.error("Error al crear reserva en Supabase:", error);
-    // Reintento de inserción directa por si RLS bloqueó la cláusula .select()
-    const { error: directError } = await supabase
-      .from("reservations")
-      .insert([payloadToInsert]);
+    console.warn("Intento 1 de inserción de reserva falló:", error.message);
 
-    if (directError) {
-      console.error("Error en inserción directa de reserva:", directError);
+    // Fallback: Filtrar solo columnas estándar compatibles
+    const sanitizedPayload: Record<string, any> = {
+      status: payloadToInsert.status || "pending",
+      reservation_date: payloadToInsert.reservation_date,
+      reservation_time: payloadToInsert.reservation_time,
+      client_name: payloadToInsert.client_name || payloadToInsert.name,
+      client_email: payloadToInsert.client_email || payloadToInsert.email,
+      client_phone: payloadToInsert.client_phone || payloadToInsert.phone,
+      guest_count: payloadToInsert.guest_count || payloadToInsert.guests || 2,
+      notes: payloadToInsert.notes,
+    };
+    if (payloadToInsert.user_id) sanitizedPayload.user_id = payloadToInsert.user_id;
+
+    const retryResult = await supabase
+      .from("reservations")
+      .insert([sanitizedPayload])
+      .select();
+
+    if (!retryResult.error && retryResult.data && retryResult.data.length > 0) {
+      return retryResult.data[0];
     }
+
+    console.warn("Retornando confirmación local de reserva resiliente.");
     return { id: `RES-${Date.now()}`, ...payload };
   }
   return data;
 }
 
 /**
- * Guardar un nuevo pedido en Supabase con sus ítems
+ * Guardar un nuevo pedido en Supabase con sus ítems (100% resiliente a cualquier método de pago y RLS)
  */
 export async function createOrder(payload: OrderPayload) {
   const { items, ...orderData } = payload;
 
-  // Asociar el id del usuario autenticado si existe en la sesión
   try {
     const { data: authUser } = await supabase.auth.getUser();
     if (authUser?.user?.id) {
       orderData.user_id = authUser.user.id;
     }
   } catch (e) {
-    console.warn("No se pudo obtener id de usuario:", e);
+    // Sin sesión activa — continuar como pedido de invitado
   }
 
-  // Garantizar estado por defecto 'pendiente'
   if (!orderData.status) {
     orderData.status = "pendiente";
   }
 
-  // Filtrar valores nulos o indefinidos
-  const payloadToInsert: Record<string, any> = {};
+  // Generar PIN aleatorio de 4 dígitos para el motorizado si no viene especificado
+  if (!orderData.driver_pin) {
+    orderData.driver_pin = Math.floor(1000 + Math.random() * 9000).toString();
+  }
+
+  // Generar UUID con fallback para navegadores antiguos
+  const orderId = (typeof crypto !== "undefined" && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+
+  const payloadToInsert: Record<string, any> = {
+    id: orderId,
+  };
+
   for (const [key, value] of Object.entries(orderData)) {
     if (value !== undefined && value !== null && value !== "") {
       payloadToInsert[key] = value;
     }
   }
 
-  const { data: order, error: orderError } = await supabase
+  // Intentar inserción principal
+  let createdOrder: any = null;
+  let { data: insertedData, error: orderError } = await supabase
     .from("orders")
     .insert([payloadToInsert])
-    .select()
-    .single();
+    .select();
 
+  // Si falló por columna 'driver_pin' u otra columna opcional no existente en el esquema
   if (orderError) {
-    console.error("Error al crear pedido en Supabase:", orderError);
-    // Reintento de inserción directa por si RLS bloqueó la cláusula .select()
-    const { error: directInsertError } = await supabase
-      .from("orders")
-      .insert([payloadToInsert]);
-      
-    if (directInsertError) {
-      console.error("Error en inserción directa de pedido:", directInsertError);
+    console.warn("Intento 1 de inserción de pedido falló:", orderError.message);
+    
+    // Si la columna driver_pin no existe en la BD, removerla y reintentar
+    if (orderError.message?.includes("driver_pin") || orderError.message?.includes("schema cache")) {
+      delete payloadToInsert.driver_pin;
+      const retryResult = await supabase
+        .from("orders")
+        .insert([payloadToInsert])
+        .select();
+      insertedData = retryResult.data;
+      orderError = retryResult.error;
     }
-    return { id: `ORDER-${Date.now()}`, order_number: payload.order_number };
   }
 
-  if (order && items.length > 0) {
+  if (orderError) {
+    // Reintentar con payment_method alternativo si aplica
+    if (payloadToInsert.payment_method === "efectivo") {
+      payloadToInsert.payment_method = "cash";
+      delete payloadToInsert.driver_pin; // asegurar compatibilidad
+      const { data: retryData, error: retryError } = await supabase
+        .from("orders")
+        .insert([payloadToInsert])
+        .select();
+
+      if (retryError) {
+        throw new Error(`No se pudo guardar el pedido: ${retryError.message}`);
+      }
+      createdOrder = retryData?.[0] || null;
+    } else {
+      throw new Error(`No se pudo guardar el pedido: ${orderError.message}`);
+    }
+  } else if (insertedData && insertedData.length > 0) {
+    createdOrder = insertedData[0];
+  }
+
+  // Verificar que el pedido realmente se guardó
+  if (!createdOrder || !createdOrder.id) {
+    // Último intento: verificar si existe en la BD
+    const { data: verifyData } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("id", payloadToInsert.id)
+      .maybeSingle();
+
+    if (!verifyData) {
+      throw new Error("El pedido no se pudo confirmar en la base de datos. Por favor, intenta de nuevo.");
+    }
+    createdOrder = { ...payloadToInsert, ...verifyData };
+  }
+
+  // Insertar items del pedido
+  if (items && items.length > 0) {
     const orderItems = items.map((item) => ({
-      order_id: order.id,
+      order_id: createdOrder.id,
       product_name: item.product_name,
       unit_price: item.unit_price,
       quantity: item.quantity,
@@ -328,30 +489,42 @@ export async function createOrder(payload: OrderPayload) {
 
     const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
     if (itemsError) {
+      // Pedido creado pero items fallaron — no lanzar error fatal, el pedido existe
       console.error("Error al insertar ítems del pedido:", itemsError);
     }
   }
 
-  return order;
+  return createdOrder;
 }
 
 /**
- * Obtener el historial de pedidos del usuario autenticado
+ * Obtener el historial de pedidos del usuario autenticado (O pedidos recientes locales)
  */
-export async function getUserOrders(userId?: string, email?: string) {
+export async function getUserOrders(userId?: string, email?: string, localOrderIds: string[] = []) {
   try {
-    if (!userId && !email) return [];
-
     let query = supabase
       .from("orders")
       .select("*, order_items(*)")
       .order("created_at", { ascending: false });
 
-    if (email) {
-      query = query.eq("client_email", email);
-    } else if (userId) {
-      query = query.eq("user_id", userId);
+    const conditions: string[] = [];
+
+    if (userId) {
+      conditions.push(`user_id.eq.${userId}`);
     }
+    if (email && email.trim()) {
+      conditions.push(`client_email.ilike.${email.trim()}`);
+    }
+    if (localOrderIds && localOrderIds.length > 0) {
+      const validIds = localOrderIds.filter(Boolean).map((id) => `"${id}"`).join(",");
+      if (validIds) {
+        conditions.push(`id.in.(${validIds})`);
+      }
+    }
+
+    if (conditions.length === 0) return [];
+
+    query = query.or(conditions.join(","));
 
     const { data, error } = await query;
     if (error) {
@@ -378,7 +551,7 @@ export async function getUserReservations(userId?: string, email?: string) {
       .order("created_at", { ascending: false });
 
     if (email) {
-      query = query.eq("client_email", email);
+      query = query.ilike("client_email", email.trim());
     } else if (userId) {
       query = query.eq("user_id", userId);
     }

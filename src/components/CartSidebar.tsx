@@ -19,6 +19,7 @@ import {
   ClipboardList,
   Ticket,
   Tag,
+  Banknote,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import {
@@ -28,6 +29,7 @@ import {
   DELIVERY_CONFIG,
 } from "../utils/deliveryUtils";
 import { signInWithGoogle, signInWithFacebook, createOrder, signOut, supabase } from "../lib/supabase";
+import { sendOrderEmails } from "../lib/emailService";
 import { LocationSelector } from "./LocationSelector";
 import { CustomerHistoryModal } from "./CustomerHistoryModal";
 import { LoginModal } from "./LoginModal";
@@ -85,12 +87,20 @@ export function CartSidebar() {
   const [step, setStep] = useState<Step>("cart");
   const [deliverySubStep, setDeliverySubStep] = useState<"location" | "details">("location");
   const [orderType, setOrderType] = useState<OrderType>("delivery");
-  const [paymentMethod, setPaymentMethod] = useState<"yape" | "card">("yape");
+  const [paymentMethod, setPaymentMethod] = useState<"yape" | "card" | "efectivo">("yape");
+  const [yapeTitular, setYapeTitular] = useState("");
+  const [yapeOperacion, setYapeOperacion] = useState("");
   const [isMounted, setIsMounted] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string>("");
+  const [completedOrderSummary, setCompletedOrderSummary] = useState<{
+    orderNumber: string;
+    items: { id: string; name: string; quantity: number; price: number }[];
+    total: number;
+    address: string;
+  } | null>(null);
 
-  // Ref para medir si ya estamos completamente en el cliente (evita problemas de hidratación SSR)
+  const isHistoryTrigger = useRef(false);
   const portalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -106,6 +116,17 @@ export function CartSidebar() {
       portalRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (!isHistoryTrigger.current) {
+        if (step === "profile" || step === "success") {
+          setStep("cart");
+        }
+      }
+      isHistoryTrigger.current = false;
+    }
+  }, [isOpen]);
 
   // Escuchar sesión activa de Supabase (Google Auth) y sincronizar al volver de la ventana emergente
   useEffect(() => {
@@ -182,6 +203,7 @@ export function CartSidebar() {
     };
 
     const handleOpenHistory = () => {
+      isHistoryTrigger.current = true;
       setStep("profile");
       setIsOpen(true);
     };
@@ -377,15 +399,60 @@ export function CartSidebar() {
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar ubicación exacta para delivery
+    if (orderType === "delivery" && !clientLocation) {
+      alert("Por favor, selecciona tu ubicación exacta en el mapa para que el motorizado pueda realizar la entrega con precisión.");
+      return;
+    }
+
+    // Validar datos de Yape/Plin (de 3 a 8 dígitos numéricos: Yape directo 3+, Plin 6-8)
+    if (paymentMethod === "yape") {
+      const cleanTitular = yapeTitular.trim();
+      const cleanOp = yapeOperacion.trim();
+
+      if (cleanTitular.length < 3) {
+        alert("Por favor, ingresa el nombre completo del titular de la cuenta de origen.");
+        return;
+      }
+
+      if (!/^\d{3,8}$/.test(cleanOp)) {
+        alert("El número de operación de Yape/Plin debe contener entre 3 y 8 dígitos numéricos (Ej: 123456 o 789).");
+        return;
+      }
+    }
+
     setProcessing(true);
-    const orderNum = `LF-${Date.now().toString().slice(-6)}`;
+
+    // Validar disponibilidad de productos antes de confirmar el pedido
     try {
-      await createOrder({
+      const productNames = items.map((i) => i.name);
+      const { data: availableProducts } = await supabase
+        .from("products")
+        .select("name, is_available")
+        .in("name", productNames);
+
+      if (availableProducts && availableProducts.length > 0) {
+        const unavailable = availableProducts.filter((p) => p.is_available === false);
+        if (unavailable.length > 0) {
+          const names = unavailable.map((p) => p.name).join(", ");
+          alert(`Los siguientes platos se agotaron mientras realizabas tu pedido: ${names}. Por favor, retíralos del carrito.`);
+          setProcessing(false);
+          return;
+        }
+      }
+    } catch (stockErr) {
+      // Si no se puede verificar stock, continuar con el pedido
+    }
+
+    const orderNum = `LF-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+    try {
+      const createdOrd = await createOrder({
         order_number: orderNum,
         order_type: orderType,
         status: "pendiente",
         client_name: delivery.name || "Cliente",
-        client_email: delivery.email || "cliente@ejemplo.com",
+        client_email: delivery.email || activeUser?.email || "cliente@ejemplo.com",
         client_phone: delivery.phone || "",
         address: delivery.address,
         reference: delivery.reference,
@@ -396,7 +463,11 @@ export function CartSidebar() {
         delivery_fee: DELIVERY_FEE,
         total: total,
         payment_method: paymentMethod,
-        notes: delivery.notes,
+        notes: [
+          delivery.notes,
+          paymentMethod === "yape" && yapeTitular ? `Yape Titular: ${yapeTitular}` : "",
+          paymentMethod === "yape" && yapeOperacion ? `N° Op: ${yapeOperacion}` : "",
+        ].filter(Boolean).join(" | ") || undefined,
         items: items.map((i) => {
           const opts = i.customizations
             ? [
@@ -417,13 +488,45 @@ export function CartSidebar() {
         }),
       });
 
+      // Enviar correo de confirmación al cliente y notificación a la caja (contacto@restaurantelasflores.com)
+      sendOrderEmails(
+        {
+          ...createdOrd,
+          customer_email: delivery.email || activeUser?.email,
+          customer_name: delivery.name || "Cliente",
+          order_type: orderType,
+          subtotal: totalPrice,
+          delivery_fee: DELIVERY_FEE,
+          total_amount: total,
+          payment_method: paymentMethod,
+          address: delivery.address,
+        },
+        items
+      ).catch((e) => console.warn("Background email notification error:", e));
+
+      // Guardar el ID de la orden en localStorage para garantizar el acceso al historial inmediato
+      try {
+        if (createdOrd?.id) {
+          const savedIds: string[] = JSON.parse(localStorage.getItem("las_flores_recent_orders") || "[]");
+          if (!savedIds.includes(createdOrd.id)) {
+            savedIds.push(createdOrd.id);
+            localStorage.setItem("las_flores_recent_orders", JSON.stringify(savedIds.slice(-20)));
+          }
+        }
+      } catch (lsErr) {
+        console.warn("Error guardando orden local:", lsErr);
+      }
+
       // Increment coupon used_count in Supabase & Log redemption record for BI Analytics
       if (appliedCoupon) {
         try {
-          await supabase
-            .from("coupons")
-            .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
-            .eq("id", appliedCoupon.id);
+          await supabase.rpc("increment_coupon_used_count", { coupon_id: appliedCoupon.id }).catch(() => {
+            // Fallback si la función RPC no existe: incremento directo
+            return supabase
+              .from("coupons")
+              .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
+              .eq("id", appliedCoupon.id);
+          });
 
           await supabase.from("coupon_redemptions").insert([
             {
@@ -441,6 +544,12 @@ export function CartSidebar() {
         }
       }
 
+      setCompletedOrderSummary({
+        orderNumber: orderNum,
+        items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.price })),
+        total: total,
+        address: delivery.address,
+      });
       setCreatedOrderNumber(orderNum);
       clearCart();
       setStep("success");
@@ -1023,43 +1132,52 @@ export function CartSidebar() {
           {/* PASO 3: PAGO */}
           {step === "payment" && (
             <form id="payment-form" className="p-5 space-y-4 min-h-full" onSubmit={handlePayment}>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {(
                   [
-                    { id: "yape", label: "Yape / Plin", Icon: Smartphone, color: R.morado },
-                    { id: "card", label: "Tarjeta", Icon: CreditCard, color: "#0057A8" },
+                    { id: "yape", label: "Yape / Plin", Icon: Smartphone },
+                    { id: "card", label: "Tarjeta", Icon: CreditCard },
+                    { id: "efectivo", label: "Efectivo", Icon: Banknote },
                   ] as const
-                ).map(({ id, label, Icon, color }) => {
+                ).map(({ id, label, Icon }) => {
                   const active = paymentMethod === id;
                   return (
                     <button
                       key={id}
                       type="button"
                       onClick={() => setPaymentMethod(id)}
-                      className="py-4 rounded-xl font-serif font-bold text-sm flex flex-col items-center gap-2 transition-all border-2"
-                      style={{
-                        background: active ? color : "white",
-                        borderColor: active ? color : `${color}25`,
-                        color: active ? "white" : `${color}99`,
-                        boxShadow: active ? `0 4px 16px ${color}35` : "none",
-                      }}
+                      className={`py-3 px-1 rounded-2xl font-serif font-bold text-xs flex flex-col items-center gap-1.5 transition-all border-2 cursor-pointer ${
+                        active
+                          ? "bg-[#2c4a3e] text-white border-[#2c4a3e] shadow-md scale-[1.02]"
+                          : "bg-white text-nogal/70 border-nogal/15 hover:border-nogal/30 hover:bg-piedra/30"
+                      }`}
                     >
-                      <Icon size={20} />
-                      {label}
+                      <Icon size={18} className={active ? "text-chilca" : "text-nogal/60"} />
+                      <span className="truncate w-full text-center">{label}</span>
                     </button>
                   );
                 })}
               </div>
 
-              {paymentMethod === "yape" ? (
+              {paymentMethod === "efectivo" && (
+                <div className="bg-white rounded-2xl p-5 border border-nogal/10 shadow-sm space-y-2 text-left animate-in fade-in duration-300">
+                  <div className="flex items-center gap-2 font-bold text-xs text-nogal">
+                    <Banknote size={18} className="text-eucalipto" />
+                    <span>Pago Contra Entrega en Efectivo</span>
+                  </div>
+                  <p className="text-xs text-nogal/70 leading-relaxed font-medium">
+                    Pagarás un total de <strong className="text-eucalipto">S/ {total.toFixed(2)}</strong> directamente al motorizado al recibir tu pedido.
+                  </p>
+                </div>
+              )}
+
+              {paymentMethod === "yape" && (
                 <div
-                  className="bg-white rounded-xl p-5 border shadow-sm space-y-4"
-                  style={{ borderColor: `${R.amarillo}50` }}
+                  className="bg-white rounded-2xl p-5 border border-nogal/10 shadow-sm space-y-4 animate-in fade-in duration-300"
                 >
                   <div className="flex flex-col items-center">
                     <div
-                      className="w-36 h-36 rounded-xl p-3 mb-3 border bg-white"
-                      style={{ borderColor: `${R.amarillo}50` }}
+                      className="w-36 h-36 rounded-xl p-3 mb-3 border border-nogal/10 bg-white shadow-xs"
                     >
                       <div
                         className="w-full h-full rounded-lg"
@@ -1077,18 +1195,35 @@ export function CartSidebar() {
                   </div>
                   <div>
                     <Label>Titular de la cuenta origen *</Label>
-                    <input required placeholder="Ej: Juan Pérez" className={inputCls} />
+                    <input
+                      required
+                      placeholder="Ej: Juan Pérez"
+                      className={inputCls}
+                      value={yapeTitular}
+                      onChange={(e) => setYapeTitular(e.target.value)}
+                    />
                   </div>
                   <div>
                     <Label>N° Operación (Yape/Plin) *</Label>
-                    <input required placeholder="Ej: 123456" className={inputCls} />
+                    <input
+                      required
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={8}
+                      placeholder="Ej: 123456"
+                      className={inputCls}
+                      value={yapeOperacion}
+                      onChange={(e) => setYapeOperacion(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                    />
                     <p className="text-[10px] text-black/40 mt-1.5 font-medium">
-                      6 u 8 dígitos de aprobación de tu pantalla de éxito.
+                      Entre 3 y 8 dígitos de aprobación de tu pantalla de éxito.
                     </p>
                   </div>
                 </div>
-              ) : (
-                <div className="bg-white rounded-xl p-5 border border-[#0057A8]/15 shadow-sm space-y-4">
+              )}
+
+              {paymentMethod === "card" && (
+                <div className="bg-white rounded-2xl p-5 border border-[#0057A8]/15 shadow-sm space-y-4 animate-in fade-in duration-300">
                   <div
                     className="rounded-lg px-4 py-2.5 flex items-center justify-between"
                     style={{ background: "linear-gradient(135deg,#0057A8,#0088D1)" }}
@@ -1155,10 +1290,10 @@ export function CartSidebar() {
                       required
                       value={payment.cardName}
                       onChange={(e) =>
-                        setPayment({ ...payment, cardName: e.target.value.toUpperCase() })
+                        setPayment({ ...payment, cardName: e.target.value })
                       }
-                      placeholder="JUAN PEREZ"
-                      className={`${inputCls} uppercase`}
+                      placeholder="Nombre como figura en la tarjeta"
+                      className={inputCls}
                     />
                   </div>
                 </div>
@@ -1213,7 +1348,7 @@ export function CartSidebar() {
               {orderType === "delivery" ? (
                 <p className="text-black/50 text-xs mb-6">
                   Llegará a{" "}
-                  <strong className="text-black/70">{delivery.address || "tu dirección"}</strong> en
+                  <strong className="text-black/70">{completedOrderSummary?.address || delivery.address || "tu dirección"}</strong> en
                   aprox. <strong style={{ color: R.verde }}>30 min</strong>.
                 </p>
               ) : (
@@ -1231,7 +1366,7 @@ export function CartSidebar() {
                 <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-black/40 mb-3">
                   Resumen
                 </p>
-                {items.map((item) => (
+                {(completedOrderSummary?.items || items).map((item) => (
                   <div
                     key={item.id}
                     className="flex justify-between text-sm text-black/60 font-medium mb-1.5"
@@ -1244,12 +1379,12 @@ export function CartSidebar() {
                 ))}
                 <div className="flex justify-between font-serif font-bold text-base pt-2.5 border-t border-black/5 mt-2">
                   <span className="text-black/70">Total pagado</span>
-                  <span style={{ color: R.rojo }}>S/ {total.toFixed(2)}</span>
+                  <span style={{ color: R.rojo }}>S/ {(completedOrderSummary?.total ?? total).toFixed(2)}</span>
                 </div>
               </div>
               <p className="text-xs text-black/30 font-medium">
                 Pedido{" "}
-                <strong style={{ color: R.morado }}>#{createdOrderNumber}</strong>
+                <strong style={{ color: R.morado }}>#{completedOrderSummary?.orderNumber || createdOrderNumber}</strong>
               </p>
             </div>
           )}

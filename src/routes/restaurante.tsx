@@ -7,7 +7,7 @@ const platoCuyImg = "/gastronomia/cuy-chactado.webp"; // placeholder
 const platoMaizImg = "/gastronomia/chicharron.webp"; // placeholder
 import { SiteFooter } from "@/components/site-footer";
 import { useState, useTransition, useEffect, useRef } from "react";
-import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart } from "lucide-react";
+import { Calendar, CreditCard, ChevronRight, Check, ShoppingCart, ChevronDown } from "lucide-react";
 import { SiteNavigationMenu } from "../components/SiteNavigationMenu";
 import { useCart } from "@/context/CartContext";
 
@@ -326,8 +326,6 @@ function RestaurantePage() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [language, setLanguage] = useState<"ES" | "EN">("ES");
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -383,71 +381,6 @@ function RestaurantePage() {
             </button>
           )}
           
-          {/* Language Selector with Dropdown */}
-          <div className="pointer-events-auto relative">
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`flex items-center gap-2 px-2 py-1.5 transition-all ${
-                isScrolled ? "text-nogal" : "text-piedra"
-              }`}
-            >
-              <img
-                src={language === "ES" ? "https://flagcdn.com/w40/pe.png" : "https://flagcdn.com/w40/us.png"}
-                alt={language === "ES" ? "Peru Flag" : "USA Flag"}
-                className="w-5 h-auto rounded-[2px]"
-              />
-              <span className="text-xs font-bold">{language}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isLangDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 py-2 min-w-[100px]">
-                {language === "ES" ? (
-                  <button
-                    onClick={() => {
-                      setLanguage("EN");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/us.png"
-                      alt="USA Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>EN</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setLanguage("ES");
-                      setIsLangDropdownOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-left transition-colors"
-                  >
-                    <img
-                      src="https://flagcdn.com/w40/pe.png"
-                      alt="Peru Flag"
-                      className="w-5 h-auto rounded-[2px]"
-                    />
-                    <span className={`text-xs font-bold ${isScrolled ? "text-nogal" : "text-white"}`}>ES</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </nav>
 
@@ -467,15 +400,21 @@ function RestaurantePage() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8 text-piedra">
           <div className="max-w-3xl text-center">
-            <h1 className="font-serif italic text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.05] text-balance animate-reveal [animation-delay:200ms]">
+            <h1 className="font-serif text-4xl md:text-6xl text-piedra font-normal leading-tight animate-reveal [animation-delay:200ms]">
               La familia detrás de cada plato
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-[1.7] text-piedra/80">
+            <p className="mx-auto mt-6 max-w-3xl text-base md:text-lg text-piedra/90 leading-relaxed">
               Cada generación ha dejado una huella distinta: una fundadora que abrió el fuego, una
               segunda etapa que consolidó el proyecto y una tercera que lo lleva al presente con una
               mirada contemporánea.
             </p>
           </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
+          <span className="text-piedra/60 text-[10px] uppercase tracking-[0.4em] font-medium">Desliza</span>
+          <ChevronDown size={24} className="text-piedra/60" strokeWidth={1.5} />
         </div>
       </header>
 

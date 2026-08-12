@@ -102,7 +102,7 @@ export function SiteFooter() {
               <br />
               967 456 230 / +51 980 723 422
               <br />
-              restaurantelasfloresperu@gmail.com
+              contacto@restaurantelasflores.com
             </p>
           </div>
 
