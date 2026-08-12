@@ -65,7 +65,32 @@ export async function sendEmail({
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("[Email Service Error]:", errorText);
+      console.warn("[Email Service Warning]:", errorText);
+
+      // Si el dominio personalizado aún no está verificado en Resend, reintentar con el remitente de pruebas (onboarding@resend.dev)
+      if (errorText.includes("validation_error") || errorText.includes("not verified") || response.status === 403) {
+        console.info("[Email Service] Reintentando envío con el emisor por defecto onboarding@resend.dev mientras se verifica el dominio...");
+        const retryRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "Restaurante Las Flores <onboarding@resend.dev>",
+            to: Array.isArray(to) ? to : [to],
+            reply_to: replyTo,
+            subject,
+            html,
+          }),
+        });
+
+        if (retryRes.ok) {
+          console.info("[Email Service] ¡Correo de prueba enviado exitosamente vía onboarding@resend.dev!");
+          return true;
+        }
+      }
+
       return false;
     }
 
