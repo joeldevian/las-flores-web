@@ -37,34 +37,32 @@ export async function sendEmail({
 }: EmailPayload): Promise<boolean> {
   const supabaseUrl = (import.meta as any)?.env?.VITE_SUPABASE_URL || "https://twbhugvklizzpjbpdosj.supabase.co";
   const anonKey = (import.meta as any)?.env?.VITE_SUPABASE_ANON_KEY;
+  const enableEdgeEmail = (import.meta as any)?.env?.VITE_ENABLE_EDGE_EMAIL === "true";
 
-  if (!anonKey) {
-    console.info(`[Email Service Log]: Correo registrado para ${Array.isArray(to) ? to.join(", ") : to}: "${subject}".`);
-    return true;
-  }
+  if (enableEdgeEmail && anonKey) {
+    try {
+      const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({
+          to: Array.isArray(to) ? to : [to],
+          subject,
+          html,
+          from,
+          reply_to: replyTo,
+        }),
+      }).catch(() => null);
 
-  try {
-    const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${anonKey}`,
-      },
-      body: JSON.stringify({
-        to: Array.isArray(to) ? to : [to],
-        subject,
-        html,
-        from,
-        reply_to: replyTo,
-      }),
-    }).catch(() => null);
-
-    if (response && response.ok) {
-      console.info("[Email Service]: Correo enviado exitosamente vía Supabase Edge Function.");
-      return true;
+      if (response && response.ok) {
+        console.info("[Email Service]: Correo enviado exitosamente vía Supabase Edge Function.");
+        return true;
+      }
+    } catch (error) {
+      // Silenciar excepciones de red / CORS si la Edge Function aún no fue desplegada
     }
-  } catch (error) {
-    // Silenciar excepciones de red / CORS si la Edge Function aún no fue desplegada
   }
 
   console.info(`[Email Service Log]: Notificación para ${Array.isArray(to) ? to.join(", ") : to}: "${subject}".`);
