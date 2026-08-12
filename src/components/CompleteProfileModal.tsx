@@ -82,37 +82,31 @@ export function CompleteProfileModal({
 
     setSaving(true);
     try {
-      // 1. Intentar actualizar tabla public.profiles con la columna birth_date (estándar Supabase)
-      const updateData: Record<string, any> = {
+      // 1. Guardar en public.profiles con upsert (crea la fila si no existe o la actualiza si existe)
+      const payload: Record<string, any> = {
+        id: userId,
         phone: cleanPhone,
         birth_date: birthdateFormatted,
         updated_at: new Date().toISOString(),
       };
-      if (name.trim()) updateData.full_name = name.trim();
+      if (name.trim()) payload.full_name = name.trim();
 
-      let { error: profileErr } = await supabase
+      const { error: upsertErr } = await supabase
         .from("profiles")
-        .update(updateData)
-        .eq("id", userId);
+        .upsert(payload, { onConflict: "id" });
 
-      // Si falla por columna inexistente (e.g. la columna se llama birthdate en vez de birth_date)
-      if (profileErr) {
-        console.warn("Intento 1 con birth_date falló, probando con birthdate:", profileErr.message);
-        delete updateData.birth_date;
-        updateData.birthdate = birthdateFormatted;
+      if (upsertErr) {
+        console.warn("Error en upsert profiles con birth_date:", upsertErr.message);
+        // Fallback: probar con la columna 'birthdate' si 'birth_date' no existe en el esquema
+        delete payload.birth_date;
+        payload.birthdate = birthdateFormatted;
 
-        const { error: err2 } = await supabase
+        const { error: upsertErr2 } = await supabase
           .from("profiles")
-          .update(updateData)
-          .eq("id", userId);
+          .upsert(payload, { onConflict: "id" });
 
-        if (err2) {
-          console.warn("Intento 2 con birthdate falló, probando upsert solo phone:", err2.message);
-          // Si ambas fallan, al menos asegurar guardar el teléfono
-          await supabase
-            .from("profiles")
-            .update({ phone: cleanPhone, updated_at: new Date().toISOString() })
-            .eq("id", userId);
+        if (upsertErr2) {
+          console.error("Error definitivo guardando perfil en BD:", upsertErr2.message);
         }
       }
 

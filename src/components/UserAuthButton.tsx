@@ -92,8 +92,9 @@ export function UserAuthButton({ textColorClass }: UserAuthButtonProps) {
 
       // Si se acaba de iniciar sesión (promptIfIncomplete === true), verificar si faltan teléfono o cumpleaños
       if (promptIfIncomplete) {
-        const phoneVal = data?.phone || userObj?.user_metadata?.phone;
-        const birthVal = data?.birth_date || data?.birthdate || userObj?.user_metadata?.birth_date;
+        // Verificar estrictamente en la tabla de la base de datos (public.profiles)
+        const phoneVal = data?.phone;
+        const birthVal = data?.birth_date || data?.birthdate;
 
         if (!phoneVal || !birthVal) {
           setShowCompleteModal(true);
