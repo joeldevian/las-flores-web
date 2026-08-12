@@ -485,8 +485,8 @@ function CashierDashboardRoute() {
           }}
           className="fixed top-20 right-4 z-50 bg-[#2D473C] text-white p-4 rounded-2xl shadow-2xl border-2 border-emerald-400 flex items-center gap-4 animate-in slide-in-from-top-5 duration-300 max-w-md cursor-pointer hover:bg-[#243B31] transition-all"
         >
-          <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce overflow-hidden p-1.5">
-            <img src="/LOGO.png" alt="Logo" className="w-full h-full object-contain brightness-0 invert" />
+          <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shrink-0 animate-bounce p-2.5">
+            <Calendar size={24} className="text-white" />
           </div>
 
           <div className="flex-1 min-w-0">
