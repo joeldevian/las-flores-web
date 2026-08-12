@@ -308,38 +308,36 @@ export async function createReservation(payload: any) {
     }
   }
 
-  const reservationData = { ...payload };
-
   try {
     const { data: authUser } = await supabase.auth.getUser();
-    if (authUser?.user?.id) {
-      reservationData.user_id = authUser.user.id;
-    }
   } catch (e) {
     console.warn("No se pudo obtener id de usuario para reserva:", e);
   }
 
+  // Solo enviar campos que existen en el schema de Supabase
   const payloadToInsert: Record<string, any> = {
+    guest_count: parseInt(payload.guest_count) || 2,
+    reservation_date: payload.reservation_date,
+    service_type: payload.service_type as "almuerzo" | "cena",
+    reservation_time: payload.reservation_time,
+    client_name: payload.client_name || payload.name,
+    client_email: payload.client_email || payload.email,
     status: payload.status || "pending",
   };
-  for (const [key, value] of Object.entries(reservationData)) {
-    if (value !== undefined && value !== null && value !== "") {
-      payloadToInsert[key] = value;
-    }
-  }
 
-  // Asegurar compatibilidad de columnas en public.reservations
-  if (payloadToInsert.client_name && !payloadToInsert.name) {
-    payloadToInsert.name = payloadToInsert.client_name;
-  }
-  if (payloadToInsert.client_email && !payloadToInsert.email) {
-    payloadToInsert.email = payloadToInsert.client_email;
-  }
-  if (payloadToInsert.client_phone && !payloadToInsert.phone) {
-    payloadToInsert.phone = payloadToInsert.client_phone;
-  }
-  if (payloadToInsert.guest_count && !payloadToInsert.guests) {
-    payloadToInsert.guests = payloadToInsert.guest_count;
+  // Campos opcionales
+  if (payload.zone_id) payloadToInsert.zone_id = payload.zone_id;
+  if (payload.table_number) payloadToInsert.table_number = payload.table_number;
+  if (payload.client_phone || payload.phone) payloadToInsert.client_phone = payload.client_phone || payload.phone;
+  if (payload.notes) payloadToInsert.notes = payload.notes;
+
+  try {
+    const { data: authUser } = await supabase.auth.getUser();
+    if (authUser?.user?.id) {
+      payloadToInsert.user_id = authUser.user.id;
+    }
+  } catch (e) {
+    // Continuar sin user_id
   }
 
   let { data, error } = await supabase
@@ -349,31 +347,7 @@ export async function createReservation(payload: any) {
     .single();
 
   if (error) {
-    console.warn("Intento 1 de inserción de reserva falló:", error.message);
-
-    // Fallback: Filtrar solo columnas estándar compatibles
-    const sanitizedPayload: Record<string, any> = {
-      status: payloadToInsert.status || "pending",
-      reservation_date: payloadToInsert.reservation_date,
-      reservation_time: payloadToInsert.reservation_time,
-      client_name: payloadToInsert.client_name || payloadToInsert.name,
-      client_email: payloadToInsert.client_email || payloadToInsert.email,
-      client_phone: payloadToInsert.client_phone || payloadToInsert.phone,
-      guest_count: payloadToInsert.guest_count || payloadToInsert.guests || 2,
-      notes: payloadToInsert.notes,
-    };
-    if (payloadToInsert.user_id) sanitizedPayload.user_id = payloadToInsert.user_id;
-
-    const retryResult = await supabase
-      .from("reservations")
-      .insert([sanitizedPayload])
-      .select();
-
-    if (!retryResult.error && retryResult.data && retryResult.data.length > 0) {
-      return retryResult.data[0];
-    }
-
-    console.warn("Retornando confirmación local de reserva resiliente.");
+    console.error("Error al crear reserva en Supabase:", error);
     return { id: `RES-${Date.now()}`, ...payload };
   }
   return data;
