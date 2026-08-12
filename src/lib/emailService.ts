@@ -62,7 +62,7 @@ export async function sendEmail(payload: EmailPayload): Promise<boolean> {
 }
 
 /**
- * 1. Enviar Resumen de Pedido de Delivery / Recojo (Diseño Ejecutivo y Elegante)
+ * 1. Enviar Resumen de Pedido de Delivery / Recojo (Diseño Retablo Ayacuchano)
  */
 export async function sendOrderEmails(orderData: any, items: any[] = []): Promise<void> {
   const shortId = orderData.id ? orderData.id.slice(0, 8).toUpperCase() : "LF-ORDER";
@@ -86,45 +86,46 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
     .join("");
 
   const emailHtml = `
-    <div style="font-family: Georgia, serif, sans-serif; max-width: 620px; margin: 0 auto; background-color: #FAF6ED; border-radius: 16px; overflow: hidden; border: 1px solid #D4AF3740; box-shadow: 0 8px 30px rgba(0,0,0,0.05);">
+    <div style="font-family: Georgia, 'Times New Roman', serif, sans-serif; max-width: 620px; margin: 0 auto; background-color: #F6F1E7; padding: 24px 16px;">
       
-      <!-- Cabecera Corporativa -->
-      <div style="background-color: #2C4A3E; padding: 36px 30px; text-align: center; border-bottom: 3px solid #D4AF37;">
-        <p style="font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #D4AF37; margin: 0 0 6px 0; font-weight: 700;">
-          Comprobante Digital de Compra
-        </p>
-        <h1 style="font-size: 26px; margin: 0; color: #FFFFFF; font-weight: 400; letter-spacing: 1px;">
-          Restaurante Las Flores
-        </h1>
-        <p style="font-family: Arial, sans-serif; font-size: 12px; color: #E0ECE5; margin-top: 6px; font-weight: 300;">
-          Huamanga, Ayacucho — Perú
-        </p>
+      <!-- Copete de Retablo Ayacuchano -->
+      <div style="text-align: center; margin-bottom: -15px; position: relative; z-index: 2;">
+        <img src="https://www.restaurantelasflores.com/retablo-copete.png" alt="Copete Retablo Ayacuchano" style="max-width: 320px; width: 85%; height: auto; display: block; margin: 0 auto;" />
       </div>
 
-      <!-- Contenido Principal -->
-      <div style="padding: 36px 32px; color: #1B2A24; font-family: Arial, sans-serif;">
-        <div style="text-align: center; margin-bottom: 28px;">
-          <span style="background-color: #2C4A3E10; color: #2C4A3E; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; uppercase; tracking: 1px;">
-            Pedido N° #${shortId}
-          </span>
+      <!-- Caja Marco Principal del Retablo -->
+      <div style="background-color: #FFFFFF; border: 4px solid #2C4A3E; border-radius: 16px; padding: 32px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.08); position: relative; z-index: 1; border-top: 6px solid #D4AF37;">
+        
+        <!-- Logo Horizontal de Las Flores -->
+        <div style="text-align: center; margin-bottom: 20px; border-bottom: 1px solid #EAE3D2; padding-bottom: 20px;">
+          <img src="https://www.restaurantelasflores.com/images.png" alt="Restaurante Las Flores" style="max-width: 220px; width: 75%; height: auto; display: block; margin: 0 auto;" />
+          <p style="font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #D4AF37; margin: 12px 0 0 0; font-weight: 700;">
+            Comprobante Digital de Pedido
+          </p>
         </div>
 
-        <p style="font-size: 14px; color: #333333; line-height: 1.6; margin-bottom: 24px;">
-          Estimado/a <strong>${orderData.customer_name || orderData.full_name || "Cliente"}</strong>,<br/>
-          Hemos recibido su pedido correctamente. Nuestro equipo gastronómico ha comenzado con la preparación garantizando los más altos estándares de calidad artesanal.
-        </p>
+        <!-- Título y Saludo -->
+        <div style="text-align: center; font-family: Arial, sans-serif; margin-bottom: 24px;">
+          <span style="background-color: #2C4A3E10; color: #2C4A3E; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+            Pedido N° #${shortId}
+          </span>
+          <p style="font-size: 14px; color: #444444; line-height: 1.6; margin: 16px 0 0 0;">
+            Estimado/a <strong>${orderData.customer_name || orderData.full_name || "Cliente"}</strong>,<br/>
+            Hemos recibido su pedido correctamente. Nuestro equipo se encuentra preparando su orden con los mejores insumos de Ayacucho.
+          </p>
+        </div>
 
         <!-- Detalle de Productos -->
-        <div style="background-color: #FFFFFF; padding: 24px; border-radius: 12px; margin: 24px 0; border-top: 3px solid #2C4A3E; border-left: 1px solid #EAE3D2; border-right: 1px solid #EAE3D2; border-bottom: 1px solid #EAE3D2;">
-          <h3 style="font-family: Georgia, serif; font-size: 15px; color: #2C4A3E; margin: 0 0 16px 0; text-transform: uppercase; tracking: 1px; border-bottom: 1px solid #EAE3D2; padding-bottom: 8px;">
+        <div style="background-color: #FAF6ED; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #D4AF3750; border-left: 5px solid #2C4A3E; font-family: Arial, sans-serif;">
+          <h3 style="font-family: Georgia, serif; font-size: 14px; color: #2C4A3E; margin: 0 0 14px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #EAE3D2; padding-bottom: 8px;">
             Resumen de la Orden
           </h3>
           
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px;">
             <thead>
               <tr style="color: #777777; font-size: 11px; text-transform: uppercase; text-align: left; letter-spacing: 1px;">
-                <th style="padding: 8px 10px; border-bottom: 2px solid #2C4A3E;">Ítem</th>
-                <th style="padding: 8px 10px; border-bottom: 2px solid #2C4A3E; text-align: right;">Importe</th>
+                <th style="padding: 6px 10px; border-bottom: 2px solid #2C4A3E;">Ítem</th>
+                <th style="padding: 6px 10px; border-bottom: 2px solid #2C4A3E; text-align: right;">Importe</th>
               </tr>
             </thead>
             <tbody>
@@ -132,36 +133,36 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
             </tbody>
           </table>
 
-          <!-- Totales -->
-          <div style="font-size: 13px; text-align: right; border-top: 1px solid #EAE3D2; padding-top: 14px; color: #444444;">
+          <div style="font-size: 13px; text-align: right; border-top: 1px solid #EAE3D2; padding-top: 12px; color: #444444;">
             <p style="margin: 4px 0;">Subtotal: <strong>S/ ${Number(orderData.subtotal || orderData.total_amount || 0).toFixed(2)}</strong></p>
             ${isDelivery ? `<p style="margin: 4px 0;">Servicio de Delivery: <strong>S/ ${Number(orderData.delivery_fee || 0).toFixed(2)}</strong></p>` : ""}
-            <p style="margin: 10px 0 0 0; font-size: 16px; color: #2C4A3E;">
+            <p style="margin: 8px 0 0 0; font-size: 16px; color: #2C4A3E;">
               <strong>Total abonado: S/ ${Number(orderData.total_amount || 0).toFixed(2)}</strong>
             </p>
           </div>
         </div>
 
-        <!-- Información de Entrega -->
-        <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; margin-bottom: 28px; font-size: 13px; border: 1px solid #EAE3D2; line-height: 1.6;">
+        <!-- Detalles de Modalidad y Pago -->
+        <div style="background-color: #FFFFFF; padding: 16px; border-radius: 10px; margin-bottom: 24px; font-size: 13px; border: 1px solid #EAE3D2; font-family: Arial, sans-serif;">
           <p style="margin: 3px 0; color: #555555;"><strong style="color: #1B2A24;">Modalidad:</strong> ${isDelivery ? "Delivery a Domicilio" : "Recojo en Establecimiento"}</p>
-          ${isDelivery && orderData.address ? `<p style="margin: 3px 0; color: #555555;"><strong style="color: #1B2A24;">Dirección de Entrega:</strong> ${orderData.address}</p>` : ""}
-          <p style="margin: 3px 0; color: #555555;"><strong style="color: #1B2A24;">Forma de Pago:</strong> ${orderData.payment_method ? orderData.payment_method.toUpperCase() : "Confirmado"}</p>
+          ${isDelivery && orderData.address ? `<p style="margin: 3px 0; color: #555555;"><strong style="color: #1B2A24;">Dirección:</strong> ${orderData.address}</p>` : ""}
+          <p style="margin: 3px 0; color: #555555;"><strong style="color: #1B2A24;">Método de Pago:</strong> ${orderData.payment_method ? orderData.payment_method.toUpperCase() : "Confirmado"}</p>
         </div>
 
         <!-- Botón de Rastreo -->
-        <div style="text-align: center; margin-top: 32px;">
-          <a href="${trackingUrl}" style="background-color: #2C4A3E; color: #FFFFFF; padding: 15px 32px; border-radius: 10px; text-decoration: none; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; box-shadow: 0 4px 12px rgba(44,74,62,0.2);">
+        <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 24px;">
+          <a href="${trackingUrl}" target="_blank" style="background-color: #2C4A3E; color: #FFFFFF; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">
             Seguimiento de Pedido en Vivo
           </a>
         </div>
+
       </div>
 
-      <!-- Pie Corporativo -->
-      <div style="background-color: #F0EAE0; padding: 24px 30px; text-align: center; font-family: Arial, sans-serif; font-size: 11px; color: #666666; border-top: 1px solid #EAE3D2;">
+      <!-- Pie del Retablo -->
+      <div style="text-align: center; font-family: Arial, sans-serif; font-size: 11px; color: #777777; margin-top: 24px; padding-top: 12px;">
         <p style="margin: 0; font-weight: 700; color: #1B2A24;">Restaurante Las Flores — Ayacucho</p>
         <p style="margin: 4px 0 0 0;">Jr. José Olaya 106, Huamanga — Perú</p>
-        <p style="margin: 6px 0 0 0;">Atención al Cliente: <a href="mailto:${OFFICIAL_EMAIL}" style="color: #2C4A3E; text-decoration: none; font-weight: 600;">${OFFICIAL_EMAIL}</a> | Teléfono: +51 980 723 422</p>
+        <p style="margin: 6px 0 0 0;">Atención al Cliente: <a href="mailto:${OFFICIAL_EMAIL}" style="color: #2C4A3E; text-decoration: none; font-weight: 600;">${OFFICIAL_EMAIL}</a> | Tel: +51 980 723 422</p>
       </div>
 
     </div>
@@ -185,13 +186,13 @@ export async function sendOrderEmails(orderData: any, items: any[] = []): Promis
 }
 
 /**
- * 2. Enviar Confirmación de Reserva de Mesa (Diseño Ejecutivo de Alto Nivel)
+ * 2. Enviar Confirmación de Reserva de Mesa (Formato Retablo Ayacuchano)
  */
 export async function sendReservationEmail(reservationData: any): Promise<void> {
   const customerEmail = reservationData.email;
   const fullName = reservationData.name || reservationData.full_name || "Estimado/a cliente";
 
-  // Formatear Fecha (YYYY-MM-DD -> DD/MM/YYYY o Nombre de Fecha)
+  // Formatear Fecha (YYYY-MM-DD -> DD/MM/YYYY)
   let dateFormatted = reservationData.reservation_date || "Fecha por confirmar";
   if (reservationData.reservation_date && reservationData.reservation_date.includes("-")) {
     const parts = reservationData.reservation_date.split("-");
@@ -201,46 +202,52 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
   }
 
   const emailHtml = `
-    <div style="font-family: Georgia, serif, sans-serif; max-width: 620px; margin: 0 auto; background-color: #FAF6ED; border-radius: 16px; overflow: hidden; border: 1px solid #D4AF3740; box-shadow: 0 8px 30px rgba(0,0,0,0.05);">
+    <div style="font-family: Georgia, 'Times New Roman', serif, sans-serif; max-width: 620px; margin: 0 auto; background-color: #F6F1E7; padding: 24px 16px;">
       
-      <!-- Cabecera Corporativa -->
-      <div style="background-color: #2C4A3E; padding: 36px 30px; text-align: center; border-bottom: 3px solid #D4AF37;">
-        <p style="font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #D4AF37; margin: 0 0 6px 0; font-weight: 700;">
-          Confirmación Oficial de Mesa
-        </p>
-        <h1 style="font-size: 26px; margin: 0; color: #FFFFFF; font-weight: 400; letter-spacing: 1px;">
-          Restaurante Las Flores
-        </h1>
-        <p style="font-family: Arial, sans-serif; font-size: 12px; color: #E0ECE5; margin-top: 6px; font-weight: 300;">
-          Tradición & Alta Gastronomía — Ayacucho
-        </p>
+      <!-- Copete de Retablo Ayacuchano -->
+      <div style="text-align: center; margin-bottom: -15px; position: relative; z-index: 2;">
+        <img src="https://www.restaurantelasflores.com/retablo-copete.png" alt="Copete Retablo Ayacuchano" style="max-width: 320px; width: 85%; height: auto; display: block; margin: 0 auto;" />
       </div>
 
-      <!-- Contenido Principal -->
-      <div style="padding: 36px 32px; color: #1B2A24; font-family: Arial, sans-serif;">
+      <!-- Caja Marco Principal del Retablo -->
+      <div style="background-color: #FFFFFF; border: 4px solid #2C4A3E; border-radius: 16px; padding: 32px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.08); position: relative; z-index: 1; border-top: 6px solid #D4AF37;">
         
-        <h2 style="font-family: Georgia, serif; font-size: 20px; color: #2C4A3E; margin: 0 0 12px 0; text-align: center; font-weight: 400;">
-          Su Reserva ha sido Confirmada
-        </h2>
-        
-        <p style="font-size: 14px; color: #555555; line-height: 1.6; margin-bottom: 28px; text-align: center;">
-          Estimado/a <strong>${fullName}</strong>,<br/>
-          Nos complace informarle que su mesa ha sido asignada satisfactoriamente en nuestro establecimiento. Nos estamos preparando para brindarle una experiencia memorable.
-        </p>
+        <!-- Logo Horizontal Oficial de Las Flores (con la rosa roja) -->
+        <div style="text-align: center; margin-bottom: 20px; border-bottom: 1px solid #EAE3D2; padding-bottom: 20px;">
+          <img src="https://www.restaurantelasflores.com/images.png" alt="Restaurante Las Flores" style="max-width: 220px; width: 75%; height: auto; display: block; margin: 0 auto;" />
+          <p style="font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #D4AF37; margin: 12px 0 0 0; font-weight: 700;">
+            Tradición & Alta Gastronomía — Ayacucho
+          </p>
+        </div>
 
-        <!-- Tarjeta Pase Digital Executive -->
-        <div style="background-color: #FFFFFF; padding: 28px; border-radius: 14px; margin: 24px 0; border-top: 4px solid #D4AF37; border-left: 1px solid #EAE3D2; border-right: 1px solid #EAE3D2; border-bottom: 1px solid #EAE3D2; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+        <!-- Título y Mensaje de Bienvenida -->
+        <div style="text-align: center; font-family: Arial, sans-serif; margin-bottom: 28px;">
+          <h2 style="font-family: Georgia, serif; font-size: 22px; color: #2C4A3E; margin: 0 0 10px 0; font-weight: 400;">
+            Confirmación Oficial de Reserva
+          </h2>
+          <p style="font-size: 14px; color: #555555; line-height: 1.6; margin: 0;">
+            Estimado/a <strong>${fullName}</strong>,<br/>
+            Es un honor para nosotros recibirle. Su mesa ha sido reservada con éxito dentro de nuestro espacio gastronómico.
+          </p>
+        </div>
+
+        <!-- Pase Digital de Reserva dentro del Retablo -->
+        <div style="background-color: #FAF6ED; border-radius: 12px; padding: 24px; margin: 24px 0; border: 1px solid #D4AF3750; border-left: 5px solid #2C4A3E; font-family: Arial, sans-serif;">
           
-          <div style="border-bottom: 1px solid #EAE3D2; padding-bottom: 14px; margin-bottom: 18px; text-align: center;">
-            <span style="font-family: Georgia, serif; font-size: 14px; color: #2C4A3E; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">
-              Pase Digital de Reserva
+          <div style="text-align: center; border-bottom: 1px solid #EAE3D2; padding-bottom: 12px; margin-bottom: 16px;">
+            <span style="font-family: Georgia, serif; font-size: 13px; color: #2C4A3E; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">
+              Pase Digital de Mesa
             </span>
           </div>
 
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 2;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 2.1;">
             <tbody>
               <tr>
-                <td style="color: #777777; width: 40%; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Fecha Programada:</td>
+                <td style="color: #777777; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Titular de Reserva:</td>
+                <td style="color: #1B2A24; font-weight: 700; text-align: right;">${fullName}</td>
+              </tr>
+              <tr>
+                <td style="color: #777777; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Fecha Programada:</td>
                 <td style="color: #1B2A24; font-weight: 700; text-align: right;">${dateFormatted}</td>
               </tr>
               <tr>
@@ -260,32 +267,36 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
                   : ""
               }
               <tr>
-                <td style="color: #777777; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Teléfono de Contacto:</td>
+                <td style="color: #777777; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Teléfono registrado:</td>
                 <td style="color: #1B2A24; font-weight: 700; text-align: right;">${reservationData.phone || reservationData.client_phone || "Registrado"}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p style="font-size: 12px; color: #777777; line-height: 1.5; text-align: center; margin-top: 20px; font-style: italic;">
-          * Le sugerimos ingresar con 10 minutos de anticipación a su horario reservado.<br/>
+        <!-- Indicaciones -->
+        <p style="font-family: Arial, sans-serif; font-size: 12px; color: #777777; line-height: 1.5; text-align: center; font-style: italic; margin-bottom: 24px;">
+          Le sugerimos ingresar 10 minutos antes de su horario reservado.<br/>
           Ubicación: Jr. José Olaya 106, Huamanga — Ayacucho.
         </p>
 
-        <!-- Acciones -->
-        <div style="text-align: center; margin-top: 32px;">
-          <a href="https://www.restaurantelasflores.com/reservas" style="background-color: #2C4A3E; color: #FFFFFF; padding: 14px 30px; border-radius: 10px; text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">
-            Ver Mi Reserva en la Web
+        <!-- Botones Útiles de Acción -->
+        <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 24px;">
+          <a href="https://maps.google.com/?q=Jr.+Jose+Olaya+106,+Huamanga,+Ayacucho" target="_blank" style="background-color: #2C4A3E; color: #FFFFFF; padding: 13px 22px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin: 4px;">
+            Ver Ubicación en Google Maps
+          </a>
+          <a href="https://wa.me/51980723422?text=Hola%20Restaurante%20Las%20Flores,%20tengo%20una%20consulta%20sobre%20mi%20reserva" target="_blank" style="background-color: #25D366; color: #FFFFFF; padding: 13px 22px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin: 4px;">
+            Contactar por WhatsApp
           </a>
         </div>
 
       </div>
 
-      <!-- Pie Corporativo -->
-      <div style="background-color: #F0EAE0; padding: 24px 30px; text-align: center; font-family: Arial, sans-serif; font-size: 11px; color: #666666; border-top: 1px solid #EAE3D2;">
+      <!-- Pie del Retablo -->
+      <div style="text-align: center; font-family: Arial, sans-serif; font-size: 11px; color: #777777; margin-top: 24px; padding-top: 12px;">
         <p style="margin: 0; font-weight: 700; color: #1B2A24;">Restaurante Las Flores — Ayacucho</p>
         <p style="margin: 4px 0 0 0;">Jr. José Olaya 106, Huamanga — Perú</p>
-        <p style="margin: 6px 0 0 0;">Atención de Reservas: <a href="mailto:${OFFICIAL_EMAIL}" style="color: #2C4A3E; text-decoration: none; font-weight: 600;">${OFFICIAL_EMAIL}</a> | Teléfono: +51 980 723 422</p>
+        <p style="margin: 6px 0 0 0;">Atención de Reservas: <a href="mailto:${OFFICIAL_EMAIL}" style="color: #2C4A3E; text-decoration: none; font-weight: 600;">${OFFICIAL_EMAIL}</a> | Tel: +51 980 723 422</p>
       </div>
 
     </div>
@@ -313,15 +324,22 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
  */
 export async function sendContactEmail(contactData: any): Promise<void> {
   const emailHtml = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #FAF6ED; border-radius: 14px; padding: 28px; border: 1px solid #D4AF3740;">
-      <h2 style="font-family: Georgia, serif; color: #2C4A3E; margin-top: 0; font-size: 18px; border-bottom: 2px solid #2C4A3E; padding-bottom: 8px;">
-        Mensaje del Formulario de Contacto
-      </h2>
-      <p style="font-size: 13px; color: #333333; margin: 6px 0;"><strong>Remitente:</strong> ${contactData.name}</p>
-      <p style="font-size: 13px; color: #333333; margin: 6px 0;"><strong>Correo Electrónico:</strong> ${contactData.email}</p>
-      <p style="font-size: 13px; color: #333333; margin: 6px 0;"><strong>Teléfono:</strong> ${contactData.phone || "No especificado"}</p>
-      <div style="background: #FFFFFF; padding: 18px; border-left: 4px solid #2C4A3E; border-radius: 8px; margin-top: 16px;">
-        <p style="font-size: 13px; color: #1B2A24; margin: 0; line-height: 1.6;">${contactData.message}</p>
+    <div style="font-family: Georgia, serif, sans-serif; max-width: 600px; margin: 0 auto; background-color: #F6F1E7; padding: 20px;">
+      <div style="background-color: #FFFFFF; border: 3px solid #2C4A3E; border-radius: 14px; padding: 24px;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <img src="https://www.restaurantelasflores.com/images.png" alt="Restaurante Las Flores" style="max-width: 180px; width: 65%; height: auto;" />
+        </div>
+        <h2 style="font-family: Georgia, serif; color: #2C4A3E; margin-top: 0; font-size: 18px; text-align: center; border-bottom: 2px solid #2C4A3E; padding-bottom: 8px;">
+          Mensaje de Contacto desde la Web
+        </h2>
+        <div style="font-family: Arial, sans-serif; font-size: 13px; color: #333333; line-height: 1.8;">
+          <p style="margin: 4px 0;"><strong>Remitente:</strong> ${contactData.name}</p>
+          <p style="margin: 4px 0;"><strong>Correo Electrónico:</strong> ${contactData.email}</p>
+          <p style="margin: 4px 0;"><strong>Teléfono:</strong> ${contactData.phone || "No especificado"}</p>
+          <div style="background: #FAF6ED; padding: 16px; border-left: 4px solid #2C4A3E; border-radius: 8px; margin-top: 16px;">
+            <p style="margin: 0; color: #1B2A24; line-height: 1.6;">${contactData.message}</p>
+          </div>
+        </div>
       </div>
     </div>
   `;
