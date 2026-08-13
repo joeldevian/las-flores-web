@@ -12,15 +12,63 @@ import { ShoppingCart } from "lucide-react";
 export const Route = createFileRoute("/carta")({
   head: () => ({
     meta: [
-      { title: "Menú y Carta Digital — Restaurante Las Flores Ayacucho | Platos Típicos & Delivery" },
+      { title: "Carta Digital y Menú — Restaurante Las Flores Ayacucho | Platos Típicos & Delivery" },
       {
         name: "description",
         content:
-          "Consulta la carta completa de Restaurante Las Flores en Ayacucho: Puca Picante, Cuy Frito, Pachamanca, Trucha y postres tradicionales. ¡Pide delivery a domicilio en Huamanga!",
+          "Consulta la carta completa de Restaurante Las Flores en Ayacucho: Puca Picante, Cuy Frito, Pachamanca, Trucha, Chicharrones y postres tradicionales en Jr. José Olaya 106, Huamanga. ¡Pide delivery a domicilio!",
       },
       {
         name: "keywords",
-        content: "carta restaurante las flores, menu restaurante las flores, platos tipicos ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery comida ayacucho",
+        content:
+          "carta restaurante las flores, menu restaurante las flores, precios restaurante las flores, platos tipicos ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery comida ayacucho, chicharrones ayacucho",
+      },
+      { property: "og:title", content: "Carta Digital y Menú — Restaurante Las Flores Ayacucho" },
+      {
+        property: "og:description",
+        content: "Conoce nuestra variada carta de platos típicos ayacuchanos, desayunos y bebidas tradicionales. Pide delivery o reserva tu mesa.",
+      },
+      { property: "og:image", content: "https://www.restaurantelasflores.com/images.png" },
+      { property: "og:url", content: "https://www.restaurantelasflores.com/carta" },
+      { property: "og:type", content: "website" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Menu",
+          "name": "Carta Digital Restaurante Las Flores Ayacucho",
+          "url": "https://www.restaurantelasflores.com/carta",
+          "mainEntityOfPage": "https://www.restaurantelasflores.com/carta",
+          "inLanguage": "es-PE",
+          "hasMenuSection": [
+            {
+              "@type": "MenuSection",
+              "name": "Platos Típicos Ayacuchanos",
+              "hasMenuItem": [
+                {
+                  "@type": "MenuItem",
+                  "name": "Puca Picante con Chicharrón",
+                  "description": "El plato bandera de Ayacucho preparado a base de maní, ají panca y chicharrón crocante de cerdo.",
+                  "offers": { "@type": "Offer", "price": "38.00", "priceCurrency": "PEN" }
+                },
+                {
+                  "@type": "MenuItem",
+                  "name": "Cuy Frito Tradicional",
+                  "description": "Cuy crocante macerado en hierbas andinas, acompañado de papas doradas y qapchi ayacuchano.",
+                  "offers": { "@type": "Offer", "price": "55.00", "priceCurrency": "PEN" }
+                },
+                {
+                  "@type": "MenuItem",
+                  "name": "Mondongo Ayacuchano",
+                  "description": "Sopa reconfortante de maíz blanco pelado, mote y carne de res cocida a fuego lento.",
+                  "offers": { "@type": "Offer", "price": "32.00", "priceCurrency": "PEN" }
+                }
+              ]
+            }
+          ]
+        }),
       },
     ],
   }),
