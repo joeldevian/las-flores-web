@@ -340,7 +340,7 @@ function ClientTrackingLink() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1b2a24] font-bold text-xs uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-lg hover:bg-white transition-all transform hover:scale-105"
                     >
-                      <Star size={16} fill="#1b2a24" /> Publicar en Google Maps (1 clic)
+                      <Star size={16} fill="#1b2a24" /> Publicar en Google Maps
                     </a>
                   </>
                 ) : (
