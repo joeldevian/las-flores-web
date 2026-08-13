@@ -335,7 +335,7 @@ function ClientTrackingLink() {
                       Nos alegra enormemente que hayas disfrutado la experiencia Las Flores. ¿Nos ayudas a seguir creciendo publicando tu opinión en Google Maps?
                     </p>
                     <a
-                      href="https://maps.google.com/?q=Jr.+Jose+Olaya+106,+Huamanga,+Ayacucho"
+                      href="https://www.google.com/maps/place/Restaurante+Las+Flores/@-13.1629067,-74.220488,17z/data=!4m8!3m7!1s0x911287600027a52b:0x1c3e!8m2!3d-13.1629067!4d-74.220488!9m1!1b1"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1b2a24] font-bold text-xs uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-lg hover:bg-white transition-all transform hover:scale-105"
