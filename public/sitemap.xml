@@ -12,14 +12,6 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- Dónde Comer en Ayacucho (Landing de Posicionamiento #1) -->
-  <url>
-    <loc>https://www.restaurantelasflores.com/donde-comer-en-ayacucho</loc>
-    <lastmod>2026-08-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-
   <!-- Carta / Menú -->
   <url>
     <loc>https://www.restaurantelasflores.com/carta</loc>

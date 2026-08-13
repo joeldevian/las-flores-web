@@ -16,7 +16,6 @@ import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as FamiliaLasFloresRouteImport } from './routes/familia-las-flores'
 import { Route as EventosRouteImport } from './routes/eventos'
-import { Route as DondeComerEnAyacuchoRouteImport } from './routes/donde-comer-en-ayacucho'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as CartaRouteImport } from './routes/carta'
 import { Route as CajaRouteImport } from './routes/caja'
@@ -58,11 +57,6 @@ const FamiliaLasFloresRoute = FamiliaLasFloresRouteImport.update({
 const EventosRoute = EventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DondeComerEnAyacuchoRoute = DondeComerEnAyacuchoRouteImport.update({
-  id: '/donde-comer-en-ayacucho',
-  path: '/donde-comer-en-ayacucho',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactoRoute = ContactoRouteImport.update({
@@ -107,7 +101,6 @@ export interface FileRoutesByFullPath {
   '/caja': typeof CajaRoute
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
-  '/donde-comer-en-ayacucho': typeof DondeComerEnAyacuchoRoute
   '/eventos': typeof EventosRoute
   '/familia-las-flores': typeof FamiliaLasFloresRoute
   '/galeria': typeof GaleriaRoute
@@ -124,7 +117,6 @@ export interface FileRoutesByTo {
   '/caja': typeof CajaRoute
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
-  '/donde-comer-en-ayacucho': typeof DondeComerEnAyacuchoRoute
   '/eventos': typeof EventosRoute
   '/familia-las-flores': typeof FamiliaLasFloresRoute
   '/galeria': typeof GaleriaRoute
@@ -142,7 +134,6 @@ export interface FileRoutesById {
   '/caja': typeof CajaRoute
   '/carta': typeof CartaRoute
   '/contacto': typeof ContactoRoute
-  '/donde-comer-en-ayacucho': typeof DondeComerEnAyacuchoRoute
   '/eventos': typeof EventosRoute
   '/familia-las-flores': typeof FamiliaLasFloresRoute
   '/galeria': typeof GaleriaRoute
@@ -161,7 +152,6 @@ export interface FileRouteTypes {
     | '/caja'
     | '/carta'
     | '/contacto'
-    | '/donde-comer-en-ayacucho'
     | '/eventos'
     | '/familia-las-flores'
     | '/galeria'
@@ -178,7 +168,6 @@ export interface FileRouteTypes {
     | '/caja'
     | '/carta'
     | '/contacto'
-    | '/donde-comer-en-ayacucho'
     | '/eventos'
     | '/familia-las-flores'
     | '/galeria'
@@ -195,7 +184,6 @@ export interface FileRouteTypes {
     | '/caja'
     | '/carta'
     | '/contacto'
-    | '/donde-comer-en-ayacucho'
     | '/eventos'
     | '/familia-las-flores'
     | '/galeria'
@@ -213,7 +201,6 @@ export interface RootRouteChildren {
   CajaRoute: typeof CajaRoute
   CartaRoute: typeof CartaRoute
   ContactoRoute: typeof ContactoRoute
-  DondeComerEnAyacuchoRoute: typeof DondeComerEnAyacuchoRoute
   EventosRoute: typeof EventosRoute
   FamiliaLasFloresRoute: typeof FamiliaLasFloresRoute
   GaleriaRoute: typeof GaleriaRoute
@@ -276,13 +263,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/donde-comer-en-ayacucho': {
-      id: '/donde-comer-en-ayacucho'
-      path: '/donde-comer-en-ayacucho'
-      fullPath: '/donde-comer-en-ayacucho'
-      preLoaderRoute: typeof DondeComerEnAyacuchoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contacto': {
       id: '/contacto'
       path: '/contacto'
@@ -341,7 +321,6 @@ const rootRouteChildren: RootRouteChildren = {
   CajaRoute: CajaRoute,
   CartaRoute: CartaRoute,
   ContactoRoute: ContactoRoute,
-  DondeComerEnAyacuchoRoute: DondeComerEnAyacuchoRoute,
   EventosRoute: EventosRoute,
   FamiliaLasFloresRoute: FamiliaLasFloresRoute,
   GaleriaRoute: GaleriaRoute,
