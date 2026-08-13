@@ -416,9 +416,10 @@ export async function sendReviewRequestEmail(customerData: { name: string; email
 
   if (customerEmail && customerEmail.includes("@")) {
     await sendEmail({
-      from: SENDERS.NOTIFICACIONES,
+      from: SENDERS.GENERAL,
+      replyTo: OFFICIAL_EMAIL,
       to: customerEmail,
-      subject: `¿Cómo fue su experiencia? — Restaurante Las Flores Ayacucho`,
+      subject: `¿Cómo fue su experiencia en Las Flores? — Tu Opinión en Google Maps`,
       html: emailHtml,
     });
   }

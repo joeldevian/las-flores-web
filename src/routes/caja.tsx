@@ -310,10 +310,25 @@ function CashierDashboardRoute() {
       const s = (newStatus || "").toLowerCase();
       if (s.includes("entregad") || s.includes("complet") || s.includes("delivered")) {
         const targetOrd = orders.find((o) => o.id === orderId);
-        const emailToUse = targetOrd?.client_email || targetOrd?.customer_email;
-        if (targetOrd && emailToUse && emailToUse.includes("@")) {
+        let emailToUse = targetOrd?.client_email || targetOrd?.customer_email || targetOrd?.email;
+        let nameToUse = targetOrd?.client_name || targetOrd?.customer_name || targetOrd?.name || "Cliente";
+
+        if (!emailToUse) {
+          const { data: dbOrd } = await supabase
+            .from("orders")
+            .select("client_email, customer_email, email, client_name, customer_name, name")
+            .eq("id", orderId)
+            .maybeSingle();
+
+          if (dbOrd) {
+            emailToUse = dbOrd.client_email || dbOrd.customer_email || dbOrd.email;
+            nameToUse = dbOrd.client_name || dbOrd.customer_name || dbOrd.name || nameToUse;
+          }
+        }
+
+        if (emailToUse && emailToUse.includes("@")) {
           sendReviewRequestEmail({
-            name: targetOrd.client_name || targetOrd.customer_name || "Cliente",
+            name: nameToUse,
             email: emailToUse,
           }).catch((e) => console.warn("Background review request email warning:", e));
         }

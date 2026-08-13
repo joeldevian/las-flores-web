@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, MapPin, Phone, User, ShoppingBag, Clock, FileText, ExternalLink, MessageSquare } from "lucide-react";
+import { X, Loader2, MapPin, Phone, User, ShoppingBag, Clock, FileText, ExternalLink, MessageSquare, Star } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { sendReviewRequestEmail } from "../lib/emailService";
 import { openWhatsAppDispatch, generateDeliveryGoogleMapsUrl } from "../utils/whatsappDispatch";
 
 interface AdminOrderDetailModalProps {
@@ -19,6 +20,28 @@ export function AdminOrderDetailModal({
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [sendingReview, setSendingReview] = useState(false);
+
+  const handleSendReviewEmail = async () => {
+    if (!order) return;
+    const emailToUse = order.client_email || order.customer_email || order.email;
+    const nameToUse = order.client_name || order.customer_name || order.name || "Cliente";
+
+    if (!emailToUse || !emailToUse.includes("@")) {
+      alert("Este pedido no tiene un correo electrónico válido registrado.");
+      return;
+    }
+
+    setSendingReview(true);
+    try {
+      await sendReviewRequestEmail({ name: nameToUse, email: emailToUse });
+      alert(`¡Correo de solicitud de reseña de 5 estrellas enviado con éxito a ${emailToUse}!`);
+    } catch (err: any) {
+      alert(`Error al enviar el correo: ${err?.message || "Revisa la configuración"}`);
+    } finally {
+      setSendingReview(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && order) {
@@ -239,18 +262,27 @@ export function AdminOrderDetailModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
-          {order.order_type === "delivery" ? (
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {order.order_type === "delivery" && (
+              <button
+                onClick={() => openWhatsAppDispatch(order, items)}
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-colors"
+              >
+                <MessageSquare size={16} />
+                <span>Enviar a Motorizado</span>
+              </button>
+            )}
+
             <button
-              onClick={() => openWhatsAppDispatch(order, items)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center gap-2 shadow-sm transition-colors"
+              onClick={handleSendReviewEmail}
+              disabled={sendingReview}
+              className="px-4 py-2 rounded-xl bg-[#d4af37] hover:bg-[#b8952b] text-[#1b2a24] font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-50"
             >
-              <MessageSquare size={16} />
-              <span>Enviar a Motorizado (WhatsApp)</span>
+              <Star size={15} fill="#1b2a24" />
+              <span>{sendingReview ? "Enviando..." : "Enviar Correo de Reseña"}</span>
             </button>
-          ) : (
-            <div />
-          )}
+          </div>
 
           <button
             onClick={onClose}
