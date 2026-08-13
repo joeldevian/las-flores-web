@@ -26,31 +26,6 @@ function ClientTrackingLink() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentStatus, setCurrentStatus] = useState<string>("pendiente");
-  const [userRating, setUserRating] = useState<number>(5);
-  const [hoverRating, setHoverRating] = useState<number>(0);
-  const [reviewComment, setReviewComment] = useState<string>("");
-  const [reviewSubmitting, setReviewSubmitting] = useState<boolean>(false);
-  const [reviewSubmitted, setReviewSubmitted] = useState<boolean>(false);
-
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setReviewSubmitting(true);
-    try {
-      await supabase.from("customer_reviews").insert([
-        {
-          order_id: orderId,
-          client_name: order?.order_number ? `Pedido #${order.order_number}` : "Cliente Las Flores",
-          rating: userRating,
-          comment: reviewComment,
-        },
-      ]);
-    } catch (err) {
-      // Ignorar silenciosamente si la tabla es opcional
-    } finally {
-      setReviewSubmitting(false);
-      setReviewSubmitted(true);
-    }
-  };
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -266,90 +241,30 @@ function ClientTrackingLink() {
             </div>
           </section>
         )}
-
-        {/* SISTEMA DE RESEÑAS INTERACTIVO E INTELIGENTE */}
+          {/* BANNER OFICIAL DE RESEÑAS GOOGLE MAPS */}
         {isDelivered && (
-          <section className="bg-[#2c4a3e] text-[#faf6ed] p-6 md:p-8 rounded-[2rem] shadow-xl text-center border-2 border-[#d4af37] relative z-10 space-y-5">
-            {!reviewSubmitted ? (
-              <form onSubmit={handleSubmitReview} className="space-y-4 max-w-md mx-auto">
-                <span className="text-[#d4af37] font-serif text-xs uppercase tracking-widest font-bold block">
-                  Opinión del Cliente
-                </span>
-                <h3 className="font-serif text-2xl text-white font-bold">
-                  ¿Qué tal tu experiencia con Las Flores?
-                </h3>
-                <p className="text-xs opacity-85 leading-relaxed">
-                  Haz clic en las estrellas para valorar tu pedido:
-                </p>
-
-                {/* Seleccionador de 5 Estrellas Interactivas */}
-                <div className="flex justify-center gap-2 py-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      onClick={() => setUserRating(star)}
-                      className="focus:outline-none transition-transform hover:scale-125 cursor-pointer"
-                    >
-                      <Star
-                        size={32}
-                        className={
-                          (hoverRating || userRating) >= star
-                            ? "text-[#d4af37] fill-[#d4af37]"
-                            : "text-white/30"
-                        }
-                      />
-                    </button>
-                  ))}
-                </div>
-
-                <textarea
-                  value={reviewComment}
-                  onChange={(e) => setReviewComment(e.target.value)}
-                  placeholder="Cuéntanos tu opinión sobre la comida y la atención (opcional)..."
-                  rows={2}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-xs text-white placeholder-white/50 focus:outline-none focus:border-[#d4af37] resize-none"
-                />
-
-                <button
-                  type="submit"
-                  disabled={reviewSubmitting}
-                  className="w-full bg-[#d4af37] text-[#1b2a24] font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-lg hover:bg-white transition-all transform active:scale-95 disabled:opacity-50 cursor-pointer"
-                >
-                  {reviewSubmitting ? "Guardando opinión..." : "Enviar Mi Calificación"}
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-4 max-w-md mx-auto py-2 animate-fade-in">
-                <div className="w-12 h-12 bg-[#d4af37]/20 rounded-full flex items-center justify-center mx-auto text-[#d4af37]">
-                  <Star size={28} fill="#d4af37" />
-                </div>
-                <h3 className="font-serif text-2xl text-white font-bold">
-                  ¡Gracias por tu opinión!
-                </h3>
-                {userRating >= 4 ? (
-                  <>
-                    <p className="text-xs opacity-90 leading-relaxed">
-                      Nos alegra enormemente que hayas disfrutado la experiencia Las Flores. ¿Nos ayudas a seguir creciendo publicando tu opinión en Google Maps?
-                    </p>
-                    <a
-                      href="https://www.google.com/maps/place/Restaurante+Las+Flores/@-13.1629067,-74.220488,17z/data=!4m8!3m7!1s0x911287600027a52b:0x1c3e!8m2!3d-13.1629067!4d-74.220488!9m1!1b1"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1b2a24] font-bold text-xs uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-lg hover:bg-white transition-all transform hover:scale-105"
-                    >
-                      <Star size={16} fill="#1b2a24" /> Publicar en Google Maps
-                    </a>
-                  </>
-                ) : (
-                  <p className="text-xs opacity-90 leading-relaxed">
-                    Agradecemos sinceramente tus comentarios. Nuestro equipo de administración revisará tu mensaje para seguir perfeccionando nuestra atención.
-                  </p>
-                )}
-              </div>
-            )}
+          <section className="bg-[#2c4a3e] text-[#faf6ed] p-6 md:p-8 rounded-[2rem] shadow-xl text-center border-2 border-[#d4af37] space-y-4 relative z-10">
+            <div className="flex justify-center gap-1.5 text-[#d4af37]">
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+            </div>
+            <h3 className="font-serif text-2xl text-white font-bold">
+              ¿Qué tal tu experiencia con Las Flores?
+            </h3>
+            <p className="text-xs md:text-sm opacity-90 max-w-md mx-auto leading-relaxed">
+              ¡Esperamos que disfrutes tus alimentos! Nos ayuda enormemente que compartas tu opinión de 5 estrellas en nuestra ficha oficial de Google Maps.
+            </p>
+            <a
+              href="https://www.google.com/maps/place/Restaurante+Las+Flores/@-13.1629067,-74.222784,17z/data=!4m8!3m7!1s0x911287600027a52b:0x1c3e775f879b7bbe!8m2!3d-13.1629067!4d-74.2179131!9m1!1b1!16s%2Fg%2F11bw_7shlg"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1b2a24] font-bold text-xs uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-lg hover:bg-white transition-all transform hover:scale-105"
+            >
+              <Star size={16} fill="#1b2a24" /> Calificar en Google Maps
+            </a>
           </section>
         )}
 
