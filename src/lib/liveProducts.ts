@@ -221,8 +221,9 @@ export function useLiveMenuCategories() {
     refreshMenu();
 
     // Suscripción Realtime a cambios en la tabla 'products' y 'categories'
+    const channelName = `live-menu-updates-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const channel = supabase
-      .channel("live-menu-updates")
+      .channel(channelName)
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => {
         refreshMenu();
       })
