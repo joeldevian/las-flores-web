@@ -26,24 +26,6 @@ type Category = {
 
 const GALLERY_CATEGORIES: Category[] = [
   {
-    id: "restaurante",
-    label: "Restaurante",
-    images: [
-      "/imagenes-reales/Salones/Salonprincipal.webp",
-      "/imagenes-reales/Salones/Ventana.webp",
-      "/imagenes-reales/Salones/Estrado.webp",
-    ],
-  },
-  {
-    id: "experiencia",
-    label: "Experiencia",
-    images: [
-      "/imagenes-reales/EVENTOS-COORPORATIVAS/reuniones-corporativas.webp",
-      "/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp",
-      "/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp",
-    ],
-  },
-  {
     id: "arte-cultura",
     label: "Arte y Cultura",
     images: [
@@ -132,18 +114,32 @@ const GALLERY_CATEGORIES: Category[] = [
     ],
   },
   {
-    id: "gastronomia",
-    label: "Gastronomía",
+    id: "postres-bebidas",
+    label: "Postres y Bebidas",
     images: [
-      "/imagenes-reales/CARTA/02042026-DSC04652.webp",
-      "/imagenes-reales/CARTA/02042026-DSC04727.webp",
-      "/imagenes-reales/RECOMENDACIONES-CHEF/cuy-chactado.webp",
+      "/imagenes-reales/galeria/postres-bebidas/chicha-uno.webp",
+      "/imagenes-reales/galeria/postres-bebidas/chicha-dos.webp",
+      "/imagenes-reales/galeria/postres-bebidas/chicha-tres.webp",
+      "/imagenes-reales/galeria/postres-bebidas/chicha-cinco.webp",
+      "/imagenes-reales/galeria/postres-bebidas/panes-dos.webp",
+      "/imagenes-reales/galeria/postres-bebidas/wawa-uno.webp",
+      "/imagenes-reales/galeria/postres-bebidas/galleta-tres.webp",
+      "/imagenes-reales/galeria/postres-bebidas/galleta-cuatro.webp",
     ],
   },
+  {
+    id: "experiencia",
+    label: "Experiencia",
+    images: [
+      "/imagenes-reales/EVENTOS-COORPORATIVAS/reuniones-corporativas.webp",
+      "/imagenes-reales/EVENTOS-COORPORATIVAS/celebraciones-familiares.webp",
+      "/imagenes-reales/EVENTOS-COORPORATIVAS/bodas-recepciones.webp",
+    ],
+  }
 ];
 
 function GaleriaPage() {
-  const [activeCategory, setActiveCategory] = useState<string>("restaurante");
+  const [activeCategory, setActiveCategory] = useState<string>("arte-cultura");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
