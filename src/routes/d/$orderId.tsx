@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { CheckCircle2, Navigation2, Package, MapPin, ExternalLink, Loader2, AlertTriangle, ShieldCheck, Phone, Clock, ArrowRight, Banknote, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { sendReviewRequestEmail } from "@/lib/emailService";
 
 export const Route = createFileRoute("/d/$orderId")({
   component: DriverMagicLink,
@@ -182,6 +183,16 @@ function DriverMagicLink() {
         .from("orders")
         .update({ status: "entregado" })
         .eq("id", orderId);
+
+      // Disparar correo de solicitud de reseña de 5 estrellas al cliente
+      const emailToUse = (orderData as any)?.client_email || (orderData as any)?.customer_email || (orderData as any)?.email;
+      const nameToUse = orderData?.client_name || "Cliente";
+      if (emailToUse && emailToUse.includes("@")) {
+        sendReviewRequestEmail({
+          name: nameToUse,
+          email: emailToUse,
+        }).catch((e) => console.warn("Driver view review email warning:", e));
+      }
     } catch (err) {
       console.error("Error al actualizar estado en DB:", err);
     } finally {
