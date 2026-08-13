@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
+import { sendReviewRequestEmail } from "../lib/emailService";
 import { playOrderChime } from "../utils/audioAlert";
 import { CashierOrderCard } from "../components/CashierOrderCard";
 import { CashierReservationCard } from "../components/CashierReservationCard";
@@ -304,6 +305,20 @@ function CashierDashboardRoute() {
         .eq("id", orderId);
 
       if (error) throw error;
+
+      // Disparar automáticamente correo de solicitud de reseña de 5 estrellas al marcar como entregado
+      const s = (newStatus || "").toLowerCase();
+      if (s.includes("entregad") || s.includes("complet") || s.includes("delivered")) {
+        const targetOrd = orders.find((o) => o.id === orderId);
+        const emailToUse = targetOrd?.client_email || targetOrd?.customer_email;
+        if (targetOrd && emailToUse && emailToUse.includes("@")) {
+          sendReviewRequestEmail({
+            name: targetOrd.client_name || targetOrd.customer_name || "Cliente",
+            email: emailToUse,
+          }).catch((e) => console.warn("Background review request email warning:", e));
+        }
+      }
+
       await fetchData();
     } catch (err: any) {
       console.error("Error updating order status:", err);

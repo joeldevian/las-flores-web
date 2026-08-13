@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Package, MapPin, Navigation2, Loader2, AlertTriangle, CheckCircle2, Utensils, Truck, Clock, ShieldCheck } from "lucide-react";
+import { Package, MapPin, Navigation2, Loader2, AlertTriangle, CheckCircle2, Utensils, Truck, Clock, ShieldCheck, Star } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/rastreo/$orderId")({
@@ -239,6 +239,33 @@ function ClientTrackingLink() {
             })}
           </div>
         </section>
+
+        {/* BANNER DE CALIFICACIÓN DE 5 ESTRELLAS CUANDO EL PEDIDO FUE ENTREGADO */}
+        {isDelivered && (
+          <section className="bg-[#2c4a3e] text-[#faf6ed] p-6 md:p-8 rounded-[2rem] shadow-xl text-center border-2 border-[#d4af37] space-y-4 relative z-10">
+            <div className="flex justify-center gap-1.5 text-[#d4af37]">
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+              <Star size={26} fill="#d4af37" />
+            </div>
+            <h3 className="font-serif text-2xl text-white font-bold">
+              ¿Qué tal tu experiencia con Las Flores?
+            </h3>
+            <p className="text-xs md:text-sm opacity-90 max-w-md mx-auto leading-relaxed">
+              ¡Esperamos que disfrutes tus alimentos! Nos ayuda enormemente que compartas tu opinión de 5 estrellas en nuestra ficha oficial de Google Maps.
+            </p>
+            <a
+              href="https://maps.google.com/?q=Jr.+Jose+Olaya+106,+Huamanga,+Ayacucho"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1b2a24] font-bold text-xs uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-lg hover:bg-white transition-all transform hover:scale-105"
+            >
+              <Star size={16} fill="#1b2a24" /> Calificar con 5 Estrellas en Google Maps
+            </a>
+          </section>
+        )}
 
         {/* Info Box Abajo */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 relative z-10">
