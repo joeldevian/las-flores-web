@@ -209,61 +209,63 @@ function ClientTrackingLink() {
           </div>
         </header>
 
-        {/* LÍNEA DE TIEMPO / TIMELINE DE ESTADO EN VIVO */}
-        <section className="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl shadow-nogal/5 border border-nogal/10 relative z-10 space-y-8">
-          <div className="flex items-center justify-between border-b border-nogal/10 pb-4">
-            <h2 className="font-serif text-xl font-bold text-nogal">Seguimiento en Tiempo Real</h2>
-            <span className="text-[10px] uppercase font-extrabold tracking-widest bg-eucalipto/10 text-eucalipto px-3 py-1 rounded-full flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-eucalipto animate-ping" />
-              Sincronizado en Vivo
-            </span>
-          </div>
+        {/* LÍNEA DE TIEMPO / TIMELINE DE ESTADO EN VIVO (Solo visible mientras el pedido está en proceso) */}
+        {!isDelivered && (
+          <section className="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl shadow-nogal/5 border border-nogal/10 relative z-10 space-y-8">
+            <div className="flex items-center justify-between border-b border-nogal/10 pb-4">
+              <h2 className="font-serif text-xl font-bold text-nogal">Seguimiento en Tiempo Real</h2>
+              <span className="text-[10px] uppercase font-extrabold tracking-widest bg-eucalipto/10 text-eucalipto px-3 py-1 rounded-full flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-eucalipto animate-ping" />
+                Sincronizado en Vivo
+              </span>
+            </div>
 
-          <div className="relative pl-6 md:pl-8 border-l-2 border-nogal/15 space-y-8 my-2">
-            {steps.map((step) => {
-              const Icon = step.icon;
-              const isCompleted = step.num < activeStep;
-              const isCurrent = step.num === activeStep;
+            <div className="relative pl-6 md:pl-8 border-l-2 border-nogal/15 space-y-8 my-2">
+              {steps.map((step) => {
+                const Icon = step.icon;
+                const isCompleted = step.num < activeStep;
+                const isCurrent = step.num === activeStep;
 
-              return (
-                <div key={step.num} className="relative flex items-start gap-4 group">
-                  {/* Marcador del Nodo */}
-                  <div 
-                    className={`absolute -left-[31px] md:-left-[39px] top-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-500 ${
-                      isCompleted
-                        ? "bg-eucalipto text-white shadow-md scale-100"
-                        : isCurrent
-                        ? "bg-nogal text-chilca shadow-xl ring-4 ring-eucalipto/20 scale-110"
-                        : "bg-piedra text-nogal/40 border border-nogal/20"
-                    }`}
-                  >
-                    {isCompleted ? <CheckCircle2 size={16} /> : <Icon size={16} />}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className={`font-serif text-lg font-bold transition-colors ${
-                        isCurrent ? "text-nogal font-black" : isCompleted ? "text-eucalipto" : "text-nogal/40"
-                      }`}>
-                        {step.title}
-                      </h3>
-                      {isCurrent && (
-                        <span className="text-[9px] uppercase font-extrabold px-2 py-0.5 bg-nogal text-chilca rounded-full animate-pulse">
-                          En Proceso
-                        </span>
-                      )}
+                return (
+                  <div key={step.num} className="relative flex items-start gap-4 group">
+                    {/* Marcador del Nodo */}
+                    <div 
+                      className={`absolute -left-[31px] md:-left-[39px] top-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-500 ${
+                        isCompleted
+                          ? "bg-eucalipto text-white shadow-md scale-100"
+                          : isCurrent
+                          ? "bg-nogal text-chilca shadow-xl ring-4 ring-eucalipto/20 scale-110"
+                          : "bg-piedra text-nogal/40 border border-nogal/20"
+                      }`}
+                    >
+                      {isCompleted ? <CheckCircle2 size={16} /> : <Icon size={16} />}
                     </div>
-                    <p className={`text-xs mt-1 leading-relaxed ${
-                      isCurrent ? "text-nogal/80 font-medium" : "text-nogal/50"
-                    }`}>
-                      {step.desc}
-                    </p>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className={`font-serif text-lg font-bold transition-colors ${
+                          isCurrent ? "text-nogal font-black" : isCompleted ? "text-eucalipto" : "text-nogal/40"
+                        }`}>
+                          {step.title}
+                        </h3>
+                        {isCurrent && (
+                          <span className="text-[9px] uppercase font-extrabold px-2 py-0.5 bg-nogal text-chilca rounded-full animate-pulse">
+                            En Proceso
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-xs mt-1 leading-relaxed ${
+                        isCurrent ? "text-nogal/80 font-medium" : "text-nogal/50"
+                      }`}>
+                        {step.desc}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* SISTEMA DE RESEÑAS INTERACTIVO E INTELIGENTE */}
         {isDelivered && (
