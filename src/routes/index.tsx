@@ -989,8 +989,9 @@ function Index() {
                     alt={p.nombre}
                     width={1000}
                     height={800}
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
+                    fetchPriority="high"
                     className="w-full h-full object-cover"
                   />
                   <div className="dish-card-overlay">

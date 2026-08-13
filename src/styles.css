@@ -244,8 +244,9 @@
   position: relative;
   overflow: hidden;
   border-radius: 0.5rem;
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   cursor: pointer;
+  will-change: transform;
 }
 
 .dish-card-hover:hover {
@@ -254,7 +255,8 @@
 }
 
 .dish-card-hover img {
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.25s ease-out;
+  will-change: transform;
 }
 
 .dish-card-hover:hover img {
@@ -266,8 +268,8 @@
   inset: 0;
   background: linear-gradient(to top, rgba(15, 10, 15, 0.95) 0%, rgba(15, 10, 15, 0.6) 60%, rgba(15, 10, 15, 0.2) 100%);
   opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: scale(0.97);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -275,6 +277,7 @@
   text-align: center;
   padding: 1.5rem;
   z-index: 10;
+  will-change: opacity, transform;
 }
 
 .dish-card-hover:hover .dish-card-overlay {
