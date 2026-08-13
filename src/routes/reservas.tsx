@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import type { User } from "@supabase/supabase-js";
 import { signInWithGoogle, signInWithFacebook, signOut, createReservation, updateUserProfile, supabase } from "@/lib/supabase";
 import { sendReservationEmail } from "@/lib/emailService";
+import { playSuccessChime } from "@/lib/soundUtils";
 import { Calendar, CheckCircle2, User as UserIcon, MapPin, Search, ShoppingCart, ChevronLeft, Check, AlertCircle, Sparkles, Sun, Wine, Utensils, Users, Award, Share2, CalendarPlus, QrCode, Heart, Coffee } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
 import { getBlockedZonesForReservation, listRestaurantZones } from "@/features/zones/api";
@@ -518,6 +519,9 @@ function ReservasPage() {
       });
 
       const resCode = createdRes?.id ? String(createdRes.id) : code;
+
+      // Reproducir sonido cálido de confirmación
+      playSuccessChime();
 
       // Enviar correo de confirmación de reserva
       sendReservationEmail({

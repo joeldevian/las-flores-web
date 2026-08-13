@@ -192,7 +192,6 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
   const customerEmail = reservationData.email;
   const fullName = reservationData.name || reservationData.full_name || "Estimado/a cliente";
 
-  // Formatear Fecha (YYYY-MM-DD -> DD/MM/YYYY)
   let dateFormatted = reservationData.reservation_date || "Fecha por confirmar";
   if (reservationData.reservation_date && reservationData.reservation_date.includes("-")) {
     const parts = reservationData.reservation_date.split("-");
@@ -212,7 +211,7 @@ export async function sendReservationEmail(reservationData: any): Promise<void> 
       <!-- Caja Marco Principal del Retablo -->
       <div style="background-color: #FFFFFF; border: 4px solid #2C4A3E; border-radius: 16px; padding: 32px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.08); position: relative; z-index: 1; border-top: 6px solid #D4AF37;">
         
-        <!-- Logo Horizontal Oficial de Las Flores (con la rosa roja) -->
+        <!-- Logo Horizontal Oficial de Las Flores -->
         <div style="text-align: center; margin-bottom: 20px; border-bottom: 1px solid #EAE3D2; padding-bottom: 20px;">
           <img src="https://www.restaurantelasflores.com/images.png" alt="Restaurante Las Flores" style="max-width: 220px; width: 75%; height: auto; display: block; margin: 0 auto;" />
           <p style="font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #D4AF37; margin: 12px 0 0 0; font-weight: 700;">
@@ -351,4 +350,76 @@ export async function sendContactEmail(contactData: any): Promise<void> {
     subject: `Mensaje de Contacto — ${contactData.name}`,
     html: emailHtml,
   });
+}
+
+/**
+ * 4. Enviar Solicitud de Reseña de 5 Estrellas en Google Maps (Post-Atención / NPS)
+ */
+export async function sendReviewRequestEmail(customerData: { name: string; email: string }): Promise<void> {
+  const customerEmail = customerData.email;
+  const fullName = customerData.name || "Estimado/a cliente";
+
+  const emailHtml = `
+    <div style="font-family: Georgia, 'Times New Roman', serif, sans-serif; max-width: 620px; margin: 0 auto; background-color: #F6F1E7; padding: 24px 16px;">
+      
+      <!-- Copete de Retablo Ayacuchano -->
+      <div style="text-align: center; margin-bottom: -15px; position: relative; z-index: 2;">
+        <img src="https://www.restaurantelasflores.com/retablo-copete.png" alt="Copete Retablo Ayacuchano" style="max-width: 320px; width: 85%; height: auto; display: block; margin: 0 auto;" />
+      </div>
+
+      <!-- Caja Marco Principal del Retablo -->
+      <div style="background-color: #FFFFFF; border: 4px solid #2C4A3E; border-radius: 16px; padding: 32px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.08); position: relative; z-index: 1; border-top: 6px solid #D4AF37;">
+        
+        <!-- Logo Horizontal Oficial de Las Flores -->
+        <div style="text-align: center; margin-bottom: 20px; border-bottom: 1px solid #EAE3D2; padding-bottom: 20px;">
+          <img src="https://www.restaurantelasflores.com/images.png" alt="Restaurante Las Flores" style="max-width: 220px; width: 75%; height: auto; display: block; margin: 0 auto;" />
+          <p style="font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #D4AF37; margin: 12px 0 0 0; font-weight: 700;">
+            Excelencia & Tradición — Ayacucho
+          </p>
+        </div>
+
+        <!-- Título y Mensaje -->
+        <div style="text-align: center; font-family: Arial, sans-serif; margin-bottom: 24px;">
+          <h2 style="font-family: Georgia, serif; font-size: 22px; color: #2C4A3E; margin: 0 0 12px 0; font-weight: 400;">
+            ¿Cómo fue su experiencia en Las Flores?
+          </h2>
+          <p style="font-size: 14px; color: #555555; line-height: 1.6; margin: 0;">
+            Estimado/a <strong>${fullName}</strong>,<br/>
+            Ha sido un absoluto honor recibirle en Restaurante Las Flores. Su opinión es fundamental para seguir preservando la mejor gastronomía tradicional de Huamanga.
+          </p>
+        </div>
+
+        <!-- Tarjeta Invitación Reseña Google Maps -->
+        <div style="background-color: #FAF6ED; border-radius: 12px; padding: 24px; margin: 24px 0; border: 1px solid #D4AF3750; border-left: 5px solid #2C4A3E; text-align: center; font-family: Arial, sans-serif;">
+          <p style="font-size: 15px; color: #1B2A24; font-weight: 700; margin: 0 0 8px 0;">
+            Valore su Experiencia con 5 Estrellas
+          </p>
+          <p style="font-size: 12px; color: #666666; margin: 0 0 18px 0; line-height: 1.5;">
+            Le invitamos cordialmente a compartir su valoración en nuestra ficha oficial de Google Maps.
+          </p>
+
+          <a href="https://maps.google.com/?q=Jr.+Jose+Olaya+106,+Huamanga,+Ayacucho" target="_blank" style="background-color: #2C4A3E; color: #FFFFFF; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">
+            Compartir Reseña en Google Maps
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Pie del Retablo -->
+      <div style="text-align: center; font-family: Arial, sans-serif; font-size: 11px; color: #777777; margin-top: 24px; padding-top: 12px;">
+        <p style="margin: 0; font-weight: 700; color: #1B2A24;">Restaurante Las Flores — Ayacucho</p>
+        <p style="margin: 4px 0 0 0;">Jr. José Olaya 106, Huamanga — Perú</p>
+      </div>
+
+    </div>
+  `;
+
+  if (customerEmail && customerEmail.includes("@")) {
+    await sendEmail({
+      from: SENDERS.NOTIFICACIONES,
+      to: customerEmail,
+      subject: `¿Cómo fue su experiencia? — Restaurante Las Flores Ayacucho`,
+      html: emailHtml,
+    });
+  }
 }

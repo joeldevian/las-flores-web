@@ -29,6 +29,7 @@ import {
   DELIVERY_CONFIG,
 } from "../utils/deliveryUtils";
 import { signInWithGoogle, signInWithFacebook, createOrder, signOut, supabase } from "../lib/supabase";
+import { playSuccessChime } from "@/lib/soundUtils";
 import { sendOrderEmails } from "../lib/emailService";
 import { LocationSelector } from "./LocationSelector";
 import { CustomerHistoryModal } from "./CustomerHistoryModal";
@@ -487,6 +488,9 @@ export function CartSidebar() {
           };
         }),
       });
+
+      // Reproducir sonido cálido de confirmación
+      playSuccessChime();
 
       // Enviar correo de confirmación al cliente y notificación a la caja (contacto@restaurantelasflores.com)
       sendOrderEmails(
