@@ -19,18 +19,18 @@ import { FamiliaLasFloresSection } from "../components/FamiliaLasFloresSection";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Restaurante Las Flores Ayacucho — El Mejor Restaurante en Huamanga | Platos Típicos & Parrillas" },
+      { title: "Restaurante Las Flores Ayacucho — Dónde Comer en Ayacucho | Carta & Reservas" },
       {
         name: "description",
         content:
-          "El mejor restaurante en Ayacucho. En Restaurante Las Flores disfruta la auténtica gastronomía ayacuchana (Puca Picante, Cuy Frito, Pachamanca) en Jr. José Olaya 106, Huamanga. ¡Reserva tu mesa o pide delivery online!",
+          "¿Dónde comer en Ayacucho? Disfruta la mejor gastronomía tradicional ayacuchana (Puca Picante, Cuy Frito, Pachamanca) y parrillas en Restaurante Las Flores. Jr. José Olaya 106, Huamanga. ¡Reserva online o pide delivery!",
       },
       {
         name: "keywords",
         content:
-          "restaurante las flores, restaurante las flores ayacucho, restaurantes ayacucho, mejor restaurante ayacucho, donde comer en ayacucho, restaurante turistico ayacucho, puca picante ayacucho, cuy frito ayacucho, delivery ayacucho, reservas restaurante ayacucho",
+          "restaurante las flores, restaurante las flores ayacucho, restaurantes ayacucho, restaurantes en ayacucho, donde comer en ayacucho, mejor restaurante ayacucho, restaurante turistico ayacucho, puca picante ayacucho, cuy frito ayacucho, desayunos ayacucho, delivery ayacucho, reservas restaurante ayacucho",
       },
-      { property: "og:title", content: "Restaurante Las Flores Ayacucho — El Mejor Restaurante en Huamanga" },
+      { property: "og:title", content: "Restaurante Las Flores Ayacucho — Dónde Comer en Ayacucho" },
       {
         property: "og:description",
         content:
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "Restaurant",
           "name": "Restaurante Las Flores",
-          "alternateName": "Las Flores Ayacucho",
+          "alternateName": ["Las Flores Ayacucho", "Restaurante Turístico Las Flores"],
           "url": "https://www.restaurantelasflores.com",
           "logo": "https://www.restaurantelasflores.com/images.png",
           "image": "https://www.restaurantelasflores.com/images.png",
@@ -82,6 +82,47 @@ export const Route = createFileRoute("/")({
           "servesCuisine": ["Peruana", "Ayacuchana", "Tradicional", "Parrillas", "Desayunos", "Almuerzos", "Cenas"],
           "acceptsReservations": "True",
           "hasMenu": "https://www.restaurantelasflores.com/carta"
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Cuál es el mejor lugar para comer en Ayacucho?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Restaurante Las Flores es uno de los mejores y más emblemáticos lugares para comer en Ayacucho. Ofrece gastronomía típica ayacuchana como Puca Picante, Cuy Frito, Mondongo y Parrillas en un ambiente tradicional en Jr. José Olaya 106, Huamanga."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Dónde tomar desayuno en Ayacucho?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "En Restaurante Las Flores servimos desayunos tradicionales ayacuchanos con pan chapla, queso ayacuchano, caldos tradicionales y café artesanal todos los días desde las 07:00 a.m."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuáles son los platos típicos de Ayacucho?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Los platos típicos de Ayacucho incluyen el Puca Picante, Cuy Frito, Mondongo Ayacuchano, Pachamanca y Qapchi, todos preparados con insumos autóctonos en Restaurante Las Flores."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué restaurantes hay cerca de la Plaza de Armas de Ayacucho?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Restaurante Las Flores se encuentra ubicado a pocas cuadras del centro histórico en Jr. José Olaya 106, Huamanga — Ayacucho."
+              }
+            }
+          ]
         }),
       },
     ],
