@@ -227,12 +227,51 @@ const COLLABORATORS: Collaborator[] = [
     recommendedDish: "Helado de Lúcuma",
     dishPrice: "S/ 12.00",
     badge: "Creatividad Visual",
+  },
+  {
+    id: "cocina-1",
+    name: "Ronaldiño",
+    role: "Cocinero",
+    category: "cocina",
+    years: "3 años en Las Flores",
+    photo: "/familia/Ronaldinho.webp",
+    quote:
+      "Cocinar es mi verdadera pasión. Estos 3 años me han enseñado que el secreto de un buen plato está en el respeto por nuestros insumos locales y el amor que le ponemos a cada preparación.",
+    recommendedDish: "Mondongo Ayacuchano",
+    dishPrice: "S/ 25.00",
+    badge: "Sazón Tradicional",
+  },
+  {
+    id: "cocina-2",
+    name: "Marina",
+    role: "Maestra Cocinera",
+    category: "cocina",
+    years: "5 años en Las Flores",
+    photo: "/familia/Marina.webp",
+    quote:
+      "Tengo el orgullo de decir que llevo 5 años cuidando las recetas de la casa. Mi mayor alegría es saber que cada persona que prueba mi sazón se lleva un pedacito de nuestra tradición.",
+    recommendedDish: "Puca Picante con Chicharrón",
+    dishPrice: "S/ 38.00",
+    badge: "Manos de Oro",
+  },
+  {
+    id: "reposteria-1",
+    name: "Nancy Marleny",
+    role: "Asistente de Repostería",
+    category: "reposteria",
+    years: "2 años en Las Flores",
+    photo: "/familia/Nancy.webp",
+    quote:
+      "Acompañar nuestras comidas con el dulce perfecto es mi especialidad. Durante estos 2 años he aprendido a mezclar las técnicas tradicionales con el cariño que nos caracteriza.",
+    recommendedDish: "Helado de Lúcuma",
+    dishPrice: "S/ 12.00",
+    badge: "Toque Dulce",
   }
 ];
 
 function FamiliaLasFloresPage() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<"all" | "cocina" | "salon" | "reposteria">("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "administracion" | "cocina" | "salon" | "barra" | "reposteria">("all");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {

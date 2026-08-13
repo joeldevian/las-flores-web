@@ -6,12 +6,10 @@ const ayacuchoHero = "/inicio/ayacucho.webp";
 const culturaImg = "/imagenes-reales/ARTE Y CULTURA LISTO/CERAMICA/CERAMICA-AYACUCHANA.webp";
 const retabloImg =
   "/imagenes-reales/ARTE Y CULTURA LISTO/RETABLO AYACUCHANO/LopezA.webp";
-const platoPucaImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/PUCA PICANTE/puca.webp"; // placeholder if needed
-const platoCuyImg = "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/CUY FRITO/cuy.webp"; // placeholder
-const platoMondongoImg =
-  "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/MONDONGO/mondongo.webp"; // placeholder
-const platoMaizImg =
-  "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/POSTRES Y BEBIDAS/CHAPLA/chapla.webp"; // placeholder
+const platoPucaImg = "/imagenes-reales/seccion-gastronomia/puca-picante.webp";
+const platoCuyImg = "/imagenes-reales/seccion-gastronomia/cuy-frito-ayacuchano.webp";
+const platoMondongoImg = "/imagenes-reales/seccion-gastronomia/mondongo ayacuchano.webp";
+const platoMaizImg = "/imagenes-reales/seccion-gastronomia/chorizo-ayacuchano.webp";
 import { SiteFooter } from "@/components/site-footer";
 import { LocationSelector } from "../components/LocationSelector";
 import RetabloWrapper, { AyacuchoFlowerInline } from "../components/RetabloWrapper";
@@ -964,22 +962,22 @@ function Index() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Puca-Picante.webp",
+                img: "/imagenes-reales/seccion-gastronomia/puca-picante.webp",
                 nombre: "Puca Picante",
                 desc: "Emblemático guiso de intenso color rojo a base de papa, maní tostado, betarraga y chicharrón de cerdo. Un clásico de festividades y picanterías ayacuchanas.",
               },
               {
-                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Mondongo%20Ayacuchano.webp",
+                img: "/imagenes-reales/seccion-gastronomia/mondongo ayacuchano.webp",
                 nombre: "Mondongo Ayacuchano",
                 desc: "Contundente caldo dominical preparado con maíz mote, carnes, panza y hierbabuena. Un reparador desayuno tradicional de la sierra.",
               },
               {
-                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Cuy-Frito-Ayacuchano.webp",
+                img: "/imagenes-reales/seccion-gastronomia/cuy-frito-ayacuchano.webp",
                 nombre: "Cuy Frito Ayacuchano",
                 desc: "Plato crujiente y emblemático de la gastronomía andina. Una herencia culinaria prehispánica presente en celebraciones tradicionales.",
               },
               {
-                img: "/imagenes-reales/RUTA GASTRONOMICA FALTA FOTOS/PLATOS/Chorizo-Ayacuchano.webp",
+                img: "/imagenes-reales/seccion-gastronomia/chorizo-ayacuchano.webp",
                 nombre: "Chorizo Ayacuchano",
                 desc: "Carne de cerdo finamente picada y macerada en ají panca, servida sin embutir. Un manjar tradicional especialmente popular en Semana Santa.",
               },
